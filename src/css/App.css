@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Roboto';
+    font-weight: normal;
+    src: url('../fonts/Roboto-Regular.ttf');
+}
+
+body {
+    overflow-y: scroll;
+    height: 100%;
+    margin:0;
+    background-color: aliceblue;
+}
+:root {
+    --max-width: 600px;
+}
+
+.mobile-view {
+    background-color: #FFFFFF;
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 320px;
+    max-width: var(--max-width);
+    min-height: 100%;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.header{
+    background-color: #FDF1E5;
+    color: #E9A260;
+    font-family: "Roboto", sans-serif;
+    width: 100%;
+    min-width: 320px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    transform: translateZ(0);
+    font-size: 18px;
+    height: 50px;
+}
+
+.footer{
+    font-family: "Roboto", sans-serif;
+    width: 100%;
+    min-width: 320px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    gap: 5px;
+    padding: 0 16px 5px;
+    position: fixed;
+    justify-content: space-around;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #FDF1E5;
+    transform: translateZ(0);
+    font-size: 10px;
+    height: 75px;
+}
+
+.bottom-button{
+    width: 58px;
+}
+
+/*푸터, 헤더가 있을때*/
+.back-view1{
+    background-color: #FFFFFF;
+    min-height: 100vh;
+
+    padding-top: 50px;
+    padding-bottom: 75px;
+}
+
+/*푸터,헤더가 없을떄*/
+.back-view0{
+    background-color: #FFFFFF;
+    min-height: 100vh;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
