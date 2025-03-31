@@ -1,4 +1,10 @@
-import React from "react";
+import * as React from "react";
+import TextField from "@mui/material/TextField";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 const Step2 = ({ nextStep }) => {
     return (
@@ -9,37 +15,61 @@ const Step2 = ({ nextStep }) => {
         //     </button>
         // </div>
         <div>
-            <div className="flex max-w-sm w-full bg-white shadow-md rounded-lg overflow-hidden mx-auto">
+            <div>
+                <TextField
+                    required
+                    id="nickname"
+                    label="닉네임"
+                    variant="standard"
+                    placeholder="2~16자 이내로 입력해주세요"
+                    focused
+                />
+                <br />
+                어떤 반려동물과 함께하고 계신가요?
+                <br />
+                <TextField
+                    required
+                    id="pet-name"
+                    label="이름"
+                    variant="standard"
+                    focused
+                />
+                <br />
+                <TextField
+                    required
+                    id="pet-registration"
+                    label="애완동물을 등록해주세요"
+                    variant="standard"
+                    focused
+                />
+            </div>
+            <div>
+                <FormControl margin="normal">
+                    <FormLabel id="pet-gender-label">
+                        아이의 성별을 선택해주세요 *
+                    </FormLabel>
+                    <RadioGroup
+                        row
+                        aria-labelledby="pet-gender-label"
+                        name="pet-gender"
+                    >
+                        <FormControlLabel
+                            value="M"
+                            control={<Radio />}
+                            label="남아"
+                        />
+                        <FormControlLabel
+                            value="F"
+                            control={<Radio />}
+                            label="여아"
+                        />
+                    </RadioGroup>
+                </FormControl>
+                <br />
                 <button className="border border-black" onClick={nextStep}>
                     다음
                 </button>
-
-                <div className="w-2 bg-gray-800"></div>
-
-                <div className="flex items-center px-2 py-3">
-                    <form className="w-full max-w-sm">
-                        <div className="flex items-center border-b border-gray-400 py-2">
-                            <input
-                                className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                                type="text"
-                                placeholder="Jane Doe"
-                                aria-label="Full name"
-                            />
-                            <button
-                                className="flex-shrink-0 bg-green-500 hover:bg-green-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-                                type="button"
-                            >
-                                Sign Up
-                            </button>
-                            <button
-                                className="flex-shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded"
-                                type="button"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <br />
             </div>
         </div>
     );
