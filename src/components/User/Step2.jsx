@@ -8,12 +8,6 @@ import FormLabel from "@mui/material/FormLabel";
 
 const Step2 = ({ nextStep }) => {
     return (
-        // <div className="flex flex-col">
-        //     두번째페이지
-        //     <button className="border border-black" onClick={nextStep}>
-        //         다음
-        //     </button>
-        // </div>
         <div>
             <div>
                 <TextField
@@ -66,9 +60,7 @@ const Step2 = ({ nextStep }) => {
                     </RadioGroup>
                 </FormControl>
                 <br />
-                <button className="border border-black" onClick={nextStep}>
-                    다음
-                </button>
+                <button onClick={nextStep}>다음</button>
                 <br />
             </div>
         </div>
