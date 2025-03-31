@@ -1,7 +1,7 @@
 import React from "react";
 
-const Petsitter = () => {
+const PetSitter = () => {
     return <div>나는펫시터</div>;
 };
 
-export default Petsitter;
+export default PetSitter;

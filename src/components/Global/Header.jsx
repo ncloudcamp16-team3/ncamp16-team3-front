@@ -4,32 +4,69 @@ import icon from "../../assets/images/icon1.svg";
 import notification from "../../assets/images/Notification2.svg";
 import profile from "../../assets/images/haribo.jpg";
 import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 
 const Header = () => {
     const navigate = useNavigate();
     return (
-        <div className="header flex flex-row justify-between p-1 ps-3 pe-3">
-            <div className="rounded-full border border-gray-400 overflow-hidden w-10 h-10">
-                <img
+        <Box
+            component="div"
+            className="header"
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-between"
+        >
+            <Box
+                sx={{
+                    borderRadius: "50%",
+                    border: "1px solid #D1D5DB",
+                    overflow: "hidden",
+                    width: "40px",
+                    height: "40px",
+                }}
+            >
+                <Box
+                    component="img"
                     src={profile}
                     alt="profile"
-                    className="object-cover w-fit h-fit"
+                    sx={{
+                        maxWidth: "100%",
+                    }}
                 />
-            </div>
-            <div className="flex items-center">
-                <img src={icon} alt="아이콘" className="object-contain" />
-                <span className="ms-2 whitespace-nowrap font-bold">
+            </Box>
+            <Box display="flex" alignItems="center">
+                <Box
+                    component="img"
+                    src={icon}
+                    alt="아이콘"
+                    sx={{
+                        objectFit: "contain",
+                    }}
+                />
+                <Box
+                    component="span"
+                    sx={{
+                        ml: 0.5,
+                        whiteSpace: "nowrap",
+                        fontWeight: "bold",
+                    }}
+                >
                     꼬리친구들
-                </span>
-            </div>
+                </Box>
+            </Box>
             <div onClick={() => navigate("/notification")}>
-                <img
+                <Box
+                    component="img"
                     src={notification}
                     alt="종"
-                    className="object-contain w-10 h-10"
+                    sx={{
+                        objectFit: "contain",
+                        width: "40px",
+                        height: "40px",
+                    }}
                 />
             </div>
-        </div>
+        </Box>
     );
 };
 

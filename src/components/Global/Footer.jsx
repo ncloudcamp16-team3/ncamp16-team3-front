@@ -1,52 +1,55 @@
 import React from "react";
 import "../../css/App.css";
+import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
+import BottomButton from "./BottomButton.jsx";
 import board from "../../assets/images/board.svg";
 import main from "../../assets/images/main.svg";
 import petsta from "../../assets/images/petsta.svg";
 import reserve from "../../assets/images/reserve.svg";
 import petsitter from "../../assets/images/petsitter.svg";
-import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="footer flex justify-between items-end">
-            <div
-                className="flex flex-col items-center bottom-button"
-                onClick={() => navigate("/petsta")}
-            >
-                <img src={petsta} width="40px" />
-                <span>펫스타</span>
-            </div>
-            <div
-                className="flex flex-col items-center bottom-button"
+        <Box
+            component="div"
+            className="footer"
+            display="flex"
+            alignItems="end"
+            justifyContent="space-between"
+        >
+            <BottomButton
+                icon={petsta}
+                label="펫스타"
+                onClick={() => navigate("/petSta")}
+            />
+            <BottomButton
+                icon={board}
+                label="게시판"
                 onClick={() => navigate("/board")}
-            >
-                <img src={board} className="w-fit h-fit" />
-                <span>게시판</span>
-            </div>
-            <div
-                className="transform translate-y-[-13px]"
+            />
+            <Box
+                component="div"
+                sx={{
+                    transform: "translateY(-13px)",
+                }}
                 onClick={() => navigate("/")}
             >
                 <img src={main} />
-            </div>
-            <div
-                className="flex flex-col items-center bottom-button"
+            </Box>
+            <BottomButton
+                icon={reserve}
+                label="예약"
                 onClick={() => navigate("/reserve")}
-            >
-                <img src={reserve} className="w-fit h-fit" />
-                <span>예약</span>
-            </div>
-            <div
-                className="flex flex-col items-center bottom-button"
+            />
+            <BottomButton
+                icon={petsitter}
+                label="임보구해요"
                 onClick={() => navigate("/petsitter")}
-            >
-                <img src={petsitter} className="w-fit h-fit" />
-                <span>임보구해요</span>
-            </div>
-        </div>
+            />
+        </Box>
     );
 };
 
