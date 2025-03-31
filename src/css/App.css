@@ -1,6 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 
 @font-face {
     font-family: 'Roboto';
@@ -8,14 +10,15 @@
     src: url('../fonts/Roboto-Regular.ttf');
 }
 
+:root {
+    --max-width: 600px;
+}
+
 body {
     overflow-y: scroll;
     height: 100%;
     margin:0;
     background-color: aliceblue;
-}
-:root {
-    --max-width: 600px;
 }
 
 .mobile-view {
@@ -45,6 +48,7 @@ body {
     transform: translateZ(0);
     font-size: 18px;
     height: 50px;
+    padding: 5px 10px 0 10px;
 }
 
 .footer{
