@@ -1,0 +1,33 @@
+[
+  {
+    "user_name": "해피해피해피",
+    "user_photo": "happyman.svg",
+    "file_name": "happi.mp4",
+    "file_type": "video",
+    "likes": "35000",
+    "comments": "234",
+    "content": "해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피해피\n엔터누르고 해피해피해피해피",
+    "created_at": "2025-03-31 14:30:00"
+  },
+  {
+    "user_name": "해피해피해피",
+    "user_photo": "happyman.svg",
+    "file_name": "happybird.mp4",
+    "file_type": "video",
+    "likes": "365000",
+    "comments": "2354",
+    "content": "삑삑삑삑삒",
+    "created_at": "2025-03-31 12:30:00"
+  },
+
+  {
+    "user_name": "허언증환자",
+    "user_photo": "badman.svg",
+    "file_name": "image_20.png",
+    "file_type": "photo",
+    "likes": "4050",
+    "comments": "54000",
+    "content": "오늘 놀러가서 찍은 사진",
+    "created_at" : "2025-03-17"
+  }
+]

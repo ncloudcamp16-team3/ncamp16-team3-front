@@ -2,7 +2,6 @@ import React from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/icon1.svg";
 import notification from "../../assets/images/Notification2.svg";
-import profile from "../../assets/images/haribo.jpg";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 
@@ -27,7 +26,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={profile}
+                    src={"./mock/Global/images/haribo.jpg"}
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
