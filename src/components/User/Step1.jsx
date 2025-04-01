@@ -1,85 +1,139 @@
-import React from "react";
-import joinLogo from "/src/assets/images/User/join_logo.png";
-import KakaoLogo from "/src/assets/images/User/Kakao Login.png";
-import NaverLogo from "/src/assets/images/User/Naver Login.png";
-import GoogleLogo from "/src/assets/images/User/Google Login.png";
-import { Box, Typography } from "@mui/material";
+import * as React from "react";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Input from "@mui/material/Input";
+import FormControl from "@mui/material/FormControl";
+import {
+    Box,
+    Button,
+    FormHelperText,
+    InputAdornment,
+    InputLabel,
+    Typography,
+} from "@mui/material";
+import RequiUi from "./RequiUi.jsx";
+import { useNavigate } from "react-router-dom";
 
-const Step1 = ({ nextStep }) => {
-    const handleGoogleLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/kakao";
-    };
+const Step1 = ({ nextStep, handleChange, formData, prevStep }) => {
+    const navigate = useNavigate();
 
     return (
         <Box
             display="flex"
             flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            textAlign="center"
+            alignItems="left"
+            width="90%"
+            mx="auto"
+            gap={2}
         >
-            <Typography variant="h6" fontWeight="bold" mb={4}>
-                꼬리친구들
+            <Typography variant="h6" fontWeight="bold" textAlign="center">
+                환영합니다
             </Typography>
-            <Box component="img" src={joinLogo} alt="logo" width={300} mb={4} />
-            <Typography variant="h6" fontWeight="bold" mb={4}>
-                다양한 애완동물을 위한 컨텐츠!
-            </Typography>
-            <Typography variant="body1" mb={10} sx={{ color: "#C8C8C8" }}>
-                꼬리친구들을 만나볼까요?
+            <Typography
+                variant="h6"
+                fontWeight="bold"
+                mb={1}
+                textAlign="center"
+            >
+                회원가입이 완료되었어요!
             </Typography>
 
-            <Box
-                width="90%"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                gap={2}
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="nickname">
+                    닉네임 <RequiUi />
+                </InputLabel>
+                <Input
+                    required
+                    id="nickname"
+                    name="nickname"
+                    placeholder="2~16자 이내로 입력해주세요"
+                    value={formData.nickname}
+                    onChange={handleChange}
+                    startAdornment={<InputAdornment />}
+                />
+            </FormControl>
+
+            <Typography
+                variant="body1"
+                fontWeight="bold"
+                mb={1}
+                alignItems="left"
             >
-                <Box
-                    component="button"
-                    onClick={handleGoogleLogin}
-                    border="none"
-                    bgcolor="white"
-                    width="100%"
+                어떤 반려동물과 함께하고 계신가요?
+            </Typography>
+
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="pet-name">
+                    이름 <RequiUi />
+                </InputLabel>
+                <Input
+                    required
+                    id="petName"
+                    name="petName"
+                    value={formData.petName}
+                    onChange={handleChange}
+                    startAdornment={<InputAdornment />}
+                />
+            </FormControl>
+
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="petRegistration">
+                    애완동물을 등록해주세요 <RequiUi />
+                </InputLabel>
+                <Input
+                    required
+                    id="petRegistration"
+                    name="petRegistration"
+                    placeholder="애완동물을 입력해주세요"
+                    value={formData.petRegistration}
+                    onChange={handleChange}
+                    startAdornment={<InputAdornment />}
+                />
+            </FormControl>
+
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <FormHelperText>
+                    아이의 성별을 선택해주세요 <RequiUi />
+                </FormHelperText>
+                <RadioGroup
+                    row
+                    aria-required
+                    id="petGender"
+                    name="petGender"
+                    justifyContent="center"
+                    value={formData.petGender}
+                    onChange={handleChange}
                 >
-                    <Box
-                        component="img"
-                        src={KakaoLogo}
-                        alt="Kakao Login"
-                        width="100%"
+                    <FormControlLabel
+                        value="남아"
+                        control={<Radio />}
+                        label="남아"
                     />
-                </Box>
-                <Box
-                    component="button"
-                    onClick={nextStep}
-                    border="none"
-                    bgcolor="white"
-                    width="100%"
-                >
-                    <Box
-                        component="img"
-                        src={NaverLogo}
-                        alt="Naver Login"
-                        width="100%"
+                    <FormControlLabel
+                        value="여아"
+                        control={<Radio />}
+                        label="여아"
                     />
-                </Box>
-                <Box
-                    component="button"
-                    onClick={nextStep}
-                    border="none"
-                    bgcolor="white"
-                    width="100%"
-                >
-                    <Box
-                        component="img"
-                        src={GoogleLogo}
-                        alt="Google Login"
-                        width="100%"
-                    />
-                </Box>
-            </Box>
+                </RadioGroup>
+            </FormControl>
+
+            <Button
+                variant="contained"
+                onClick={() => navigate("/login")}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
+                뒤로
+            </Button>
+
+            <Button
+                variant="contained"
+                alignItems="center"
+                onClick={nextStep}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
+                다음
+            </Button>
         </Box>
     );
 };

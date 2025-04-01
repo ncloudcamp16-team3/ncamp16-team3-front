@@ -1,20 +1,29 @@
-import * as React from "react";
-import Radio from "@mui/material/Radio";
+import React from "react";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Input from "@mui/material/Input";
+import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import {
     Box,
     Button,
     FormHelperText,
     InputAdornment,
     InputLabel,
-    Typography,
 } from "@mui/material";
 import RequiUi from "./RequiUi.jsx";
+import Input from "@mui/material/Input";
+import dayjs from "dayjs";
 
 const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
+    // MobileDatePicker에서 날짜 선택 시 값을 업데이트하는 핸들러
+    const handleDateChange = (newValue) => {
+        handleChange({ target: { name: "petBirthday", value: newValue } });
+    };
+
     return (
         <Box
             display="flex"
@@ -24,66 +33,26 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
             mx="auto"
             gap={2}
         >
-            <Typography variant="h6" fontWeight="bold" textAlign="center">
-                환영합니다
-            </Typography>
-            <Typography
-                variant="h6"
-                fontWeight="bold"
-                mb={1}
-                textAlign="center"
-            >
-                회원가입이 완료되었어요!
-            </Typography>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="nickname">
-                    닉네임 <RequiUi />
-                </InputLabel>
-                <Input
-                    required
-                    id="nickname"
-                    name="nickname"
-                    placeholder="2~16자 이내로 입력해주세요"
-                    value={formData.nickname}
-                    onChange={handleChange}
-                    startAdornment={<InputAdornment />}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <FormHelperText>
+                    아이의 생일은 언제인가요? <RequiUi />
+                </FormHelperText>
+                <MobileDatePicker
+                    value={dayjs(formData.petBirthday)}
+                    onChange={handleDateChange}
                 />
-            </FormControl>
+            </LocalizationProvider>
 
-            <Typography
-                variant="body1"
-                fontWeight="bold"
-                mb={1}
-                alignItems="left"
-            >
-                어떤 반려동물과 함께하고 계신가요?
-            </Typography>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="pet-name">
-                    이름 <RequiUi />
+            <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
+                <InputLabel htmlFor="petWeigth" sx={{ mb: 4 }}>
+                    몸무게를 입력해 주세요 <RequiUi />
                 </InputLabel>
                 <Input
                     required
-                    id="petName"
-                    name="petName"
-                    value={formData.petName}
-                    onChange={handleChange}
-                    startAdornment={<InputAdornment />}
-                />
-            </FormControl>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="petRegistration">
-                    애완동물을 등록해주세요 <RequiUi />
-                </InputLabel>
-                <Input
-                    required
-                    id="petRegistration"
-                    name="petRegistration"
-                    placeholder="애완동물을 입력해주세요"
-                    value={formData.petRegistration}
+                    id="petWeight"
+                    name="petWeight"
+                    placeholder="몸무게를 입력해 주세요"
+                    value={formData.petWeight}
                     onChange={handleChange}
                     startAdornment={<InputAdornment />}
                 />
@@ -91,29 +60,52 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
-                    아이의 성별을 선택해주세요 <RequiUi />
+                    체형을 선택해 주세요 <RequiUi />
                 </FormHelperText>
                 <RadioGroup
                     row
                     aria-required
-                    id="petGender"
-                    name="petGender"
+                    id="petBodyType"
+                    name="petBodyType"
                     justifyContent="center"
-                    value={formData.petGender}
+                    value={formData.petBodyType}
                     onChange={handleChange}
                 >
                     <FormControlLabel
-                        value="남아"
+                        value="날씬"
                         control={<Radio />}
-                        label="남아"
+                        label="날씬"
                     />
                     <FormControlLabel
-                        value="여아"
+                        value="적당"
                         control={<Radio />}
-                        label="여아"
+                        label="적당"
+                    />
+                    <FormControlLabel
+                        value="통통"
+                        control={<Radio />}
+                        label="통통"
                     />
                 </RadioGroup>
             </FormControl>
+
+            <FormHelperText>
+                아이를 소개해 주세요 <RequiUi />
+            </FormHelperText>
+            <TextareaAutosize
+                id="petIntroduction"
+                name="petIntroduction"
+                minRows={3}
+                placeholder="아이의 특징을 적어주세요"
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    borderColor: "#ccc",
+                }}
+                value={formData.petIntroduction}
+                onChange={handleChange}
+            />
 
             <Button
                 variant="contained"
@@ -125,7 +117,6 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <Button
                 variant="contained"
-                alignItems="center"
                 onClick={nextStep}
                 sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
             >

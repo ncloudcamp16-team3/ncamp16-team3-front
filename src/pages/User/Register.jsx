@@ -3,7 +3,6 @@ import Step1 from "../../components/User/Step1.jsx";
 import Step2 from "../../components/User/Step2.jsx";
 import Step3 from "../../components/User/Step3.jsx";
 import Step4 from "../../components/User/Step4.jsx";
-import Step5 from "../../components/User/Step5.jsx";
 
 const Register = () => {
     const [step, setStep] = useState(1);
@@ -41,7 +40,14 @@ const Register = () => {
 
     return (
         <div>
-            {step === 1 && <Step1 nextStep={nextStep} />}
+            {step === 1 && (
+                <Step1
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                    handleChange={handleChange}
+                    formData={formData}
+                />
+            )}
             {step === 2 && (
                 <Step2
                     nextStep={nextStep}
@@ -58,15 +64,7 @@ const Register = () => {
                     formData={formData}
                 />
             )}
-            {step === 4 && (
-                <Step4
-                    nextStep={nextStep}
-                    prevStep={prevStep}
-                    handleChange={handleChange}
-                    formData={formData}
-                />
-            )}
-            {step === 5 && <Step5 formData={formData} prevStep={prevStep} />}
+            {step === 4 && <Step4 formData={formData} prevStep={prevStep} />}
         </div>
     );
 };

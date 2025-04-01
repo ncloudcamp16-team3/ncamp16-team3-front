@@ -1,72 +1,38 @@
 import React from "react";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import FormControl from "@mui/material/FormControl";
-import {
-    Box,
-    Button,
-    FormHelperText,
-    InputAdornment,
-    InputLabel,
-    Typography,
-} from "@mui/material";
-import RequiUi from "./RequiUi.jsx";
-import Input from "@mui/material/Input";
+import { Box, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
-const Step4 = ({ nextStep, handleChange, formData, prevStep }) => {
-    // const navigate = useNavigate();
+const Step4 = ({ formData, prevStep }) => {
+    const navigate = useNavigate();
 
     return (
         <Box
             display="flex"
             flexDirection="column"
-            alignItems="left"
+            alignItems="center"
             width="90%"
             mx="auto"
             gap={2}
         >
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                <FormHelperText>
-                    중성화 여부를 알려주세요 <RequiUi />
-                </FormHelperText>
-                <RadioGroup
-                    row
-                    aria-required
-                    id="petNeutered"
-                    name="petNeutered"
-                    justifyContent="center"
-                    value={formData.petNeutered}
-                    onChange={handleChange}
-                >
-                    <FormControlLabel value="Y" control={<Radio />} label="O" />
-                    <FormControlLabel value="N" control={<Radio />} label="X" />
-                </RadioGroup>
-            </FormControl>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
-                <InputLabel htmlFor="petFavorite" sx={{ mb: 4 }}>
-                    좋아하는 것을 알려주세요
-                </InputLabel>
-                <Input
-                    id="petFavorite"
-                    name="petFavorite"
-                    placeholder="ex) 공놀이, 산책"
-                    value={formData.petFavorite}
-                    onChange={handleChange}
-                    startAdornment={<InputAdornment />}
-                />
-            </FormControl>
-
-            <Typography variant="body1" mt={3} mb={2}>
-                아이 사진등록하기
+            <Typography variant="h6" fontWeight="bold" textAlign="center">
+                입력한 정보를 확인하세요
             </Typography>
 
-            <FormHelperText>
-                첫번째 사진으로 프로필 사진이 등록됩니다 <RequiUi />
-                <br />
-                (구현 예정)
-            </FormHelperText>
+            <Box textAlign="left" width="100%">
+                <Typography>닉네임: {formData.nickname}</Typography>
+                <Typography>반려동물 이름: {formData.petName}</Typography>
+                <Typography>등록번호: {formData.petRegistration}</Typography>
+                <Typography>성별: {formData.petGender}</Typography>
+                <Typography>
+                    생일: {dayjs(formData.petBirthday).format("YYYY-MM-DD")}
+                </Typography>
+                <Typography>몸무게: {formData.petWeight}</Typography>
+                <Typography>체형: {formData.petBodyType}</Typography>
+                <Typography>소개: {formData.petIntroduction}</Typography>
+                <Typography>중성화 여부: {formData.petNeutered}</Typography>
+                <Typography>좋아하는 것: {formData.petFavorite}</Typography>
+            </Box>
 
             <Button
                 variant="contained"
@@ -78,10 +44,10 @@ const Step4 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <Button
                 variant="contained"
-                onClick={nextStep}
+                onClick={() => navigate("/")}
                 sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
             >
-                다음
+                제출
             </Button>
         </Box>
     );
