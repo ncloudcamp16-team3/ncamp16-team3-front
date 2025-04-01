@@ -1,47 +1,90 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
+import {
+    Box,
+    Button,
+    FormHelperText,
+    InputAdornment,
+    InputLabel,
+    Typography,
+} from "@mui/material";
+import Requi from "./Requi.jsx";
+import Input from "@mui/material/Input";
 
-const Step4 = () => {
-    const navigate = useNavigate();
+const Step4 = ({ nextStep, handleChange, formData, prevStep }) => {
+    // const navigate = useNavigate();
+
     return (
-        <div>
-            <FormControl margin="normal">
-                <FormLabel id="pet-gender-label">
-                    중성화 여부를 알려주세요 *
-                </FormLabel>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="left"
+            width="90%"
+            mx="auto"
+            gap={2}
+        >
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <FormHelperText>
+                    중성화 여부를 알려주세요 <Requi />
+                </FormHelperText>
                 <RadioGroup
                     row
-                    aria-labelledby="pet-gender-label"
-                    name="pet-gender"
+                    aria-required
+                    id="petNeutered"
+                    name="petNeutered"
+                    justifyContent="center"
+                    value={formData.petNeutered}
+                    onChange={handleChange}
                 >
                     <FormControlLabel value="Y" control={<Radio />} label="O" />
                     <FormControlLabel value="N" control={<Radio />} label="X" />
                 </RadioGroup>
             </FormControl>
-            <br />
-            <TextField
-                required
-                id="nickname"
-                label="좋아하는 것을 알려주세요."
-                variant="standard"
-                placeholder="ex) 공놀이, 산책"
-                focused
-            />
-            <br />
-            아이 사진등록하기
-            <br />
-            첫번째 사진으로 프로필 사진이 등록됩니다.*
-            <br />
-            (구현예정)
-            <br />
-            <button onClick={() => navigate("/")}>제출</button>
-        </div>
+
+            <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
+                <InputLabel htmlFor="petFavorite" sx={{ mb: 4 }}>
+                    좋아하는 것을 알려주세요
+                </InputLabel>
+                <Input
+                    id="petFavorite"
+                    name="petFavorite"
+                    placeholder="ex) 공놀이, 산책"
+                    value={formData.petFavorite}
+                    onChange={handleChange}
+                    startAdornment={<InputAdornment />}
+                />
+            </FormControl>
+
+            <Typography variant="body1" mt={3} mb={2}>
+                아이 사진등록하기
+            </Typography>
+
+            <FormHelperText>
+                첫번째 사진으로 프로필 사진이 등록됩니다 <Requi />
+                <br />
+                (구현 예정)
+            </FormHelperText>
+
+            <Button
+                variant="contained"
+                onClick={prevStep}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
+                뒤로
+            </Button>
+
+            <Button
+                variant="contained"
+                onClick={nextStep}
+                // onClick={() => navigate("/")}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
+                다음
+            </Button>
+        </Box>
     );
 };
 
