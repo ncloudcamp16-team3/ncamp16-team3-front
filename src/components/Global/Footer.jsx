@@ -30,13 +30,7 @@ const Footer = () => {
                 label="게시판"
                 onClick={() => navigate("/board")}
             />
-            <Box
-                component="div"
-                sx={{
-                    transform: "translateY(-13px)",
-                }}
-                onClick={() => navigate("/")}
-            >
+            <Box component="div" onClick={() => navigate("/")}>
                 <img src={main} />
             </Box>
             <BottomButton
