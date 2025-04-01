@@ -12,7 +12,7 @@ import {
     InputLabel,
     Typography,
 } from "@mui/material";
-import Requi from "./Requi.jsx";
+import RequiUi from "./RequiUi.jsx";
 
 const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
     return (
@@ -38,7 +38,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="nickname">
-                    닉네임 <Requi />
+                    닉네임 <RequiUi />
                 </InputLabel>
                 <Input
                     required
@@ -62,7 +62,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="pet-name">
-                    이름 <Requi />
+                    이름 <RequiUi />
                 </InputLabel>
                 <Input
                     required
@@ -76,7 +76,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="petRegistration">
-                    애완동물을 등록해주세요 <Requi />
+                    애완동물을 등록해주세요 <RequiUi />
                 </InputLabel>
                 <Input
                     required
@@ -91,7 +91,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
-                    아이의 성별을 선택해주세요 <Requi />
+                    아이의 성별을 선택해주세요 <RequiUi />
                 </FormHelperText>
                 <RadioGroup
                     row
