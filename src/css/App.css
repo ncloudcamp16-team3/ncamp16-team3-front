@@ -88,8 +88,5 @@ body {
 /*푸터,헤더가 없을떄*/
 .back-view0{
     background-color: #FFFFFF;
-    min-height: 100vh;
-
-    padding-top: 20px;
-    padding-bottom: 20px;
+    height: 100vh;
 }

@@ -1,5 +1,5 @@
 import "./css/App.css";
-import Layout1Outlet from "./components/Global/Layout1.jsx";
+import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Main from "./pages/Main/Main.jsx";
 import Login from "./pages/User/Login.jsx";
@@ -19,9 +19,8 @@ function App() {
             <Router>
                 <Container>
                     <Routes>
-                        <Route element={<Layout1Outlet />}>
+                        <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
-                            <Route path="/login" element={<Login />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
@@ -32,6 +31,7 @@ function App() {
                             />
                         </Route>
                         <Route element={<Layout0 />}>
+                            <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
                     </Routes>
