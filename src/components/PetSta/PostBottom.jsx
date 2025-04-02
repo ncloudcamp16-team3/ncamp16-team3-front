@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import PetStaHeart from "../../assets/images/pet-sta-heart.svg";
-import PetStaComment from "../../assets/images/pet-sta-comment.svg";
-import PetStaBookmark from "../../assets/images/pet-sta-bookmark.svg";
+import PetStaHeart from "../../assets/images/PetSta/pet-sta-heart.svg";
+import PetStaComment from "../../assets/images/PetSta/pet-sta-comment.svg";
+import PetStaBookmark from "../../assets/images/PetSta/pet-sta-bookmark.svg";
 import { useTheme } from "@mui/material/styles";
 
 const PostBottom = ({ user_name, likes, comments, content, created_at }) => {

@@ -12,6 +12,8 @@ const VideoPost = ({
     comments,
     content,
     created_at,
+    isMute,
+    toggleMute,
 }) => {
     const [isWide, setIsWide] = useState(false); // 화면이 넓은지 여부
 
@@ -47,7 +49,12 @@ const VideoPost = ({
             >
                 {isWide ? (
                     <div style={{ position: "relative", width: "100%" }}>
-                        <VideoPlayer file_name={file_name} isWide={true} />
+                        <VideoPlayer
+                            file_name={file_name}
+                            isWide={true}
+                            isMute={isMute}
+                            toggleMute={toggleMute}
+                        />
                         {/* 프로필 이미지와 사용자 이름 */}
                         <PostProfile
                             user_name={user_name}
@@ -68,7 +75,11 @@ const VideoPost = ({
                                 boxSizing: "border-box",
                             }}
                         >
-                            <VideoPlayer file_name={file_name} />
+                            <VideoPlayer
+                                file_name={file_name}
+                                isMute={isMute}
+                                toggleMute={toggleMute}
+                            />
                         </Box>
                         {/* 프로필 이미지와 사용자 이름 */}
                     </div>

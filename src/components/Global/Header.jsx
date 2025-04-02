@@ -1,7 +1,7 @@
 import React from "react";
 import "../../css/App.css";
-import icon from "../../assets/images/icon1.svg";
-import notification from "../../assets/images/Notification2.svg";
+import icon from "../../assets/images/Global/icon1.svg";
+import notification from "../../assets/images/Global/notification2.svg";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 

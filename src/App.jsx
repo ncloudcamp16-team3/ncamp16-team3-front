@@ -13,12 +13,18 @@ import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
+import Layout2 from "./components/Global/Layout2.jsx";
+import Post from "./pages/PetSta/Post.jsx";
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Router>
                 <Container>
                     <Routes>
+                        <Route element={<Layout0 />}>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                        </Route>
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
                             <Route path="/petsta" element={<PetSta />} />
@@ -30,9 +36,8 @@ function App() {
                                 element={<Notification />}
                             />
                         </Route>
-                        <Route element={<Layout0 />}>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
+                        <Route element={<Layout2 />}>
+                            <Route path="/petsta/post" element={<Post />} />
                         </Route>
                     </Routes>
                 </Container>

@@ -7,10 +7,15 @@ import FriendList from "../../components/PetSta/FriendList.jsx";
 
 const PetSta = () => {
     const [posts, setPosts] = useState([]);
+    const [isMute, setIsMute] = useState(true);
 
     useEffect(() => {
         setPosts(postsData); // JSON 파일에서 데이터를 setPosts로 업데이트
     }, []);
+
+    const toggleMute = () => {
+        setIsMute(!isMute);
+    };
 
     return (
         <div>
@@ -27,6 +32,8 @@ const PetSta = () => {
                         comments={post.comments}
                         content={post.content}
                         created_at={post.created_at}
+                        isMute={isMute}
+                        toggleMute={toggleMute}
                     />
                 ) : (
                     <PhotoPost
