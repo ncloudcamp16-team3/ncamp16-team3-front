@@ -11,7 +11,7 @@ import {
     InputLabel,
     Typography,
 } from "@mui/material";
-import RequiUi from "./RequiUi.jsx";
+import ReqUi from "./ReqUi.jsx";
 import Input from "@mui/material/Input";
 
 const Step3 = ({ nextStep, handleChange, formData, prevStep }) => {
@@ -28,7 +28,7 @@ const Step3 = ({ nextStep, handleChange, formData, prevStep }) => {
         >
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
-                    중성화 여부를 알려주세요 <RequiUi />
+                    중성화 여부를 알려주세요 <ReqUi />
                 </FormHelperText>
                 <RadioGroup
                     row
@@ -63,7 +63,7 @@ const Step3 = ({ nextStep, handleChange, formData, prevStep }) => {
             </Typography>
 
             <FormHelperText>
-                첫번째 사진으로 프로필 사진이 등록됩니다 <RequiUi />
+                첫번째 사진으로 프로필 사진이 등록됩니다 <ReqUi />
                 <br />
                 (구현 예정)
             </FormHelperText>
