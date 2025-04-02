@@ -6,10 +6,20 @@ import GoogleLogo from "/src/assets/images/User/google-logo.svg";
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const Login = ({ nextStep }) => {
-    const handleGoogleLogin = () => {
+const Login = () => {
+    const handleKakaoLogin = () => {
         window.location.href =
             "http://localhost:8080/oauth2/authorization/kakao";
+    };
+
+    const handleNaverLogin = () => {
+        window.location.href =
+            "http://localhost:8080/oauth2/authorization/naver";
+    };
+
+    const handleGoogleLogin = () => {
+        window.location.href =
+            "http://localhost:8080/oauth2/authorization/google";
     };
     const navigate = useNavigate();
 
@@ -65,7 +75,7 @@ const Login = ({ nextStep }) => {
                     alignItems="center"
                     gap="10px"
                     backgroundColor="#FEE500"
-                    onClick={handleGoogleLogin}
+                    onClick={handleNaverLogin}
                     width="90%"
                 >
                     <Box width="32px">
@@ -88,7 +98,7 @@ const Login = ({ nextStep }) => {
                     gap="10px"
                     backgroundColor="#27C250"
                     width="90%"
-                    onClick={() => navigate("/register")}
+                    onClick={handleNaverLogin}
                 >
                     <Box width="32px">
                         <Box
@@ -112,6 +122,7 @@ const Login = ({ nextStep }) => {
                     gap="10px"
                     backgroundColor="#FFFFFF"
                     width="90%"
+                    onClick={handleGoogleLogin}
                 >
                     <Box width="32px">
                         <Box

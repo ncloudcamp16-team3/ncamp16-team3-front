@@ -12,10 +12,10 @@ import {
     InputLabel,
     Typography,
 } from "@mui/material";
-import RequiUi from "./RequiUi.jsx";
 import { useNavigate } from "react-router-dom";
+import ReqUi from "./ReqUi.jsx";
 
-const Step1 = ({ nextStep, handleChange, formData, prevStep }) => {
+const Step1 = ({ nextStep, handleChange, formData }) => {
     const navigate = useNavigate();
 
     return (
@@ -41,7 +41,7 @@ const Step1 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="nickname">
-                    닉네임 <RequiUi />
+                    닉네임 <ReqUi />
                 </InputLabel>
                 <Input
                     required
@@ -65,7 +65,7 @@ const Step1 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="pet-name">
-                    이름 <RequiUi />
+                    이름 <ReqUi />
                 </InputLabel>
                 <Input
                     required
@@ -79,7 +79,7 @@ const Step1 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="petRegistration">
-                    애완동물을 등록해주세요 <RequiUi />
+                    애완동물을 등록해주세요 <ReqUi />
                 </InputLabel>
                 <Input
                     required
@@ -94,7 +94,7 @@ const Step1 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
-                    아이의 성별을 선택해주세요 <RequiUi />
+                    아이의 성별을 선택해주세요 <ReqUi />
                 </FormHelperText>
                 <RadioGroup
                     row

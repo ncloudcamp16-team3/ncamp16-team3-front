@@ -14,7 +14,7 @@ import {
     InputAdornment,
     InputLabel,
 } from "@mui/material";
-import RequiUi from "./RequiUi.jsx";
+import ReqUi from "./ReqUi.jsx";
 import Input from "@mui/material/Input";
 import dayjs from "dayjs";
 
@@ -35,7 +35,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
         >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <FormHelperText>
-                    아이의 생일은 언제인가요? <RequiUi />
+                    아이의 생일은 언제인가요? <ReqUi />
                 </FormHelperText>
                 <MobileDatePicker
                     value={dayjs(formData.petBirthday)}
@@ -45,7 +45,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
                 <InputLabel htmlFor="petWeigth" sx={{ mb: 4 }}>
-                    몸무게를 입력해 주세요 <RequiUi />
+                    몸무게를 입력해 주세요 <ReqUi />
                 </InputLabel>
                 <Input
                     required
@@ -60,7 +60,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
-                    체형을 선택해 주세요 <RequiUi />
+                    체형을 선택해 주세요 <ReqUi />
                 </FormHelperText>
                 <RadioGroup
                     row
@@ -90,7 +90,7 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
             </FormControl>
 
             <FormHelperText>
-                아이를 소개해 주세요 <RequiUi />
+                아이를 소개해 주세요 <ReqUi />
             </FormHelperText>
             <TextareaAutosize
                 id="petIntroduction"
