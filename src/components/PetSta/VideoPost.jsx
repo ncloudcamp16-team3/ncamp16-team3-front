@@ -3,8 +3,10 @@ import { Box } from "@mui/material";
 import PostProfile from "./PostProfile.jsx";
 import PostBottom from "./PostBottom.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
+import { useNavigate } from "react-router-dom";
 
 const VideoPost = ({
+    post_id,
     user_name,
     user_photo,
     file_name,
@@ -12,10 +14,10 @@ const VideoPost = ({
     comments,
     content,
     created_at,
-    isMute,
-    toggleMute,
 }) => {
     const [isWide, setIsWide] = useState(false); // 화면이 넓은지 여부
+    const [currentTime, setCurrentTime] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (file_name) {
@@ -31,6 +33,10 @@ const VideoPost = ({
             };
         }
     }, [file_name]);
+
+    const handlePostClick = () => {
+        navigate(`/petsta/post/${post_id}`, { state: { currentTime } });
+    };
 
     return (
         <Box
@@ -48,12 +54,14 @@ const VideoPost = ({
                 }}
             >
                 {isWide ? (
-                    <div style={{ position: "relative", width: "100%" }}>
+                    <div
+                        onClick={handlePostClick}
+                        style={{ position: "relative", width: "100%" }}
+                    >
                         <VideoPlayer
                             file_name={file_name}
                             isWide={true}
-                            isMute={isMute}
-                            toggleMute={toggleMute}
+                            setCurrentTime={setCurrentTime}
                         />
                         {/* 프로필 이미지와 사용자 이름 */}
                         <PostProfile
@@ -63,7 +71,10 @@ const VideoPost = ({
                         />
                     </div>
                 ) : (
-                    <div style={{ position: "relative", width: "100%" }}>
+                    <div
+                        onClick={handlePostClick}
+                        style={{ position: "relative", width: "100%" }}
+                    >
                         <PostProfile
                             user_name={user_name}
                             user_photo={user_photo}
@@ -77,8 +88,7 @@ const VideoPost = ({
                         >
                             <VideoPlayer
                                 file_name={file_name}
-                                isMute={isMute}
-                                toggleMute={toggleMute}
+                                setCurrentTime={setCurrentTime}
                             />
                         </Box>
                         {/* 프로필 이미지와 사용자 이름 */}

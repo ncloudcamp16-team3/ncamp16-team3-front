@@ -20,10 +20,11 @@ const PetSta = () => {
     return (
         <div>
             <FriendList />
-            {posts.map((post, index) =>
+            {posts.map((post) =>
                 post.file_type === "video" ? (
                     <VideoPost
-                        key={index}
+                        key={post.post_id}
+                        post_id={post.post_id}
                         user_name={post.user_name}
                         user_photo={post.user_photo}
                         file_name={post.file_name}
@@ -37,7 +38,8 @@ const PetSta = () => {
                     />
                 ) : (
                     <PhotoPost
-                        key={index}
+                        key={post.post_id}
+                        post_id={post.post_id}
                         user_name={post.user_name}
                         user_photo={post.user_photo}
                         file_name={post.file_name}

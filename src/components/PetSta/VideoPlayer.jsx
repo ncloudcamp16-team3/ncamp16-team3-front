@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import AudioOff from "../../assets/images/PetSta/audio-off.png";
 import AudioOn from "../../assets/images/PetSta/audio-on.png";
 import { Box } from "@mui/material";
+import { Context } from "../../context/Context.jsx";
 
-const VideoPlayer = ({ file_name, isWide = false, isMute, toggleMute }) => {
+const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const { isMute, toggleMute } = useContext(Context);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -59,9 +61,14 @@ const VideoPlayer = ({ file_name, isWide = false, isMute, toggleMute }) => {
                     transform: isWide ? "" : "scale(0.999)",
                 }}
                 muted={isMute}
+                onTimeUpdate={() => {
+                    if (videoRef.current) {
+                        setCurrentTime(videoRef.current.currentTime);
+                    }
+                }}
             >
                 <source
-                    src={`./mock/PetSta/videos/${file_name}`}
+                    src={`/mock/PetSta/videos/${file_name}`}
                     type="video/mp4"
                 />
             </video>
@@ -78,7 +85,10 @@ const VideoPlayer = ({ file_name, isWide = false, isMute, toggleMute }) => {
                 color="white"
                 width="25px"
                 height="25px"
-                onClick={toggleMute}
+                onClick={(event) => {
+                    event.stopPropagation();
+                    toggleMute();
+                }}
                 sx={{ cursor: "pointer" }}
             >
                 <img
