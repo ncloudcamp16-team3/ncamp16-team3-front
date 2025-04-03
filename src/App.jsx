@@ -1,5 +1,4 @@
 import "./css/App.css";
-import "./css/Admin.css";
 import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Main from "./pages/Main/Main.jsx";
@@ -24,30 +23,40 @@ function App() {
         <ThemeProvider theme={theme}>
             <Provider>
                 <Router>
+                    <Routes>
+                        <Route path="/admin/dashboard" element={<Admin />} />
+                        <Route path="/admin" element={<Admin />} />
+                    </Routes>
                     <Container>
                         <Routes>
                             <Route element={<Layout0 />}>
                                 <Route path="/login" element={<Login />} />
-                                <Route path="/register" element={<Register />} />
+                                <Route
+                                    path="/register"
+                                    element={<Register />}
+                                />
                             </Route>
                             <Route element={<Layout1 />}>
                                 <Route path="/" element={<Main />} />
                                 <Route path="/petsta" element={<PetSta />} />
                                 <Route path="/board" element={<Board />} />
                                 <Route path="/reserve" element={<Reserve />} />
-                                <Route path="/petsitter" element={<PetSitter />} />
+                                <Route
+                                    path="/petsitter"
+                                    element={<PetSitter />}
+                                />
                                 <Route path="/calendar" element={<Cal />} />
-                                <Route path="/notification" element={<Notification />} />
+                                <Route
+                                    path="/notification"
+                                    element={<Notification />}
+                                />
                             </Route>
                             <Route element={<Layout2 />}>
-                                <Route path="/petsta/post/:post_id" element={<PostDetail />} />
+                                <Route
+                                    path="/petsta/post/:post_id"
+                                    element={<PostDetail />}
+                                />
                             </Route>
-                            <Route id="mobile" path="/admin" element={<Admin />} />
-                            <Route
-                                id="mobile"
-                                path="/admin/dashboard"
-                                element={<Admin />}
-                            />
                         </Routes>
                     </Container>
                 </Router>
