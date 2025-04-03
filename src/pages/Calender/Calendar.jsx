@@ -39,29 +39,21 @@ const Cal = () => {
     );
 
     const selectedReserves = reserves.filter(
-        (reserve) =>
-            format(parseISO(reserve.entry_time), "yyyy-MM-dd") ===
-            format(selectedDate, "yyyy-MM-dd")
+        (reserve) => format(parseISO(reserve.entry_time), "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
     );
 
     // 일정이 있는 날짜인지 확인하고 이벤트 유형에 따라 반환
     const checkHasScheduleOrEvent = (date) => {
         const hasSchedule = schedules.some(
-            (schedule) =>
-                format(parseISO(schedule.start_date), "yyyy-MM-dd") ===
-                format(date, "yyyy-MM-dd")
+            (schedule) => format(parseISO(schedule.start_date), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
         );
 
         const hasEvent = events.some(
-            (event) =>
-                format(parseISO(event.start_date), "yyyy-MM-dd") ===
-                format(date, "yyyy-MM-dd")
+            (event) => format(parseISO(event.start_date), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
         );
 
         const hasReserve = reserves.some(
-            (reserve) =>
-                format(parseISO(reserve.entry_time), "yyyy-MM-dd") ===
-                format(date, "yyyy-MM-dd")
+            (reserve) => format(parseISO(reserve.entry_time), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
         );
 
         return { hasSchedule, hasEvent, hasReserve };
@@ -75,14 +67,11 @@ const Cal = () => {
         <div className="p-4">
             <Calendar
                 calendarType="gregory"
-                formatDay={(locale, date) =>
-                    date.toLocaleString("en", { day: "numeric" })
-                }
+                formatDay={(locale, date) => date.toLocaleString("en", { day: "numeric" })}
                 onChange={handleDateChange}
                 value={selectedDate}
                 tileContent={({ date }) => {
-                    const { hasSchedule, hasEvent, hasReserve } =
-                        checkHasScheduleOrEvent(date);
+                    const { hasSchedule, hasEvent, hasReserve } = checkHasScheduleOrEvent(date);
 
                     return (
                         <Box
@@ -130,12 +119,8 @@ const Cal = () => {
                 }}
             />
             <div className="mt-4">
-                <h2 className="text-lg font-semibold">
-                    {format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트
-                </h2>
-                {selectedSchedules.length > 0 ||
-                selectedEvents.length > 0 ||
-                selectedReserves.length > 0 ? (
+                <h2 className="text-lg font-semibold">{format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트</h2>
+                {selectedSchedules.length > 0 || selectedEvents.length > 0 || selectedReserves.length > 0 ? (
                     <div className="mt-2 space-y-4">
                         {/* 캘린더 일정 출력 */}
                         {selectedSchedules.length > 0 && (
@@ -188,24 +173,14 @@ const Cal = () => {
                                 <h3 className="text-md font-bold">예약 목록</h3>
                                 <ul className="mt-2 space-y-2">
                                     {selectedReserves.map((reserve) => (
-                                        <li
-                                            key={reserve.id}
-                                            className="p-3 border rounded-lg shadow-md bg-white"
-                                        >
-                                            <h3 className="font-bold text-lg">
-                                                🏢 {reserve.facility_name}
-                                            </h3>
+                                        <li key={reserve.id} className="p-3 border rounded-lg shadow-md bg-white">
+                                            <h3 className="font-bold text-lg">🏢 {reserve.facility_name}</h3>
+                                            <p className="text-sm text-gray-500">📍 {reserve.address}</p>
                                             <p className="text-sm text-gray-500">
-                                                📍 {reserve.address}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                🕒 {reserve.entry_time} ~{" "}
-                                                {reserve.exit_time || "미정"}
+                                                🕒 {reserve.entry_time} ~ {reserve.exit_time || "미정"}
                                             </p>
                                             <p className="text-sm text-gray-700 font-semibold">
-                                                💰 예약 금액:{" "}
-                                                {reserve.amount.toLocaleString()}
-                                                원
+                                                💰 예약 금액: {reserve.amount.toLocaleString()}원
                                             </p>
                                         </li>
                                     ))}

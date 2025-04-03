@@ -66,7 +66,13 @@ const VideoPost = ({ post_id, user_name, user_photo, file_name, likes, comments,
                     </div>
                 )}
             </Box>
-            <PostBottom user_name={user_name} content={content} created_at={created_at} comments={comments} likes={likes} />
+            <PostBottom
+                user_name={user_name}
+                content={content}
+                created_at={created_at}
+                comments={comments}
+                likes={likes}
+            />
         </Box>
     );
 };

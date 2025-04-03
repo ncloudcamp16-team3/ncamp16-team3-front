@@ -31,31 +31,19 @@ function App() {
                         <Routes>
                             <Route element={<Layout0 />}>
                                 <Route path="/login" element={<Login />} />
-                                <Route
-                                    path="/register"
-                                    element={<Register />}
-                                />
+                                <Route path="/register" element={<Register />} />
                             </Route>
                             <Route element={<Layout1 />}>
                                 <Route path="/" element={<Main />} />
                                 <Route path="/petsta" element={<PetSta />} />
                                 <Route path="/board" element={<Board />} />
                                 <Route path="/reserve" element={<Reserve />} />
-                                <Route
-                                    path="/petsitter"
-                                    element={<PetSitter />}
-                                />
+                                <Route path="/petsitter" element={<PetSitter />} />
                                 <Route path="/calendar" element={<Cal />} />
-                                <Route
-                                    path="/notification"
-                                    element={<Notification />}
-                                />
+                                <Route path="/notification" element={<Notification />} />
                             </Route>
                             <Route element={<Layout2 />}>
-                                <Route
-                                    path="/petsta/post/:post_id"
-                                    element={<PostDetail />}
-                                />
+                                <Route path="/petsta/post/:post_id" element={<PostDetail />} />
                             </Route>
                         </Routes>
                     </Container>
