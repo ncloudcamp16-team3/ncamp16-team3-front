@@ -1,42 +1,42 @@
 [
   {
     "user_name" : "고맴이",
-    "file_name" : "cat1.png",
+    "user_photo" : "cat1.png",
     "is_view" : "false"
   },
   {
     "user_name" : "억울이",
-    "file_name" : "dog1.png",
+    "user_photo" : "dog1.png",
     "is_view" : "false"
   },
   {
     "user_name" : "호떡",
-    "file_name" : "dog2.png",
+    "user_photo" : "dog2.png",
     "is_view" : "true"
   },
   {
     "user_name" : "개화남",
-    "file_name" : "dog3.png",
+    "user_photo" : "dog3.png",
     "is_view" : "true"
   },
   {
     "user_name" : "고맴이",
-    "file_name" : "cat1.png",
+    "user_photo" : "cat1.png",
     "is_view" : "false"
   },
   {
     "user_name" : "억울이",
-    "file_name" : "dog1.png",
+    "user_photo" : "dog1.png",
     "is_view" : "false"
   },
   {
     "user_name" : "호떡",
-    "file_name" : "dog2.png",
+    "user_photo" : "dog2.png",
     "is_view" : "true"
   },
   {
     "user_name" : "개화남",
-    "file_name" : "dog3.png",
+    "user_photo" : "dog3.png",
     "is_view" : "true"
   }
 ]

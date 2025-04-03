@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import PetStaHeart from "../../assets/images/pet-sta-heart.svg";
-import PetStaComment from "../../assets/images/pet-sta-comment.svg";
-import PetStaBookmark from "../../assets/images/pet-sta-bookmark.svg";
+import PetStaHeart from "../../assets/images/PetSta/petsta-heart.svg";
+import PetStaComment from "../../assets/images/PetSta/petsta-comment.svg";
+import PetStaBookmark from "../../assets/images/PetSta/petsta-bookmark.svg";
 import { useTheme } from "@mui/material/styles";
 
 const PostBottom = ({ user_name, likes, comments, content, created_at }) => {
     const [like_count, setLike_count] = useState("");
     const [comment_count, setComment_count] = useState("");
     const [isExpended, setIsExpended] = useState(false);
+
     const [createTime, setCreateTime] = useState("");
 
     const theme = useTheme();
@@ -54,7 +55,6 @@ const PostBottom = ({ user_name, likes, comments, content, created_at }) => {
             setCreateTime(`${hoursAgo}시간 전`);
         } else {
             // 24시간을 넘으면 월/일 형식으로
-            const options = { month: "2-digit", day: "2-digit" };
             const month = createdTime.getMonth() + 1; // 0부터 시작하므로 +1
             const day = createdTime.getDate();
             setCreateTime(`${month}월 ${day}일`);

@@ -3,11 +3,11 @@ import "../../css/App.css";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import BottomButton from "./BottomButton.jsx";
-import board from "../../assets/images/board.svg";
-import main from "../../assets/images/main.svg";
-import petsta from "../../assets/images/petsta.svg";
-import reserve from "../../assets/images/reserve.svg";
-import petsitter from "../../assets/images/petsitter.svg";
+import board from "../../assets/images/Global/board.svg";
+import main from "../../assets/images/Global/main.svg";
+import petsta from "../../assets/images/Global/petsta.svg";
+import reserve from "../../assets/images/Global/reserve.svg";
+import petsitter from "../../assets/images/Global/petsitter.svg";
 
 const Footer = () => {
     const navigate = useNavigate();

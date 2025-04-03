@@ -13,32 +13,48 @@ import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
-import Cal from "./pages/Calender/Calendar.jsx";
+import Layout2 from "./components/Global/Layout2.jsx";
+import PostDetail from "./pages/PetSta/PostDetail.jsx";
+import { Provider } from "./context/Context.jsx";
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <Router>
-                <Container>
-                    <Routes>
-                        <Route element={<Layout1 />}>
-                            <Route path="/" element={<Main />} />
-                            <Route path="/petsta" element={<PetSta />} />
-                            <Route path="/board" element={<Board />} />
-                            <Route path="/reserve" element={<Reserve />} />
-                            <Route path="/petsitter" element={<PetSitter />} />
+            <Provider>
+                <Router>
+                    <Container>
+                        <Routes>
+                            <Route element={<Layout0 />}>
+                                <Route path="/login" element={<Login />} />
+                                <Route
+                                    path="/register"
+                                    element={<Register />}
+                                />
+                            </Route>
+                            <Route element={<Layout1 />}>
+                                <Route path="/" element={<Main />} />
+                                <Route path="/petsta" element={<PetSta />} />
+                                <Route path="/board" element={<Board />} />
+                                <Route path="/reserve" element={<Reserve />} />
+                                <Route
+                                    path="/petsitter"
+                                    element={<PetSitter />}
+                                />
                             <Route path="/calendar" element={<Cal />} />
-                            <Route
-                                path="/notification"
-                                element={<Notification />}
-                            />
-                        </Route>
-                        <Route element={<Layout0 />}>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                        </Route>
-                    </Routes>
-                </Container>
-            </Router>
+                                <Route
+                                    path="/notification"
+                                    element={<Notification />}
+                                />
+                            </Route>
+                            <Route element={<Layout2 />}>
+                                <Route
+                                    path="/petsta/post/:post_id"
+                                    element={<PostDetail />}
+                                />
+                            </Route>
+                        </Routes>
+                    </Container>
+                </Router>
+            </Provider>
         </ThemeProvider>
     );
 }
