@@ -115,12 +115,24 @@ const MenuSection = styled(Box)(({ theme }) => ({
     marginBottom: theme.spacing(2),
 }));
 
+// 일반 메뉴 아이템 스타일링
 const StyledListItemButton = styled(ListItemButton)(({ selected }) => ({
     borderRadius: "8px",
     margin: "0px 8px",
     backgroundColor: selected ? "#673e19" : "transparent",
     "&:hover": {
-        backgroundColor: "#fff7ec",
+        backgroundColor: "#efa969",
+    },
+}));
+
+// 하위 메뉴 아이템을 위한 새로운 스타일 컴포넌트
+const SubMenuListItemButton = styled(ListItemButton)(({ selected }) => ({
+    borderRadius: "8px",
+    margin: "0px 8px",
+    // 하위 메뉴가 선택되었을 때 다른 배경색 사용
+    backgroundColor: selected ? "#E9A260" : "transparent",
+    "&:hover": {
+        backgroundColor: selected ? "#E9A260" : "#fff7ec",
     },
 }));
 
@@ -162,15 +174,20 @@ const Layout = ({ children }) => {
                     <StyledListItemButton
                         onClick={handlePostsClick}
                         sx={{
-                            backgroundColor:
-                                selectedIndex === 0 ||
-                                selectedIndex === 1 ||
-                                selectedIndex === 2
-                                    ? "#F2DFCE"
-                                    : "transparent",
+                            backgroundColor: openPosts
+                                ? "#E9A260"
+                                : selectedIndex === 0 ||
+                                    selectedIndex === 1 ||
+                                    selectedIndex === 2
+                                  ? "#F2DFCE"
+                                  : "transparent",
                             marginBottom: 0,
-                            borderBottomLeftRadius: 0,
-                            borderBottomRightRadius: 0,
+                            borderBottomLeftRadius: openPosts ? 0 : "8px",
+                            borderBottomRightRadius: openPosts ? 0 : "8px",
+                            color: openPosts ? "white" : "inherit",
+                            "& .MuiListItemIcon-root": {
+                                color: openPosts ? "white" : "inherit",
+                            },
                         }}
                     >
                         <ListItemIcon>
@@ -195,7 +212,8 @@ const Layout = ({ children }) => {
                                 borderTopLeftRadius: 0,
                             }}
                         >
-                            <StyledListItemButton
+                            {/* 하위 메뉴에 새로운 스타일 컴포넌트 사용 */}
+                            <SubMenuListItemButton
                                 selected={selectedIndex === 1}
                                 onClick={() => handleListItemClick(1)}
                             >
@@ -203,9 +221,9 @@ const Layout = ({ children }) => {
                                     <ArticleIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="게시글 목록" />
-                            </StyledListItemButton>
+                            </SubMenuListItemButton>
 
-                            <StyledListItemButton
+                            <SubMenuListItemButton
                                 selected={selectedIndex === 2}
                                 onClick={() => handleListItemClick(2)}
                             >
@@ -213,7 +231,7 @@ const Layout = ({ children }) => {
                                     <FormatListBulletedIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="공지글 작성" />
-                            </StyledListItemButton>
+                            </SubMenuListItemButton>
                         </List>
                     </Collapse>
                 </MenuSection>
