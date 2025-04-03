@@ -35,11 +35,7 @@ const Login = () => {
                         marginBottom: "30px",
                     }} // 크기 조절
                 />
-                <TextField
-                    label="아이디"
-                    variant="outlined"
-                    sx={{ margin: "0 1em" }}
-                />
+                <TextField label="아이디" variant="outlined" sx={{ margin: "0 1em" }} />
                 <TextField
                     label="비밀번호"
                     variant="outlined"

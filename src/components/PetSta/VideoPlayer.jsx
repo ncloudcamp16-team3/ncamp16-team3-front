@@ -3,11 +3,18 @@ import AudioOff from "../../assets/images/PetSta/audio-off.png";
 import AudioOn from "../../assets/images/PetSta/audio-on.png";
 import { Box } from "@mui/material";
 import { Context } from "../../context/Context.jsx";
+import { useNavigate } from "react-router-dom";
 
-const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
+const VideoPlayer = ({ file_name, post_id, isWide = false }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const { isMute, toggleMute } = useContext(Context);
+    const currentTime = useRef(0);
+    const navigate = useNavigate();
+
+    const handlePostClick = () => {
+        navigate(`/petsta/post/${post_id}`, { state: { currentTime: currentTime.current } });
+    };
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -46,6 +53,7 @@ const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
     return (
         <Box position="relative" width="100%" height={isWide ? "auto" : "100%"} overflow="hidden">
             <video
+                onClick={handlePostClick}
                 ref={videoRef}
                 style={{
                     width: "100%",
@@ -56,7 +64,7 @@ const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
                 muted={isMute}
                 onTimeUpdate={() => {
                     if (videoRef.current) {
-                        setCurrentTime(videoRef.current.currentTime);
+                        currentTime.current = videoRef.current.currentTime;
                     }
                 }}
             >

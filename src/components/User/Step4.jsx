@@ -29,7 +29,11 @@ const Step4 = ({ formData, prevStep }) => {
                 뒤로
             </Button>
 
-            <Button variant="contained" onClick={() => navigate("/")} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button
+                variant="contained"
+                onClick={() => navigate("/")}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
                 제출
             </Button>
         </Box>
