@@ -16,6 +16,7 @@ import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
+import Cal from "./pages/Calender/Calendar.jsx";
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -39,7 +40,7 @@ function App() {
                                     path="/petsitter"
                                     element={<PetSitter />}
                                 />
-                            <Route path="/calendar" element={<Cal />} />
+                                <Route path="/calendar" element={<Cal />} />
                                 <Route
                                     path="/notification"
                                     element={<Notification />}
