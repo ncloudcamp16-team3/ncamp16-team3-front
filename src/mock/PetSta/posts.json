@@ -1,7 +1,7 @@
 [
   {
     "post_id": "1",
-    "user_id": "1",
+    "user_id": "5",
     "is_view" : "false",
     "user_name": "해피해피해피",
     "user_photo": "happyman.svg",
@@ -14,7 +14,7 @@
   },
   {
     "post_id": "2",
-    "user_id": "1",
+    "user_id": "5",
     "is_view" : "false",
     "user_name": "해피해피해피",
     "user_photo": "happyman.svg",
@@ -28,7 +28,7 @@
 
   {
     "post_id": "3",
-    "user_id": "2",
+    "user_id": "6",
     "is_view" : "true",
     "user_name": "허언증환자",
     "user_photo": "badman.svg",

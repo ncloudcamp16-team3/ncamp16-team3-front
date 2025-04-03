@@ -86,11 +86,20 @@ const Step1 = ({ nextStep, handleChange, formData }) => {
                 </RadioGroup>
             </FormControl>
 
-            <Button variant="contained" onClick={() => navigate("/login")} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button
+                variant="contained"
+                onClick={() => navigate("/login")}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
                 뒤로
             </Button>
 
-            <Button variant="contained" alignItems="center" onClick={nextStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button
+                variant="contained"
+                alignItems="center"
+                onClick={nextStep}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+            >
                 다음
             </Button>
         </Box>

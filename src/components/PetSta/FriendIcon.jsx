@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import UserIcon from "./UserIcon.jsx";
 
-const FriendIcon = ({ friend }) => {
+const FriendIcon = React.memo(({ friend }) => {
     const theme = useTheme();
     return (
         <Box display="flex" flexDirection="column" alignItems="center">
@@ -13,6 +13,6 @@ const FriendIcon = ({ friend }) => {
             </Typography>
         </Box>
     );
-};
+});
 
 export default FriendIcon;
