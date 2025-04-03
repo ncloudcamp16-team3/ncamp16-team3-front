@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { format, parseISO } from "date-fns";
-import "react-calendar/dist/Calendar.css"; // css import
+import "react-calendar/dist/Calendar.css";
+import { Box } from "@mui/material"; // css import
 
 const Cal = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [schedules, setSchedules] = useState([]);
     const [events, setEvents] = useState([]);
+    const [reserves, setReserves] = useState([]);
 
     // JSON 파일 로드
     useEffect(() => {
@@ -19,6 +21,11 @@ const Cal = () => {
             .then((response) => response.json())
             .then((data) => setEvents(data))
             .catch((error) => console.error("Error loading events:", error));
+
+        fetch("src/mock/Calendar/reserves.json")
+            .then((response) => response.json())
+            .then((data) => setReserves(data))
+            .catch((error) => console.error("Error loading reserves:", error));
     }, []);
 
     // 선택한 날짜의 일정 필터링
@@ -31,38 +38,104 @@ const Cal = () => {
         (event) => format(parseISO(event.start_date), "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
     );
 
-    // 일정이 있는 날짜인지 확인
-    const checkHasSchedule = (date) => {
-        return (
-            schedules.some((schedule) => format(parseISO(schedule.start_date), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")) ||
-            events.some((event) => format(parseISO(event.start_date), "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
-        );
-    };
+    const selectedReserves = reserves.filter(
+        (reserve) =>
+            format(parseISO(reserve.entry_time), "yyyy-MM-dd") ===
+            format(selectedDate, "yyyy-MM-dd")
+    );
 
+    // 일정이 있는 날짜인지 확인하고 이벤트 유형에 따라 반환
+    const checkHasScheduleOrEvent = (date) => {
+        const hasSchedule = schedules.some(
+            (schedule) =>
+                format(parseISO(schedule.start_date), "yyyy-MM-dd") ===
+                format(date, "yyyy-MM-dd")
+        );
+
+        const hasEvent = events.some(
+            (event) =>
+                format(parseISO(event.start_date), "yyyy-MM-dd") ===
+                format(date, "yyyy-MM-dd")
+        );
+
+        const hasReserve = reserves.some(
+            (reserve) =>
+                format(parseISO(reserve.entry_time), "yyyy-MM-dd") ===
+                format(date, "yyyy-MM-dd")
+        );
+
+        return { hasSchedule, hasEvent, hasReserve };
+    };
     // 날짜 선택 시 실행
     const handleDateChange = (date) => {
         setSelectedDate(date);
-        console.log(`📅 선택한 날짜: ${format(date, "yyyy-MM-dd")}, 일정 있음: ${checkHasSchedule(date)}`);
     };
 
     return (
         <div className="p-4">
             <Calendar
                 calendarType="gregory"
-                locale="en-US"
+                formatDay={(locale, date) =>
+                    date.toLocaleString("en", { day: "numeric" })
+                }
                 onChange={handleDateChange}
                 value={selectedDate}
-                tileContent={({ date }) =>
-                    checkHasSchedule(date) ? (
-                        <div className="flex justify-center items-center mt-1">
-                            <span className="w-1.5 h-1.5 bg-red-500 rounded-full">일정</span>
-                        </div>
-                    ) : null
-                }
+                tileContent={({ date }) => {
+                    const { hasSchedule, hasEvent, hasReserve } =
+                        checkHasScheduleOrEvent(date);
+
+                    return (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                gap: 0.5, // 원 사이의 간격 조정
+                            }}
+                        >
+                            {hasSchedule && (
+                                <Box
+                                    sx={{
+                                        width: 6,
+                                        height: 6,
+                                        backgroundColor: "blue", // 일정(schedule)일 경우 파란색
+                                        borderRadius: "50%",
+                                    }}
+                                />
+                            )}
+
+                            {hasEvent && (
+                                <Box
+                                    sx={{
+                                        width: 6,
+                                        height: 6,
+                                        backgroundColor: "red", // 이벤트(event)일 경우 빨간색
+                                        borderRadius: "50%",
+                                    }}
+                                />
+                            )}
+
+                            {hasReserve && (
+                                <Box
+                                    sx={{
+                                        width: 6,
+                                        height: 6,
+                                        backgroundColor: "green",
+                                        borderRadius: "50%",
+                                    }}
+                                />
+                            )}
+                        </Box>
+                    );
+                }}
             />
             <div className="mt-4">
-                <h2 className="text-lg font-semibold">{format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트</h2>
-                {selectedSchedules.length > 0 || selectedEvents.length > 0 ? (
+                <h2 className="text-lg font-semibold">
+                    {format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트
+                </h2>
+                {selectedSchedules.length > 0 ||
+                selectedEvents.length > 0 ||
+                selectedReserves.length > 0 ? (
                     <div className="mt-2 space-y-4">
                         {/* 캘린더 일정 출력 */}
                         {selectedSchedules.length > 0 && (
@@ -103,6 +176,37 @@ const Cal = () => {
                                             >
                                                 🔗 이벤트 상세 보기
                                             </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* 예약 출력 */}
+                        {selectedReserves.length > 0 && (
+                            <div>
+                                <h3 className="text-md font-bold">예약 목록</h3>
+                                <ul className="mt-2 space-y-2">
+                                    {selectedReserves.map((reserve) => (
+                                        <li
+                                            key={reserve.id}
+                                            className="p-3 border rounded-lg shadow-md bg-white"
+                                        >
+                                            <h3 className="font-bold text-lg">
+                                                🏢 {reserve.facility_name}
+                                            </h3>
+                                            <p className="text-sm text-gray-500">
+                                                📍 {reserve.address}
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                🕒 {reserve.entry_time} ~{" "}
+                                                {reserve.exit_time || "미정"}
+                                            </p>
+                                            <p className="text-sm text-gray-700 font-semibold">
+                                                💰 예약 금액:{" "}
+                                                {reserve.amount.toLocaleString()}
+                                                원
+                                            </p>
                                         </li>
                                     ))}
                                 </ul>
