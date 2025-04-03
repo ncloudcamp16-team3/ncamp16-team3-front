@@ -11,20 +11,24 @@ import Notification from "./pages/Notification/Notification.jsx";
 import Container from "./components/Global/Container.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
-import Admin from "./pages/Admin/Admin.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+import Admin from "./pages/Admin/Admin.jsx";
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Provider>
                 <Router>
                     <Routes>
-                        <Route path="/admin/dashboard" element={<Admin />} />
+                        <Route
+                            path="/admin/dashboard"
+                            element={<AdminDashboard />}
+                        />
                         <Route path="/admin" element={<Admin />} />
                     </Routes>
                     <Container>
