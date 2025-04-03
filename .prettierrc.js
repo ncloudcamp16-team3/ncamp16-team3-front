@@ -2,8 +2,8 @@ export default {
     // 탭을 4개 스페이스로 처리
     tabWidth: 4,
 
-    // 한 줄에 최대 80자
-    printWidth: 140,
+    // 한 줄에 최대 120자
+    printWidth: 120,
 
     // 쌍따옴표 사용
     singleQuote: false,
@@ -16,4 +16,7 @@ export default {
 
     // 연산자 사이 공백 추가
     spaceInfixOps: true,
+
+    // OS에 따른 코드라인 끝 처리 방식 사용
+    endOfLine: "auto",
 };

@@ -44,7 +44,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={"./mock/Global/images/haribo.jpg"}
+                    src={"/mock/Global/images/haribo.jpg"}
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
@@ -98,7 +98,7 @@ const Header = () => {
                 </MenuItem>
 
                 <MenuItem
-                    onClick={handleClickMenu("/Info")}
+                    onClick={handleClickMenu("/MyPage")}
                     sx={{
                         display: "flex",
                         alignItems: "flex-end",

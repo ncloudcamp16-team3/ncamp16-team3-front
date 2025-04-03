@@ -16,7 +16,7 @@ const Background = () => {
                 maxWidth: "none",
                 width: "100vw",
                 height: "100vh",
-                backgroundImage: "url('/src/assets/images/admin.png')",
+                backgroundImage: "url('/src/assets/images/Admin/admin.png')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
