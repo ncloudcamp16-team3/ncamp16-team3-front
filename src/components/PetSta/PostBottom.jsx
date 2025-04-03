@@ -4,14 +4,16 @@ import PetStaHeart from "../../assets/images/PetSta/petsta-heart.svg";
 import PetStaComment from "../../assets/images/PetSta/petsta-comment.svg";
 import PetStaBookmark from "../../assets/images/PetSta/petsta-bookmark.svg";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
-const PostBottom = ({ user_name, likes, comments, content, created_at }) => {
+const PostBottom = ({ user_name, post_id, likes, comments, content, created_at }) => {
     const [like_count, setLike_count] = useState("");
     const [comment_count, setComment_count] = useState("");
     const [isExpended, setIsExpended] = useState(false);
 
     const [createTime, setCreateTime] = useState("");
 
+    const navigate = useNavigate();
     const theme = useTheme();
     const isLongContent = content.length > 30;
     const shortContent = content.length > 30 ? content.slice(0, 30) + "..." : content;
@@ -74,8 +76,10 @@ const PostBottom = ({ user_name, likes, comments, content, created_at }) => {
                 <Box sx={{ padding: 1, display: "flex", alignItems: "center" }}>
                     <img src={PetStaHeart} alt="Like Icon" />
                     <Typography sx={{ marginRight: 2 }}>{like_count}</Typography> {/* marginRight가 sx로 적용됨 */}
-                    <img src={PetStaComment} alt="Comment Icon" />
-                    <Typography>{comment_count}</Typography>
+                    <Box display="flex" onClick={() => navigate(`/petsta/post/comment/${post_id}`)}>
+                        <img src={PetStaComment} alt="Comment Icon" />
+                        <Typography>{comment_count}</Typography>
+                    </Box>
                 </Box>
                 <Box sx={{ padding: 1, display: "flex", alignItems: "center" }}>
                     <img src={PetStaBookmark} alt="Bookmark Icon" />
