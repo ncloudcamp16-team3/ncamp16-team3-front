@@ -1,0 +1,28 @@
+[
+  {
+  "id": 1,
+  "user_id": 101,
+  "title": "반려견 산책 모임",
+  "content": "반려견과 함께하는 산책 모임을 가집니다.",
+  "start_date": "2025-04-15 15:00:00",
+  "end_date": "2025-04-15 17:00:00",
+  "address": "서울시 강남구 강남대로",
+  "detail_address": "강남역 10번 출구 앞 공원",
+  "dong_name": "역삼동",
+  "latitude": 37.4979,
+  "longitude": 127.0276
+  },
+  {
+    "id": 2,
+    "user_id": 102,
+    "title": "캠핑 일정",
+    "content": "주말에 가족과 함께 캠핑을 갑니다.",
+    "start_date": "2025-04-20 12:00:00",
+    "end_date": "2025-04-21 14:00:00",
+    "address": "강원도 춘천시 남산면",
+    "detail_address": "춘천 강변 캠핑장",
+    "dong_name": "남산면",
+    "latitude": 37.8748,
+    "longitude": 127.7342
+  }
+]
