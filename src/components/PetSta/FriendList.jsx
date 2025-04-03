@@ -1,21 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import FriendsData from "../../mock/PetSta/friends.json";
 import FriendIcon from "./FriendIcon.jsx";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 const FriendList = () => {
-    const [friends, setFriends] = useState([]);
     const scrollRef = useRef(null); // 스크롤할 영역을 참조하기 위한 ref
     const isDragging = useRef(false); // 드래그 상태를 추적하는 ref
     const startX = useRef(0); // 드래그 시작 위치
     const scrollLeft = useRef(0); // 드래그 시작 시 스크롤 위치
 
-    useEffect(() => {
-        setFriends(FriendsData);
-    }, []);
+    const friends = useMemo(() => FriendsData, []);
     const theme = useTheme();
-
     // 마우스 다운 핸들러
     const handleMouseDown = (e) => {
         isDragging.current = true;
