@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box,
     Drawer,
@@ -180,20 +180,77 @@ const AccordionHeaderButton = styled(ListItemButton)(({ open }) => ({
 }));
 
 const Layout = ({ children }) => {
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [openPosts, setOpenPosts] = useState(true); // 아코디언 열림/닫힘 상태
+    const [selectedIndex, setSelectedIndex] = useState(1); // 초기값을 1로 설정 (게시글 목록)
+    const [openPosts, setOpenPosts] = useState(true); // 게시글 관리 아코디언 열림/닫힘 상태
+    const [openPetsitter, setOpenPetsitter] = useState(false); // 펫시터 관리 아코디언 열림/닫힘 상태
+    const [openCompany, setOpenCompany] = useState(false); // 업체 관리 아코디언 열림/닫힘 상태
 
     const handleListItemClick = (index) => {
         setSelectedIndex(index);
     };
 
-    // 게시글 관리 아코디언 토글 - 이벤트 전파 중지 추가
+    // 게시글 관리 아코디언 토글
     const handlePostsClick = (event) => {
-        // 이벤트 전파 중지 (중요!)
+        // 이벤트 전파 중지
         event.preventDefault();
         event.stopPropagation();
-        setOpenPosts(!openPosts);
+
+        // 현재 상태의 반대값
+        const newOpenState = !openPosts;
+
+        // 열리는 경우에만 다른 아코디언들을 닫음
+        if (newOpenState) {
+            setOpenPetsitter(false);
+            setOpenCompany(false);
+        }
+
+        setOpenPosts(newOpenState);
     };
+
+    // 펫시터 관리 아코디언 토글
+    const handlePetsitterClick = (event) => {
+        // 이벤트 전파 중지
+        event.preventDefault();
+        event.stopPropagation();
+
+        // 현재 상태의 반대값
+        const newOpenState = !openPetsitter;
+
+        // 열리는 경우에만 다른 아코디언들을 닫음
+        if (newOpenState) {
+            setOpenPosts(false);
+            setOpenCompany(false);
+        }
+
+        setOpenPetsitter(newOpenState);
+    };
+
+    // 업체 관리 아코디언 토글
+    const handleCompanyClick = (event) => {
+        // 이벤트 전파 중지
+        event.preventDefault();
+        event.stopPropagation();
+
+        // 현재 상태의 반대값
+        const newOpenState = !openCompany;
+
+        // 열리는 경우에만 다른 아코디언들을 닫음
+        if (newOpenState) {
+            setOpenPosts(false);
+            setOpenPetsitter(false);
+        }
+
+        setOpenCompany(newOpenState);
+    };
+
+    // 컴포넌트 초기 마운트 시 기본 선택 상태 설정
+    useEffect(() => {
+        // 게시글 관리 아코디언을 열고, 게시글 목록(인덱스 1)을 선택
+        setOpenPosts(true);
+        setOpenPetsitter(false);
+        setOpenCompany(false);
+        setSelectedIndex(1);
+    }, []); // 빈 의존성 배열: 컴포넌트 최초 마운트 시에만 실행
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -280,51 +337,133 @@ const Layout = ({ children }) => {
                 <Divider sx={{ mx: 2 }} />
 
                 <MenuSection>
-                    {/* 펫시터 관리 - 선택 시 #E9A260 배경색 적용 */}
-                    <StyledListItemButton
-                        selected={selectedIndex === 3}
-                        onClick={() => handleListItemClick(3)}
-                        sx={{
-                            "&.Mui-selected": {
-                                backgroundColor: "#E9A260",
-                                color: "white",
-                            },
-                            "&.Mui-selected:hover": {
-                                backgroundColor: "#E9A260",
-                            },
-                            "&.Mui-selected .MuiListItemIcon-root": {
-                                color: "white",
-                            },
-                        }}
-                    >
+                    {/* 펫시터 관리 - 아코디언 헤더 */}
+                    <AccordionHeaderButton open={openPetsitter} onClick={handlePetsitterClick}>
                         <ListItemIcon>
                             <PersonIcon />
                         </ListItemIcon>
                         <ListItemText primary="펫시터 관리" />
-                    </StyledListItemButton>
+                        {/* 확장/축소 아이콘 */}
+                        {openPetsitter ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    </AccordionHeaderButton>
 
-                    {/* 업체 관리 - 선택 시 #E9A260 배경색 적용 */}
-                    <StyledListItemButton
-                        selected={selectedIndex === 4}
-                        onClick={() => handleListItemClick(4)}
-                        sx={{
-                            "&.Mui-selected": {
-                                backgroundColor: "#E9A260",
-                                color: "white",
-                            },
-                            "&.Mui-selected:hover": {
-                                backgroundColor: "#E9A260",
-                            },
-                            "&.Mui-selected .MuiListItemIcon-root": {
-                                color: "white",
-                            },
-                        }}
-                    >
+                    {/* 펫시터 관리 하위 메뉴 */}
+                    <Collapse in={openPetsitter} timeout="auto" unmountOnExit>
+                        <List
+                            component="div"
+                            disablePadding
+                            sx={{
+                                pl: 4,
+                                backgroundColor: "#FDF1E5",
+                                margin: "0 8px",
+                                paddingLeft: 0,
+                                borderTopRightRadius: 0,
+                                borderTopLeftRadius: 0,
+                            }}
+                        >
+                            {/* 펫시터 목록 메뉴 */}
+                            <SubMenuListItemButton
+                                selected={selectedIndex === 3}
+                                onClick={() => handleListItemClick(3)}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <PersonIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="펫시터 목록" />
+                            </SubMenuListItemButton>
+
+                            {/* 펫시터 신청목록 메뉴 */}
+                            <SubMenuListItemButton
+                                selected={selectedIndex === 4}
+                                onClick={() => handleListItemClick(4)}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <FormatListBulletedIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="펫시터 신청목록" />
+                            </SubMenuListItemButton>
+                        </List>
+                    </Collapse>
+
+                    {/* 업체 관리 아코디언 헤더 */}
+                    <AccordionHeaderButton open={openCompany} onClick={handleCompanyClick}>
                         <ListItemIcon>
                             <GroupsIcon />
                         </ListItemIcon>
                         <ListItemText primary="업체 관리" />
-                    </StyledListItemButton>
+                        {/* 확장/축소 아이콘 */}
+                        {openCompany ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    </AccordionHeaderButton>
+
+                    {/* 업체 관리 하위 메뉴 */}
+                    <Collapse in={openCompany} timeout="auto" unmountOnExit>
+                        <List
+                            component="div"
+                            disablePadding
+                            sx={{
+                                pl: 4,
+                                backgroundColor: "#FDF1E5",
+                                margin: "0 8px",
+                                paddingLeft: 0,
+                                borderTopRightRadius: 0,
+                                borderTopLeftRadius: 0,
+                            }}
+                        >
+                            {/* 업체 목록 메뉴 */}
+                            <SubMenuListItemButton
+                                selected={selectedIndex === 5}
+                                onClick={() => handleListItemClick(5)}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <GroupsIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="업체 목록" />
+                            </SubMenuListItemButton>
+
+                            {/* 업체 등록 메뉴 */}
+                            <SubMenuListItemButton
+                                selected={selectedIndex === 6}
+                                onClick={() => handleListItemClick(6)}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <FormatListBulletedIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="업체 등록" />
+                            </SubMenuListItemButton>
+                        </List>
+                    </Collapse>
                 </MenuSection>
 
                 <Box sx={{ flexGrow: 1 }} />
