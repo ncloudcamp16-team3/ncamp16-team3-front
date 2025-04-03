@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import PetStaHeart from "../../assets/images/PetSta/petsta-heart.svg";
-import PetStaComment from "../../assets/images/PetSta/petsta-comment.svg";
+import PetStaComment from "../../assets/images/Global/comment.svg";
 import PetStaBookmark from "../../assets/images/PetSta/petsta-bookmark.svg";
 import { useTheme } from "@mui/material/styles";
 
