@@ -77,6 +77,12 @@ body {
     width: 58px;
 }
 
+/*푸터,헤더가 없을떄*/
+.back-view0{
+    background-color: #FFFFFF;
+    height: 100vh;
+}
+
 /*푸터, 헤더가 있을때*/
 .back-view1{
     background-color: #FFFFFF;
@@ -85,8 +91,9 @@ body {
     padding-bottom: 65px;
 }
 
-/*푸터,헤더가 없을떄*/
-.back-view0{
+/*푸터, 헤더가 있을때*/
+.back-view2{
     background-color: #FFFFFF;
-    height: 100vh;
+    min-height: 100vh;
+    padding-bottom: 65px;
 }

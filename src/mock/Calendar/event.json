@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "봄꽃 축제",
+    "address": "서울시 중구 남산공원",
+    "start_date": "2025-04-10 10:00:00",
+    "end_date": "2025-04-12 18:00:00",
+    "event_url": "https://springfestival.com"
+  },
+  {
+    "id": 2,
+    "title": "애견 운동회",
+    "address": "경기도 성남시 분당구 탄천공원",
+    "start_date": "2025-05-15 09:00:00",
+    "end_date": "2025-05-15 17:00:00",
+    "event_url": "https://dogfestival.com"
+  }
+]

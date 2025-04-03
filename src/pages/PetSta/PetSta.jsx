@@ -7,18 +7,24 @@ import FriendList from "../../components/PetSta/FriendList.jsx";
 
 const PetSta = () => {
     const [posts, setPosts] = useState([]);
+    const [isMute, setIsMute] = useState(true);
 
     useEffect(() => {
         setPosts(postsData); // JSON 파일에서 데이터를 setPosts로 업데이트
     }, []);
 
+    const toggleMute = () => {
+        setIsMute(!isMute);
+    };
+
     return (
         <div>
             <FriendList />
-            {posts.map((post, index) =>
+            {posts.map((post) =>
                 post.file_type === "video" ? (
                     <VideoPost
-                        key={index}
+                        key={post.post_id}
+                        post_id={post.post_id}
                         user_name={post.user_name}
                         user_photo={post.user_photo}
                         file_name={post.file_name}
@@ -27,10 +33,13 @@ const PetSta = () => {
                         comments={post.comments}
                         content={post.content}
                         created_at={post.created_at}
+                        isMute={isMute}
+                        toggleMute={toggleMute}
                     />
                 ) : (
                     <PhotoPost
-                        key={index}
+                        key={post.post_id}
+                        post_id={post.post_id}
                         user_name={post.user_name}
                         user_photo={post.user_photo}
                         file_name={post.file_name}
