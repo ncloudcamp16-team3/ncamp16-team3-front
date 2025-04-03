@@ -1,4 +1,5 @@
 import "./css/App.css";
+import "./css/Admin.css";
 import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Main from "./pages/Main/Main.jsx";
@@ -11,6 +12,7 @@ import Notification from "./pages/Notification/Notification.jsx";
 import Container from "./components/Global/Container.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
+import Admin from "./pages/Admin/Admin.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
@@ -52,6 +54,12 @@ function App() {
                                     element={<PostDetail />}
                                 />
                             </Route>
+                            <Route id="mobile" path="/admin" element={<Admin />} />
+                            <Route
+                                id="mobile"
+                                path="/admin/dashboard"
+                                element={<Admin />}
+                            />
                         </Routes>
                     </Container>
                 </Router>
