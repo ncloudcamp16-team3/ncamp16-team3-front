@@ -45,12 +45,10 @@ const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
 
     return (
         <Box
-            sx={{
-                position: "relative",
-                width: "100%",
-                height: isWide ? "auto" : "100%",
-                overflow: "hidden",
-            }}
+            position="relative"
+            width="100%"
+            height={isWide ? "auto" : "100%"}
+            overflow="hidden"
         >
             <video
                 ref={videoRef}
