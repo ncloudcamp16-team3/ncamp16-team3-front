@@ -8,7 +8,7 @@ const PostDetail = () => {
     const { post_id } = useParams();
     const location = useLocation();
     const currentTime = location.state?.currentTime || 0;
-    const post = posts.find((p) => p.post_id === post_id);
+    const post = posts.find((p) => p.post_id === Number(post_id));
     return (
         <div>
             {post.file_type === "video" ? (

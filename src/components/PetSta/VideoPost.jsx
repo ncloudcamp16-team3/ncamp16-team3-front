@@ -3,12 +3,9 @@ import { Box } from "@mui/material";
 import PostProfile from "./PostProfile.jsx";
 import PostBottom from "./PostBottom.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
-import { useNavigate } from "react-router-dom";
 
 const VideoPost = ({ post_id, user_name, user_id, user_photo, file_name, likes, comments, content, created_at }) => {
     const [isWide, setIsWide] = useState(false); // 화면이 넓은지
-
-    const navigate = useNavigate();
 
     // 🔹 useMemo를 사용하여 isWide 계산 (렌더링 최소화)
     useEffect(() => {
@@ -69,6 +66,7 @@ const VideoPost = ({ post_id, user_name, user_id, user_photo, file_name, likes, 
                 )}
             </Box>
             <PostBottom
+                post_id={post_id}
                 user_name={user_name}
                 content={content}
                 created_at={created_at}

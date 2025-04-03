@@ -20,6 +20,7 @@ import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
+import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 
 function App() {
     return (
@@ -44,7 +45,8 @@ function App() {
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
                             <Route path="/notification" element={<Notification />} />
-                                <Route path="/mypage" element={<MyPage />} />
+                            <Route path="/mypage" element={<MyPage />} />
+                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

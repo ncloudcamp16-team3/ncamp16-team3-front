@@ -44,7 +44,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={"./mock/Global/images/haribo.jpg"}
+                    src={"/mock/Global/images/haribo.jpg"}
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
