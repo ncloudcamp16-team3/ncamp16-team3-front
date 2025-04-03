@@ -39,6 +39,7 @@ function App() {
                                     path="/petsitter"
                                     element={<PetSitter />}
                                 />
+                            <Route path="/calendar" element={<Cal />} />
                                 <Route
                                     path="/notification"
                                     element={<Notification />}
