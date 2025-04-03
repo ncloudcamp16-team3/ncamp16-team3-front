@@ -35,10 +35,7 @@ export default [
         rules: {
             ...js.configs.recommended.rules,
             ...reactHooks.configs.recommended.rules,
-            "react-refresh/only-export-components": [
-                "warn",
-                { allowConstantExport: true },
-            ],
+            "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
             "prettier/prettier": "error",
             "react/jsx-uses-react": "error",
             "react/jsx-uses-vars": "error",

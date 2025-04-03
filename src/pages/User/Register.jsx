@@ -40,30 +40,9 @@ const Register = () => {
 
     return (
         <div>
-            {step === 1 && (
-                <Step1
-                    nextStep={nextStep}
-                    prevStep={prevStep}
-                    handleChange={handleChange}
-                    formData={formData}
-                />
-            )}
-            {step === 2 && (
-                <Step2
-                    nextStep={nextStep}
-                    prevStep={prevStep}
-                    handleChange={handleChange}
-                    formData={formData}
-                />
-            )}
-            {step === 3 && (
-                <Step3
-                    nextStep={nextStep}
-                    prevStep={prevStep}
-                    handleChange={handleChange}
-                    formData={formData}
-                />
-            )}
+            {step === 1 && <Step1 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} formData={formData} />}
+            {step === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} formData={formData} />}
+            {step === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} formData={formData} />}
             {step === 4 && <Step4 formData={formData} prevStep={prevStep} />}
         </div>
     );

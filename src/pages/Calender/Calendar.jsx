@@ -30,16 +30,12 @@ const Cal = () => {
 
     // 선택한 날짜의 일정 필터링
     const selectedSchedules = schedules.filter(
-        (schedule) =>
-            format(parseISO(schedule.start_date), "yyyy-MM-dd") ===
-            format(selectedDate, "yyyy-MM-dd")
+        (schedule) => format(parseISO(schedule.start_date), "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
     );
 
     // 선택한 날짜에 해당하는 이벤트 필터링
     const selectedEvents = events.filter(
-        (event) =>
-            format(parseISO(event.start_date), "yyyy-MM-dd") ===
-            format(selectedDate, "yyyy-MM-dd")
+        (event) => format(parseISO(event.start_date), "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
     );
 
     const selectedReserves = reserves.filter(
@@ -147,21 +143,13 @@ const Cal = () => {
                                 <h3 className="text-md font-bold">📌 일정</h3>
                                 <ul className="mt-2 space-y-2">
                                     {selectedSchedules.map((schedule) => (
-                                        <li
-                                            key={schedule.id}
-                                            className="p-2 border rounded shadow"
-                                        >
-                                            <h3 className="font-bold">
-                                                {schedule.title}
-                                            </h3>
+                                        <li key={schedule.id} className="p-2 border rounded shadow">
+                                            <h3 className="font-bold">{schedule.title}</h3>
                                             <p>{schedule.content}</p>
                                             <p className="text-sm text-gray-500">
-                                                🕒 {schedule.start_date} ~{" "}
-                                                {schedule.end_date}
+                                                🕒 {schedule.start_date} ~ {schedule.end_date}
                                             </p>
-                                            <p className="text-sm text-gray-500">
-                                                📍 {schedule.address}
-                                            </p>
+                                            <p className="text-sm text-gray-500">📍 {schedule.address}</p>
                                         </li>
                                     ))}
                                 </ul>
@@ -174,19 +162,11 @@ const Cal = () => {
                                 <h3 className="text-md font-bold">🎉 이벤트</h3>
                                 <ul className="mt-2 space-y-2">
                                     {selectedEvents.map((event) => (
-                                        <li
-                                            key={event.id}
-                                            className="p-2 border rounded shadow"
-                                        >
-                                            <h3 className="font-bold">
-                                                {event.title}
-                                            </h3>
+                                        <li key={event.id} className="p-2 border rounded shadow">
+                                            <h3 className="font-bold">{event.title}</h3>
+                                            <p className="text-sm text-gray-500">📍 {event.address}</p>
                                             <p className="text-sm text-gray-500">
-                                                📍 {event.address}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                🕒 {event.start_date} ~{" "}
-                                                {event.end_date}
+                                                🕒 {event.start_date} ~ {event.end_date}
                                             </p>
                                             <a
                                                 href={event.event_url}
@@ -234,9 +214,7 @@ const Cal = () => {
                         )}
                     </div>
                 ) : (
-                    <p className="text-gray-500 mt-2">
-                        해당 날짜에 일정이나 이벤트가 없습니다.
-                    </p>
+                    <p className="text-gray-500 mt-2">해당 날짜에 일정이나 이벤트가 없습니다.</p>
                 )}
             </div>
         </div>

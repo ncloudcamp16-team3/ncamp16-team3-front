@@ -14,8 +14,7 @@ const PostBottom = ({ user_name, likes, comments, content, created_at }) => {
 
     const theme = useTheme();
     const isLongContent = content.length > 30;
-    const shortContent =
-        content.length > 30 ? content.slice(0, 30) + "..." : content;
+    const shortContent = content.length > 30 ? content.slice(0, 30) + "..." : content;
 
     useEffect(() => {
         if (likes >= 10000) {
@@ -74,10 +73,7 @@ const PostBottom = ({ user_name, likes, comments, content, created_at }) => {
             <Box display="flex" justifyContent="space-between">
                 <Box sx={{ padding: 1, display: "flex", alignItems: "center" }}>
                     <img src={PetStaHeart} alt="Like Icon" />
-                    <Typography sx={{ marginRight: 2 }}>
-                        {like_count}
-                    </Typography>{" "}
-                    {/* marginRight가 sx로 적용됨 */}
+                    <Typography sx={{ marginRight: 2 }}>{like_count}</Typography> {/* marginRight가 sx로 적용됨 */}
                     <img src={PetStaComment} alt="Comment Icon" />
                     <Typography>{comment_count}</Typography>
                 </Box>

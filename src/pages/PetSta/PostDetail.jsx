@@ -58,10 +58,7 @@ const PostDetail = () => {
         }
     }, [post.comments]);
 
-    const shortContent =
-        post.content.length > 20
-            ? post.content.slice(0, 20) + "..."
-            : post.content;
+    const shortContent = post.content.length > 20 ? post.content.slice(0, 20) + "..." : post.content;
 
     // 🔥 비디오가 로드된 후 currentTime 설정
     useEffect(() => {
@@ -73,13 +70,7 @@ const PostDetail = () => {
 
     return (
         <div>
-            <Box
-                height="92vh"
-                backgroundColor="black"
-                display="flex"
-                alignItems="center"
-                position="relative"
-            >
+            <Box height="92vh" backgroundColor="black" display="flex" alignItems="center" position="relative">
                 {showIcon && (
                     <Box
                         position="absolute"
@@ -94,11 +85,7 @@ const PostDetail = () => {
                         width="50px"
                         height="50px"
                     >
-                        <img
-                            src={isMute ? AudioOff : AudioOn}
-                            width="25px"
-                            height="25px"
-                        />
+                        <img src={isMute ? AudioOff : AudioOn} width="25px" height="25px" />
                     </Box>
                 )}
                 {/* 상단 오버레이 (제목 & 뒤로가기) */}
@@ -119,19 +106,10 @@ const PostDetail = () => {
                     </IconButton>
                     동영상
                 </Box>
-                <Box
-                    position="absolute"
-                    bottom="0px"
-                    left="0"
-                    color="white"
-                    zIndex="100"
-                    padding="15px"
-                >
+                <Box position="absolute" bottom="0px" left="0" color="white" zIndex="100" padding="15px">
                     <Box display="flex" alignItems="center" gap={1} mb={1}>
                         <UserIcon userInfo={post} />
-                        <Typography fontWeight="bold">
-                            {post.user_name}
-                        </Typography>
+                        <Typography fontWeight="bold">{post.user_name}</Typography>
                         <Box
                             border="1px solid #FFFFFF"
                             borderRadius="10px"
@@ -155,46 +133,21 @@ const PostDetail = () => {
                         }}
                         onClick={() => setIsExpended(!isExpended)}
                     >
-                        {isExpended
-                            ? renderContent(post.content)
-                            : shortContent}
+                        {isExpended ? renderContent(post.content) : shortContent}
                     </Typography>
                 </Box>
-                <Box
-                    position="absolute"
-                    right="5px"
-                    bottom="50px"
-                    color="white"
-                    zIndex="999"
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="center"
-                        width="50px"
-                    >
+                <Box position="absolute" right="5px" bottom="50px" color="white" zIndex="999">
+                    <Box display="flex" flexDirection="column" alignItems="center" width="50px">
                         <div>
                             <img src={PetstaHeart} width="32px" height="32px" />
                         </div>
-                        {post.likes > 0 && (
-                            <Typography>{like_count}</Typography>
-                        )}
+                        {post.likes > 0 && <Typography>{like_count}</Typography>}
                         <div>
-                            <img
-                                src={PetstaComment}
-                                width="32px"
-                                height="32px"
-                            />
+                            <img src={PetstaComment} width="32px" height="32px" />
                         </div>
-                        {post.comments > 0 && (
-                            <Typography>{comment_count}</Typography>
-                        )}
+                        {post.comments > 0 && <Typography>{comment_count}</Typography>}
                         <div>
-                            <img
-                                src={PetstaBookmark}
-                                width="32px"
-                                height="32px"
-                            />
+                            <img src={PetstaBookmark} width="32px" height="32px" />
                         </div>
                     </Box>
                 </Box>
@@ -211,10 +164,7 @@ const PostDetail = () => {
                     autoPlay
                     loop
                 >
-                    <source
-                        src={`/mock/PetSta/videos/${post.file_name}`}
-                        type="video/mp4"
-                    />
+                    <source src={`/mock/PetSta/videos/${post.file_name}`} type="video/mp4" />
                 </video>
             </Box>
         </div>

@@ -2,11 +2,11 @@ export default {
     // 탭을 4개 스페이스로 처리
     tabWidth: 4,
 
+    // 한 줄에 최대 80자
+    printWidth: 140,
+
     // 쌍따옴표 사용
     singleQuote: false,
-
-    // 한 줄에 최대 80자
-    printWidth: 80,
 
     // 문장 끝에 세미콜론 추가
     semi: true,

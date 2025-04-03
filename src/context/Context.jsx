@@ -8,9 +8,5 @@ export function Provider({ children }) {
         setIsMute((prev) => !prev);
     };
 
-    return (
-        <Context.Provider value={{ isMute, toggleMute }}>
-            {children}
-        </Context.Provider>
-    );
+    return <Context.Provider value={{ isMute, toggleMute }}>{children}</Context.Provider>;
 }

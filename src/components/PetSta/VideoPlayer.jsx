@@ -44,12 +44,7 @@ const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
     }, [isPlaying]);
 
     return (
-        <Box
-            position="relative"
-            width="100%"
-            height={isWide ? "auto" : "100%"}
-            overflow="hidden"
-        >
+        <Box position="relative" width="100%" height={isWide ? "auto" : "100%"} overflow="hidden">
             <video
                 ref={videoRef}
                 style={{
@@ -65,10 +60,7 @@ const VideoPlayer = ({ file_name, isWide = false, setCurrentTime }) => {
                     }
                 }}
             >
-                <source
-                    src={`/mock/PetSta/videos/${file_name}`}
-                    type="video/mp4"
-                />
+                <source src={`/mock/PetSta/videos/${file_name}`} type="video/mp4" />
             </video>
 
             <Box
