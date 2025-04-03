@@ -93,13 +93,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 // 메인 컨텐츠 스타일링
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
-    ({ theme }) => ({
-        flexGrow: 1,
-        padding: theme.spacing(1),
-        backgroundColor: "#FFFFFF",
-    })
-);
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(({ theme }) => ({
+    flexGrow: 1,
+    padding: theme.spacing(1),
+    backgroundColor: "#FFFFFF",
+}));
 
 // 커스텀 스타일 컴포넌트
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -115,24 +113,69 @@ const MenuSection = styled(Box)(({ theme }) => ({
     marginBottom: theme.spacing(2),
 }));
 
-// 일반 메뉴 아이템 스타일링
-const StyledListItemButton = styled(ListItemButton)(({ selected }) => ({
+// 일반 메뉴 아이템 스타일링 - 여기서 선택된 배경색을 #E9A260으로 변경
+const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
     borderRadius: "8px",
     margin: "0px 8px",
-    backgroundColor: selected ? "#673e19" : "transparent",
+    "&.Mui-selected": {
+        backgroundColor: "#E9A260",
+        color: "white",
+        "& .MuiListItemIcon-root": {
+            color: "white",
+        },
+    },
+    "&.Mui-selected:hover": {
+        backgroundColor: "#E9A260",
+    },
     "&:hover": {
         backgroundColor: "#efa969",
     },
 }));
 
-// 하위 메뉴 아이템을 위한 새로운 스타일 컴포넌트
-const SubMenuListItemButton = styled(ListItemButton)(({ selected }) => ({
+// 하위 메뉴 아이템을 위한 스타일 컴포넌트
+const SubMenuListItemButton = styled(ListItemButton)(({ theme }) => ({
     borderRadius: "8px",
     margin: "0px 8px",
-    // 하위 메뉴가 선택되었을 때 다른 배경색 사용
-    backgroundColor: selected ? "#E9A260" : "transparent",
+    // 하위 메뉴가 선택되었을 때 #F2DFCE 배경색 사용
+    "&.Mui-selected": {
+        backgroundColor: "#F2DFCE",
+        // 색상이 밝아서 텍스트는 기본 색상 유지
+        "& .MuiListItemIcon-root": {
+            color: "inherit",
+        },
+    },
+    "&.Mui-selected:hover": {
+        backgroundColor: "#F2DFCE",
+    },
     "&:hover": {
-        backgroundColor: selected ? "#E9A260" : "#fff7ec",
+        backgroundColor: "#fff7ec",
+    },
+}));
+
+// 아코디언 헤더를 위한 새로운 스타일 컴포넌트
+const AccordionHeaderButton = styled(ListItemButton)(({ open }) => ({
+    borderRadius: "8px",
+    margin: "0px 8px",
+    backgroundColor: open ? "#E9A260" : "transparent",
+    borderBottomLeftRadius: open ? 0 : "8px",
+    borderBottomRightRadius: open ? 0 : "8px",
+    color: open ? "white" : "inherit",
+    "& .MuiListItemIcon-root": {
+        color: open ? "white" : "inherit",
+    },
+    "&:hover": {
+        backgroundColor: open ? "#E9A260" : "#efa969",
+    },
+    // 선택 상태에 대한 스타일 추가
+    "&.Mui-selected": {
+        backgroundColor: "#E9A260",
+        color: "white",
+        "& .MuiListItemIcon-root": {
+            color: "white",
+        },
+    },
+    "&.Mui-selected:hover": {
+        backgroundColor: "#E9A260",
     },
 }));
 
@@ -154,7 +197,7 @@ const Layout = ({ children }) => {
 
     return (
         <Box sx={{ display: "flex" }}>
-            {/* 사이드바 - component="a" 속성 제거 */}
+            {/* 사이드바 */}
             <StyledDrawer variant="permanent" anchor="left">
                 <DrawerHeader style={{ justifyContent: "center" }}>
                     <Box
@@ -171,32 +214,14 @@ const Layout = ({ children }) => {
 
                 <MenuSection>
                     {/* 게시글 관리 - 아코디언 헤더 */}
-                    <StyledListItemButton
-                        onClick={handlePostsClick}
-                        sx={{
-                            backgroundColor: openPosts
-                                ? "#E9A260"
-                                : selectedIndex === 0 ||
-                                    selectedIndex === 1 ||
-                                    selectedIndex === 2
-                                  ? "#F2DFCE"
-                                  : "transparent",
-                            marginBottom: 0,
-                            borderBottomLeftRadius: openPosts ? 0 : "8px",
-                            borderBottomRightRadius: openPosts ? 0 : "8px",
-                            color: openPosts ? "white" : "inherit",
-                            "& .MuiListItemIcon-root": {
-                                color: openPosts ? "white" : "inherit",
-                            },
-                        }}
-                    >
+                    <AccordionHeaderButton open={openPosts} onClick={handlePostsClick}>
                         <ListItemIcon>
                             <GridViewIcon />
                         </ListItemIcon>
                         <ListItemText primary="게시글 관리" />
                         {/* 확장/축소 아이콘 */}
                         {openPosts ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                    </StyledListItemButton>
+                    </AccordionHeaderButton>
 
                     {/* 게시글 관리 하위 메뉴 - Collapse로 감싸기 */}
                     <Collapse in={openPosts} timeout="auto" unmountOnExit>
@@ -212,10 +237,18 @@ const Layout = ({ children }) => {
                                 borderTopLeftRadius: 0,
                             }}
                         >
-                            {/* 하위 메뉴에 새로운 스타일 컴포넌트 사용 */}
+                            {/* 하위 메뉴에 SubMenuListItemButton 사용 - #F2DFCE 색상 적용 */}
                             <SubMenuListItemButton
                                 selected={selectedIndex === 1}
                                 onClick={() => handleListItemClick(1)}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
                             >
                                 <ListItemIcon>
                                     <ArticleIcon />
@@ -226,6 +259,14 @@ const Layout = ({ children }) => {
                             <SubMenuListItemButton
                                 selected={selectedIndex === 2}
                                 onClick={() => handleListItemClick(2)}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
                             >
                                 <ListItemIcon>
                                     <FormatListBulletedIcon />
@@ -239,9 +280,22 @@ const Layout = ({ children }) => {
                 <Divider sx={{ mx: 2 }} />
 
                 <MenuSection>
+                    {/* 펫시터 관리 - 선택 시 #E9A260 배경색 적용 */}
                     <StyledListItemButton
                         selected={selectedIndex === 3}
                         onClick={() => handleListItemClick(3)}
+                        sx={{
+                            "&.Mui-selected": {
+                                backgroundColor: "#E9A260",
+                                color: "white",
+                            },
+                            "&.Mui-selected:hover": {
+                                backgroundColor: "#E9A260",
+                            },
+                            "&.Mui-selected .MuiListItemIcon-root": {
+                                color: "white",
+                            },
+                        }}
                     >
                         <ListItemIcon>
                             <PersonIcon />
@@ -249,9 +303,22 @@ const Layout = ({ children }) => {
                         <ListItemText primary="펫시터 관리" />
                     </StyledListItemButton>
 
+                    {/* 업체 관리 - 선택 시 #E9A260 배경색 적용 */}
                     <StyledListItemButton
                         selected={selectedIndex === 4}
                         onClick={() => handleListItemClick(4)}
+                        sx={{
+                            "&.Mui-selected": {
+                                backgroundColor: "#E9A260",
+                                color: "white",
+                            },
+                            "&.Mui-selected:hover": {
+                                backgroundColor: "#E9A260",
+                            },
+                            "&.Mui-selected .MuiListItemIcon-root": {
+                                color: "white",
+                            },
+                        }}
                     >
                         <ListItemIcon>
                             <GroupsIcon />
@@ -294,16 +361,9 @@ const Layout = ({ children }) => {
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="검색"
-                                inputProps={{ "aria-label": "search" }}
-                            />
+                            <StyledInputBase placeholder="검색" inputProps={{ "aria-label": "search" }} />
                         </Search>
-                        <IconButton
-                            size="large"
-                            color="inherit"
-                            sx={{ color: "#F0A355" }}
-                        >
+                        <IconButton size="large" color="inherit" sx={{ color: "#F0A355" }}>
                             <RefreshIcon />
                         </IconButton>
                     </Toolbar>

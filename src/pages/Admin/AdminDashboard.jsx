@@ -5,7 +5,7 @@ import Layout from "../../components/Admin/Layout.jsx";
 
 const AdminDashboard = () => {
     return (
-        <Box>
+        <Box height="100vh" backgroundColor="white">
             <Layout />
             <DashBoard />
         </Box>

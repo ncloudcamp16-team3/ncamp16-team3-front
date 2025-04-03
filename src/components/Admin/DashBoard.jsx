@@ -1,42 +1,25 @@
 import React from "react";
 import Layout from "./Layout";
-import {
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-    Button,
-    Box,
-} from "@mui/material";
-
-// 샘플 데이터
-const rows = [
-    {
-        id: 1,
-        title: "강아지 사료 뭐가 좋은가요..?",
-        views: 876,
-        date: "2025-03-21",
-    },
-    {
-        id: 2,
-        title: "고양이 사료 뭐 사세요..?",
-        views: 1132,
-        date: "2025-03-21",
-    },
-    {
-        id: 3,
-        title: "앵무새 어디로 데려가요..?",
-        views: 450,
-        date: "2025-03-21",
-    },
-    { id: 4, title: "강아지 사료", views: 372, date: "2025-03-21" },
-];
-
+import rows from "../../mock/Admin/board.json";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, Box } from "@mui/material";
 function DashBoard() {
+    // 각 열에 대한 스타일 객체를 미리 정의
+    const cellStyles = {
+        id: { width: 50, minWidth: 50, maxWidth: 50 },
+        title: { width: 200, minWidth: 200, maxWidth: 200 },
+        image: { width: 100, minWidth: 100, maxWidth: 100 },
+        content: { width: 350, minWidth: 350, maxWidth: 350 },
+        views: { width: 100, minWidth: 100, maxWidth: 100 },
+        date: { width: 200, minWidth: 200, maxWidth: 200 },
+    };
+
+    // 공통 스타일 (텍스트 오버플로우 처리)
+    const commonCellStyle = {
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+    };
+
     return (
         <Layout>
             <Box
@@ -64,12 +47,12 @@ function DashBoard() {
                 <Table sx={{ minWidth: 650 }} aria-label="게시글 테이블">
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>제목</TableCell>
-                            <TableCell>사진</TableCell>
-                            <TableCell>내용</TableCell>
-                            <TableCell>조회수</TableCell>
-                            <TableCell>등록일자</TableCell>
+                            <TableCell sx={{ ...cellStyles.id, ...commonCellStyle }}>ID</TableCell>
+                            <TableCell sx={{ ...cellStyles.title, ...commonCellStyle }}>제목</TableCell>
+                            <TableCell sx={{ ...cellStyles.image, ...commonCellStyle }}>사진</TableCell>
+                            <TableCell sx={{ ...cellStyles.content, ...commonCellStyle }}>내용</TableCell>
+                            <TableCell sx={{ ...cellStyles.views, ...commonCellStyle }}>조회수</TableCell>
+                            <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>등록일자</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -82,11 +65,11 @@ function DashBoard() {
                                     },
                                 }}
                             >
-                                <TableCell component="th" scope="row">
+                                <TableCell component="th" scope="row" sx={{ ...cellStyles.id, ...commonCellStyle }}>
                                     {row.id}
                                 </TableCell>
-                                <TableCell>{row.title}</TableCell>
-                                <TableCell>
+                                <TableCell sx={{ ...cellStyles.title, ...commonCellStyle }}>{row.title}</TableCell>
+                                <TableCell sx={{ ...cellStyles.image }}>
                                     <Box
                                         component="img"
                                         sx={{
@@ -95,13 +78,13 @@ function DashBoard() {
                                             objectFit: "cover",
                                             borderRadius: "4px",
                                         }}
-                                        src="/api/placeholder/60/50"
+                                        src="../../public/mock/Admin/images/cat.png"
                                         alt="썸네일"
                                     />
                                 </TableCell>
-                                <TableCell>...</TableCell>
-                                <TableCell>{row.views}</TableCell>
-                                <TableCell>{row.date}</TableCell>
+                                <TableCell sx={{ ...cellStyles.content, ...commonCellStyle }}>{row.content}</TableCell>
+                                <TableCell sx={{ ...cellStyles.views, ...commonCellStyle }}>{row.views}</TableCell>
+                                <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>{row.date}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
