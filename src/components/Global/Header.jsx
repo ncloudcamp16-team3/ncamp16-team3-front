@@ -1,12 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/Global/icon1.svg";
 import notification from "../../assets/images/Global/notification2.svg";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, MenuItem, Menu } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import Bookmark from "../../assets/images/Global/modal-bookmark.svg";
+import Calendar from "../../assets/images/Global/modal-calendar.svg";
+import Info from "../../assets/images/Global/modal-info.svg";
+import Logout from "../../assets/images/Global/modal-logout.svg";
+import Purchase from "../../assets/images/Global/modal-purchase.svg";
 
 const Header = () => {
     const navigate = useNavigate();
+
+    const theme = useTheme();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const toggleMenu = (event) => {
+        if (anchorEl) {
+            setAnchorEl(null); // 메뉴 닫기
+        } else {
+            setAnchorEl(event.currentTarget); // 메뉴 열기
+        }
+    };
+
+    const handleClickMenu = (link) => () => {
+        toggleMenu();
+        navigate(link);
+    };
     return (
         <Box
             component="div"
@@ -23,6 +46,7 @@ const Header = () => {
                     width: "40px",
                     height: "40px",
                 }}
+                onClick={toggleMenu}
             >
                 <Box
                     component="img"
@@ -33,6 +57,118 @@ const Header = () => {
                     }}
                 />
             </Box>
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={toggleMenu}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                transformOrigin={{ vertical: "top", horizontal: "left" }}
+                disableScrollLock={true}
+                sx={{
+                    "& .MuiPaper-root": {
+                        backgroundColor: theme.brand5,
+                        borderRadius: "10px",
+                        width: "145px",
+                        padding: "5px 5px 0 5px",
+                    },
+                }}
+            >
+                <MenuItem
+                    onClick={handleClickMenu("/bookmark")}
+                    sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        gap: 1.5,
+                        fontWeight: "600",
+                        padding: "4px 8px 4px 8px",
+                        minHeight: "32px",
+                    }}
+                >
+                    <img
+                        src={Bookmark}
+                        alt="북마크"
+                        style={{ width: "24px", height: "24px" }}
+                    />
+                    <span>북마크</span>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleClickMenu("/calendar")}
+                    sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        gap: 1.5,
+                        fontWeight: "600",
+                        padding: "4px 8px 4px 8px",
+                        minHeight: "32px",
+                    }}
+                >
+                    <img
+                        src={Calendar}
+                        alt="캘린더"
+                        style={{ width: "24px", height: "24px" }}
+                    />
+                    <span>캘린더</span>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleClickMenu("/Info")}
+                    sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        gap: 1.5,
+                        fontWeight: "600",
+                        padding: "4px 8px 4px 8px",
+                        minHeight: "32px",
+                    }}
+                >
+                    <img
+                        src={Info}
+                        alt="회원정보"
+                        style={{ width: "24px", height: "24px" }}
+                    />
+                    <span>회원정보</span>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleClickMenu("/purchase")}
+                    sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        gap: 1.5,
+                        fontWeight: "600",
+                        padding: "4px 8px 4px 8px",
+                        minHeight: "32px",
+                    }}
+                >
+                    <img
+                        src={Purchase}
+                        alt="결제내역"
+                        style={{ width: "24px", height: "24px" }}
+                    />
+                    <span>결제내역</span>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => alert("로그아웃 만들어주실분?")}
+                    sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        gap: 1.5,
+                        fontWeight: "600",
+                        padding: "4px 8px 4px 8px",
+                        minHeight: "32px",
+                        color: "red",
+                    }}
+                >
+                    <img
+                        src={Logout}
+                        alt="로그아웃"
+                        style={{ width: "24px", height: "24px" }}
+                    />
+                    <span>로그아웃</span>
+                </MenuItem>
+            </Menu>
             <Box display="flex" alignItems="center">
                 <Box
                     component="img"
