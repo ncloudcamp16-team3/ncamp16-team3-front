@@ -10,7 +10,7 @@ import AudioOff from "../../assets/images/PetSta/audio-off.png";
 import AudioOn from "../../assets/images/PetSta/audio-on.png";
 import { useNavigate } from "react-router-dom";
 
-const PostVideo = ({ post, currentTime = 0 }) => {
+const VideoDetail = ({ post, currentTime = 0 }) => {
     const [isExpended, setIsExpended] = useState(false);
     const [like_count, setLike_count] = useState("");
     const [comment_count, setComment_count] = useState("");
@@ -58,10 +58,19 @@ const PostVideo = ({ post, currentTime = 0 }) => {
         ));
     };
 
-    const shortContent = post.content.length > 20 ? post.content.slice(0, 20) + "..." : post.content;
+    const shortContent =
+        post.content.length > 20
+            ? post.content.slice(0, 20) + "..."
+            : post.content;
 
     return (
-        <Box height="92vh" backgroundColor="black" display="flex" alignItems="center" position="relative">
+        <Box
+            height="92vh"
+            backgroundColor="black"
+            display="flex"
+            alignItems="center"
+            position="relative"
+        >
             {showIcon && (
                 <Box
                     position="absolute"
@@ -76,7 +85,11 @@ const PostVideo = ({ post, currentTime = 0 }) => {
                     width="50px"
                     height="50px"
                 >
-                    <img src={isMute ? AudioOff : AudioOn} width="25px" height="25px" />
+                    <img
+                        src={isMute ? AudioOff : AudioOn}
+                        width="25px"
+                        height="25px"
+                    />
                 </Box>
             )}
             <Box
@@ -89,13 +102,21 @@ const PostVideo = ({ post, currentTime = 0 }) => {
                 color="white"
                 fontSize="18px"
                 zIndex="999"
+                gap={1}
             >
                 <IconButton onClick={() => navigate(-1)}>
                     <img src={LeftArrow} />
                 </IconButton>
                 동영상
             </Box>
-            <Box position="absolute" bottom="0px" left="0" color="white" zIndex="100" padding="15px">
+            <Box
+                position="absolute"
+                bottom="0px"
+                left="0"
+                color="white"
+                zIndex="100"
+                padding="15px"
+            >
                 <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <UserIcon userInfo={post} />
                     <Typography fontWeight="bold">{post.user_name}</Typography>
@@ -122,8 +143,19 @@ const PostVideo = ({ post, currentTime = 0 }) => {
                     {isExpended ? renderContent(post.content) : shortContent}
                 </Typography>
             </Box>
-            <Box position="absolute" right="5px" bottom="50px" color="white" zIndex="999">
-                <Box display="flex" flexDirection="column" alignItems="center" width="50px">
+            <Box
+                position="absolute"
+                right="5px"
+                bottom="50px"
+                color="white"
+                zIndex="999"
+            >
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    width="50px"
+                >
                     <div>
                         <img src={PetstaHeart} width="32px" height="32px" />
                     </div>
@@ -131,7 +163,9 @@ const PostVideo = ({ post, currentTime = 0 }) => {
                     <div>
                         <img src={PetstaComment} width="32px" height="32px" />
                     </div>
-                    {post.comments > 0 && <Typography>{comment_count}</Typography>}
+                    {post.comments > 0 && (
+                        <Typography>{comment_count}</Typography>
+                    )}
                     <div>
                         <img src={PetstaBookmark} width="32px" height="32px" />
                     </div>
@@ -150,10 +184,13 @@ const PostVideo = ({ post, currentTime = 0 }) => {
                 autoPlay
                 loop
             >
-                <source src={`/mock/PetSta/videos/${post.file_name}`} type="video/mp4" />
+                <source
+                    src={`/mock/PetSta/videos/${post.file_name}`}
+                    type="video/mp4"
+                />
             </video>
         </Box>
     );
 };
 
-export default PostVideo;
+export default VideoDetail;

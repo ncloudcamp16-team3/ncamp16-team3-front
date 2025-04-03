@@ -5,7 +5,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import unusedImports from "eslint-plugin-unused-imports";
 import prettier from "eslint-plugin-prettier";
-import prettierConfig from "eslint-config-prettier";
+import prettierConfig from "eslint-config-prettier/flat";
 
 export default [
     {
@@ -28,9 +28,10 @@ export default [
             prettier,
         },
         rules: {
+            "max-len": "off",
             ...js.configs.recommended.rules,
             ...reactHooks.configs.recommended.rules,
-            "prettier/prettier": "error",
+            "prettier/prettier": ["error"],
             "react/jsx-uses-react": "error",
             "react/jsx-uses-vars": "error",
             "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],

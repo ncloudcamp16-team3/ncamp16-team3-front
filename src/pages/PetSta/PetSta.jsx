@@ -25,6 +25,7 @@ const PetSta = () => {
                     <VideoPost
                         key={post.post_id}
                         post_id={post.post_id}
+                        user_id={post.user_id}
                         user_name={post.user_name}
                         user_photo={post.user_photo}
                         file_name={post.file_name}
@@ -40,6 +41,7 @@ const PetSta = () => {
                     <PhotoPost
                         key={post.post_id}
                         post_id={post.post_id}
+                        user_id={post.user_id}
                         user_name={post.user_name}
                         user_photo={post.user_photo}
                         file_name={post.file_name}
