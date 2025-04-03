@@ -1,5 +1,8 @@
 [
   {
+    "post_id": "1",
+    "user_id": "1",
+    "is_view" : "false",
     "user_name": "해피해피해피",
     "user_photo": "happyman.svg",
     "file_name": "happi.mp4",
@@ -10,6 +13,9 @@
     "created_at": "2025-03-31 14:30:00"
   },
   {
+    "post_id": "2",
+    "user_id": "1",
+    "is_view" : "false",
     "user_name": "해피해피해피",
     "user_photo": "happyman.svg",
     "file_name": "happybird.mp4",
@@ -21,6 +27,9 @@
   },
 
   {
+    "post_id": "3",
+    "user_id": "2",
+    "is_view" : "true",
     "user_name": "허언증환자",
     "user_photo": "badman.svg",
     "file_name": "image_20.png",
