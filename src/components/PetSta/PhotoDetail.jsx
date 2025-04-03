@@ -4,25 +4,12 @@ import PhotoPost from "./PhotoPost.jsx";
 import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
 import { useNavigate } from "react-router-dom";
 
-const VideoDetail = ({ post }) => {
+const PhotoDetail = ({ post }) => {
     const navigate = useNavigate();
 
     return (
-        <Box
-            height="92vh"
-            backgroundColor="white"
-            display="flex"
-            flexDirection="column"
-        >
-            <Box
-                top={0}
-                left={0}
-                display="flex"
-                alignItems="center"
-                padding="10px 15px"
-                fontSize="18px"
-                gap={1}
-            >
+        <Box height="92vh" backgroundColor="white" display="flex" flexDirection="column">
+            <Box top={0} left={0} display="flex" alignItems="center" padding="10px 15px" fontSize="18px" gap={1}>
                 <IconButton onClick={() => navigate(-1)}>
                     <img src={LeftArrow} />
                 </IconButton>
@@ -43,4 +30,4 @@ const VideoDetail = ({ post }) => {
     );
 };
 
-export default VideoDetail;
+export default PhotoDetail;

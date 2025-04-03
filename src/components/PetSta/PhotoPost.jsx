@@ -20,6 +20,7 @@ const PhotoPost = ({ post_id, user_id, user_name, user_photo, file_name, likes, 
             </Box>
 
             <PostBottom
+                post_id={post_id}
                 user_name={user_name}
                 content={content}
                 created_at={created_at}

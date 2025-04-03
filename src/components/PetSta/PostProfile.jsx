@@ -5,7 +5,7 @@ import userData from "../../mock/PetSta/friends.json";
 
 const PostProfile = ({ user_name, user_id, isAbsolute = false }) => {
     console.log(user_id);
-    const userInfo = userData.find((u) => u.user_id === String(user_id));
+    const userInfo = userData.find((u) => u.user_id === Number(user_id));
 
     console.log("userInfo", userInfo);
     return (
