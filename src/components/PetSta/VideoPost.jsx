@@ -5,16 +5,7 @@ import PostBottom from "./PostBottom.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
 import { useNavigate } from "react-router-dom";
 
-const VideoPost = ({
-    post_id,
-    user_name,
-    user_photo,
-    file_name,
-    likes,
-    comments,
-    content,
-    created_at,
-}) => {
+const VideoPost = ({ post_id, user_name, user_photo, file_name, likes, comments, content, created_at }) => {
     const [isWide, setIsWide] = useState(false); // 화면이 넓은지 여부
     const [currentTime, setCurrentTime] = useState(0);
     const navigate = useNavigate();
@@ -54,31 +45,14 @@ const VideoPost = ({
                 }}
             >
                 {isWide ? (
-                    <div
-                        onClick={handlePostClick}
-                        style={{ position: "relative", width: "100%" }}
-                    >
-                        <VideoPlayer
-                            file_name={file_name}
-                            isWide={true}
-                            setCurrentTime={setCurrentTime}
-                        />
+                    <div onClick={handlePostClick} style={{ position: "relative", width: "100%" }}>
+                        <VideoPlayer file_name={file_name} isWide={true} setCurrentTime={setCurrentTime} />
                         {/* 프로필 이미지와 사용자 이름 */}
-                        <PostProfile
-                            user_name={user_name}
-                            user_photo={user_photo}
-                            isAbsolute={true}
-                        />
+                        <PostProfile user_name={user_name} user_photo={user_photo} isAbsolute={true} />
                     </div>
                 ) : (
-                    <div
-                        onClick={handlePostClick}
-                        style={{ position: "relative", width: "100%" }}
-                    >
-                        <PostProfile
-                            user_name={user_name}
-                            user_photo={user_photo}
-                        />
+                    <div onClick={handlePostClick} style={{ position: "relative", width: "100%" }}>
+                        <PostProfile user_name={user_name} user_photo={user_photo} />
                         <Box
                             sx={{
                                 background: "black",
@@ -86,22 +60,13 @@ const VideoPost = ({
                                 boxSizing: "border-box",
                             }}
                         >
-                            <VideoPlayer
-                                file_name={file_name}
-                                setCurrentTime={setCurrentTime}
-                            />
+                            <VideoPlayer file_name={file_name} setCurrentTime={setCurrentTime} />
                         </Box>
                         {/* 프로필 이미지와 사용자 이름 */}
                     </div>
                 )}
             </Box>
-            <PostBottom
-                user_name={user_name}
-                content={content}
-                created_at={created_at}
-                comments={comments}
-                likes={likes}
-            />
+            <PostBottom user_name={user_name} content={content} created_at={created_at} comments={comments} likes={likes} />
         </Box>
     );
 };

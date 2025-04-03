@@ -3,14 +3,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
-import {
-    Box,
-    Button,
-    FormHelperText,
-    InputAdornment,
-    InputLabel,
-    Typography,
-} from "@mui/material";
+import { Box, Button, FormHelperText, InputAdornment, InputLabel, Typography } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import Input from "@mui/material/Input";
 
@@ -18,14 +11,7 @@ const Step3 = ({ nextStep, handleChange, formData, prevStep }) => {
     // const navigate = useNavigate();
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="left"
-            width="90%"
-            mx="auto"
-            gap={2}
-        >
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
                     중성화 여부를 알려주세요 <ReqUi />
@@ -68,19 +54,11 @@ const Step3 = ({ nextStep, handleChange, formData, prevStep }) => {
                 (구현 예정)
             </FormHelperText>
 
-            <Button
-                variant="contained"
-                onClick={prevStep}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
-            >
+            <Button variant="contained" onClick={prevStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 뒤로
             </Button>
 
-            <Button
-                variant="contained"
-                onClick={nextStep}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
-            >
+            <Button variant="contained" onClick={nextStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
         </Box>

@@ -65,8 +65,7 @@ const FriendList = () => {
                     sx={{
                         borderRadius: "50%",
                         padding: "2px",
-                        background:
-                            "linear-gradient(90deg, #E9A260 0%, #E2DECE 100%)",
+                        background: "linear-gradient(90deg, #E9A260 0%, #E2DECE 100%)",
                     }}
                 >
                     <Box
@@ -90,11 +89,7 @@ const FriendList = () => {
                         />
                     </Box>
                 </Box>
-                <Typography
-                    marginTop="4px"
-                    fontSize="11px"
-                    color={theme.secondary}
-                >
+                <Typography marginTop="4px" fontSize="11px" color={theme.secondary}>
                     하리보
                 </Typography>
             </Box>

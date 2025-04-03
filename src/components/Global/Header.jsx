@@ -31,13 +31,7 @@ const Header = () => {
         navigate(link);
     };
     return (
-        <Box
-            component="div"
-            className="header"
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-        >
+        <Box component="div" className="header" display="flex" flexDirection="row" justifyContent="space-between">
             <Box
                 sx={{
                     borderRadius: "50%",
@@ -84,11 +78,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Bookmark}
-                        alt="북마크"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Bookmark} alt="북마크" style={{ width: "24px", height: "24px" }} />
                     <span>북마크</span>
                 </MenuItem>
 
@@ -103,11 +93,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Calendar}
-                        alt="캘린더"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Calendar} alt="캘린더" style={{ width: "24px", height: "24px" }} />
                     <span>캘린더</span>
                 </MenuItem>
 
@@ -122,11 +108,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Info}
-                        alt="회원정보"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Info} alt="회원정보" style={{ width: "24px", height: "24px" }} />
                     <span>회원정보</span>
                 </MenuItem>
 
@@ -141,11 +123,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Purchase}
-                        alt="결제내역"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Purchase} alt="결제내역" style={{ width: "24px", height: "24px" }} />
                     <span>결제내역</span>
                 </MenuItem>
 
@@ -161,11 +139,7 @@ const Header = () => {
                         color: "red",
                     }}
                 >
-                    <img
-                        src={Logout}
-                        alt="로그아웃"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Logout} alt="로그아웃" style={{ width: "24px", height: "24px" }} />
                     <span>로그아웃</span>
                 </MenuItem>
             </Menu>

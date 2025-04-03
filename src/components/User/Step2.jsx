@@ -7,13 +7,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
-import {
-    Box,
-    Button,
-    FormHelperText,
-    InputAdornment,
-    InputLabel,
-} from "@mui/material";
+import { Box, Button, FormHelperText, InputAdornment, InputLabel } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import Input from "@mui/material/Input";
 import dayjs from "dayjs";
@@ -25,22 +19,12 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
     };
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="left"
-            width="90%"
-            mx="auto"
-            gap={2}
-        >
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <FormHelperText>
                     아이의 생일은 언제인가요? <ReqUi />
                 </FormHelperText>
-                <MobileDatePicker
-                    value={dayjs(formData.petBirthday)}
-                    onChange={handleDateChange}
-                />
+                <MobileDatePicker value={dayjs(formData.petBirthday)} onChange={handleDateChange} />
             </LocalizationProvider>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
@@ -71,21 +55,9 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
                     value={formData.petBodyType}
                     onChange={handleChange}
                 >
-                    <FormControlLabel
-                        value="날씬"
-                        control={<Radio />}
-                        label="날씬"
-                    />
-                    <FormControlLabel
-                        value="적당"
-                        control={<Radio />}
-                        label="적당"
-                    />
-                    <FormControlLabel
-                        value="통통"
-                        control={<Radio />}
-                        label="통통"
-                    />
+                    <FormControlLabel value="날씬" control={<Radio />} label="날씬" />
+                    <FormControlLabel value="적당" control={<Radio />} label="적당" />
+                    <FormControlLabel value="통통" control={<Radio />} label="통통" />
                 </RadioGroup>
             </FormControl>
 
@@ -107,19 +79,11 @@ const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
                 onChange={handleChange}
             />
 
-            <Button
-                variant="contained"
-                onClick={prevStep}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
-            >
+            <Button variant="contained" onClick={prevStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 뒤로
             </Button>
 
-            <Button
-                variant="contained"
-                onClick={nextStep}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
-            >
+            <Button variant="contained" onClick={nextStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
         </Box>

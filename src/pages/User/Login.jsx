@@ -8,29 +8,20 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const handleKakaoLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/kakao";
+        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
     };
 
     const handleNaverLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/naver";
+        window.location.href = "http://localhost:8080/oauth2/authorization/naver";
     };
 
     const handleGoogleLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/google";
+        window.location.href = "http://localhost:8080/oauth2/authorization/google";
     };
     const navigate = useNavigate();
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            textAlign="center"
-        >
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" textAlign="center">
             <Typography variant="h6" fontWeight="bold" mt={3} mb={4}>
                 꼬리친구들
             </Typography>
@@ -44,13 +35,7 @@ const Login = () => {
                 height="200px"
                 mb={2}
             >
-                <Box
-                    component="img"
-                    src={JoinLogo}
-                    alt="logo"
-                    width="200px"
-                    height="200px"
-                />
+                <Box component="img" src={JoinLogo} alt="logo" width="200px" height="200px" />
             </Box>
             <Typography variant="h6" fontWeight="bold" mb={2.5}>
                 다양한 애완동물을 위한 컨텐츠!
@@ -59,13 +44,7 @@ const Login = () => {
                 꼬리친구들을 만나볼까요?
             </Typography>
 
-            <Box
-                width="90%"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                gap={2}
-            >
+            <Box width="90%" display="flex" flexDirection="column" alignItems="center" gap={2}>
                 <Box
                     display="flex"
                     border="1px solid #747775"
@@ -79,12 +58,7 @@ const Login = () => {
                     width="90%"
                 >
                     <Box width="32px">
-                        <Box
-                            component="img"
-                            src={KakaoLogo}
-                            alt="Kakao Login"
-                            width="18px"
-                        />
+                        <Box component="img" src={KakaoLogo} alt="Kakao Login" width="18px" />
                     </Box>
                     <Typography fontSize="14px">KAKAO로 계속하기</Typography>
                 </Box>
@@ -101,12 +75,7 @@ const Login = () => {
                     onClick={handleNaverLogin}
                 >
                     <Box width="32px">
-                        <Box
-                            component="img"
-                            src={NaverLogo}
-                            alt="Naver Login"
-                            width="32px"
-                        />
+                        <Box component="img" src={NaverLogo} alt="Naver Login" width="32px" />
                     </Box>
                     <Typography color="white" fontSize="14px">
                         NAVER로 계속하기
@@ -125,12 +94,7 @@ const Login = () => {
                     onClick={handleGoogleLogin}
                 >
                     <Box width="32px">
-                        <Box
-                            component="img"
-                            src={GoogleLogo}
-                            alt="Google Login"
-                            width="18px"
-                        />
+                        <Box component="img" src={GoogleLogo} alt="Google Login" width="18px" />
                     </Box>
                     <Typography fontSize="14px">Google로 계속하기</Typography>
                 </Box>

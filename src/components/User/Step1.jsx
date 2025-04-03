@@ -4,14 +4,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import {
-    Box,
-    Button,
-    FormHelperText,
-    InputAdornment,
-    InputLabel,
-    Typography,
-} from "@mui/material";
+import { Box, Button, FormHelperText, InputAdornment, InputLabel, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 
@@ -19,23 +12,11 @@ const Step1 = ({ nextStep, handleChange, formData }) => {
     const navigate = useNavigate();
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="left"
-            width="90%"
-            mx="auto"
-            gap={2}
-        >
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
             <Typography variant="h6" fontWeight="bold" textAlign="center">
                 환영합니다
             </Typography>
-            <Typography
-                variant="h6"
-                fontWeight="bold"
-                mb={1}
-                textAlign="center"
-            >
+            <Typography variant="h6" fontWeight="bold" mb={1} textAlign="center">
                 회원가입이 완료되었어요!
             </Typography>
 
@@ -54,12 +35,7 @@ const Step1 = ({ nextStep, handleChange, formData }) => {
                 />
             </FormControl>
 
-            <Typography
-                variant="body1"
-                fontWeight="bold"
-                mb={1}
-                alignItems="left"
-            >
+            <Typography variant="body1" fontWeight="bold" mb={1} alignItems="left">
                 어떤 반려동물과 함께하고 계신가요?
             </Typography>
 
@@ -105,33 +81,16 @@ const Step1 = ({ nextStep, handleChange, formData }) => {
                     value={formData.petGender}
                     onChange={handleChange}
                 >
-                    <FormControlLabel
-                        value="남아"
-                        control={<Radio />}
-                        label="남아"
-                    />
-                    <FormControlLabel
-                        value="여아"
-                        control={<Radio />}
-                        label="여아"
-                    />
+                    <FormControlLabel value="남아" control={<Radio />} label="남아" />
+                    <FormControlLabel value="여아" control={<Radio />} label="여아" />
                 </RadioGroup>
             </FormControl>
 
-            <Button
-                variant="contained"
-                onClick={() => navigate("/login")}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
-            >
+            <Button variant="contained" onClick={() => navigate("/login")} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 뒤로
             </Button>
 
-            <Button
-                variant="contained"
-                alignItems="center"
-                onClick={nextStep}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
-            >
+            <Button variant="contained" alignItems="center" onClick={nextStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
         </Box>
