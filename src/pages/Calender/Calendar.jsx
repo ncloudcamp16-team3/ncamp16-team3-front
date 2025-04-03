@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { format, parseISO } from "date-fns";
-import "react-calendar/dist/Calendar.css"; // css import
+import "react-calendar/dist/Calendar.css";
+import { Box } from "@mui/material"; // css import
 
 const Cal = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -63,17 +64,25 @@ const Cal = () => {
         <div className="p-4">
             <Calendar
                 calendarType="gregory"
-                locale="en-US"
+                formatDay={(locale, date) =>
+                    date.toLocaleString("en", { day: "numeric" })
+                }
                 onChange={handleDateChange}
                 value={selectedDate}
                 tileContent={({ date }) =>
                     checkHasSchedule(date) ? (
-                        <div className="flex justify-center items-center mt-1">
+                        <Box>
                             <span className="w-1.5 h-1.5 bg-red-500 rounded-full">
                                 일정
                             </span>
-                        </div>
-                    ) : null
+                        </Box>
+                    ) : // <div className="flex justify-center items-center mt-1">>
+                    //   <span className="w-1.5 h-1.5 bg-red-500 rounded-full">
+                    //           일정
+                    //       </span>
+                    // </div>
+
+                    null
                 }
             />
             <div className="mt-4">
