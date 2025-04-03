@@ -12,12 +12,14 @@ import Container from "./components/Global/Container.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
+import MyPage from "./pages/User/MyPage.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -31,31 +33,20 @@ function App() {
                         <Routes>
                             <Route element={<Layout0 />}>
                                 <Route path="/login" element={<Login />} />
-                                <Route
-                                    path="/register"
-                                    element={<Register />}
-                                />
+                                <Route path="/register" element={<Register />} />
                             </Route>
                             <Route element={<Layout1 />}>
                                 <Route path="/" element={<Main />} />
                                 <Route path="/petsta" element={<PetSta />} />
                                 <Route path="/board" element={<Board />} />
                                 <Route path="/reserve" element={<Reserve />} />
-                                <Route
-                                    path="/petsitter"
-                                    element={<PetSitter />}
-                                />
+                                <Route path="/petsitter" element={<PetSitter />} />
                                 <Route path="/calendar" element={<Cal />} />
-                                <Route
-                                    path="/notification"
-                                    element={<Notification />}
-                                />
+                                <Route path="/notification" element={<Notification />} />
+                                <Route path="/mypage" element={<MyPage />} />
                             </Route>
                             <Route element={<Layout2 />}>
-                                <Route
-                                    path="/petsta/post/:post_id"
-                                    element={<PostDetail />}
-                                />
+                                <Route path="/petsta/post/:post_id" element={<PostDetail />} />
                             </Route>
                         </Routes>
                     </Container>
