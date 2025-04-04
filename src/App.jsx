@@ -19,7 +19,6 @@ import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
-import Admin from "./pages/Admin/Admin.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 
 function App() {
@@ -28,10 +27,7 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
-                        <Route
-                            path="/admin/dashboard"
-                            element={<AdminDashboard />}
-                        />
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route element={<Layout0 />}>
                             <Route path="/login" element={<Login />} />
