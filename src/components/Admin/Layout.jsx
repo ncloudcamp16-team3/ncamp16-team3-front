@@ -2,19 +2,16 @@ import React, { useState, useEffect } from "react";
 import {
     Box,
     Drawer,
-    AppBar,
-    Toolbar,
     List,
     Typography,
     Divider,
     ListItemIcon,
     ListItemText,
     ListItemButton,
-    InputBase,
-    IconButton,
     Collapse,
 } from "@mui/material";
-import { styled, alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
+import { useAdmin } from "./AdminContext.jsx";
 
 // 아이콘 import
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -23,11 +20,10 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupsIcon from "@mui/icons-material/Groups";
 import LogoutIcon from "@mui/icons-material/Logout";
-import SearchIcon from "@mui/icons-material/Search";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import icon from "../../assets/images/Global/icon1.svg";
+import { useNavigate } from "react-router-dom";
 
 // 사이드바 너비 정의
 const drawerWidth = 350;
@@ -40,55 +36,7 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
         width: drawerWidth,
         boxSizing: "border-box",
         backgroundColor: "#FFFFFF",
-        borderRight: "none",
-    },
-}));
-
-// 헤더 스타일링
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-    backgroundColor: "#FFFFFF",
-    boxShadow: "none",
-    borderBottom: "1px solid #F0F0F0",
-}));
-
-// 검색창 스타일링
-const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-        marginLeft: theme.spacing(1),
-        width: "auto",
-    },
-    border: "1px solid #E0E0E0",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#888888",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "#333333",
-    "& .MuiInputBase-input": {
-        padding: theme.spacing(1, 1, 1, 0),
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create("width"),
-        width: "100%",
-        [theme.breakpoints.up("md")]: {
-            width: "20ch",
-        },
+        borderRight: "1px solid #eeeeee",
     },
 }));
 
@@ -129,6 +77,21 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
     },
     "&:hover": {
         backgroundColor: "#efa969",
+    },
+}));
+
+const StyledListItemButton2 = styled(ListItemButton)(({ theme }) => ({
+    borderRadius: "8px",
+    margin: "0px 8px",
+    "&.Mui-selected": {
+        backgroundColor: "#E9A260",
+        color: "white",
+        "& .MuiListItemIcon-root": {
+            color: "white",
+        },
+    },
+    "&:hover": {
+        backgroundColor: "#ff8484",
     },
 }));
 
@@ -180,13 +143,21 @@ const AccordionHeaderButton = styled(ListItemButton)(({ open }) => ({
 }));
 
 const Layout = ({ children }) => {
+    const { setSelectedMenu } = useAdmin();
     const [selectedIndex, setSelectedIndex] = useState(1); // 초기값을 1로 설정 (게시글 목록)
     const [openPosts, setOpenPosts] = useState(true); // 게시글 관리 아코디언 열림/닫힘 상태
     const [openPetsitter, setOpenPetsitter] = useState(false); // 펫시터 관리 아코디언 열림/닫힘 상태
     const [openCompany, setOpenCompany] = useState(false); // 업체 관리 아코디언 열림/닫힘 상태
+    const navigate = useNavigate();
 
-    const handleListItemClick = (index) => {
+    const handleListItemClick = (index, menuTitle) => {
         setSelectedIndex(index);
+        setSelectedMenu(menuTitle);
+        navigate(`/admin/dashboard`);
+    };
+
+    const logout = () => {
+        navigate("/admin");
     };
 
     // 게시글 관리 아코디언 토글
@@ -297,7 +268,7 @@ const Layout = ({ children }) => {
                             {/* 하위 메뉴에 SubMenuListItemButton 사용 - #F2DFCE 색상 적용 */}
                             <SubMenuListItemButton
                                 selected={selectedIndex === 1}
-                                onClick={() => handleListItemClick(1)}
+                                onClick={() => handleListItemClick(1, "게시글 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -315,7 +286,7 @@ const Layout = ({ children }) => {
 
                             <SubMenuListItemButton
                                 selected={selectedIndex === 2}
-                                onClick={() => handleListItemClick(2)}
+                                onClick={() => handleListItemClick(2, "공지글 작성")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -364,7 +335,7 @@ const Layout = ({ children }) => {
                             {/* 펫시터 목록 메뉴 */}
                             <SubMenuListItemButton
                                 selected={selectedIndex === 3}
-                                onClick={() => handleListItemClick(3)}
+                                onClick={() => handleListItemClick(3, "펫시터 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -383,7 +354,7 @@ const Layout = ({ children }) => {
                             {/* 펫시터 신청목록 메뉴 */}
                             <SubMenuListItemButton
                                 selected={selectedIndex === 4}
-                                onClick={() => handleListItemClick(4)}
+                                onClick={() => handleListItemClick(4, "펫시터 신청목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -428,7 +399,7 @@ const Layout = ({ children }) => {
                             {/* 업체 목록 메뉴 */}
                             <SubMenuListItemButton
                                 selected={selectedIndex === 5}
-                                onClick={() => handleListItemClick(5)}
+                                onClick={() => handleListItemClick(5, "업체 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -447,7 +418,7 @@ const Layout = ({ children }) => {
                             {/* 업체 등록 메뉴 */}
                             <SubMenuListItemButton
                                 selected={selectedIndex === 6}
-                                onClick={() => handleListItemClick(6)}
+                                onClick={() => handleListItemClick(6, "업체 등록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -469,51 +440,26 @@ const Layout = ({ children }) => {
                 <Box sx={{ flexGrow: 1 }} />
 
                 <Box sx={{ p: 2 }}>
-                    <StyledListItemButton onClick={() => alert("로그아웃")}>
+                    <StyledListItemButton2 onClick={logout}>
                         <ListItemIcon>
                             <LogoutIcon />
                         </ListItemIcon>
                         <ListItemText primary="로그아웃" />
-                    </StyledListItemButton>
+                    </StyledListItemButton2>
                 </Box>
             </StyledDrawer>
 
             {/* 메인 컨텐츠 영역 */}
             <Box sx={{ flexGrow: 1 }}>
                 {/* 헤더 */}
-                <StyledAppBar position="fixed">
-                    <Toolbar>
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component="div"
-                            sx={{
-                                flexGrow: 0,
-                                display: { xs: "none", sm: "block" },
-                                color: "#333333",
-                            }}
-                        >
-                            게시글 관리
-                        </Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <Search>
-                            <SearchIconWrapper>
-                                <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase placeholder="검색" inputProps={{ "aria-label": "search" }} />
-                        </Search>
-                        <IconButton size="large" color="inherit" sx={{ color: "#F0A355" }}>
-                            <RefreshIcon />
-                        </IconButton>
-                    </Toolbar>
-                </StyledAppBar>
+                {/*<Box sx={{ p: 2, borderBottom: "1px solid #F0F0F0" }}></Box>*/}
 
                 {/* 메인 컨텐츠 */}
                 <Main
                     sx={{
                         marginTop: 5,
-                        paddingLeft: 8,
-                        paddingRight: 8,
+                        paddingLeft: 4,
+                        paddingRight: 4,
                     }}
                 >
                     {children}
