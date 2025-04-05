@@ -19,8 +19,14 @@ import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
-import Admin from "./pages/Admin/Admin.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
+import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
+import { AdminProvider } from "./components/Admin/AdminContext.jsx";
+
+// 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
+const AdminLayout = ({ children }) => {
+    return <AdminProvider>{children}</AdminProvider>;
+};
 
 function App() {
     return (
@@ -28,11 +34,31 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
+                        {/* 관리자 경로 */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <AdminLayout>
+                                    <Admin />
+                                </AdminLayout>
+                            }
+                        />
                         <Route
                             path="/admin/dashboard"
-                            element={<AdminDashboard />}
+                            element={
+                                <AdminLayout>
+                                    <AdminDashboard />
+                                </AdminLayout>
+                            }
                         />
-                        <Route path="/admin" element={<Admin />} />
+                        <Route
+                            path="/admin/board/:id"
+                            element={
+                                <AdminLayout>
+                                    <AdminPostDetail />
+                                </AdminLayout>
+                            }
+                        />
                         <Route element={<Layout0 />}>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
