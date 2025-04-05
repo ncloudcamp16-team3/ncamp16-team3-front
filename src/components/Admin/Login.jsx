@@ -53,7 +53,7 @@ const Login = () => {
                         margin: "0 1em",
                         fontSize: "1em",
                     }}
-                    href={"/admin/dashboard"}
+                    href={"/admin/board/list"}
                 >
                     로그인
                 </Button>
