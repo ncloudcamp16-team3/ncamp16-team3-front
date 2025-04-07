@@ -4,7 +4,7 @@ import FriendsData from "../../mock/PetSta/friends.json";
 import CommentsData from "../../mock/PetSta/comments.json";
 import PostReplyItem from "./PostReplyItem"; // 답글 컴포넌트 추가
 
-const PostCommentItem = ({ comment }) => {
+const PostCommentItem = ({ comment, onReply }) => {
     const [showReplies, setShowReplies] = useState(false);
     const user = FriendsData.find((friend) => friend.user_id === comment.user_id);
 
@@ -28,31 +28,39 @@ const PostCommentItem = ({ comment }) => {
                     </Box>
                     <Typography>{comment.content}</Typography>
                     <Typography
-                        fontSize="12px"
+                        fontSize="14px"
                         color="#A8A8A9"
                         sx={{ cursor: "pointer", marginTop: 0.5 }}
-                        onClick={() => setShowReplies(!showReplies)}
+                        onClick={() => onReply(user.user_name)}
                     >
                         답글 달기
                     </Typography>
+
+                    {/* 답글 목록 */}
+                    {showReplies &&
+                        replies.map((reply) => <PostReplyItem key={reply.id} reply={reply} onReply={onReply} />)}
                     {replies.length > 0 && (
-                        <Box display="flex" alignItems="center">
-                            <Box width="30px" height="1px" bgcolor="#A8A8A9" marginRight={1} />
+                        <Box display="flex" alignItems="center" marginTop={1.2}>
+                            <Box
+                                sx={{
+                                    borderBottom: "1px solid #A8A8A9",
+                                    width: "30px",
+                                    marginRight: 1,
+                                }}
+                            />
+
                             <Typography
-                                fontSize="12px"
+                                fontSize="14px"
                                 color="#A8A8A9"
                                 sx={{ cursor: "pointer" }}
                                 onClick={() => setShowReplies(!showReplies)}
                             >
-                                이전 답글 {replies.length}개 보기
+                                {showReplies ? "답글 숨기기" : `이전 답글 ${replies.length}개 보기`}
                             </Typography>
                         </Box>
                     )}
                 </Box>
             </Box>
-
-            {/* 답글 목록 */}
-            {showReplies && replies.map((reply) => <PostReplyItem key={reply.id} reply={reply} />)}
         </Box>
     );
 };
