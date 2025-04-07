@@ -11,7 +11,9 @@ const TitleBar = ({ name }) => {
                 <img src={Arrow} width="26px" height="26px" />
             </Box>
             <Box>
-                <Typography fontSize="20px">{name}</Typography>
+                <Typography fontWeight="bold" fontSize="20px">
+                    {name}
+                </Typography>
             </Box>
         </Box>
     );
