@@ -1,7 +1,18 @@
 import React from "react";
 import Layout from "./Layout";
 import rows from "../../mock/Admin/board.json";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, Box } from "@mui/material";
+import {
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    Button,
+    Box,
+} from "@mui/material";
 function DashBoard() {
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
@@ -78,7 +89,7 @@ function DashBoard() {
                                             objectFit: "cover",
                                             borderRadius: "4px",
                                         }}
-                                        src="../../public/mock/Admin/images/cat.png"
+                                        src={row.image}
                                         alt="썸네일"
                                     />
                                 </TableCell>
