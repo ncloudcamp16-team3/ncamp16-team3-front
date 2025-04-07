@@ -9,21 +9,25 @@ import petsData from "../../mock/User/pet.json";
 import sitterStatusData from "../../mock/User/petsitter.json";
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
 import { Context } from "../../context/Context.jsx";
+import { useNavigate } from "react-router-dom";
 
 const MyPage = () => {
+    const navigate = useNavigate();
     const [pets, setPets] = useState([]);
     const [sitterStatus, setSitterStatus] = useState({});
     const { user, setUser } = useContext(Context);
     const [hover, setHover] = useState({});
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
-    const [openNicknameModal, setOpenNicknameModal] = useState(false); // 닉네임 모달 상태 추가
+    const [openNicknameModal, setOpenNicknameModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
 
     useEffect(() => {
         setPets(petsData);
         setSitterStatus(sitterStatusData);
     }, []);
-
+    const handleEditPet = (petId) => {
+        navigate(`/pet/edit/${petId}`);
+    };
     const handleHoverEnter = (id) => setHover((prev) => ({ ...prev, [id]: true }));
     const handleHoverLeave = (id) => setHover((prev) => ({ ...prev, [id]: false }));
 
@@ -50,6 +54,10 @@ const MyPage = () => {
         setUser((prev) => ({ ...prev, nickname: newNickname }));
     };
 
+    const handleAddPet = () => {
+        navigate("/add-pet");
+    };
+
     return (
         <Box sx={{ width: "100%", p: 2, pb: 8 }}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -70,6 +78,7 @@ const MyPage = () => {
                     variant="contained"
                     size="small"
                     startIcon={<AddIcon />}
+                    onClick={handleAddPet}
                     sx={{
                         bgcolor: "#E9A260",
                         color: "white",
@@ -109,6 +118,7 @@ const MyPage = () => {
                                 <Tooltip title="수정하기">
                                     <IconButton
                                         size="small"
+                                        onClick={() => handleEditPet(pet.id)}
                                         sx={{
                                             position: "absolute",
                                             right: 2,
@@ -195,7 +205,6 @@ const MyPage = () => {
                 </Link>
             </Box>
 
-            {/* 분리된 회원탈퇴 모달 컴포넌트 */}
             <WithdrawalModal
                 open={openWithdrawalModal}
                 onClose={handleCloseWithdrawalModal}
@@ -203,7 +212,6 @@ const MyPage = () => {
                 onInputChange={handleWithdrawalInputChange}
                 onWithdrawal={handleWithdrawal}
             />
-            {/* 닉네임 수정 모달 추가 */}
             <NicknameEditModal
                 open={openNicknameModal}
                 onClose={handleCloseNicknameModal}

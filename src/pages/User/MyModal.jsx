@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, Modal, TextField } from "@mui/material";
 
-// 회원 탈퇴 모달
+
 const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawal }) => {
     useEffect(() => {
         if (!open) return;

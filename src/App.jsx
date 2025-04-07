@@ -12,6 +12,8 @@ import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
+import EditPet from "./pages/User/EditPet.jsx";
+import AddPet from "./pages/User/AddPet.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
@@ -23,8 +25,6 @@ import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import { AdminProvider } from "./components/Admin/AdminContext.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
-import AddVideo from "./pages/PetSta/AddVideo.jsx";
-import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
@@ -124,9 +124,9 @@ function App() {
                             <Route path="/calendar" element={<Cal />} />
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
+                            <Route path="/add-pet" element={<AddPet />} />
+                            <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
-                            <Route path="/petsta/post/add/video" element={<AddVideo />} />
-                            <Route path="/petsta/post/add/Photo" element={<AddPhoto />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
