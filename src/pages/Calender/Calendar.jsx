@@ -225,85 +225,123 @@ const Cal = () => {
             </Box>
 
             <Box sx={{ px: 2 }}>
-                <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트</h2>
+                {!showForm && (
+                    <>
+                        <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트</h2>
 
-                {showForm ? (
-                    <Box sx={{ px: 2, py: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: 1, mb: 2 }}>
-                        <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                            <InputLabel>제목</InputLabel>
-                            <Input name="title" value={formData.title} onChange={handleInputChange} />
-                        </FormControl>
+                        {selectedSchedules.length > 0 || selectedEvents.length > 0 || selectedReserves.length > 0 ? (
+                            openItem.id ? (
+                                <>
+                                    <Button variant="outlined" onClick={handleBack} sx={{ mb: 2 }}>
+                                        이전으로
+                                    </Button>
 
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <FormHelperText>일정</FormHelperText>
-                            <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                                <MobileDatePicker
-                                    label="시작일"
-                                    value={formData.start_date}
-                                    onChange={(newValue) => handleDateChange("start_date", newValue)}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
-                                />
-                                <MobileDatePicker
-                                    label="종료일"
-                                    value={formData.end_date}
-                                    onChange={(newValue) => handleDateChange("end_date", newValue)}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
-                                />
-                            </Box>
-                        </LocalizationProvider>
-
-                        <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                            <InputLabel>장소</InputLabel>
-                            <Input name="address" value={formData.address} onChange={handleInputChange} />
-                        </FormControl>
-
-                        <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                            <InputLabel>내용</InputLabel>
-                            <Input name="content" value={formData.content} onChange={handleInputChange} />
-                        </FormControl>
-
-                        <Box display="flex" gap={1}>
-                            <Button variant="contained" color="primary" onClick={addSchedule}>
-                                저장
-                            </Button>
-                            <Button variant="outlined" onClick={() => setShowForm(false)}>
-                                취소
-                            </Button>
-                        </Box>
-                    </Box>
-                ) : (
-                    <Button onClick={() => setShowForm(true)} variant="contained" sx={{ mx: 2, my: 1 }}>
-                        일정추가
-                    </Button>
+                                    {openItem.type === "schedule" &&
+                                        selectedSchedules
+                                            .filter((s) => s.id === openItem.id)
+                                            .map((s) => renderCard(s, "schedule"))}
+                                    {openItem.type === "event" &&
+                                        selectedEvents
+                                            .filter((e) => e.id === openItem.id)
+                                            .map((e) => renderCard(e, "event"))}
+                                    {openItem.type === "reserve" &&
+                                        selectedReserves
+                                            .filter((r) => r.id === openItem.id)
+                                            .map((r) => renderCard(r, "reserve"))}
+                                </>
+                            ) : (
+                                <>
+                                    {selectedSchedules.map((s) => renderCard(s, "schedule"))}
+                                    {selectedEvents.map((e) => renderCard(e, "event"))}
+                                    {selectedReserves.map((r) => renderCard(r, "reserve"))}
+                                </>
+                            )
+                        ) : (
+                            <Typography>해당 날짜에 일정이나 이벤트가 없습니다.</Typography>
+                        )}
+                    </>
                 )}
 
-                {selectedSchedules.length > 0 || selectedEvents.length > 0 || selectedReserves.length > 0 ? (
-                    openItem.id ? (
-                        <>
-                            <Button variant="outlined" onClick={handleBack} sx={{ mb: 2 }}>
-                                이전으로
-                            </Button>
+                {showForm ? (
+                    <Card
+                        sx={{
+                            mt: 2,
+                            mb: 2,
+                            borderRadius: "32px",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            position: "relative",
+                            display: "flex",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: "40px",
+                                backgroundColor: "#EB5757",
+                            }}
+                        />
 
-                            {openItem.type === "schedule" &&
-                                selectedSchedules
-                                    .filter((s) => s.id === openItem.id)
-                                    .map((s) => renderCard(s, "schedule"))}
-                            {openItem.type === "event" &&
-                                selectedEvents.filter((e) => e.id === openItem.id).map((e) => renderCard(e, "event"))}
-                            {openItem.type === "reserve" &&
-                                selectedReserves
-                                    .filter((r) => r.id === openItem.id)
-                                    .map((r) => renderCard(r, "reserve"))}
-                        </>
-                    ) : (
-                        <>
-                            {selectedSchedules.map((s) => renderCard(s, "schedule"))}
-                            {selectedEvents.map((e) => renderCard(e, "event"))}
-                            {selectedReserves.map((r) => renderCard(r, "reserve"))}
-                        </>
-                    )
+                        <Box>
+                            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                <InputLabel>제목</InputLabel>
+                                <Input name="title" value={formData.title} onChange={handleInputChange} />
+                            </FormControl>
+
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <FormHelperText>일정</FormHelperText>
+                                <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                                    <MobileDatePicker
+                                        label="시작일"
+                                        value={formData.start_date}
+                                        onChange={(newValue) => handleDateChange("start_date", newValue)}
+                                        renderInput={(params) => <TextField {...params} fullWidth />}
+                                    />
+                                    <MobileDatePicker
+                                        label="종료일"
+                                        value={formData.end_date}
+                                        onChange={(newValue) => handleDateChange("end_date", newValue)}
+                                        renderInput={(params) => <TextField {...params} fullWidth />}
+                                    />
+                                </Box>
+                            </LocalizationProvider>
+
+                            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                <InputLabel>장소</InputLabel>
+                                <Input name="address" value={formData.address} onChange={handleInputChange} />
+                            </FormControl>
+
+                            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                <InputLabel>내용</InputLabel>
+                                <Input name="content" value={formData.content} onChange={handleInputChange} />
+                            </FormControl>
+
+                            <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2, my: 1 }}>
+                                <Button
+                                    sx={{ backgroundColor: "#27AE60", borderRadius: "50px", mr: 1 }}
+                                    onClick={addSchedule}
+                                    variant="contained"
+                                >
+                                    저장
+                                </Button>
+                                <Button
+                                    sx={{ backgroundColor: "#D9D9D9", borderRadius: "50px" }}
+                                    onClick={() => setShowForm(false)}
+                                    variant="contained"
+                                >
+                                    취소
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Card>
                 ) : (
-                    <Typography>해당 날짜에 일정이나 이벤트가 없습니다.</Typography>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2, my: 1 }}>
+                        <Button
+                            sx={{ backgroundColor: "#E9A260", borderRadius: "50px" }}
+                            onClick={() => setShowForm(true)}
+                            variant="contained"
+                        >
+                            일정추가
+                        </Button>
+                    </Box>
                 )}
             </Box>
         </div>
