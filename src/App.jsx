@@ -22,6 +22,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import { AdminProvider } from "./components/Admin/AdminContext.jsx";
+import AdminNotice from "./pages/Admin/AdminNotice.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
 const AdminLayout = ({ children }) => {
@@ -44,7 +45,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/admin/dashboard"
+                            path="/admin/board/list"
                             element={
                                 <AdminLayout>
                                     <AdminDashboard />
@@ -56,6 +57,46 @@ function App() {
                             element={
                                 <AdminLayout>
                                     <AdminPostDetail />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/board/post"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/list"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/apply"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/facility/list"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/facility/apply"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
                                 </AdminLayout>
                             }
                         />

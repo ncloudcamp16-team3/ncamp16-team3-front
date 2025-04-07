@@ -153,7 +153,19 @@ const Layout = ({ children }) => {
     const handleListItemClick = (index, menuTitle) => {
         setSelectedIndex(index);
         setSelectedMenu(menuTitle);
-        navigate(`/admin/dashboard`);
+        if (index === 1) {
+            navigate(`/admin/board/list`);
+        } else if (index === 2) {
+            navigate(`/admin/board/post`);
+        } else if (index === 3) {
+            navigate("/admin/petsitter/list");
+        } else if (index === 4) {
+            navigate("/admin/petsitter/apply");
+        } else if (index === 5) {
+            navigate("/admin/facility/list");
+        } else if (index === 6) {
+            navigate("/admin/facility/apply");
+        }
     };
 
     const logout = () => {
