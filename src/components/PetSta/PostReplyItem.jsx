@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Avatar, Typography } from "@mui/material";
 import FriendsData from "../../mock/PetSta/friends.json";
 
-const PostReplyItem = ({ reply }) => {
+const PostReplyItem = ({ reply, onReply }) => {
     const user = FriendsData.find((friend) => friend.user_id === reply.user_id);
 
     // @멘션을 찾아서 링크 스타일 적용
@@ -22,7 +22,7 @@ const PostReplyItem = ({ reply }) => {
     };
 
     return (
-        <Box display="flex" alignItems="flex-start" padding={1} paddingLeft={5}>
+        <Box display="flex" alignItems="flex-start" paddingTop={3}>
             <Avatar
                 src={`/mock/PetSta/images/${user?.user_photo}`}
                 alt={user?.user_name}
@@ -36,6 +36,14 @@ const PostReplyItem = ({ reply }) => {
                     </Typography>
                 </Box>
                 <Typography>{renderContentWithMentions(reply.content)}</Typography>
+                <Typography
+                    fontSize="14px"
+                    color="#A8A8A9"
+                    sx={{ cursor: "pointer", marginTop: 0.5 }}
+                    onClick={() => onReply(user.user_name)}
+                >
+                    답글 달기
+                </Typography>
             </Box>
         </Box>
     );
