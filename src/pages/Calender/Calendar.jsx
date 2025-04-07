@@ -26,8 +26,8 @@ const Cal = () => {
         address: "",
         start_date: dayjs(selectedDate),
         end_date: dayjs(selectedDate),
-        latitude: "", // 추가
-        longitude: "", // 추가
+        latitude: "",
+        longitude: "",
     });
 
     const [address, setAddress] = useState("");
