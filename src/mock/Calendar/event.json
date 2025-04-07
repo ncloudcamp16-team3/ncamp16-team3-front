@@ -5,7 +5,9 @@
     "address": "서울시 중구 남산공원",
     "start_date": "2025-04-15 10:00:00",
     "end_date": "2025-04-15 18:00:00",
-    "event_url": "https://springfestival.com"
+    "event_url": "https://springfestival.com",
+    "latitude": 37.550434,
+    "longitude": 126.990091
   },
   {
     "id": 2,
@@ -13,6 +15,8 @@
     "address": "경기도 성남시 분당구 탄천공원",
     "start_date": "2025-05-15 09:00:00",
     "end_date": "2025-05-15 17:00:00",
-    "event_url": "https://dogfestival.com"
+    "event_url": "https://dogfestival.com",
+    "latitude": 37.394813,
+    "longitude": 127.113893
   }
 ]
