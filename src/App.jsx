@@ -23,6 +23,8 @@ import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import { AdminProvider } from "./components/Admin/AdminContext.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
+import AddVideo from "./pages/PetSta/AddVideo.jsx";
+import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
@@ -123,6 +125,8 @@ function App() {
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
+                            <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                            <Route path="/petsta/post/add/Photo" element={<AddPhoto />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
