@@ -16,9 +16,9 @@ const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawa
                 pointer-events: none !important;
             }
             .footer {
-                opacity: 0.3 !important;
+                opacity: 1 !important;
+                filter: brightness(0.5);
                 pointer-events: none !important;
-                transition: opacity 0.2s ease !important;
             }
         `;
 
@@ -129,17 +129,12 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
         styleElement.setAttribute("id", "modal-overlay-styles");
 
         styleElement.textContent = `
-            .header {
-                opacity: 1 !important;
+        .header, .footer {
+            opacity: 1 !important;
                 filter: brightness(0.5);
                 pointer-events: none !important;
-            }
-            .footer {
-                opacity: 0.3 !important;
-                pointer-events: none !important;
-                transition: opacity 0.2s ease !important;
-            }
-        `;
+        }
+    `;
 
         document.head.appendChild(styleElement);
 
