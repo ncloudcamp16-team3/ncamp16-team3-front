@@ -18,6 +18,7 @@ import {
 import { LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import TitleBar from "../../components/Global/TitleBar.jsx";
 const { kakao } = window;
 
 const Cal = () => {
@@ -363,6 +364,9 @@ const Cal = () => {
 
     return (
         <div style={{ backgroundColor: "#F2DFCE", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+            <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
+                <TitleBar name="캘린더" />
+            </div>
             <Box
                 display="flex"
                 flexDirection="column"

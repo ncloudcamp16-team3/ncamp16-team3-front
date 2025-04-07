@@ -29,7 +29,6 @@
 /* 날짜 텍스트 색상 */
 .react-calendar__tile.sunday {
     color: #EB5757;
-    text-decoration: none;
 }
 .react-calendar__tile.saturday {
     color: #2F80ED;
