@@ -19,6 +19,7 @@ import { LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import TitleBar from "../../components/Global/TitleBar.jsx";
+import DaumPost from "../../components/Calender/DaumPost.jsx";
 const { kakao } = window;
 
 const Cal = () => {
@@ -40,9 +41,37 @@ const Cal = () => {
         end_date: dayjs(selectedDate),
     });
 
+    const [address, setAddress] = useState("");
+
+    // 2. 주소 상태가 바뀔 때 formData.address도 업데이트
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, address }));
+    }, [address]);
+
+    useEffect(() => {
+        if (showForm) {
+            setAddress(""); // 주소 초기화
+            setFormData({
+                title: "",
+                start_date: null,
+                end_date: null,
+                address: "",
+                content: "",
+            });
+        }
+    }, [showForm]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        if (name === "address") {
+            setAddress(value); // 주소 따로 업데이트
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
 
     const handleDateChange = (field, value) => {
@@ -169,7 +198,6 @@ const Cal = () => {
                                 </Typography>
                             </Box>
                         )}
-
                         {item.start_date && (
                             <Typography sx={{ mt: 1 }}>
                                 <span style={{ color: "#A8A8A9" }}>시작날짜 : </span>
@@ -498,7 +526,10 @@ const Cal = () => {
 
                                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                                     <InputLabel>장소</InputLabel>
-                                    <Input name="address" onChange={handleInputChange} />
+                                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                                        <Input name="address" value={address} onChange={handleInputChange} fullWidth />
+                                        <DaumPost setAddressObj={setAddress} />
+                                    </Box>
                                 </FormControl>
 
                                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
@@ -565,7 +596,15 @@ const Cal = () => {
 
                                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                                     <InputLabel>장소</InputLabel>
-                                    <Input name="address" value={formData.address} onChange={handleInputChange} />
+                                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                                        <Input
+                                            name="address"
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                        />
+                                        <DaumPost setAddressObj={setAddress} />
+                                    </Box>
                                 </FormControl>
 
                                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
