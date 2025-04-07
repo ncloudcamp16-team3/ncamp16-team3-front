@@ -6,6 +6,7 @@ export const PetMeetingContext = createContext(null);
 export const PetMeetingProvider = ({ children }) => {
     const [pet, setPet] = useState(null);
     const [open, setOpen] = useState(false);
+    const [openActivityModal, setOpenActivityModal] = useState(false);
     const [drop, setDrop] = useState(false);
     const [friendType, setFriendType] = useState("산책친구들");
     const [view, setView] = useState("petMeeting");
@@ -16,8 +17,22 @@ export const PetMeetingProvider = ({ children }) => {
     };
 
     const value = useMemo(
-        () => ({ pet, open, drop, friendType, view, setPet, setOpen, setDrop, setFriendType, setView, setClose }),
-        [pet, open, drop, friendType, view]
+        () => ({
+            pet,
+            open,
+            drop,
+            friendType,
+            view,
+            openActivityModal,
+            setPet,
+            setOpen,
+            setDrop,
+            setFriendType,
+            setView,
+            setOpenActivityModal,
+            setClose,
+        }),
+        [pet, open, drop, friendType, view, openActivityModal]
     );
 
     useEffect(() => {

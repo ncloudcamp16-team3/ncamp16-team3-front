@@ -26,6 +26,7 @@ import AdminNotice from "./pages/Admin/AdminNotice.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
+import Main from "./pages/PetMeeting/Main.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
 const AdminLayout = ({ children }) => {

@@ -3,11 +3,8 @@ import { Box, Typography } from "@mui/material";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const ConfigBtn = ({ img, label, type }) => {
-    const { setOpen, setView, view } = useContext(PetMeetingContext);
+    const { pet, setOpen, setView, setOpenActivityModal } = useContext(PetMeetingContext);
     const handleClick = () => {
-        console.log(type);
-        console.log(view);
-
         switch (type) {
             case "pet":
                 setOpen(true);
@@ -15,7 +12,12 @@ const ConfigBtn = ({ img, label, type }) => {
             case "location":
                 setView("locationConfig");
                 break;
-            case "play":
+            case "activity":
+                if (pet.activity_status === "NONE") {
+                    setOpen(true);
+                } else {
+                    setOpenActivityModal(true);
+                }
                 break;
         }
     };

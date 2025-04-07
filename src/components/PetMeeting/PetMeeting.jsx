@@ -6,6 +6,7 @@ import Scheduler from "./Scheduler.jsx";
 import { Box } from "@mui/material";
 import FindFriend from "./FindFriend.jsx";
 import PetConfigModal from "./PetConfigModal.jsx";
+import ActivityModal from "./ActivityModal.jsx";
 
 const PetMeeting = () => {
     return (
@@ -19,6 +20,7 @@ const PetMeeting = () => {
             <Scheduler />
             <FindFriend />
             <PetConfigModal />
+            <ActivityModal />
         </Box>
     );
 };

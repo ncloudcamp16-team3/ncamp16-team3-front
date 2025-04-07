@@ -39,7 +39,7 @@ const FindFriendConfigBtns = () => {
         >
             <ConfigBtn img={PetBtn} label={!pet?.name ? "애완동물" : pet?.name} type={"pet"} />
             <ConfigBtn img={LocationBtn} label={!address ? "위치설정" : address} type={"location"} />
-            <ConfigBtn img={activityImg} label={activityLabel} type={"play"} />
+            <ConfigBtn img={activityImg} label={activityLabel} type={"activity"} />
         </Box>
     );
 };

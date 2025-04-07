@@ -17,10 +17,7 @@ const PetConfigModal = () => {
     }, [pet, open]);
 
     const petRegister = () => {
-        console.log("selectedActivity: " + selectedActivity);
         setPet((prev) => ({ ...prev, name: selectedPet, activity_status: selectedActivity }));
-
-        console.log("activity_status: " + pet.activity_status);
         setClose();
     };
 
@@ -71,7 +68,7 @@ const PetConfigModal = () => {
                                 fontSize: "35px",
                             }}
                         >
-                            등록하기
+                            놀러가기
                         </Typography>
                     </Box>
                     <Typography
@@ -80,7 +77,7 @@ const PetConfigModal = () => {
                             fontSize: "20px",
                         }}
                     >
-                        등록할 친구
+                        놀러갈 친구
                     </Typography>
                     <Box sx={{ position: "relative", width: "100%" }}>
                         <Button

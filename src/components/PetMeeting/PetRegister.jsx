@@ -26,7 +26,7 @@ const PetRegister = () => {
                     }}
                     onClick={() => setOpen(true)}
                 >
-                    등록하기
+                    놀러가기
                 </Button>
             )}
         </Box>
