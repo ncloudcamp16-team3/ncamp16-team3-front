@@ -1,17 +1,37 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
-const ConfigBtn = ({ img, label, setOpen }) => {
+const ConfigBtn = ({ img, label, type }) => {
+    const { setOpen, setView, view } = useContext(PetMeetingContext);
+    const handleClick = () => {
+        console.log(type);
+        console.log(view);
+
+        switch (type) {
+            case "pet":
+                setOpen(true);
+                break;
+            case "location":
+                setView("locationConfig");
+                break;
+            case "play":
+                break;
+        }
+    };
+
     return (
         <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                margin: "5px 40px 5px 0",
+                margin: "5px 0",
                 alignItems: "center",
                 cursor: "pointer",
+                // borderRadius: 2,
+                // border: "1px solid black",
             }}
-            onClick={() => setOpen(true)}
+            onClick={handleClick}
         >
             <Box
                 component="img"

@@ -4,7 +4,7 @@ import PetRegister from "./PetRegister.jsx";
 import FindFriendConfigBtns from "./FindFriendConfigBtns.jsx";
 import SetLocation from "./SetLocation.jsx";
 
-const FindFriend = ({ pet, setPet, setOpen }) => {
+const FindFriend = () => {
     return (
         <Box
             sx={{
@@ -15,8 +15,8 @@ const FindFriend = ({ pet, setPet, setOpen }) => {
             }}
         >
             <PetRegister />
-            <FindFriendConfigBtns pet={pet} setPet={setPet} setOpen={setOpen} />
-            <SetLocation setPet={setPet} />
+            <FindFriendConfigBtns />
+            <SetLocation />
         </Box>
     );
 };

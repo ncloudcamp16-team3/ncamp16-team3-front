@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { Box, Typography } from "@mui/material";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const FriendType = () => {
-    const [selected, setSelected] = useState("option1"); // 초기 선택 값
+    const { friendType, setFriendType } = useContext(PetMeetingContext);
 
     return (
         <Box
@@ -19,14 +20,14 @@ const FriendType = () => {
                     padding: "7px 0",
                     borderRadius: "8px",
                     cursor: "pointer",
-                    backgroundColor: selected === "option1" ? "#E9A260" : "transparent",
-                    color: selected === "option1" ? "white" : "black",
+                    backgroundColor: friendType === "산책친구들" ? "#E9A260" : "transparent",
+                    color: friendType === "산책친구들" ? "white" : "black",
                     transition: "0.3s",
                     width: "50%",
                     textAlign: "center",
                     margin: "3px 0 3px 3px",
                 }}
-                onClick={() => setSelected("option1")}
+                onClick={() => setFriendType("산책친구들")}
             >
                 <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     산책 친구들
@@ -38,14 +39,14 @@ const FriendType = () => {
                     padding: "7px 0",
                     borderRadius: "8px",
                     cursor: "pointer",
-                    backgroundColor: selected === "option2" ? "#E9A260" : "transparent",
-                    color: selected === "option2" ? "white" : "black",
+                    backgroundColor: friendType === "놀이친구들" ? "#E9A260" : "transparent",
+                    color: friendType === "놀이친구들" ? "white" : "black",
                     transition: "0.3s",
                     width: "50%",
                     textAlign: "center",
                     margin: "3px 3px 3px 0px",
                 }}
-                onClick={() => setSelected("option2")}
+                onClick={() => setFriendType("놀이친구들")}
             >
                 <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     놀이 친구들

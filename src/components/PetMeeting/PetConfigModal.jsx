@@ -1,133 +1,191 @@
-import React, { useState } from "react";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Button, Fade, Modal, Typography } from "@mui/material";
 import Dog from "../../assets/images/PetMeeting/dog.svg";
+import SelectPetDropdown from "./SelectPetDropdown.jsx";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
-const PetConfigModal = ({ open, handleClose, pet, setPet }) => {
-    const [drop, setDrop] = useState(false);
-    const changePetName = () => {
-        setPet((prev) => ({ ...prev, name: "초코" }));
-    };
+const PetConfigModal = () => {
+    const { pet, setPet, open, drop, setDrop, setClose } = useContext(PetMeetingContext);
+    const [selectedPet, setSelectedPet] = useState(null);
+    const [selectedActivity, setSelectedActivity] = useState(null);
 
-    const close = () => {
-        setDrop(false);
-        handleClose();
+    useEffect(() => {
+        if (pet?.name) {
+            setSelectedPet(pet.name);
+            setSelectedActivity(pet.activity_status);
+        }
+    }, [pet, open]);
+
+    const petRegister = () => {
+        console.log("selectedActivity: " + selectedActivity);
+        setPet((prev) => ({ ...prev, name: selectedPet, activity_status: selectedActivity }));
+
+        console.log("activity_status: " + pet.activity_status);
+        setClose();
     };
 
     return (
-        <Modal open={open} onClose={handleClose} container={document.body}>
-            <Box
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: 300,
-                    backgroundColor: "#FDF1E5",
-                    borderRadius: 2,
-                    p: 3,
-                    boxShadow: 24,
-                }}
-            >
+        <Modal
+            open={open}
+            onClose={setClose}
+            disableScrollLock
+            sx={{
+                zIndex: 10000,
+            }}
+        >
+            <Fade in={open} timeout={400}>
                 <Box
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 300,
+                        backgroundColor: "#FDF1E5",
+                        borderRadius: 2,
+                        p: 3,
+                        boxShadow: 24,
                     }}
                 >
                     <Box
-                        component="img"
-                        src={Dog}
-                        alt="dog"
                         sx={{
-                            width: 60,
-                            height: 60,
-                            objectFit: "contain",
-                            marginBottom: "10px",
-                        }}
-                    ></Box>
-                    <Typography
-                        sx={{
-                            margin: "20px",
-                            fontSize: "35px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
                     >
-                        등록하기
-                    </Typography>
-                </Box>
-                <Typography
-                    sx={{
-                        marginBottom: "10px",
-                        fontSize: "20px",
-                    }}
-                >
-                    등록할 친구
-                </Typography>
-                <Box sx={{ position: "relative", width: "100%" }}>
-                    <Button
-                        sx={{
-                            width: "100%",
-                            backgroundColor: "#E9A260",
-                            borderRadius: 2,
-                            color: "white",
-                        }}
-                        onClick={() => setDrop((prev) => !prev)}
-                    >
-                        {pet?.name}
-                    </Button>
-                    {drop && (
                         <Box
+                            component="img"
+                            src={Dog}
+                            alt="dog"
                             sx={{
-                                position: "absolute",
-                                top: "90%", // 버튼 아래에 위치
-                                left: 0,
-                                width: "100%",
-                                backgroundColor: "#F2DFCE",
-                                boxShadow: 3,
-                                borderRadius: "8px",
-                                p: 2,
-                                mt: 1,
-                                zIndex: 10, // 다른 요소보다 위에 배치
+                                width: 60,
+                                height: 60,
+                                objectFit: "contain",
+                                marginBottom: "10px",
+                            }}
+                        ></Box>
+                        <Typography
+                            sx={{
+                                margin: "20px",
+                                fontSize: "35px",
                             }}
                         >
-                            <p>옵션 1</p>
-                            <p>옵션 2</p>
+                            등록하기
+                        </Typography>
+                    </Box>
+                    <Typography
+                        sx={{
+                            marginBottom: "10px",
+                            fontSize: "20px",
+                        }}
+                    >
+                        등록할 친구
+                    </Typography>
+                    <Box sx={{ position: "relative", width: "100%" }}>
+                        <Button
+                            sx={{
+                                width: "100%",
+                                backgroundColor: "#E9A260",
+                                borderRadius: 2,
+                                color: "white",
+                            }}
+                            onClick={() => setDrop((prev) => !prev)}
+                        >
+                            {selectedPet}
+                        </Button>
+                        {drop && <SelectPetDropdown selectedPet={selectedPet} setSelectedPet={setSelectedPet} />}
+                    </Box>
+                    <Typography
+                        sx={{
+                            margin: "10px 0",
+                            fontSize: "20px",
+                        }}
+                    >
+                        활동목록
+                    </Typography>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 0,
+                            margin: "10px 0",
+                            backgroundColor: "rgba(46, 45, 45, 0.1)",
+                            borderRadius: "8px",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                padding: "7px 0",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                                backgroundColor: selectedActivity === "WALK" ? "#E9A260" : "transparent",
+                                color: selectedActivity === "WALK" ? "white" : "black",
+                                transition: "0.3s",
+                                width: "50%",
+                                textAlign: "center",
+                                margin: "3px 0 3px 3px",
+                            }}
+                            onClick={() => setSelectedActivity("WALK")}
+                        >
+                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                산책친구들
+                            </Typography>
                         </Box>
-                    )}
-                </Box>
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        gap: "30px",
-                        justifyContent: "center",
-                        marginTop: "20px",
-                    }}
-                >
-                    <Button
+
+                        <Box
+                            sx={{
+                                padding: "7px 0",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                                backgroundColor: selectedActivity === "PLAY" ? "#E9A260" : "transparent",
+                                color: selectedActivity === "PLAY" ? "white" : "black",
+                                transition: "0.3s",
+                                width: "50%",
+                                textAlign: "center",
+                                margin: "3px 3px 3px 0px",
+                            }}
+                            onClick={() => setSelectedActivity("PLAY")}
+                        >
+                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                놀이친구들
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    <Box
                         sx={{
-                            backgroundColor: "#E9A260",
-                            color: "black",
-                            borderRadius: 5,
-                            padding: "7px 30px",
+                            width: "100%",
+                            display: "flex",
+                            gap: "30px",
+                            justifyContent: "center",
+                            marginTop: "20px",
                         }}
-                        onClick={changePetName}
                     >
-                        등록
-                    </Button>
-                    <Button
-                        sx={{
-                            backgroundColor: "#F2DFCE",
-                            color: "black",
-                            borderRadius: 5,
-                            padding: "7px 30px",
-                        }}
-                        onClick={close}
-                    >
-                        취소
-                    </Button>
+                        <Button
+                            sx={{
+                                backgroundColor: "#E9A260",
+                                color: "white",
+                                borderRadius: 5,
+                                padding: "7px 30px",
+                            }}
+                            onClick={() => petRegister(selectedPet)}
+                        >
+                            등록
+                        </Button>
+                        <Button
+                            sx={{
+                                backgroundColor: "#F2DFCE",
+                                color: "black",
+                                borderRadius: 5,
+                                padding: "7px 30px",
+                            }}
+                            onClick={setClose}
+                        >
+                            취소
+                        </Button>
+                    </Box>
                 </Box>
-            </Box>
+            </Fade>
         </Modal>
     );
 };

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import calendarImg from "../../assets/images/PetMeeting/calendar.svg";
 import { useNavigate } from "react-router-dom";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
-const Scheduler = ({ petName }) => {
+const Scheduler = () => {
     const navigate = useNavigate();
+    const { pet } = useContext(PetMeetingContext);
 
     return (
         <Box
@@ -29,7 +31,7 @@ const Scheduler = ({ petName }) => {
                 >
                     일정관리
                 </Typography>
-                <Typography variant="body1">{petName}의 일정을 관리해보아요</Typography>
+                <Typography variant="body1">{pet?.name}의 일정을 관리해보아요</Typography>
             </Box>
             <Box
                 component="img"

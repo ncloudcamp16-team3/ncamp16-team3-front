@@ -1,28 +1,34 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Button, Typography } from "@mui/material";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PetRegister = () => {
+    const { pet, setOpen, friendType } = useContext(PetMeetingContext);
     return (
         <Box
             sx={{
                 display: "flex",
                 justifyContent: "space-between",
+                height: "40px",
             }}
         >
             <Box>
-                <Typography variant="h5">산책 친구들</Typography>
+                <Typography variant="h5">{friendType}</Typography>
             </Box>
-            <Button
-                sx={{
-                    borderRadius: 5,
-                    backgroundColor: "#E9A260",
-                    fontWeight: 600,
-                    padding: "7px 20px",
-                    color: "white",
-                }}
-            >
-                등록하기
-            </Button>
+            {!pet && (
+                <Button
+                    sx={{
+                        borderRadius: 5,
+                        backgroundColor: "#E9A260",
+                        fontWeight: 600,
+                        padding: "7px 20px",
+                        color: "white",
+                    }}
+                    onClick={() => setOpen(true)}
+                >
+                    등록하기
+                </Button>
+            )}
         </Box>
     );
 };

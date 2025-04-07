@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import chatLogo from "../../assets/images/Global/comment.svg";
 import { Box, Typography } from "@mui/material";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
-const MainPageHeader = ({ petName }) => {
+const MainPageHeader = () => {
     const navigate = useNavigate();
+    const { pet } = useContext(PetMeetingContext);
 
     return (
         <Box
@@ -20,7 +22,7 @@ const MainPageHeader = ({ petName }) => {
             }}
         >
             <Box sx={{ flex: 1 }}>
-                <Typography variant="h5">{petName} 동네친구들</Typography>
+                <Typography variant="h5">{pet?.name} 동네친구들</Typography>
                 <Typography variant="caption">8시, 12시, 18시마다 새로운 친구를 만나보아요</Typography>
             </Box>
             <Box

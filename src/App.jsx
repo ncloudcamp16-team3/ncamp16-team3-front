@@ -1,7 +1,6 @@
 import "./css/App.css";
 import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import PetMeeting from "./pages/PetMeeting/PetMeeting.jsx";
 import Login from "./pages/User/Login.jsx";
 import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
@@ -22,6 +21,7 @@ import Chat from "./pages/Chat/Chat.jsx";
 
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
+import Main from "./pages/PetMeeting/Main.jsx";
 
 function App() {
     return (
@@ -29,17 +29,14 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
-                        <Route
-                            path="/admin/dashboard"
-                            element={<AdminDashboard />}
-                        />
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route element={<Layout0 />}>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
                         <Route element={<Layout1 />}>
-                          <Route path="/" element={<PetMeeting />} />
+                            <Route path="/" element={<Main />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />

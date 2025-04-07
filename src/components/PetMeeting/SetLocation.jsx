@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import Plus from "../../assets/images/PetMeeting/plus.png";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const SetLocation = () => {
+    const { view, setView } = useContext(PetMeetingContext);
+
+    useEffect(() => {
+        console.log("view changed to:", view);
+    }, [view]);
+
     return (
         <Box
             sx={{
@@ -13,7 +20,12 @@ const SetLocation = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                position: "relative", // 자식 요소 absolute 배치 가능
+                position: "relative",
+                cursor: "pointer",
+            }}
+            onClick={() => {
+                setView("locationConfig");
+                console.log("onClick view change:", view);
             }}
         >
             <Typography
