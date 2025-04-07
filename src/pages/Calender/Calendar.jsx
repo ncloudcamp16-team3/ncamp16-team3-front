@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { format, parseISO } from "date-fns";
 import "react-calendar/dist/Calendar.css";
+import "/src/css/calendar/cal.css";
 import {
     Box,
     Card,
@@ -14,13 +15,14 @@ import {
     FormHelperText,
     TextField,
 } from "@mui/material";
-import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 const { kakao } = window;
 
 const Cal = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [currentViewMonth, setCurrentViewMonth] = useState(new Date()); // 현재 보이
     const [schedules, setSchedules] = useState([]);
     const [events, setEvents] = useState([]);
     const [reserves, setReserves] = useState([]);
@@ -76,8 +78,8 @@ const Cal = () => {
             title: formData.title,
             content: formData.content,
             address: formData.address,
-            start_date: format(formData.start_date.toDate(), "yyyy-MM-dd"),
-            end_date: format(formData.end_date.toDate(), "yyyy-MM-dd"),
+            start_date: format(formData.start_date.toDate(), "yyyy-MM-dd HH:mm:ss"),
+            end_date: format(formData.end_date.toDate(), "yyyy-MM-dd HH:mm:ss"),
         };
 
         setSchedules((prev) => [...prev, newSchedule]);
@@ -366,7 +368,7 @@ const Cal = () => {
                 flexDirection="column"
                 alignItems="center"
                 textAlign="center"
-                sx={{ height: "330px", backgroundColor: "white", color: "white" }}
+                sx={{ height: "350px", backgroundColor: "white", color: "white" }}
             >
                 <Calendar
                     calendarType="gregory"
@@ -376,6 +378,24 @@ const Cal = () => {
                         setOpenItem({ id: null, type: null });
                     }}
                     value={selectedDate}
+                    onActiveStartDateChange={({ activeStartDate }) => {
+                        setCurrentViewMonth(activeStartDate); // 달력 넘길 때 기준 변경
+                    }}
+                    tileClassName={({ date, view }) => {
+                        if (view === "month") {
+                            const shownMonth = currentViewMonth.getMonth();
+                            const shownYear = currentViewMonth.getFullYear();
+
+                            const isSameMonth = date.getMonth() === shownMonth && date.getFullYear() === shownYear;
+
+                            if (!isSameMonth) return "neighboring-month";
+
+                            const day = date.getDay();
+                            if (day === 0) return "sunday";
+                            if (day === 6) return "saturday";
+                        }
+                        return null;
+                    }}
                     tileContent={({ date }) => {
                         const { hasSchedule, hasEvent, hasReserve } = checkHasScheduleOrEvent(date);
                         return (
@@ -401,11 +421,9 @@ const Cal = () => {
                 />
             </Box>
 
-            <Box sx={{ px: 2 }}>
+            <Box sx={{ px: 2, py: 2 }}>
                 {!showForm && !modifyForm && !selectedItem && (
                     <>
-                        <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트</h2>
-
                         {selectedSchedules.length > 0 || selectedEvents.length > 0 || selectedReserves.length > 0 ? (
                             openItem.id ? (
                                 <>
@@ -437,11 +455,8 @@ const Cal = () => {
 
                 {showForm && (
                     <>
-                        <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 추가</h2>
                         <Card
                             sx={{
-                                mt: 2,
-                                mb: 2,
                                 borderRadius: "32px",
                                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                                 position: "relative",
@@ -464,12 +479,12 @@ const Cal = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <FormHelperText>일정</FormHelperText>
                                     <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                                        <MobileDatePicker
+                                        <MobileDateTimePicker
                                             label="시작일"
                                             onChange={(newValue) => handleDateChange("start_date", newValue)}
                                             renderInput={(params) => <TextField {...params} fullWidth />}
                                         />
-                                        <MobileDatePicker
+                                        <MobileDateTimePicker
                                             label="종료일"
                                             onChange={(newValue) => handleDateChange("end_date", newValue)}
                                             renderInput={(params) => <TextField {...params} fullWidth />}
@@ -510,11 +525,8 @@ const Cal = () => {
 
                 {modifyForm && selectedItem && (
                     <>
-                        <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 수정</h2>
                         <Card
                             sx={{
-                                mt: 2,
-                                mb: 2,
                                 borderRadius: "32px",
                                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                                 position: "relative",
@@ -532,13 +544,13 @@ const Cal = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <FormHelperText>일정</FormHelperText>
                                     <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                                        <MobileDatePicker
+                                        <MobileDateTimePicker
                                             label="시작일"
                                             value={formData.start_date}
                                             onChange={(newValue) => handleDateChange("start_date", newValue)}
                                             renderInput={(params) => <TextField {...params} fullWidth />}
                                         />
-                                        <MobileDatePicker
+                                        <MobileDateTimePicker
                                             label="종료일"
                                             value={formData.end_date}
                                             onChange={(newValue) => handleDateChange("end_date", newValue)}
@@ -559,11 +571,21 @@ const Cal = () => {
 
                                 <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
                                     <Button
-                                        sx={{ backgroundColor: "#27AE60", borderRadius: "50px" }}
+                                        sx={{ backgroundColor: "#FFA500", borderRadius: "50px" }}
                                         onClick={saveModifiedSchedule}
                                         variant="contained"
                                     >
-                                        저장
+                                        수정
+                                    </Button>
+                                    <Button
+                                        sx={{ backgroundColor: "#EB5757", borderRadius: "50px" }}
+                                        onClick={() => {
+                                            setModifyForm(false);
+                                            setSelectedItem(null);
+                                        }}
+                                        variant="contained"
+                                    >
+                                        삭제
                                     </Button>
                                     <Button
                                         sx={{ backgroundColor: "#D9D9D9", borderRadius: "50px" }}
