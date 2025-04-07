@@ -25,6 +25,7 @@ import { AdminProvider } from "./components/Admin/AdminContext.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
+import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
 const AdminLayout = ({ children }) => {
@@ -74,7 +75,15 @@ function App() {
                             path="/admin/petsitter/list"
                             element={
                                 <AdminLayout>
-                                    <AdminNotice />
+                                    <AdminPetsitterList />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/:id"
+                            element={
+                                <AdminLayout>
+                                    <AdminPetsitterList />
                                 </AdminLayout>
                             }
                         />
