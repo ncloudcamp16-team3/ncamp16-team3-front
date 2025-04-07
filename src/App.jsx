@@ -18,10 +18,19 @@ import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
 import Chat from "./pages/Chat/Chat.jsx";
-
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
-import Main from "./pages/PetMeeting/Main.jsx";
+import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
+import { AdminProvider } from "./components/Admin/AdminContext.jsx";
+import AdminNotice from "./pages/Admin/AdminNotice.jsx";
+import AddVideo from "./pages/PetSta/AddVideo.jsx";
+import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
+import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
+
+// 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
+const AdminLayout = ({ children }) => {
+    return <AdminProvider>{children}</AdminProvider>;
+};
 
 function App() {
     return (
@@ -29,6 +38,79 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
+                        {/* 관리자 경로 */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <AdminLayout>
+                                    <Admin />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/board/list"
+                            element={
+                                <AdminLayout>
+                                    <AdminDashboard />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/board/:id"
+                            element={
+                                <AdminLayout>
+                                    <AdminPostDetail />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/board/post"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/list"
+                            element={
+                                <AdminLayout>
+                                    <AdminPetsitterList />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/:id"
+                            element={
+                                <AdminLayout>
+                                    <AdminPetsitterList />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/apply"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/facility/list"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/facility/apply"
+                            element={
+                                <AdminLayout>
+                                    <AdminNotice />
+                                </AdminLayout>
+                            }
+                        />
                         <Route path="/admin/dashboard" element={<AdminDashboard />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route element={<Layout0 />}>
@@ -46,6 +128,8 @@ function App() {
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
+                            <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                            <Route path="/petsta/post/add/Photo" element={<AddPhoto />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

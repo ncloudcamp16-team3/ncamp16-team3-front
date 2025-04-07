@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Layout from "./Layout";
-import rows from "../../mock/Admin/board.json";
-import { useNavigate } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Box } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
+import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import Layout from "./Layout.jsx";
+import rows from "../../mock/Admin/petsitter.json";
+import { useNavigate } from "react-router-dom";
 
-function DashBoard() {
+const PetsitterList = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentFilter, setCurrentFilter] = useState("자유 게시판");
     const [filteredRows, setFilteredRows] = useState(rows);
@@ -13,11 +13,13 @@ function DashBoard() {
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
         id: { width: 80, minWidth: 80, maxWidth: 80 },
-        title: { width: 200, minWidth: 200, maxWidth: 200 },
+        sitterExp: { width: 100, minWidth: 100, maxWidth: 100 },
         image: { width: 100, minWidth: 100, maxWidth: 100 },
+        sitterId: { width: 150, minWidth: 150, maxWidth: 150 },
+        age: { width: 100, minWidth: 100, maxWidth: 100 },
+        grown: { width: 150, minWidth: 150, maxWidth: 150 },
+        houseType: { width: 100, minWidth: 100, maxWidth: 100 },
         content: { width: 350, minWidth: 350, maxWidth: 350 },
-        jellyCount: { width: 80, minWidth: 80, maxWidth: 80 },
-        views: { width: 100, minWidth: 100, maxWidth: 100 },
         date: { width: 200, minWidth: 200, maxWidth: 200 },
     };
 
@@ -31,7 +33,7 @@ function DashBoard() {
     const navigate = useNavigate();
 
     const rowHref = (id) => {
-        navigate(`/admin/board/${id}`);
+        navigate(`/admin/petsitter/${id}`);
     };
 
     // 검색 핸들러
@@ -71,15 +73,19 @@ function DashBoard() {
             {/* 테이블 부분 */}
             <Box>
                 <TableContainer>
-                    <Table sx={{ minWidth: 700 }} aria-label="게시글 테이블">
+                    <Table sx={{ minWidth: 700 }} aria-label="펫시터 리스트">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ ...cellStyles.id, ...commonCellStyle }}>글 번호</TableCell>
+                                <TableCell sx={{ ...cellStyles.id, ...commonCellStyle }}>ID</TableCell>
+                                <TableCell sx={{ ...cellStyles.sitterExp, ...commonCellStyle }}>펫시터 경험</TableCell>
                                 <TableCell sx={{ ...cellStyles.image, ...commonCellStyle }}>사진</TableCell>
-                                <TableCell sx={{ ...cellStyles.title, ...commonCellStyle }}>제목</TableCell>
-                                <TableCell sx={{ ...cellStyles.content, ...commonCellStyle }}>내용</TableCell>
-                                <TableCell sx={{ ...cellStyles.jellyCount, ...commonCellStyle }}>젤리수</TableCell>
-                                <TableCell sx={{ ...cellStyles.views, ...commonCellStyle }}>조회수</TableCell>
+                                <TableCell sx={{ ...cellStyles.sitterId, ...commonCellStyle }}>사용자 아이디</TableCell>
+                                <TableCell sx={{ ...cellStyles.age, ...commonCellStyle }}>연령대</TableCell>
+                                <TableCell sx={{ ...cellStyles.grown, ...commonCellStyle }}>
+                                    반려 동물 여부(마리)
+                                </TableCell>
+                                <TableCell sx={{ ...cellStyles.houseType, ...commonCellStyle }}>주거형태</TableCell>
+                                <TableCell sx={{ ...cellStyles.comment, ...commonCellStyle }}>코멘트</TableCell>
                                 <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>등록일자</TableCell>
                             </TableRow>
                         </TableHead>
@@ -100,6 +106,9 @@ function DashBoard() {
                                     <TableCell component="th" scope="row" sx={{ ...cellStyles.id, ...commonCellStyle }}>
                                         {row.id}
                                     </TableCell>
+                                    <TableCell sx={{ ...cellStyles.sitterExp, ...commonCellStyle }}>
+                                        {row.sitterExp}
+                                    </TableCell>
                                     <TableCell sx={{ ...cellStyles.image }}>
                                         <Box
                                             component="img"
@@ -113,14 +122,20 @@ function DashBoard() {
                                             alt="썸네일"
                                         />
                                     </TableCell>
-                                    <TableCell sx={{ ...cellStyles.title, ...commonCellStyle }}>{row.title}</TableCell>
+                                    <TableCell sx={{ ...cellStyles.sitterId, ...commonCellStyle }}>
+                                        {row.sitterId}
+                                    </TableCell>
+                                    <TableCell sx={{ ...cellStyles.age, ...commonCellStyle }}>{row.age}</TableCell>
+                                    <TableCell sx={{ ...cellStyles.grown, ...commonCellStyle }}>
+                                        {typeof row.grown === "boolean" ? (row.grown ? "예" : "아니오") : row.grown} (
+                                        {row.petCount || "없음"})
+                                    </TableCell>
+                                    <TableCell sx={{ ...cellStyles.houseType, ...commonCellStyle }}>
+                                        {row.houseType}
+                                    </TableCell>
                                     <TableCell sx={{ ...cellStyles.content, ...commonCellStyle }}>
                                         {row.content}
                                     </TableCell>
-                                    <TableCell sx={{ ...cellStyles.jellyCount, ...commonCellStyle }}>
-                                        {row.jellyCount}
-                                    </TableCell>
-                                    <TableCell sx={{ ...cellStyles.views, ...commonCellStyle }}>{row.views}</TableCell>
                                     <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>{row.date}</TableCell>
                                 </TableRow>
                             ))}
@@ -137,6 +152,6 @@ function DashBoard() {
             </Box>
         </Layout>
     );
-}
+};
 
-export default DashBoard;
+export default PetsitterList;
