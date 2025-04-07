@@ -17,6 +17,7 @@ import {
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+const { kakao } = window;
 
 const Cal = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -25,6 +26,9 @@ const Cal = () => {
     const [reserves, setReserves] = useState([]);
     const [openItem, setOpenItem] = useState({ id: null, type: null });
     const [showForm, setShowForm] = useState(false);
+    const [modifyForm, setModifyForm] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
     const [formData, setFormData] = useState({
         title: "",
         content: "",
@@ -40,6 +44,28 @@ const Cal = () => {
 
     const handleDateChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleModifyClick = (item) => {
+        setSelectedItem(item);
+        setFormData({
+            title: item.title,
+            address: item.address,
+            content: item.content,
+            start_date: dayjs(item.start_date),
+            end_date: dayjs(item.end_date),
+        });
+        setModifyForm(true);
+        setShowForm(false); // 일정추가 폼 숨기기
+    };
+
+    const saveModifiedSchedule = () => {
+        // 이곳에 서버에 수정 요청 보내는 로직 추가
+        console.log("수정할 데이터", formData);
+
+        // 저장 후 초기화
+        setModifyForm(false);
+        setSelectedItem(null);
     };
 
     const addSchedule = () => {
@@ -63,6 +89,27 @@ const Cal = () => {
             start_date: dayjs(selectedDate),
             end_date: dayjs(selectedDate),
         });
+    };
+
+    const MapPreview = ({ latitude, longitude, mapId = "map-preview" }) => {
+        useEffect(() => {
+            if (!window.kakao || !latitude || !longitude) return;
+
+            const container = document.getElementById(mapId);
+            const options = {
+                center: new kakao.maps.LatLng(latitude, longitude),
+                level: 3,
+            };
+
+            const map = new kakao.maps.Map(container, options);
+
+            new kakao.maps.Marker({
+                map,
+                position: options.center,
+            });
+        }, [latitude, longitude, mapId]);
+
+        return <div id={mapId} style={{ width: "100%", height: "150px", borderRadius: "8px" }} />;
     };
 
     useEffect(() => {
@@ -102,23 +149,153 @@ const Cal = () => {
     };
 
     const renderDetails = (item, type) => {
+        if (!item) return null;
+
+        const mapId = `map-${item.id || item.title || Math.random()}`;
+
         switch (type) {
             case "schedule":
                 return (
                     <>
-                        {item.content && <Typography sx={{ mt: 1 }}>{item.content}</Typography>}
-                        {item.address && <Typography sx={{ mt: 0.5 }}>📍 {item.address}</Typography>}
+                        {item.address && (
+                            <Box sx={{ mt: 1 }}>
+                                <MapPreview latitude={item.latitude} longitude={item.longitude} mapId={mapId} />
+                                <Typography sx={{ mt: 1 }}>
+                                    <span style={{ color: "#A8A8A9" }}>장소 : </span>
+                                    {item.address}
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {item.start_date && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>시작날짜 : </span>
+                                {item.start_date}
+                            </Typography>
+                        )}
+                        {item.end_date && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>종료날짜 : </span>
+                                {item.end_date}
+                            </Typography>
+                        )}
+                        {item.content && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>내용 : </span>
+                                {item.content}
+                            </Typography>
+                        )}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 1, my: 1 }}>
+                            <Button
+                                sx={{ backgroundColor: "#FFA500", borderRadius: "50px", mr: 1 }}
+                                onClick={() => handleModifyClick(item)}
+                                variant="contained"
+                            >
+                                수정
+                            </Button>
+                            <Button
+                                sx={{ backgroundColor: "#E9A260", borderRadius: "50px" }}
+                                onClick={handleBack}
+                                variant="contained"
+                            >
+                                확인
+                            </Button>
+                        </Box>
                     </>
                 );
             case "event":
                 return (
-                    <Typography sx={{ mt: 0.5, color: "lightblue", fontWeight: "bold" }}>{item.event_url}</Typography>
+                    <>
+                        {item.address && (
+                            <Box sx={{ mt: 1 }}>
+                                <MapPreview latitude={item.latitude} longitude={item.longitude} mapId={mapId} />
+                                <Typography sx={{ mt: 1 }}>
+                                    <span style={{ color: "#A8A8A9" }}>장소 : </span>
+                                    {item.address}
+                                </Typography>
+                            </Box>
+                        )}
+                        {item.start_date && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>시작날짜 : </span>
+                                {item.start_date}
+                            </Typography>
+                        )}
+                        {item.end_date && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>종료날짜 : </span>
+                                {item.end_date}
+                            </Typography>
+                        )}
+                        {item.event_url && (
+                            <Typography sx={{ mt: 0.5 }}>
+                                <span style={{ color: "#A8A8A9" }}>링크 : </span>
+                                <a
+                                    href={item.event_url}
+                                    style={{ color: "lightblue", textDecoration: "underline" }}
+                                    target="_blank"
+                                >
+                                    {item.event_url}
+                                </a>
+                            </Typography>
+                        )}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 1, my: 1 }}>
+                            <Button
+                                sx={{ backgroundColor: "#E9A260", borderRadius: "50px" }}
+                                onClick={handleBack}
+                                variant="contained"
+                            >
+                                확인
+                            </Button>
+                        </Box>
+                    </>
                 );
             case "reserve":
                 return (
                     <>
-                        {item.address && <Typography sx={{ mt: 0.5 }}>📍 {item.address}</Typography>}
-                        {item.amount && <Typography sx={{ mt: 0.5 }}>{item.amount.toLocaleString()}원</Typography>}
+                        {item.address && (
+                            <Box sx={{ mt: 1 }}>
+                                <MapPreview latitude={item.latitude} longitude={item.longitude} mapId={mapId} />
+                                <Typography sx={{ mt: 1 }}>
+                                    <span style={{ color: "#A8A8A9" }}>장소 : </span>
+                                    {item.address}
+                                </Typography>
+                            </Box>
+                        )}
+                        {item.entry_time && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>시작날짜 : </span>
+                                {item.entry_time}
+                            </Typography>
+                        )}
+                        {item.exit_time && (
+                            <Typography sx={{ mt: 1 }}>
+                                <span style={{ color: "#A8A8A9" }}>종료날짜 : </span>
+                                {item.exit_time}
+                            </Typography>
+                        )}
+                        {item.amount && (
+                            <Typography sx={{ mt: 0.5 }}>
+                                <span style={{ color: "#A8A8A9" }}>결제 금액 : </span>
+                                {item.amount.toLocaleString()}원
+                            </Typography>
+                        )}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 1, my: 1 }}>
+                            <Button
+                                sx={{ backgroundColor: "#2F80ED", borderRadius: "50px", mr: 1 }}
+                                onClick={handleBack}
+                                variant="contained"
+                            >
+                                예약상세
+                            </Button>
+                            <Button
+                                sx={{ backgroundColor: "#E9A260", borderRadius: "50px" }}
+                                onClick={handleBack}
+                                variant="contained"
+                            >
+                                확인
+                            </Button>
+                        </Box>
                     </>
                 );
             default:
@@ -225,17 +402,13 @@ const Cal = () => {
             </Box>
 
             <Box sx={{ px: 2 }}>
-                {!showForm && (
+                {!showForm && !modifyForm && !selectedItem && (
                     <>
                         <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 & 이벤트</h2>
 
                         {selectedSchedules.length > 0 || selectedEvents.length > 0 || selectedReserves.length > 0 ? (
                             openItem.id ? (
                                 <>
-                                    <Button variant="outlined" onClick={handleBack} sx={{ mb: 2 }}>
-                                        이전으로
-                                    </Button>
-
                                     {openItem.type === "schedule" &&
                                         selectedSchedules
                                             .filter((s) => s.id === openItem.id)
@@ -262,77 +435,152 @@ const Cal = () => {
                     </>
                 )}
 
-                {showForm ? (
-                    <Card
-                        sx={{
-                            mt: 2,
-                            mb: 2,
-                            borderRadius: "32px",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                            position: "relative",
-                            display: "flex",
-                        }}
-                    >
-                        <Box
+                {showForm && (
+                    <>
+                        <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 추가</h2>
+                        <Card
                             sx={{
-                                width: "40px",
-                                backgroundColor: "#EB5757",
+                                mt: 2,
+                                mb: 2,
+                                borderRadius: "32px",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                position: "relative",
+                                display: "flex",
                             }}
-                        />
+                        >
+                            <Box
+                                sx={{
+                                    width: "40px",
+                                    backgroundColor: "#EB5757",
+                                }}
+                            />
 
-                        <Box>
-                            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                                <InputLabel>제목</InputLabel>
-                                <Input name="title" value={formData.title} onChange={handleInputChange} />
-                            </FormControl>
+                            <Box sx={{ flex: 1, p: 2 }}>
+                                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>제목</InputLabel>
+                                    <Input name="title" onChange={handleInputChange} />
+                                </FormControl>
 
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <FormHelperText>일정</FormHelperText>
-                                <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                                    <MobileDatePicker
-                                        label="시작일"
-                                        value={formData.start_date}
-                                        onChange={(newValue) => handleDateChange("start_date", newValue)}
-                                        renderInput={(params) => <TextField {...params} fullWidth />}
-                                    />
-                                    <MobileDatePicker
-                                        label="종료일"
-                                        value={formData.end_date}
-                                        onChange={(newValue) => handleDateChange("end_date", newValue)}
-                                        renderInput={(params) => <TextField {...params} fullWidth />}
-                                    />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <FormHelperText>일정</FormHelperText>
+                                    <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                                        <MobileDatePicker
+                                            label="시작일"
+                                            onChange={(newValue) => handleDateChange("start_date", newValue)}
+                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                        />
+                                        <MobileDatePicker
+                                            label="종료일"
+                                            onChange={(newValue) => handleDateChange("end_date", newValue)}
+                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                        />
+                                    </Box>
+                                </LocalizationProvider>
+
+                                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>장소</InputLabel>
+                                    <Input name="address" onChange={handleInputChange} />
+                                </FormControl>
+
+                                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>내용</InputLabel>
+                                    <Input name="content" onChange={handleInputChange} />
+                                </FormControl>
+
+                                <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2, my: 1 }}>
+                                    <Button
+                                        sx={{ backgroundColor: "#27AE60", borderRadius: "50px", mr: 1 }}
+                                        onClick={addSchedule}
+                                        variant="contained"
+                                    >
+                                        저장
+                                    </Button>
+                                    <Button
+                                        sx={{ backgroundColor: "#D9D9D9", borderRadius: "50px" }}
+                                        onClick={() => setShowForm(false)}
+                                        variant="contained"
+                                    >
+                                        취소
+                                    </Button>
                                 </Box>
-                            </LocalizationProvider>
-
-                            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                                <InputLabel>장소</InputLabel>
-                                <Input name="address" value={formData.address} onChange={handleInputChange} />
-                            </FormControl>
-
-                            <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                                <InputLabel>내용</InputLabel>
-                                <Input name="content" value={formData.content} onChange={handleInputChange} />
-                            </FormControl>
-
-                            <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2, my: 1 }}>
-                                <Button
-                                    sx={{ backgroundColor: "#27AE60", borderRadius: "50px", mr: 1 }}
-                                    onClick={addSchedule}
-                                    variant="contained"
-                                >
-                                    저장
-                                </Button>
-                                <Button
-                                    sx={{ backgroundColor: "#D9D9D9", borderRadius: "50px" }}
-                                    onClick={() => setShowForm(false)}
-                                    variant="contained"
-                                >
-                                    취소
-                                </Button>
                             </Box>
-                        </Box>
-                    </Card>
-                ) : (
+                        </Card>
+                    </>
+                )}
+
+                {modifyForm && selectedItem && (
+                    <>
+                        <h2>{format(selectedDate, "yyyy년 MM월 dd일")} 일정 수정</h2>
+                        <Card
+                            sx={{
+                                mt: 2,
+                                mb: 2,
+                                borderRadius: "32px",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                position: "relative",
+                                display: "flex",
+                            }}
+                        >
+                            <Box sx={{ width: "40px", backgroundColor: "#EB5757" }} />
+
+                            <Box sx={{ flex: 1, p: 2 }}>
+                                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>제목</InputLabel>
+                                    <Input name="title" value={formData.title} onChange={handleInputChange} />
+                                </FormControl>
+
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <FormHelperText>일정</FormHelperText>
+                                    <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                                        <MobileDatePicker
+                                            label="시작일"
+                                            value={formData.start_date}
+                                            onChange={(newValue) => handleDateChange("start_date", newValue)}
+                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                        />
+                                        <MobileDatePicker
+                                            label="종료일"
+                                            value={formData.end_date}
+                                            onChange={(newValue) => handleDateChange("end_date", newValue)}
+                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                        />
+                                    </Box>
+                                </LocalizationProvider>
+
+                                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>장소</InputLabel>
+                                    <Input name="address" value={formData.address} onChange={handleInputChange} />
+                                </FormControl>
+
+                                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>내용</InputLabel>
+                                    <Input name="content" value={formData.content} onChange={handleInputChange} />
+                                </FormControl>
+
+                                <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                                    <Button
+                                        sx={{ backgroundColor: "#27AE60", borderRadius: "50px" }}
+                                        onClick={saveModifiedSchedule}
+                                        variant="contained"
+                                    >
+                                        저장
+                                    </Button>
+                                    <Button
+                                        sx={{ backgroundColor: "#D9D9D9", borderRadius: "50px" }}
+                                        onClick={() => {
+                                            setModifyForm(false);
+                                            setSelectedItem(null);
+                                        }}
+                                        variant="contained"
+                                    >
+                                        취소
+                                    </Button>
+                                </Box>
+                            </Box>
+                        </Card>
+                    </>
+                )}
+                {!showForm && !modifyForm && !selectedItem && !openItem?.id && (
                     <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2, my: 1 }}>
                         <Button
                             sx={{ backgroundColor: "#E9A260", borderRadius: "50px" }}
