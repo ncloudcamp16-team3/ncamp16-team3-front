@@ -1,12 +1,21 @@
-import React from "react";
-import TitleBar from "../../components/Global/TitleBar.jsx";
+import React, { useState } from "react";
+import AddPhotoSelect from "../../components/PetSta/AddPhotoSelect.jsx";
+import AddPhotoDetail from "../../components/PetSta/AddPhotoDetail.jsx";
 
 const AddPhoto = () => {
+    const [step, setStep] = useState(1);
+    const [imagePreview, setImagePreview] = useState(null);
     return (
-        <div>
-            <TitleBar name="사진 업로드" />
-            나는포토업로드
-        </div>
+        <>
+            {step === 1 && (
+                <AddPhotoSelect
+                    imagePreview={imagePreview}
+                    setImagePreview={setImagePreview}
+                    goNext={() => setStep(2)}
+                />
+            )}
+            {step === 2 && <AddPhotoDetail imagePreview={imagePreview} onBack={() => setStep(1)} />}
+        </>
     );
 };
 
