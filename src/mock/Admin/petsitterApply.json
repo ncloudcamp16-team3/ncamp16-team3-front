@@ -2,7 +2,7 @@
   {
     "id": 1,
     "sitterExp": "Yes",
-    "image": "../../mock/Admin/images/cat.png",
+    "image": "../../../mock/Admin/images/cat.png",
     "sitterId": "초코맘",
     "age": "20대",
     "grown": "강아지",
@@ -14,7 +14,7 @@
   {
     "id": 2,
     "sitterExp": "Yes",
-    "image": "../../mock/Admin/images/cat.png",
+    "image": "../../../mock/Admin/images/cat.png",
     "sitterId": "초코맘",
     "age": "20대",
     "grown": "강아지",
@@ -26,7 +26,7 @@
   {
     "id": 3,
     "sitterExp": "Yes",
-    "image": "../../mock/Admin/images/cat.png",
+    "image": "../../../mock/Admin/images/cat.png",
     "sitterId": "초코맘",
     "age": "20대",
     "grown": "강아지",
@@ -38,7 +38,7 @@
   {
     "id": 4,
     "sitterExp": "Yes",
-    "image": "../../mock/Admin/images/cat.png",
+    "image": "../../../mock/Admin/images/cat.png",
     "sitterId": "초코맘",
     "age": "20대",
     "grown": "강아지",

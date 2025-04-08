@@ -154,8 +154,30 @@ const PostDetail = () => {
                     </Box>
 
                     {/* 작업 버튼 영역 */}
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
-                        <Button variant="outlined" color="inherit" size="medium" onClick={handleDelete}>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2, gap: 2 }}>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "#e6b17e",
+                                "&:hover": { backgroundColor: "#d9a064" },
+                                borderRadius: 2,
+                                px: 4,
+                            }}
+                            onClick={() => window.history.back()}
+                        >
+                            뒤로
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "#e2ccb5",
+                                "&:hover": { backgroundColor: "#d4bea7" },
+                                color: "#000",
+                                borderRadius: 2,
+                                px: 4,
+                            }}
+                            onClick={handleDelete}
+                        >
                             삭제
                         </Button>
                     </Box>

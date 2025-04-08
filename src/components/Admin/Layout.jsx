@@ -24,6 +24,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import icon from "../../assets/images/Global/icon1.svg";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // 사이드바 너비 정의
 const drawerWidth = 350;
@@ -144,11 +145,16 @@ const AccordionHeaderButton = styled(ListItemButton)(({ open }) => ({
 
 const Layout = ({ children }) => {
     const { setSelectedMenu } = useAdmin();
-    const [selectedIndex, setSelectedIndex] = useState(1); // 초기값을 1로 설정 (게시글 목록)
-    const [openPosts, setOpenPosts] = useState(true); // 게시글 관리 아코디언 열림/닫힘 상태
-    const [openPetsitter, setOpenPetsitter] = useState(false); // 펫시터 관리 아코디언 열림/닫힘 상태
-    const [openCompany, setOpenCompany] = useState(false); // 업체 관리 아코디언 열림/닫힘 상태
+    const location = useLocation();
     const navigate = useNavigate();
+
+    // URL에 따라 초기 아코디언 상태 결정
+    const initialPath = location.pathname;
+
+    const [selectedIndex, setSelectedIndex] = useState(0); // 초기값을 0으로 설정
+    const [openPosts, setOpenPosts] = useState(initialPath.includes("/admin/board"));
+    const [openPetsitter, setOpenPetsitter] = useState(initialPath.includes("/admin/petsitter"));
+    const [openCompany, setOpenCompany] = useState(initialPath.includes("/admin/facility"));
 
     const handleListItemClick = (index, menuTitle) => {
         setSelectedIndex(index);
@@ -172,68 +178,70 @@ const Layout = ({ children }) => {
         navigate("/admin");
     };
 
-    // 게시글 관리 아코디언 토글
+    // 게시글 관리 아코디언 토글 - 단순히 열고 닫는 기능만 수행
     const handlePostsClick = (event) => {
-        // 이벤트 전파 중지
         event.preventDefault();
         event.stopPropagation();
+        setOpenPosts(!openPosts);
 
-        // 현재 상태의 반대값
-        const newOpenState = !openPosts;
-
-        // 열리는 경우에만 다른 아코디언들을 닫음
-        if (newOpenState) {
+        // 다른 아코디언 닫기
+        if (!openPosts) {
             setOpenPetsitter(false);
             setOpenCompany(false);
         }
-
-        setOpenPosts(newOpenState);
     };
 
-    // 펫시터 관리 아코디언 토글
+    // 펫시터 관리 아코디언 토글 - 단순히 열고 닫는 기능만 수행
     const handlePetsitterClick = (event) => {
-        // 이벤트 전파 중지
         event.preventDefault();
         event.stopPropagation();
+        setOpenPetsitter(!openPetsitter);
 
-        // 현재 상태의 반대값
-        const newOpenState = !openPetsitter;
-
-        // 열리는 경우에만 다른 아코디언들을 닫음
-        if (newOpenState) {
+        // 다른 아코디언 닫기
+        if (!openPetsitter) {
             setOpenPosts(false);
             setOpenCompany(false);
         }
-
-        setOpenPetsitter(newOpenState);
     };
 
-    // 업체 관리 아코디언 토글
+    // 업체 관리 아코디언 토글 - 단순히 열고 닫는 기능만 수행
     const handleCompanyClick = (event) => {
-        // 이벤트 전파 중지
         event.preventDefault();
         event.stopPropagation();
+        setOpenCompany(!openCompany);
 
-        // 현재 상태의 반대값
-        const newOpenState = !openCompany;
-
-        // 열리는 경우에만 다른 아코디언들을 닫음
-        if (newOpenState) {
+        // 다른 아코디언 닫기
+        if (!openCompany) {
             setOpenPosts(false);
             setOpenPetsitter(false);
         }
-
-        setOpenCompany(newOpenState);
     };
 
-    // 컴포넌트 초기 마운트 시 기본 선택 상태 설정
+    // 2. URL 변경 시 선택된 메뉴 항목만 업데이트
     useEffect(() => {
-        // 게시글 관리 아코디언을 열고, 게시글 목록(인덱스 1)을 선택
-        setOpenPosts(true);
-        setOpenPetsitter(false);
-        setOpenCompany(false);
-        setSelectedIndex(1);
-    }, []); // 빈 의존성 배열: 컴포넌트 최초 마운트 시에만 실행
+        const path = location.pathname;
+
+        // URL에 따라 선택된 메뉴 항목 설정 (아코디언 상태는 수정하지 않음)
+        if (path.includes("/admin/board/list")) {
+            setSelectedIndex(1);
+            setSelectedMenu("게시글 목록");
+        } else if (path.includes("/admin/board/post")) {
+            setSelectedIndex(2);
+            setSelectedMenu("공지글 작성");
+        } else if (path.includes("/admin/petsitter/list")) {
+            setSelectedIndex(3);
+            setSelectedMenu("펫시터 목록");
+        } else if (path.includes("/admin/petsitter/apply")) {
+            setSelectedIndex(4);
+            setSelectedMenu("펫시터 신청목록");
+        } else if (path.includes("/admin/facility/list")) {
+            setSelectedIndex(5);
+            setSelectedMenu("업체 목록");
+        } else if (path.includes("/admin/facility/apply")) {
+            setSelectedIndex(6);
+            setSelectedMenu("업체 등록");
+        }
+    }, [location]);
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -271,7 +279,7 @@ const Layout = ({ children }) => {
                             sx={{
                                 pl: 4,
                                 backgroundColor: "#FDF1E5",
-                                margin: "0 8px",
+                                margin: "1px 8px",
                                 paddingLeft: 0,
                                 borderTopRightRadius: 0,
                                 borderTopLeftRadius: 0,

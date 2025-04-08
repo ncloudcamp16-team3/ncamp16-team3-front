@@ -1,6 +1,7 @@
 import "./css/App.css";
 import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Main from "./pages/Main/Main.jsx";
 import Login from "./pages/User/Login.jsx";
 import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
@@ -17,16 +18,15 @@ import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Calendar.jsx";
-import Chat from "./pages/Chat/Chat.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import { AdminProvider } from "./components/Admin/AdminContext.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
-import AddVideo from "./pages/PetSta/AddVideo.jsx";
-import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
-import Main from "./pages/PetMeeting/Main.jsx";
+import AdminPetsitterDetail from "./pages/Admin/AdminPetsitterDetail.jsx";
+import AdminPetSitterApplyList from "./pages/Admin/AdminPetSitterApplyList.jsx";
+import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
 const AdminLayout = ({ children }) => {
@@ -84,7 +84,7 @@ function App() {
                             path="/admin/petsitter/:id"
                             element={
                                 <AdminLayout>
-                                    <AdminPetsitterList />
+                                    <AdminPetsitterDetail />
                                 </AdminLayout>
                             }
                         />
@@ -92,7 +92,15 @@ function App() {
                             path="/admin/petsitter/apply"
                             element={
                                 <AdminLayout>
-                                    <AdminNotice />
+                                    <AdminPetSitterApplyList />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/petsitter/apply/:id"
+                            element={
+                                <AdminLayout>
+                                    <AdminPetSitterApplyDetail />
                                 </AdminLayout>
                             }
                         />
@@ -112,8 +120,6 @@ function App() {
                                 </AdminLayout>
                             }
                         />
-                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                        <Route path="/admin" element={<Admin />} />
                         <Route element={<Layout0 />}>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
@@ -123,7 +129,6 @@ function App() {
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
-                            <Route path="/chat" element={<Chat />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
                             <Route path="/notification" element={<Notification />} />
