@@ -18,6 +18,9 @@ const AddPhotoDetail = ({ imagePreview, onBack }) => {
                         borderRadius="25px"
                         position="relative"
                         sx={{}}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
                     >
                         <img
                             src={imagePreview}
