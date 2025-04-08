@@ -5,12 +5,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
 import { Box, Button, FormHelperText, InputLabel, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
+import { useRegister } from "./RegisterContext.jsx";
 
-const Step2 = ({ nextStep, handleChange, formData, prevStep }) => {
-    const navigate = useNavigate();
-
+const Step2 = () => {
+    const { nextStep, handleChange, formData, prevStep } = useRegister();
     return (
         <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
             <Typography variant="body1" fontWeight="bold" mb={1}>

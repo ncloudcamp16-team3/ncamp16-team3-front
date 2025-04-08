@@ -10,9 +10,11 @@ import TextareaAutosize from "@mui/material/TextareaAutosize";
 import { Box, Button, FormHelperText, InputLabel, Input } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import dayjs from "dayjs";
+import { useRegister } from "./RegisterContext.jsx";
 
-const Step3 = ({ nextStep, handleChange, formData, prevStep }) => {
-    // 생일 입력 처리
+const Step3 = () => {
+    const { nextStep, handleChange, formData, prevStep } = useRegister();
+
     const handleDateChange = (newValue) => {
         handleChange({ target: { name: "petBirthday", value: newValue ? newValue.format("YYYY-MM-DD") : "" } });
     };

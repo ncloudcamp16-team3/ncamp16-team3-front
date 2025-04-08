@@ -1,11 +1,13 @@
 import * as React from "react";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, InputAdornment, InputLabel, Typography, FormHelperText } from "@mui/material";
+import { Box, Button, InputLabel, Typography, FormHelperText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
+import { useRegister } from "./RegisterContext.jsx";
+const Step1 = () => {
+    const { nextStep, nickname, setNickname } = useRegister();
 
-const Step1 = ({ nextStep, prevStep, nickname, setNickname }) => {
     const navigate = useNavigate();
     const [error, setError] = React.useState(false);
 
@@ -38,7 +40,6 @@ const Step1 = ({ nextStep, prevStep, nickname, setNickname }) => {
                     placeholder="2~16자 이내로 입력해주세요"
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
-                    startAdornment={<InputAdornment />}
                 />
                 {error && <FormHelperText>닉네임은 2~16자 이내로 입력해주세요.</FormHelperText>}
             </FormControl>

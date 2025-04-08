@@ -2,9 +2,12 @@ import React from "react";
 import { Box, Typography, Button, Avatar, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { useRegister } from "./RegisterContext.jsx";
 
-const Step5 = ({ nickname, petDataList, prevStep, goToStep2 }) => {
+const Step5 = () => {
     const navigate = useNavigate();
+
+    const { nickname, petDataList, prevStep, goToStep2 } = useRegister();
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3}>
