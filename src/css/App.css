@@ -21,6 +21,10 @@ body {
     background-color: aliceblue;
 }
 
+body.modal-open {
+    overflow: hidden; /* 모달이 열려도 스크롤바 유지 */
+}
+
 .mobile-view {
     background-color: #FFFFFF;
     display:flex;
@@ -97,3 +101,5 @@ body {
     min-height: 100vh;
     padding-bottom: 65px;
 }
+
+
