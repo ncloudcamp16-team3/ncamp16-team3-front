@@ -30,9 +30,8 @@ export const RegisterProvider = ({ children }) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleStep4Next = () => {
-        setPetDataList((prevList) => [...prevList, formData]);
-        setFormData(initialPetData);
+    const handleStep4Next = (newPetData) => {
+        setPetDataList([...petDataList, newPetData]);
         setStep(5);
     };
 

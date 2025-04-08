@@ -17,21 +17,30 @@ const Step4 = () => {
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
 
     useEffect(() => {
-        if (formData.petPhotos && formData.petPhotos.length > 0) {
-            const loadedPreviews = formData.petPhotos.map((file) =>
-                typeof file === "string" ? file : URL.createObjectURL(file)
-            );
-            setPreviews(loadedPreviews);
-        }
+        // 새로운 URL 생성
+        const loadedPreviews = (formData.petPhotos || []).map((file) =>
+            typeof file === "string" ? file : URL.createObjectURL(file)
+        );
+
+        setPreviews((prev) => {
+            prev.forEach((url) => URL.revokeObjectURL(url)); // 기존 URL 제거
+            return loadedPreviews;
+        });
+
+        return () => {
+            // unmount 시 URL 정리
+            loadedPreviews.forEach((url) => {
+                if (typeof url === "string") return;
+                URL.revokeObjectURL(url);
+            });
+        };
     }, [formData.petPhotos]);
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
 
-        const newPreviews = files.map((file) => URL.createObjectURL(file));
-        const updatedPhotos = formData.petPhotos ? [...formData.petPhotos, ...files] : [...files];
-        const updatedPreviews = [...previews, ...newPreviews];
+        const updatedPhotos = [...(formData.petPhotos || []), ...files];
 
         handleChange({
             target: {
@@ -40,15 +49,12 @@ const Step4 = () => {
             },
         });
 
-        setPreviews(updatedPreviews);
+        e.target.value = null;
     };
 
     const removePhoto = (index) => {
         const updatedPhotos = [...formData.petPhotos];
-        const updatedPreviews = [...previews];
-
         updatedPhotos.splice(index, 1);
-        updatedPreviews.splice(index, 1);
 
         handleChange({
             target: {
@@ -56,8 +62,6 @@ const Step4 = () => {
                 value: updatedPhotos,
             },
         });
-
-        setPreviews(updatedPreviews);
 
         if (mainPhotoIndex === index) {
             setMainPhotoIndex(0);
@@ -71,17 +75,16 @@ const Step4 = () => {
     };
 
     const handleNext = () => {
-        handleChange({
-            target: {
-                name: "mainPhotoIndex",
-                value: mainPhotoIndex,
-            },
-        });
-        handleStep4Next();
+        const newPetData = {
+            ...formData,
+            mainPhotoIndex,
+        };
+        handleStep4Next(newPetData);
     };
 
     return (
         <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
+            {/* 중성화 여부 */}
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                 <FormHelperText>
                     중성화 여부를 알려주세요 <ReqUi />
@@ -98,6 +101,7 @@ const Step4 = () => {
                 </RadioGroup>
             </FormControl>
 
+            {/* 좋아하는 것 */}
             <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
                 <InputLabel htmlFor="petFavorite" sx={{ mb: 4 }}>
                     좋아하는 것을 알려주세요
@@ -111,10 +115,10 @@ const Step4 = () => {
                 />
             </FormControl>
 
+            {/* 사진 업로드 */}
             <Typography variant="body1" mt={3} mb={2}>
                 아이 사진등록하기
             </Typography>
-
             <FormHelperText sx={{ mb: 1 }}>
                 첫번째 사진으로 프로필 사진이 등록됩니다 <ReqUi />
             </FormHelperText>
@@ -128,6 +132,7 @@ const Step4 = () => {
                 <Stack direction="row" spacing={2} flexWrap="wrap">
                     {previews.map((src, index) => (
                         <Box key={index} position="relative" textAlign="center">
+                            {/* 삭제 버튼 */}
                             <IconButton
                                 size="small"
                                 onClick={() => removePhoto(index)}
@@ -142,6 +147,7 @@ const Step4 = () => {
                                 <CancelIcon fontSize="small" />
                             </IconButton>
 
+                            {/* 대표사진 선택 */}
                             <IconButton
                                 size="small"
                                 onClick={() => selectMainPhoto(index)}
@@ -175,12 +181,13 @@ const Step4 = () => {
                 </Stack>
             )}
 
+            {/* 이동 버튼 */}
             <Button variant="contained" onClick={prevStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 뒤로
             </Button>
 
             <Button variant="contained" onClick={handleNext} sx={{ mt: 2, width: "100%", backgroundColor: "#E9A260" }}>
-                다음
+                작성 완료
             </Button>
         </Box>
     );

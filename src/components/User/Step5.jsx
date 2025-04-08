@@ -7,7 +7,7 @@ import { useRegister } from "./RegisterContext.jsx";
 const Step5 = () => {
     const navigate = useNavigate();
 
-    const { nickname, petDataList, prevStep, goToStep2 } = useRegister();
+    const { nickname, petDataList, goToStep2 } = useRegister();
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3}>
@@ -72,10 +72,6 @@ const Step5 = () => {
 
             <Button variant="outlined" sx={{ width: "100%" }} onClick={goToStep2}>
                 반려동물 추가
-            </Button>
-
-            <Button variant="contained" onClick={prevStep} sx={{ width: "100%", backgroundColor: "#E9A260" }}>
-                뒤로
             </Button>
 
             <Button
