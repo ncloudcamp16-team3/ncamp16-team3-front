@@ -48,8 +48,9 @@ function App() {
                             <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
                             <Route path="petsitter/apply" element={<AdminPetSitterApplyList />} />
                             <Route path="petsitter/apply/:id" element={<AdminPetSitterApplyDetail />} />
-                            <Route path="facility/list" element={<AdminNotice />} />
-                            <Route path="facility/apply" element={<AdminNotice />} />
+                            <Route path="facility/list" element={<AdminFacilityList />} />
+                            <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
+                            <Route path="facility/add" element={<AdminFacilityAdd />} />
                         </Route>
                         <Route element={<Layout0 />}>
                             <Route path="/login" element={<Login />} />
