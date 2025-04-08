@@ -1,7 +1,7 @@
 import "./css/App.css";
 import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Main from "./pages/Main/Main.jsx";
+import Main from "./pages/PetMeeting/Main.jsx";
 import Login from "./pages/User/Login.jsx";
 import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
@@ -27,6 +27,8 @@ import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 import AdminPetsitterDetail from "./pages/Admin/AdminPetsitterDetail.jsx";
 import AdminPetSitterApplyList from "./pages/Admin/AdminPetSitterApplyList.jsx";
 import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.jsx";
+import AddVideo from "./pages/PetSta/AddVideo.jsx";
+import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
 const AdminLayout = ({ children }) => {
