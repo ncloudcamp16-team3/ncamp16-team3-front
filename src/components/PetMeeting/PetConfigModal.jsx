@@ -10,9 +10,12 @@ const PetConfigModal = () => {
     const [selectedActivity, setSelectedActivity] = useState(null);
 
     useEffect(() => {
-        if (pet?.name) {
+        if (pet) {
             setSelectedPet(pet.name);
             setSelectedActivity(pet.activity_status);
+        } else {
+            setSelectedPet(null);
+            setSelectedActivity(null);
         }
     }, [pet, open]);
 
@@ -89,7 +92,7 @@ const PetConfigModal = () => {
                             }}
                             onClick={() => setDrop((prev) => !prev)}
                         >
-                            {selectedPet}
+                            {selectedPet ? selectedPet : "친구 선택"}
                         </Button>
                         {drop && <SelectPetDropdown selectedPet={selectedPet} setSelectedPet={setSelectedPet} />}
                     </Box>

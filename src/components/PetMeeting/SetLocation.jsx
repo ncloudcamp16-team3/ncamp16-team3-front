@@ -1,14 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import Plus from "../../assets/images/PetMeeting/plus.png";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const SetLocation = () => {
-    const { view, setView } = useContext(PetMeetingContext);
-
-    useEffect(() => {
-        console.log("view changed to:", view);
-    }, [view]);
+    const { setView } = useContext(PetMeetingContext);
 
     return (
         <Box
@@ -16,7 +12,7 @@ const SetLocation = () => {
                 borderRadius: "10px",
                 border: "2px solid rgba(0, 0, 0, 0.3)",
                 width: "100%",
-                height: "250px",
+                height: "300px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -25,7 +21,6 @@ const SetLocation = () => {
             }}
             onClick={() => {
                 setView("locationConfig");
-                console.log("onClick view change:", view);
             }}
         >
             <Typography

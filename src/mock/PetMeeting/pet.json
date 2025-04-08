@@ -1,12 +1,3 @@
 {
-  "id": 1,
-  "owner_id": 101,
-  "pet_type_id": 1,
-  "name": "크릉이",
-  "gender": "남",
-  "birth": "2022-06-15",
-  "weight": 5.2,
-  "info": "우리 애는 안물어용~",
-  "neutured": true,
-  "activity_status": "NONE"
+
 }
