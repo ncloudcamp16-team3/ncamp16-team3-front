@@ -129,7 +129,7 @@ const AdminHeader = ({
                     sx={{
                         display: "flex",
                         justifyContent: "flex-start",
-                        width: "220px",
+                        minWidth: "15%",
                     }}
                 >
                     <Typography
@@ -166,18 +166,30 @@ const AdminHeader = ({
                             endIcon={<KeyboardArrowDownIcon />}
                             onClick={handleFilterClick}
                             disableElevation
-                            sx={{ height: "41px" }}
+                            sx={{ height: "41px", width: "200px" }}
                         >
                             {currentFilter}
                         </FilterButton>
 
-                        <Menu anchorEl={anchorEl} open={open} onClose={handleFilterClose} elevation={2}>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleFilterClose}
+                            elevation={2}
+                            sx={{
+                                width: 405, // 픽셀 단위로 지정 (더 정확한 크기 조절)
+                                "& .MuiPaper-root": {
+                                    width: 405, // 내부 Paper 컴포넌트의 너비도 같이 설정
+                                    maxWidth: "49%", // 화면 크기에 따른 최대 너비 제한
+                                },
+                            }}
+                        >
                             {filters.map((filter) => (
                                 <MenuItem
                                     key={filter}
                                     onClick={() => handleFilterSelect(filter)}
                                     selected={filter === currentFilter}
-                                    sx={{ width: "148px" }}
+                                    sx={{ width: "100%" }} // MenuItem의 너비를 부모 컨테이너에 맞춤
                                 >
                                     {filter}
                                 </MenuItem>
