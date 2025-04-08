@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useAdmin } from "./AdminContext.jsx";
+import { Link } from "react-router-dom";
 
 // 아이콘 import
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -170,7 +171,7 @@ const Layout = ({ children }) => {
         } else if (index === 5) {
             navigate("/admin/facility/list");
         } else if (index === 6) {
-            navigate("/admin/facility/apply");
+            navigate("/admin/facility/add");
         }
     };
 
@@ -237,7 +238,7 @@ const Layout = ({ children }) => {
         } else if (path.includes("/admin/facility/list")) {
             setSelectedIndex(5);
             setSelectedMenu("업체 목록");
-        } else if (path.includes("/admin/facility/apply")) {
+        } else if (path.includes("/admin/facility/add")) {
             setSelectedIndex(6);
             setSelectedMenu("업체 등록");
         }
@@ -247,18 +248,20 @@ const Layout = ({ children }) => {
         <Box sx={{ display: "flex" }}>
             {/* 사이드바 */}
             <StyledDrawer variant="permanent" anchor="left">
-                <DrawerHeader style={{ justifyContent: "center" }}>
-                    <Box
-                        component="img"
-                        src={icon}
-                        alt="아이콘"
-                        sx={{
-                            objectFit: "contain",
-                            margin: "0 6px 3px 0",
-                        }}
-                    />
-                    <Typography variant="h5">꼬리친구들</Typography>
-                </DrawerHeader>
+                <Link to="/admin/board/list" style={{ textDecoration: "none", color: "inherit" }}>
+                    <DrawerHeader style={{ justifyContent: "center", cursor: "pointer" }}>
+                        <Box
+                            component="img"
+                            src={icon}
+                            alt="아이콘"
+                            sx={{
+                                objectFit: "contain",
+                                margin: "0 6px 3px 0",
+                            }}
+                        />
+                        <Typography variant="h5">꼬리친구들</Typography>
+                    </DrawerHeader>
+                </Link>
 
                 <MenuSection>
                     {/* 게시글 관리 - 아코디언 헤더 */}

@@ -29,6 +29,9 @@ import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 import AdminPetsitterDetail from "./pages/Admin/AdminPetsitterDetail.jsx";
 import AdminPetSitterApplyList from "./pages/Admin/AdminPetSitterApplyList.jsx";
 import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
+import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
+import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 
 // 관리자 경로를 AdminLayout으로 감싸는 컴포넌트
 const AdminLayout = ({ children }) => {
@@ -110,15 +113,23 @@ function App() {
                             path="/admin/facility/list"
                             element={
                                 <AdminLayout>
-                                    <AdminNotice />
+                                    <AdminFacilityList />
                                 </AdminLayout>
                             }
                         />
                         <Route
-                            path="/admin/facility/apply"
+                            path="/admin/facility/list/:id"
                             element={
                                 <AdminLayout>
-                                    <AdminNotice />
+                                    <AdminFacilityDetail />
+                                </AdminLayout>
+                            }
+                        />
+                        <Route
+                            path="/admin/facility/add"
+                            element={
+                                <AdminLayout>
+                                    <AdminFacilityAdd />
                                 </AdminLayout>
                             }
                         />
