@@ -28,6 +28,7 @@ import AdminPetSitterApplyList from "./pages/Admin/AdminPetSitterApplyList.jsx";
 import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
+import AdminLayout from "./components/Admin/AdminLayout.jsx";
 
 function App() {
     return (
