@@ -22,7 +22,6 @@ const DaumPost = ({ setAddressObj }) => {
             `${localAddress} ${fullAddress.replace(localAddress, "")}`.trim() +
             (extraAddress ? ` (${extraAddress})` : "");
 
-        // 좌표 변환 (주소 -> 위도/경도)
         if (window.kakao?.maps?.services) {
             const geocoder = new window.kakao.maps.services.Geocoder();
             geocoder.addressSearch(fullAddress, (result, status) => {
