@@ -1,7 +1,7 @@
 import "./css/App.css";
 import Layout1 from "./components/Global/Layout1.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Main from "./pages/Main/Main.jsx";
+import Main from "./pages/PetMeeting/Main.jsx";
 import Login from "./pages/User/Login.jsx";
 import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
@@ -12,8 +12,6 @@ import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
-import EditPet from "./pages/User/EditPet.jsx";
-import AddPet from "./pages/User/AddPet.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
@@ -28,6 +26,9 @@ import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 import AdminPetsitterDetail from "./pages/Admin/AdminPetsitterDetail.jsx";
 import AdminPetSitterApplyList from "./pages/Admin/AdminPetSitterApplyList.jsx";
 import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
+import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
+import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
@@ -64,8 +65,6 @@ function App() {
                             <Route path="/calendar" element={<Cal />} />
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
-                            <Route path="/add-pet" element={<AddPet />} />
-                            <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
