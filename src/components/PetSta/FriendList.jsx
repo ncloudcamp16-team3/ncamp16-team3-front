@@ -1,14 +1,18 @@
-import React, { useMemo, useRef } from "react";
+import React, { useContext, useMemo, useRef } from "react";
 import FriendsData from "../../mock/PetSta/friends.json";
 import FriendIcon from "./FriendIcon.jsx";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { Context } from "../../context/Context.jsx";
 
 const FriendList = () => {
     const scrollRef = useRef(null); // 스크롤할 영역을 참조하기 위한 ref
     const isDragging = useRef(false); // 드래그 상태를 추적하는 ref
     const startX = useRef(0); // 드래그 시작 위치
     const scrollLeft = useRef(0); // 드래그 시작 시 스크롤 위치
+    const navigate = useNavigate();
+    const { user } = useContext(Context);
 
     const friends = useMemo(() => FriendsData, []);
     const theme = useTheme();
@@ -73,10 +77,11 @@ const FriendList = () => {
                             height: "42px",
                             flexShrink: 0, // 크기를 고정하여 스크롤 가능하게 설정
                         }}
+                        onClick={() => navigate(`/petsta/user/${user.id}`)}
                     >
                         <Box
                             component="img"
-                            src={"./mock/Global/images/haribo.jpg"}
+                            src={`./mock/Global/images/${user.photo}`}
                             alt="profile"
                             sx={{
                                 maxWidth: "100%",
@@ -86,7 +91,7 @@ const FriendList = () => {
                     </Box>
                 </Box>
                 <Typography marginTop="4px" fontSize="11px" color={theme.secondary}>
-                    하리보
+                    {user.name}
                 </Typography>
             </Box>
             {friends.map((friend, index) => (

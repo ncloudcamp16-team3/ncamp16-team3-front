@@ -98,7 +98,7 @@ const Header = () => {
                 </MenuItem>
 
                 <MenuItem
-                    onClick={handleClickMenu("/MyPage")}
+                    onClick={handleClickMenu("/mypage")}
                     sx={{
                         display: "flex",
                         alignItems: "flex-end",

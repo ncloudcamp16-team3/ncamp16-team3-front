@@ -31,6 +31,7 @@ import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.j
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
+import UserPage from "./pages/PetSta/UserPage.jsx";
 
 function App() {
     return (
@@ -68,6 +69,7 @@ function App() {
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                            <Route path="/petsta/user/:user_id" element={<UserPage />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
