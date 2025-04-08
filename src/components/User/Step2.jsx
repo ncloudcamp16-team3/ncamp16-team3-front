@@ -49,7 +49,7 @@ const Step2 = () => {
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petRegistration}>
                 <InputLabel htmlFor="petRegistration">
-                    애완동물을 등록해주세요 <ReqUi />
+                    반려동물을 등록해주세요 <ReqUi />
                 </InputLabel>
                 <Input
                     required
