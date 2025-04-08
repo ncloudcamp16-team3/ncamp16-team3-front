@@ -5,11 +5,12 @@ import { Box, Button, InputLabel, Typography, FormHelperText } from "@mui/materi
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
+import { useState } from "react";
 const Step1 = () => {
     const { nextStep, nickname, setNickname } = useRegister();
 
     const navigate = useNavigate();
-    const [error, setError] = React.useState(false);
+    const [error, setError] = useState(false);
 
     const handleNext = () => {
         if (!nickname || nickname.trim().length < 2 || nickname.trim().length > 16) {
