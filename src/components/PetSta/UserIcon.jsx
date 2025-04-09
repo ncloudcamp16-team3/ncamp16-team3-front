@@ -17,6 +17,7 @@ const UserIcon = ({ userInfo }) => {
         >
             <Box
                 component="span"
+                className="custom-gradient-bg"
                 position="absolute"
                 top="0"
                 left="0"
