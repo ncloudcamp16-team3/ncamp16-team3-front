@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Box, Typography, Button, Card, CardContent, IconButton, Link, Tooltip } from "@mui/material";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Box, Typography, Button, Card, CardContent, IconButton, Link, Tooltip, Avatar } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
 import petEx from "/src/assets/images/User/pet_ex.svg";
 import sitter from "/src/assets/images/User/petsit_req.svg";
 import petsData from "../../mock/User/pet.json";
@@ -10,6 +9,8 @@ import sitterStatusData from "../../mock/User/petsitter.json";
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
 import { Context } from "../../context/Context.jsx";
 import { useNavigate } from "react-router-dom";
+import penIcon1 from "/src/assets/images/User/pen_1.svg";
+import penIcon2 from "/src/assets/images/User/pen_2.svg";
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -20,14 +21,17 @@ const MyPage = () => {
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
     const [openNicknameModal, setOpenNicknameModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         setPets(petsData);
-        setSitterStatus(sitterStatusData);
+        setSitterStatus(sitterStatusData[0]);
     }, []);
+
     const handleEditPet = (petId) => {
         navigate(`/pet/edit/${petId}`);
     };
+
     const handleHoverEnter = (id) => setHover((prev) => ({ ...prev, [id]: true }));
     const handleHoverLeave = (id) => setHover((prev) => ({ ...prev, [id]: false }));
 
@@ -58,40 +62,147 @@ const MyPage = () => {
         navigate("/add-pet");
     };
 
+    const handleProfilePhotoUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("이미지 크기는 5MB 이하여야 합니다.");
+            return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+            alert("이미지 파일만 업로드 가능합니다.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setUser((prev) => ({
+                ...prev,
+                photo: event.target.result,
+            }));
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    const handleProfileClick = () => {
+        fileInputRef.current.click();
+    };
+
     return (
         <Box sx={{ width: "100%", p: 2, pb: 8 }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+            {/* 상단 헤더 */}
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 2,
+                    justifyContent: "space-between",
+                }}
+            >
                 <Typography variant="h6" fontWeight="bold">
                     회원정보
                 </Typography>
             </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+
+            {/* 숨겨진 파일 입력 필드 */}
+            <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleProfilePhotoUpload}
+            />
+
+            {/* 프로필 섹션 */}
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 3,
+                    pb: 2,
+                    borderBottom: "1px solid #F0F0F0",
+                }}
+            >
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography variant="subtitle1" sx={{ mr: 1 }}>
-                        {user.name}
-                    </Typography>
-                    <IconButton size="small" sx={{ color: "#666", p: 0 }} onClick={handleOpenNicknameModal}>
-                        <EditIcon fontSize="small" />
-                    </IconButton>
+                    {/* 프로필 사진 */}
+                    <Box sx={{ position: "relative", mr: 2 }}>
+                        <Avatar
+                            src="/src/assets/images/User/profile-pic.jpg"
+                            alt="프로필"
+                            sx={{
+                                width: 60,
+                                height: 60,
+                                bgcolor: "#FF5C5C",
+                            }}
+                        />
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                bottom: 0,
+                                right: 0,
+                                width: 12,
+                                height: 12,
+                                bgcolor: "#1877F2",
+                                borderRadius: "50%",
+                                border: "1px solid white",
+                            }}
+                        />
+
+                        {/* 펜 아이콘 (편집 버튼) */}
+                        <Box
+                            onClick={handleProfileClick}
+                            sx={{
+                                position: "absolute",
+                                bottom: 0,
+                                right: -8,
+                                width: 24,
+                                height: 24,
+                                bgcolor: "#1877F2",
+                                borderRadius: "50%",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                cursor: "pointer",
+                                zIndex: 2,
+                            }}
+                        >
+                            <img src={penIcon1} alt="Edit" width="15" height="13" />
+                        </Box>
+                    </Box>
+
+                    {/* 사용자 이름과 편집 버튼 */}
+                    <Box display="flex" alignItems="center">
+                        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>USER1823</Typography>
+                        <IconButton size="small" onClick={handleOpenNicknameModal} sx={{ ml: 0.5, p: 0 }}>
+                            <img src={penIcon2} alt="Edit" width="16" height="16" />
+                        </IconButton>
+                    </Box>
                 </Box>
+
                 <Button
                     variant="contained"
                     size="small"
-                    startIcon={<AddIcon />}
                     onClick={handleAddPet}
                     sx={{
                         bgcolor: "#E9A260",
                         color: "white",
                         "&:hover": { bgcolor: "#d0905a" },
-                        fontSize: "0.75rem",
+                        fontSize: "12px",
                         py: 0.5,
-                        px: 2,
+                        px: 1.5,
+                        borderRadius: "4px",
+                        boxShadow: "none",
                     }}
                 >
                     동물 추가
                 </Button>
             </Box>
 
+            {/* 반려동물 목록 */}
             <Box sx={{ mb: 3 }}>
                 {pets.map((pet) => (
                     <Card
@@ -99,7 +210,7 @@ const MyPage = () => {
                         sx={{
                             mb: 2,
                             borderRadius: "12px",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
                             position: "relative",
                             transition: "transform 0.2s ease",
                             transform: hover[pet.id] ? "scale(1.02)" : "scale(1)",
@@ -113,7 +224,7 @@ const MyPage = () => {
                                     component="img"
                                     src={petEx}
                                     alt={pet.name}
-                                    sx={{ width: 85, height: 85, borderRadius: "50%", mr: 2, flexShrink: 0 }}
+                                    sx={{ width: 50, height: 50, borderRadius: "50%", mr: 2, flexShrink: 0 }}
                                 />
                                 <Tooltip title="수정하기">
                                     <IconButton
@@ -124,35 +235,33 @@ const MyPage = () => {
                                             right: 2,
                                             bottom: 2,
                                             background: "#f0f0f0",
-                                            width: 28,
-                                            height: 28,
-                                            p: 0.5,
+                                            width: 20,
+                                            height: 20,
+                                            p: 0.3,
                                             opacity: hover[pet.id] ? 1 : 0.7,
                                         }}
                                     >
-                                        <EditIcon fontSize="small" />
+                                        <img src={penIcon2} alt="Edit" width="12" height="12" />
                                     </IconButton>
                                 </Tooltip>
                             </Box>
                             <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
                                 <Box>
-                                    <Typography variant="subtitle1">{pet.name}</Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{pet.name}</Typography>
+                                    <Typography sx={{ fontSize: "12px", color: "#999" }}>
                                         {pet.pet_type_name} · {pet.gender} · {pet.weight}kg
                                     </Typography>
                                 </Box>
                             </Box>
-                            <IconButton
-                                size="small"
-                                sx={{ position: "absolute", right: 8, top: 8, color: "#999", bgcolor: "white", p: 0.5 }}
-                            >
-                                <CloseIcon fontSize="small" />
+                            <IconButton size="small" sx={{ color: "#ccc", p: 0.3 }}>
+                                <CloseIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                         </CardContent>
                     </Card>
                 ))}
             </Box>
 
+            {/* 펫시터 섹션 */}
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
                     펫시터
@@ -183,9 +292,10 @@ const MyPage = () => {
                             sx={{
                                 bgcolor: "#E9A260",
                                 "&:hover": { bgcolor: "#d0905a" },
-                                borderRadius: "25px",
+                                borderRadius: "4px",
                                 py: 0.7,
                                 fontSize: "0.9rem",
+                                boxShadow: "none",
                             }}
                         >
                             {sitterStatus.registered ? "펫시터 정보 수정" : "펫시터 신청"}
@@ -194,6 +304,7 @@ const MyPage = () => {
                 </Card>
             </Box>
 
+            {/* 회원 탈퇴 링크 */}
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
                 <Link
                     component="button"
@@ -205,6 +316,7 @@ const MyPage = () => {
                 </Link>
             </Box>
 
+            {/* 모달 */}
             <WithdrawalModal
                 open={openWithdrawalModal}
                 onClose={handleCloseWithdrawalModal}
