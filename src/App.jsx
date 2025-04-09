@@ -34,6 +34,13 @@ import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
+import UserPage from "./pages/PetSta/UserPage.jsx";
+import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
+import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
+import UserLayout from "./components/PetSta/UserLayout.jsx";
+import ChatList from "./components/Chat/ChatList.jsx";
 
 function App() {
     return (
@@ -72,6 +79,12 @@ function App() {
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                            <Route path="/petsta/user/:userId" element={<UserLayout />}>
+                                <Route path="" element={<UserPage />} />
+                                <Route path="follower" element={<FollowersTab />} />
+                                <Route path="following" element={<FollowersTab />} />
+                            </Route>
+                            <Route path="/chat" element={<ChatList />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

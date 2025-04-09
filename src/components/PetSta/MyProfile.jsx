@@ -40,7 +40,7 @@ const MyProfile = ({ userInfo }) => {
                             display="flex"
                             flexDirection="column"
                             alignItems="center"
-                            onClick={() => navigate(`/petsta/user/${userInfo.id}/follow`)}
+                            onClick={() => navigate(`/petsta/user/${userInfo.id}/following`)}
                         >
                             <Typography variant="h7" fontWeight="bold">
                                 {userInfo.followCount}
