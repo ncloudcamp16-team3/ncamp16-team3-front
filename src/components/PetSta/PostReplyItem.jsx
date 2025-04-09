@@ -1,25 +1,40 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import FriendsData from "../../mock/PetSta/friends.json";
 import UserIcon from "./UserIcon.jsx";
 
 const PostReplyItem = ({ reply, onReply }) => {
     const user = FriendsData.find((friend) => friend.userId === reply.userId);
+    const navigate = useNavigate();
 
-    // @멘션을 찾아서 링크 스타일 적용
     const renderContentWithMentions = (content) => {
-        const mentionRegex = /(@\S+)/g; // @뒤에 띄어쓰기 없는 문자열 찾기
+        const mentionRegex = /(@\S+)/g;
         const parts = content.split(mentionRegex);
 
-        return parts.map((part, index) =>
-            mentionRegex.test(part) ? (
-                <Typography key={index} component="span" color="primary" sx={{ cursor: "pointer", fontWeight: "bold" }}>
-                    {part}
-                </Typography>
-            ) : (
-                part
-            )
-        );
+        return parts.map((part, index) => {
+            if (mentionRegex.test(part)) {
+                const mentionedName = part.replace("@", "");
+                const mentionedUser = FriendsData.find((f) => f.userName === mentionedName);
+
+                return (
+                    <Typography
+                        key={index}
+                        component="span"
+                        color="primary"
+                        sx={{ cursor: "pointer", fontWeight: "bold" }}
+                        onClick={() => {
+                            if (mentionedUser) {
+                                navigate(`/petsta/user/${mentionedUser.userId}`);
+                            }
+                        }}
+                    >
+                        {part}
+                    </Typography>
+                );
+            }
+            return part;
+        });
     };
 
     return (

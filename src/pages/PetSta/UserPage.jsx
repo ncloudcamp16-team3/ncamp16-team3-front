@@ -4,6 +4,7 @@ import { Context } from "../../context/Context.jsx";
 import MyProfile from "../../components/PetSta/MyProfile.jsx";
 import UserProfile from "../../components/PetSta/UserProfile.jsx";
 import UserInfos from "../../mock/PetSta/UserInfo.json";
+import UserInfo from "../../mock/PetSta/UserInfo.json";
 
 const UserPage = () => {
     const { userId } = useParams();
@@ -15,6 +16,8 @@ const UserPage = () => {
     const isMyPage = String(userId) === String(user.id);
 
     if (!userInfo) return <div>해당 유저를 찾을 수 없습니다.</div>;
+
+    const targetUser = UserInfo.find((u) => u.id === userId);
 
     return <div>{isMyPage ? <MyProfile userInfo={userInfo} /> : <UserProfile userInfo={userInfo} />}</div>;
 };

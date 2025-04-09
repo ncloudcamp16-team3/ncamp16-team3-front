@@ -36,6 +36,8 @@ import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
+import UserLayout from "./components/PetSta/UserLayout.jsx";
+import ChatList from "./components/Chat/ChatList.jsx";
 
 function App() {
     return (
@@ -74,9 +76,12 @@ function App() {
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
-                            <Route path="/petsta/user/:userId" element={<UserPage />} />
-                            <Route path="/petsta/user/:userId/follower" element={<FollowersTab />} />
-                            <Route path="/petsta/user/:userId/following" element={<FollowersTab />} />
+                            <Route path="/petsta/user/:userId" element={<UserLayout />}>
+                                <Route path="" element={<UserPage />} />
+                                <Route path="follower" element={<FollowersTab />} />
+                                <Route path="following" element={<FollowersTab />} />
+                            </Route>
+                            <Route path="/chat" element={<ChatList />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:postId" element={<PostDetail />} />

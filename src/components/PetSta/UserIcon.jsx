@@ -3,52 +3,77 @@ import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const UserIcon = ({ userInfo }) => {
+    if (userInfo) {
+        if (userInfo.userId === undefined) {
+            userInfo.userId = userInfo.id;
+        }
+    }
+
     const navigate = useNavigate();
+
     return (
         <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
             position="relative"
-            width="46px"
-            height="46px"
+            width="42px"
+            height="42px"
             borderRadius="50%"
             onClick={() => navigate(`/petsta/user/${userInfo.userId}`)}
+            sx={{ cursor: "pointer" }}
         >
+            {/* 바깥 그라데이션 원 */}
             <Box
-                component="span"
-                className="custom-gradient-bg"
                 position="absolute"
-                top="0"
-                left="0"
+                top={0}
+                left={0}
                 width="100%"
                 height="100%"
                 borderRadius="50%"
-                padding="3px"
                 sx={{
                     background:
-                        userInfo.isView === "true"
+                        userInfo.isView === "false"
                             ? "transparent"
                             : "linear-gradient(90deg, #C913B9 0%, #F9373F 50%, #FECD00 100%)",
-                    WebkitMask: "linear-gradient(white, white) content-box, linear-gradient(white, white)",
-                    WebkitMaskComposite: "destination-out",
-                    maskComposite: "exclude",
                 }}
             />
+
+            {/* 중간 투명 공간 */}
             <Box
+                position="absolute"
+                top="2px"
+                left="2px"
+                width="38px"
+                height="38px"
                 borderRadius="50%"
-                border="2px solid transparent"
+                sx={{
+                    backgroundColor: "white",
+                }}
+            />
+
+            {/* 프로필 이미지 */}
+            <Box
+                position="absolute"
+                top="3px"
+                left="3px"
+                width="36px"
+                height="36px"
+                borderRadius="50%"
                 overflow="hidden"
-                width="42px"
-                height="42px"
-                flex="0 0 auto"
+                sx={{
+                    backgroundColor: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
             >
                 <Box
                     component="img"
-                    src={`/mock/Global/images/${userInfo.userPhoto}`} // 템플릿 리터럴 사용
+                    src={`/mock/Global/images/${userInfo.photo}`}
                     alt="profile"
                     sx={{
-                        minWidth: "100%",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: "block",
                         userSelect: "none",
                         pointerEvents: "none",
                     }}
