@@ -4,26 +4,26 @@ import PostProfile from "./PostProfile.jsx";
 import PostBottom from "./PostBottom.jsx";
 import { useNavigate } from "react-router-dom";
 
-const PhotoPost = ({ post_id, user_id, user_name, user_photo, file_name, likes, comments, content, created_at }) => {
+const PhotoPost = ({ postId, userId, userName, userPhoto, fileName, likes, comments, content, createdAt }) => {
     const navigate = useNavigate();
     const handlePostClick = () => {
-        navigate(`/petsta/post/${post_id}`);
+        navigate(`/petsta/post/${postId}`);
     };
 
     return (
         <Box sx={{ width: "100%", maxHeight: "100vh", marginBottom: 1 }}>
             <Box sx={{ position: "relative" }}>
-                <PostProfile user_id={user_id} user_name={user_name} user_photo={user_photo} />
+                <PostProfile userId={userId} userName={userName} userPhoto={userPhoto} />
                 <Box onClick={handlePostClick}>
-                    <img style={{ width: "100%" }} src={`/mock/PetSta/images/${file_name}`} />
+                    <img style={{ width: "100%" }} src={`/mock/PetSta/images/${fileName}`} />
                 </Box>
             </Box>
 
             <PostBottom
-                post_id={post_id}
-                user_name={user_name}
+                postId={postId}
+                userName={userName}
                 content={content}
-                created_at={created_at}
+                createdAt={createdAt}
                 comments={comments}
                 likes={likes}
             />

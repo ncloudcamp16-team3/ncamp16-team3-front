@@ -47,35 +47,35 @@ const PetSta = () => {
         <Box>
             <FriendList />
             {posts.map((post) =>
-                post.file_type === "video" ? (
+                post.fileType === "video" ? (
                     <VideoPost
-                        key={post.post_id}
-                        post_id={post.post_id}
-                        user_id={post.user_id}
-                        user_name={post.user_name}
-                        user_photo={post.user_photo}
-                        file_name={post.file_name}
-                        file_type={post.file_type}
+                        key={post.postId}
+                        postId={post.postId}
+                        userId={post.userId}
+                        userName={post.userName}
+                        userPhoto={post.userPhoto}
+                        fileName={post.fileName}
+                        fileType={post.fileType}
                         likes={post.likes}
                         comments={post.comments}
                         content={post.content}
-                        created_at={post.created_at}
+                        createdAt={post.createdAt}
                         isMute={isMute}
                         toggleMute={toggleMute}
                     />
                 ) : (
                     <PhotoPost
-                        key={post.post_id}
-                        post_id={post.post_id}
-                        user_id={post.user_id}
-                        user_name={post.user_name}
-                        user_photo={post.user_photo}
-                        file_name={post.file_name}
-                        file_type={post.file_type}
+                        key={post.postId}
+                        postId={post.postId}
+                        userId={post.userId}
+                        userName={post.userName}
+                        userPhoto={post.userPhoto}
+                        fileName={post.fileName}
+                        fileType={post.fileType}
                         likes={post.likes}
                         comments={post.comments}
                         content={post.content}
-                        created_at={post.created_at}
+                        createdAt={post.createdAt}
                     />
                 )
             )}

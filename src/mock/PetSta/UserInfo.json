@@ -3,56 +3,56 @@
     "id": 3212,
     "name": "USER1823",
     "photo": "haribo.jpg",
-    "post_count": 303,
-    "follower_count": 526,
-    "follow_count": 1823
+    "postCount": 303,
+    "followerCount": 526,
+    "followCount": 1823
   },
   {
     "id": 1,
     "name": "고맴이",
     "photo": "cat1.png",
-    "post_count": 12,
-    "follower_count": 108,
-    "follow_count": 42
+    "postCount": 12,
+    "followerCount": 108,
+    "followCount": 42
   },
   {
     "id": 2,
     "name": "억울이",
     "photo": "dog1.png",
-    "post_count": 87,
-    "follower_count": 309,
-    "follow_count": 91
+    "postCount": 87,
+    "followerCount": 309,
+    "followCount": 91
   },
   {
     "id": 3,
     "name": "호떡",
     "photo": "dog2.png",
-    "post_count": 54,
-    "follower_count": 250,
-    "follow_count": 120
+    "postCount": 54,
+    "followerCount": 250,
+    "followCount": 120
   },
   {
     "id": 4,
     "name": "개화남",
     "photo": "dog3.png",
-    "post_count": 32,
-    "follower_count": 134,
-    "follow_count": 85
+    "postCount": 32,
+    "followerCount": 134,
+    "followCount": 85
   },
   {
     "id": 5,
     "name": "해피해피해피",
     "photo": "happyman.svg",
-    "post_count": 121,
-    "follower_count": 512,
-    "follow_count": 201
+    "postCount": 121,
+    "followerCount": 512,
+    "followCount": 201
   },
   {
     "id": 6,
     "name": "허언증환자",
     "photo": "badman.svg",
-    "post_count": 4,
-    "follower_count": 22,
-    "follow_count": 9
+    "postCount": 4,
+    "followerCount": 22,
+    "followCount": 9
   }
 ]

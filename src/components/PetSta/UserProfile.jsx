@@ -28,19 +28,19 @@ const UserProfile = ({ userInfo }) => {
                     <Box display="flex" justifyContent="space-between" gap={4}>
                         <Box display="flex" flexDirection="column" alignItems="center">
                             <Typography variant="h7" fontWeight="bold">
-                                {userInfo.post_count}
+                                {userInfo.postCount}
                             </Typography>
                             <Typography fontSize={15}>포스팅</Typography>
                         </Box>
                         <Box display="flex" flexDirection="column" alignItems="center">
                             <Typography variant="h7" fontWeight="bold">
-                                {userInfo.follower_count}
+                                {userInfo.followerCount}
                             </Typography>
                             <Typography fontSize={15}>팔로워</Typography>
                         </Box>
                         <Box display="flex" flexDirection="column" alignItems="center">
                             <Typography variant="h7" fontWeight="bold">
-                                {userInfo.follow_count}
+                                {userInfo.followCount}
                             </Typography>
                             <Typography fontSize={15}>팔로우</Typography>
                         </Box>

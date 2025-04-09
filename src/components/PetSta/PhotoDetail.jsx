@@ -16,14 +16,14 @@ const PhotoDetail = ({ post }) => {
                 게시물
             </Box>
             <PhotoPost
-                user_id={post.user_id}
+                userId={post.userId}
                 content={post.content}
                 created_at={post.created_at}
-                file_name={post.file_name}
+                fileName={post.fileName}
                 comments={post.comments}
-                post_id={post.post_id}
-                user_name={post.user_name}
-                user_photo={post.user_photo}
+                postId={post.postId}
+                userName={post.userName}
+                userPhoto={post.userPhoto}
                 likes={post.likes}
             />
         </Box>
