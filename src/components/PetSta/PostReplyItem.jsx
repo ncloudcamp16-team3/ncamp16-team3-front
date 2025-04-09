@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, Avatar, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import FriendsData from "../../mock/PetSta/friends.json";
+import UserIcon from "./UserIcon.jsx";
 
 const PostReplyItem = ({ reply, onReply }) => {
     const user = FriendsData.find((friend) => friend.user_id === reply.user_id);
@@ -22,12 +23,8 @@ const PostReplyItem = ({ reply, onReply }) => {
     };
 
     return (
-        <Box display="flex" alignItems="flex-start" paddingTop={3}>
-            <Avatar
-                src={`/mock/PetSta/images/${user?.user_photo}`}
-                alt={user?.user_name}
-                sx={{ width: 30, height: 30, marginRight: 1 }}
-            />
+        <Box display="flex" alignItems="flex-start" paddingTop={3} gap={1}>
+            <UserIcon userInfo={user} />
             <Box flex={1}>
                 <Box display="flex" alignItems="center">
                     <Typography fontWeight="bold">{user?.user_name || "알 수 없음"}</Typography>

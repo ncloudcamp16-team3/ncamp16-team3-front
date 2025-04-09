@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Box, Avatar, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import FriendsData from "../../mock/PetSta/friends.json";
 import CommentsData from "../../mock/PetSta/comments.json";
-import PostReplyItem from "./PostReplyItem"; // 답글 컴포넌트 추가
+import PostReplyItem from "./PostReplyItem";
+import UserIcon from "./UserIcon.jsx"; // 답글 컴포넌트 추가
 
 const PostCommentItem = ({ comment, onReply }) => {
     const [showReplies, setShowReplies] = useState(false);
@@ -13,12 +14,8 @@ const PostCommentItem = ({ comment, onReply }) => {
 
     return (
         <Box display="flex" flexDirection="column" borderBottom="1px solid #ccc" padding={1}>
-            <Box display="flex" alignItems="flex-start">
-                <Avatar
-                    src={`/mock/PetSta/images/${user?.user_photo}`}
-                    alt={user?.user_name}
-                    sx={{ width: 40, height: 40, marginRight: 1 }}
-                />
+            <Box display="flex" alignItems="flex-start" gap={1}>
+                <UserIcon userInfo={user} />
                 <Box flex={1}>
                     <Box display="flex" alignItems="center">
                         <Typography fontWeight="bold">{user?.user_name || "알 수 없음"}</Typography>

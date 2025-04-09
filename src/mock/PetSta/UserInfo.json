@@ -1,56 +1,56 @@
 [
   {
-    "user_id": 3212,
-    "user_name": "USER1823",
-    "user_photo": "haribo.png",
+    "id": 3212,
+    "name": "USER1823",
+    "photo": "haribo.jpg",
     "post_count": 303,
     "follower_count": 526,
     "follow_count": 1823
   },
   {
-    "user_id": 1,
-    "user_name": "고맴이",
-    "user_photo": "cat1.png",
+    "id": 1,
+    "name": "고맴이",
+    "photo": "cat1.png",
     "post_count": 12,
     "follower_count": 108,
     "follow_count": 42
   },
   {
-    "user_id": 2,
-    "user_name": "억울이",
-    "user_photo": "dog1.png",
+    "id": 2,
+    "name": "억울이",
+    "photo": "dog1.png",
     "post_count": 87,
     "follower_count": 309,
     "follow_count": 91
   },
   {
-    "user_id": 3,
-    "user_name": "호떡",
-    "user_photo": "dog2.png",
+    "id": 3,
+    "name": "호떡",
+    "photo": "dog2.png",
     "post_count": 54,
     "follower_count": 250,
     "follow_count": 120
   },
   {
-    "user_id": 4,
-    "user_name": "개화남",
-    "user_photo": "dog3.png",
+    "id": 4,
+    "name": "개화남",
+    "photo": "dog3.png",
     "post_count": 32,
     "follower_count": 134,
     "follow_count": 85
   },
   {
-    "user_id": 5,
-    "user_name": "해피해피해피",
-    "user_photo": "happyman.svg",
+    "id": 5,
+    "name": "해피해피해피",
+    "photo": "happyman.svg",
     "post_count": 121,
     "follower_count": 512,
     "follow_count": 201
   },
   {
-    "user_id": 6,
-    "user_name": "허언증환자",
-    "user_photo": "badman.svg",
+    "id": 6,
+    "name": "허언증환자",
+    "photo": "badman.svg",
     "post_count": 4,
     "follower_count": 22,
     "follow_count": 9
