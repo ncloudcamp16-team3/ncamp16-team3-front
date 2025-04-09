@@ -3,9 +3,9 @@ import { Box, Typography } from "@mui/material";
 import UserIcon from "./UserIcon.jsx";
 import userData from "../../mock/PetSta/friends.json";
 
-const PostProfile = ({ user_name, user_id, isAbsolute = false }) => {
-    console.log(user_id);
-    const userInfo = userData.find((u) => u.user_id === Number(user_id));
+const PostProfile = ({ userName, userId, isAbsolute = false }) => {
+    console.log(userId);
+    const userInfo = userData.find((u) => u.userId === Number(userId));
 
     console.log("userInfo", userInfo);
     return (
@@ -28,7 +28,7 @@ const PostProfile = ({ user_name, user_id, isAbsolute = false }) => {
                     fontWeight: "bold",
                 }}
             >
-                {user_name}
+                {userName}
             </Typography>
         </Box>
     );

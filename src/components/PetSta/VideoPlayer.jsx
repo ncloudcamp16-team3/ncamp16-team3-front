@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import { Context } from "../../context/Context.jsx";
 import { useNavigate } from "react-router-dom";
 
-const VideoPlayer = ({ file_name, post_id, isWide = false }) => {
+const VideoPlayer = ({ fileName, postId, isWide = false }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const { isMute, toggleMute } = useContext(Context);
@@ -13,7 +13,7 @@ const VideoPlayer = ({ file_name, post_id, isWide = false }) => {
     const navigate = useNavigate();
 
     const handlePostClick = () => {
-        navigate(`/petsta/post/${post_id}`, { state: { currentTime: currentTime.current } });
+        navigate(`/petsta/post/${postId}`, { state: { currentTime: currentTime.current } });
     };
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const VideoPlayer = ({ file_name, post_id, isWide = false }) => {
                     }
                 }}
             >
-                <source src={`/mock/PetSta/videos/${file_name}`} type="video/mp4" />
+                <source src={`/mock/PetSta/videos/${fileName}`} type="video/mp4" />
             </video>
 
             <Box

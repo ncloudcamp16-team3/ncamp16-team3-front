@@ -28,12 +28,14 @@ import AdminPetsitterList from "./pages/Admin/AdminPetsitterList.jsx";
 import AdminPetsitterDetail from "./pages/Admin/AdminPetsitterDetail.jsx";
 import AdminPetSitterApplyList from "./pages/Admin/AdminPetSitterApplyList.jsx";
 import AdminPetSitterApplyDetail from "./pages/Admin/AdminPetSitterApplyDetail.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
-import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
-import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
+import UserPage from "./pages/PetSta/UserPage.jsx";
+import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
+import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 
 function App() {
     return (
@@ -67,14 +69,17 @@ function App() {
                             <Route path="/calendar" element={<Cal />} />
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
+                            <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
-                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                            <Route path="/petsta/user/:userId" element={<UserPage />} />
+                            <Route path="/petsta/user/:userId/follower" element={<FollowersTab />} />
+                            <Route path="/petsta/user/:userId/following" element={<FollowersTab />} />
                         </Route>
                         <Route element={<Layout2 />}>
-                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
+                            <Route path="/petsta/post/:postId" element={<PostDetail />} />
                         </Route>
                     </Routes>
                 </Router>

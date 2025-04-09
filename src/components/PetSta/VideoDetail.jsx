@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 const VideoDetail = ({ post, currentTime = 0 }) => {
     const [isExpended, setIsExpended] = useState(false);
-    const [like_count, setLike_count] = useState("");
-    const [comment_count, setComment_count] = useState("");
+    const [likeCount, setLikeCount] = useState("");
+    const [commentCount, setCommentCount] = useState("");
     const [showIcon, setShowIcon] = useState(false);
     const videoRef = useRef(null);
     const { isMute, toggleMute } = useContext(Context);
@@ -21,17 +21,17 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
 
     useEffect(() => {
         if (post.likes >= 10000) {
-            setLike_count((post.likes / 10000).toFixed(1) + "만");
+            setLikeCount((post.likes / 10000).toFixed(1) + "만");
         } else {
-            setLike_count(post.likes.toString());
+            setLikeCount(post.likes.toString());
         }
     }, [post.likes]);
 
     useEffect(() => {
         if (post.comments >= 10000) {
-            setComment_count((post.comments / 10000).toFixed(1) + "만");
+            setCommentCount((post.comments / 10000).toFixed(1) + "만");
         } else {
-            setComment_count(post.comments.toString());
+            setCommentCount(post.comments.toString());
         }
     }, [post.comments]);
 
@@ -99,7 +99,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
             <Box position="absolute" bottom="0px" left="0" color="white" zIndex="100" padding="15px">
                 <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <UserIcon userInfo={post} />
-                    <Typography fontWeight="bold">{post.user_name}</Typography>
+                    <Typography fontWeight="bold">{post.userName}</Typography>
                     <Box
                         border="1px solid #FFFFFF"
                         borderRadius="10px"
@@ -128,15 +128,15 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                     <div>
                         <img src={PetstaHeart} width="32px" height="32px" />
                     </div>
-                    {post.likes > 0 && <Typography>{like_count}</Typography>}
+                    {post.likes > 0 && <Typography>{likeCount}</Typography>}
                     <div
                         onClick={() => {
-                            navigate(`/petsta/post/comment/${post.post_id}`);
+                            navigate(`/petsta/post/comment/${post.postId}`);
                         }}
                     >
                         <img src={PetstaComment} width="32px" height="32px" />
                     </div>
-                    {post.comments > 0 && <Typography>{comment_count}</Typography>}
+                    {post.comments > 0 && <Typography>{commentCount}</Typography>}
                     <div>
                         <img src={PetstaBookmark} width="32px" height="32px" />
                     </div>
@@ -155,7 +155,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                 autoPlay
                 loop
             >
-                <source src={`/mock/PetSta/videos/${post.file_name}`} type="video/mp4" />
+                <source src={`/mock/PetSta/videos/${post.fileName}`} type="video/mp4" />
             </video>
         </Box>
     );

@@ -1,7 +1,9 @@
 import React from "react";
 import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const UserIcon = ({ userInfo }) => {
+    const navigate = useNavigate();
     return (
         <Box
             display="flex"
@@ -11,6 +13,7 @@ const UserIcon = ({ userInfo }) => {
             width="46px"
             height="46px"
             borderRadius="50%"
+            onClick={() => navigate(`/petsta/user/${userInfo.userId}`)}
         >
             <Box
                 component="span"
@@ -23,7 +26,7 @@ const UserIcon = ({ userInfo }) => {
                 padding="3px"
                 sx={{
                     background:
-                        userInfo.is_view === "true"
+                        userInfo.isView === "true"
                             ? "transparent"
                             : "linear-gradient(90deg, #C913B9 0%, #F9373F 50%, #FECD00 100%)",
                     WebkitMask: "linear-gradient(white, white) content-box, linear-gradient(white, white)",
@@ -41,7 +44,7 @@ const UserIcon = ({ userInfo }) => {
             >
                 <Box
                     component="img"
-                    src={`/mock/PetSta/images/${userInfo.user_photo}`} // 템플릿 리터럴 사용
+                    src={`/mock/Global/images/${userInfo.userPhoto}`} // 템플릿 리터럴 사용
                     alt="profile"
                     sx={{
                         minWidth: "100%",
