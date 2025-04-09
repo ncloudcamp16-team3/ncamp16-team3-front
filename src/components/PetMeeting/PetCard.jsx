@@ -55,7 +55,7 @@ const PetCard = ({ friend }) => {
                     성별: {friend.gender === "MALE" ? "남아" : "여아"}
                 </Typography>
                 <Typography sx={{ mb: 1, color: "#555" }}>몸무게: {friend.weight}kg</Typography>
-                <Typography sx={{ color: "#555" }}>동네: {friend.owner.dong_name}</Typography>
+                <Typography sx={{ color: "#555" }}>동네: {friend.owner.dongName}</Typography>
             </Box>
         </Box>
     );

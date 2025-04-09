@@ -13,7 +13,7 @@ const FindFriendConfigBtns = () => {
     let activityImg;
     let activityLabel;
 
-    switch (pet?.activity_status) {
+    switch (pet?.activityStatus) {
         case "PLAY":
             activityImg = PlayBtn;
             activityLabel = "놀이중";
@@ -38,7 +38,7 @@ const FindFriendConfigBtns = () => {
             <ConfigBtn img={PetBtn} label={!pet?.name ? "애완동물" : pet?.name} type={"pet"} />
             <ConfigBtn
                 img={LocationBtn}
-                label={!pet?.owner?.dong_name ? "위치설정" : pet?.owner?.dong_name}
+                label={!pet?.owner?.dongName ? "위치설정" : pet?.owner?.dongName}
                 type={"location"}
             />
             <ConfigBtn img={activityImg} label={activityLabel} type={"activity"} />

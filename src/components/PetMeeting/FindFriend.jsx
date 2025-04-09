@@ -8,7 +8,7 @@ import SetLocation from "./SetLocation.jsx";
 
 const FindFriend = () => {
     const { pet } = useContext(PetMeetingContext);
-    console.log(pet);
+
     return (
         <Box
             sx={{

@@ -9,7 +9,7 @@ const ActivityModal = () => {
     const handleRegisterClick = () => {
         setPet((prev) => ({
             ...prev,
-            activity_status: "NONE",
+            activityStatus: "NONE",
         }));
         setOpenActivityModal(false);
     };

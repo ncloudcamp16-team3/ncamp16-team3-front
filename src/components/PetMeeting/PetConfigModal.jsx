@@ -12,7 +12,7 @@ const PetConfigModal = () => {
     useEffect(() => {
         if (pet) {
             setSelectedPet(pet.name);
-            setSelectedActivity(pet.activity_status);
+            setSelectedActivity(pet.activityStatus);
         } else {
             setSelectedPet(null);
             setSelectedActivity(null);
@@ -20,7 +20,7 @@ const PetConfigModal = () => {
     }, [pet, open]);
 
     const petRegister = () => {
-        setPet((prev) => ({ ...prev, name: selectedPet, activity_status: selectedActivity }));
+        setPet((prev) => ({ ...prev, name: selectedPet, activityStatus: selectedActivity }));
         setClose();
     };
 
@@ -128,7 +128,7 @@ const PetConfigModal = () => {
                             onClick={() => setSelectedActivity("WALK")}
                         >
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                산책친구들
+                                산책가기
                             </Typography>
                         </Box>
 
@@ -147,7 +147,7 @@ const PetConfigModal = () => {
                             onClick={() => setSelectedActivity("PLAY")}
                         >
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                놀이친구들
+                                놀러가기
                             </Typography>
                         </Box>
                     </Box>
