@@ -36,9 +36,6 @@ import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
 import UserPage from "./pages/PetSta/UserPage.jsx";
 import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
-import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
-import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
 
