@@ -12,6 +12,8 @@ import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
+import AddPet from "./pages/User/AddPet.jsx";
+import EditPet from "./pages/User/EditPet.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
@@ -68,6 +70,8 @@ function App() {
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
+                            <Route path="/add-pet" element={<AddPet />} />
+                            <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
                             <Route path="/petsta/user/:userId" element={<UserPage />} />
