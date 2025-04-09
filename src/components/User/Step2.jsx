@@ -4,13 +4,13 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, FormHelperText, InputLabel, Typography } from "@mui/material";
+import { Box, Button, FormHelperText, InputLabel, Typography, Paper } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState } from "react";
 
 const Step2 = () => {
-    const { nextStep, handleChange, formData, prevStep } = useRegister();
+    const { nextStep, handleChange, formData, prevStep, token, email, nickname } = useRegister();
 
     const [errors, setErrors] = useState({
         petName: false,
@@ -80,6 +80,17 @@ const Step2 = () => {
             <Button variant="contained" onClick={handleNext} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
+
+            {/* 디버깅 정보 */}
+            <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5" }}>
+                <Typography variant="subtitle2" fontWeight="bold">디버깅 정보 (Step 2)</Typography>
+                <Typography variant="body2">토큰: {token || "없음"}</Typography>
+                <Typography variant="body2">이메일: {email || "없음"}</Typography>
+                <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
+                <Typography variant="body2">반려동물 이름: {formData.petName || "없음"}</Typography>
+                <Typography variant="body2">반려동물 종류: {formData.petRegistration || "없음"}</Typography>
+                <Typography variant="body2">반려동물 성별: {formData.petGender || "없음"}</Typography>
+            </Paper>
         </Box>
     );
 };

@@ -3,7 +3,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
-import { Avatar, Box, Button, FormHelperText, InputLabel, Stack, Typography, IconButton } from "@mui/material";
+import { Avatar, Box, Button, FormHelperText, InputLabel, Stack, Typography, IconButton, Paper } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ReqUi from "./ReqUi.jsx";
@@ -11,7 +11,7 @@ import Input from "@mui/material/Input";
 import { useRegister } from "./RegisterContext.jsx";
 
 const Step4 = () => {
-    const { handleChange, formData, prevStep, handleStep4Next } = useRegister();
+    const { handleChange, formData, prevStep, handleStep4Next, token, email, nickname } = useRegister();
 
     const [previews, setPreviews] = useState([]);
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
@@ -213,6 +213,17 @@ const Step4 = () => {
             <Button variant="contained" onClick={handleNext} sx={{ mt: 2, width: "100%", backgroundColor: "#E9A260" }}>
                 작성 완료
             </Button>
+
+            {/* 디버깅 정보 */}
+            <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5" }}>
+                <Typography variant="subtitle2" fontWeight="bold">디버깅 정보 (Step 4)</Typography>
+                <Typography variant="body2">토큰: {token || "없음"}</Typography>
+                <Typography variant="body2">이메일: {email || "없음"}</Typography>
+                <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
+                <Typography variant="body2">중성화 여부: {formData.petNeutered || "없음"}</Typography>
+                <Typography variant="body2">사진 개수: {formData.petPhotos ? formData.petPhotos.length : 0}</Typography>
+                <Typography variant="body2">대표 사진 인덱스: {mainPhotoIndex}</Typography>
+            </Paper>
         </Box>
     );
 };

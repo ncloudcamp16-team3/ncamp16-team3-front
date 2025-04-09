@@ -21,6 +21,9 @@ export const RegisterProvider = ({ children }) => {
     const [nickname, setNickname] = useState("");
     const [formData, setFormData] = useState(initialPetData);
     const [petDataList, setPetDataList] = useState([]);
+    const [token, setToken] = useState("");
+    const [email, setEmail] = useState("");
+    const [snsTypeId, setSnsTypeId] = useState(null);
 
     const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
     const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -56,6 +59,12 @@ export const RegisterProvider = ({ children }) => {
                 handleChange,
                 handleStep4Next,
                 goToStep2,
+                token,
+                setToken,
+                email,
+                setEmail,
+                snsTypeId,
+                setSnsTypeId,
             }}
         >
             {children}

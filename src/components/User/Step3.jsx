@@ -7,13 +7,13 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
-import { Box, Button, FormHelperText, InputLabel, Input } from "@mui/material";
+import { Box, Button, FormHelperText, InputLabel, Input, Typography, Paper } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import dayjs from "dayjs";
 import { useRegister } from "./RegisterContext.jsx";
 
 const Step3 = () => {
-    const { nextStep, handleChange, formData, prevStep } = useRegister();
+    const { nextStep, handleChange, formData, prevStep, token, email, nickname } = useRegister();
 
     const [errors, setErrors] = useState({
         petBirthday: false,
@@ -120,6 +120,18 @@ const Step3 = () => {
             <Button variant="contained" onClick={handleNext} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
+
+            {/* 디버깅 정보 */}
+            <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5" }}>
+                <Typography variant="subtitle2" fontWeight="bold">디버깅 정보 (Step 3)</Typography>
+                <Typography variant="body2">토큰: {token || "없음"}</Typography>
+                <Typography variant="body2">이메일: {email || "없음"}</Typography>
+                <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
+                <Typography variant="body2">반려동물 생일: {formData.petBirthday || "없음"}</Typography>
+                <Typography variant="body2">반려동물 몸무게: {formData.petWeight || "없음"}</Typography>
+                <Typography variant="body2">반려동물 체형: {formData.petBodyType || "없음"}</Typography>
+                <Typography variant="body2">반려동물 소개: {formData.petIntroduction || "없음"}</Typography>
+            </Paper>
         </Box>
     );
 };
