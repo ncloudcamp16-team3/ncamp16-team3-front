@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import EditIcon from "../../assets/images/PetSta/edit-icon.svg";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = ({ userInfo }) => {
@@ -19,9 +18,6 @@ const UserProfile = ({ userInfo }) => {
                             alt="Profile"
                             sx={{ position: "relative", width: 100, height: 100 }}
                         />
-                        <Box position="absolute" bottom={-5} right={0} onClick={() => navigate("/mypage")}>
-                            <img src={EditIcon} alt="Edit" />
-                        </Box>
                     </Box>
                 </Box>
                 <Box width="70%" display="flex" flexDirection="column" gap={1}>
