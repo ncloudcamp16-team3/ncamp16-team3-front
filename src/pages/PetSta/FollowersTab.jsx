@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import LeftArrow from "../../assets/images/global/left-arrow-black.svg";
+import UserFollows from "../../mock/PetSta/userFollows.json";
+import UserInfo from "../../mock/PetSta/userInfo.json";
+import FollowBox from "../../components/PetSta/FollowBox.jsx";
+// context가 있다면
 
 const FollowersTab = () => {
     const { userId } = useParams();
@@ -14,32 +17,58 @@ const FollowersTab = () => {
         setSelectedTab(tab);
     };
 
+    // 문자열이면 숫자로 변환
+    const targetUserId = parseInt(userId, 10);
+
+    // 필터링된 사용자 배열
+    const filteredUsers =
+        selectedTab === "followers"
+            ? UserFollows.filter((f) => f.followedId === targetUserId).map((f) =>
+                  UserInfo.find((u) => u.id === f.followerId)
+              )
+            : UserFollows.filter((f) => f.followerId === targetUserId).map((f) =>
+                  UserInfo.find((u) => u.id === f.followedId)
+              );
+    const targetUser = UserInfo.find((u) => u.id === targetUserId);
+
     return (
         <div>
-            <Box display="flex" alignItems="center">
-                <Box>
-                    <img src={LeftArrow} />
-                </Box>
-                <Typography variant="body2" color="textSecondary">
-                    해피해피해피
-                </Typography>
-            </Box>
-            <div style={{ display: "flex" }}>
-                <button
+            <Box display="flex" borderBottom="1px solid #ccc">
+                <Box
+                    width="50%"
                     onClick={() => handleTabClick("followers")}
+                    textAlign="center"
                     style={{ fontWeight: selectedTab === "followers" ? "bold" : "normal" }}
+                    borderBottom={selectedTab === "followers" ? "1px solid black" : ""}
+                    color={selectedTab === "followers" ? "black" : "#ccc"}
+                    p={0.5}
+                    sx={{ cursor: "pointer" }}
                 >
                     팔로워
-                </button>
-                <button
+                </Box>
+                <Box
+                    width="50%"
                     onClick={() => handleTabClick("following")}
-                    style={{ fontWeight: selectedTab === "following" ? "bold" : "normal" }}
+                    textAlign="center"
+                    style={{ fontWeight: selectedTab === "followers" ? "normal" : "bold" }}
+                    borderBottom={selectedTab === "followers" ? "" : "1px solid black"}
+                    color={selectedTab === "followers" ? "#ccc" : "black"}
+                    p={0.5}
+                    sx={{ cursor: "pointer" }}
                 >
                     팔로잉
-                </button>
-            </div>
+                </Box>
+            </Box>
 
-            <div>{selectedTab === "followers" ? <div>팔로워 목록 보여주기</div> : <div>팔로잉 목록 보여주기</div>}</div>
+            <Box p={1}>
+                {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user, index) => (user ? <FollowBox key={index} userInfo={user} /> : null))
+                ) : (
+                    <Typography textAlign="center" mt={2}>
+                        아무도 없습니다.
+                    </Typography>
+                )}
+            </Box>
         </div>
     );
 };

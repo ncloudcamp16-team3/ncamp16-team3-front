@@ -2,37 +2,37 @@
   {
     "userId" : 1,
     "userName" : "고맴이",
-    "userPhoto" : "cat1.png",
+    "photo" : "cat1.png",
     "isView" : "false"
   },
   {
     "userId" : 2,
     "userName" : "억울이",
-    "userPhoto" : "dog1.png",
+    "photo" : "dog1.png",
     "isView" : "false"
   },
   {
     "userId" : 3,
     "userName" : "호떡",
-    "userPhoto" : "dog2.png",
+    "photo" : "dog2.png",
     "isView" : "true"
   },
   {
     "userId" : 4,
     "userName" : "개화남",
-    "userPhoto" : "dog3.png",
+    "photo" : "dog3.png",
     "isView" : "true"
   },
   {
     "userId" : 5,
     "userName" : "해피해피해피",
-    "userPhoto" : "happyman.svg",
+    "photo" : "happyman.svg",
     "isView" : "true"
   },
   {
     "userId" : 6,
     "userName" : "허언증환자",
-    "userPhoto" : "badman.svg",
+    "photo" : "badman.svg",
     "isView" : "false"
   }
 ]

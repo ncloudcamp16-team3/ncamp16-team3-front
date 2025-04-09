@@ -125,21 +125,22 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
             </Box>
             <Box position="absolute" right="5px" bottom="50px" color="white" zIndex="999">
                 <Box display="flex" flexDirection="column" alignItems="center" width="50px">
-                    <div>
+                    <Box>
                         <img src={PetstaHeart} width="32px" height="32px" />
-                    </div>
+                    </Box>
                     {post.likes > 0 && <Typography>{likeCount}</Typography>}
-                    <div
+                    <Box
+                        mt={1}
                         onClick={() => {
                             navigate(`/petsta/post/comment/${post.postId}`);
                         }}
                     >
                         <img src={PetstaComment} width="32px" height="32px" />
-                    </div>
+                    </Box>
                     {post.comments > 0 && <Typography>{commentCount}</Typography>}
-                    <div>
+                    <Box mt={1} mb={1}>
                         <img src={PetstaBookmark} width="32px" height="32px" />
-                    </div>
+                    </Box>
                 </Box>
             </Box>
             <video

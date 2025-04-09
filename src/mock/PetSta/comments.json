@@ -58,7 +58,7 @@
     "id": 12,
     "postId": 2,
     "userId": 3,
-    "content": "@삑삑삑삑 진짜 귀엽다 ㅋㅋ",
+    "content": "@고맴이 진짜 귀엽다 ㅋㅋ",
     "parentId": 11,
     "createdAt": "2025-03-31 13:05:00",
     "reply_count": 0
@@ -86,7 +86,7 @@
     "id": 22,
     "postId": 3,
     "userId": 5,
-    "content": "@사진 멋져요! 제주도인가요?",
+    "content": "@억울이 멋져요! 제주도인가요?",
     "parentId": 21,
     "createdAt": "2025-03-17 10:05:00",
     "reply_count": 0
@@ -95,7 +95,7 @@
     "id": 23,
     "postId": 3,
     "userId": 6,
-    "content": "@사진 멋져요! 색감이 예쁘네요.",
+    "content": "@해피해피해피 멋져요! 색감이 예쁘네요.",
     "parentId": 21,
     "createdAt": "2025-03-17 10:07:00",
     "reply_count": 0

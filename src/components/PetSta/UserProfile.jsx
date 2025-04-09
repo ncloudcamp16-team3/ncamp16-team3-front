@@ -28,13 +28,25 @@ const UserProfile = ({ userInfo }) => {
                             </Typography>
                             <Typography fontSize={15}>포스팅</Typography>
                         </Box>
-                        <Box display="flex" flexDirection="column" alignItems="center">
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="center"
+                            onClick={() => navigate(`/petsta/user/${userInfo.id}/follower`)}
+                            sx={{ cursor: "pointer" }}
+                        >
                             <Typography variant="h7" fontWeight="bold">
                                 {userInfo.followerCount}
                             </Typography>
                             <Typography fontSize={15}>팔로워</Typography>
                         </Box>
-                        <Box display="flex" flexDirection="column" alignItems="center">
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="center"
+                            onClick={() => navigate(`/petsta/user/${userInfo.id}/following`)}
+                            sx={{ cursor: "pointer" }}
+                        >
                             <Typography variant="h7" fontWeight="bold">
                                 {userInfo.followCount}
                             </Typography>
@@ -50,6 +62,7 @@ const UserProfile = ({ userInfo }) => {
                         borderRadius={2}
                         textAlign="center"
                         onClick={() => setIsFollow((prev) => !prev)}
+                        sx={{ cursor: "pointer" }}
                     >
                         {isFollow ? "팔로우 취소" : "팔로우 하기"}
                     </Typography>
