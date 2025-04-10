@@ -2,32 +2,27 @@ import React, { useState } from "react";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
-import { Box, Button, FormHelperText, InputLabel, Input, Typography, Paper } from "@mui/material";
+import { Box, Button, FormHelperText, InputLabel, Input } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import dayjs from "dayjs";
 import { useRegister } from "./RegisterContext.jsx";
 
 const Step3 = () => {
-    const { nextStep, handleChange, formData, prevStep, token, email, nickname } = useRegister();
+    const { nextStep, handleChange, formData, prevStep } = useRegister();
 
     const [errors, setErrors] = useState({
-        petBirthday: false,
+        petBirth: false,
         petWeight: false,
-        petBodyType: false,
-        petIntroduction: false,
+        petInfo: false,
     });
 
     const handleNext = () => {
         const newErrors = {
-            petBirthday: !formData.petBirthday,
+            petBirth: !formData.petBirth,
             petWeight: !formData.petWeight || formData.petWeight.trim().length === 0,
-            petBodyType: !formData.petBodyType,
-            petIntroduction: !formData.petIntroduction || formData.petIntroduction.trim().length === 0,
+            petInfo: !formData.petInfo || formData.petInfo.trim().length === 0,
         };
 
         setErrors(newErrors);
@@ -39,7 +34,7 @@ const Step3 = () => {
     };
 
     const handleDateChange = (newValue) => {
-        handleChange({ target: { name: "petBirthday", value: newValue ? newValue.format("YYYY-MM-DD") : "" } });
+        handleChange({ target: { name: "petBirth", value: newValue ? newValue.format("YYYY-MM-DD") : "" } });
     };
 
     return (
@@ -50,10 +45,10 @@ const Step3 = () => {
                         아이의 생일은 언제인가요? <ReqUi />
                     </FormHelperText>
                     <MobileDatePicker
-                        value={formData.petBirthday ? dayjs(formData.petBirthday) : null}
+                        value={formData.petBirth ? dayjs(formData.petBirth) : null}
                         onChange={handleDateChange}
                     />
-                    {errors.petBirthday && <FormHelperText>반려동물의 생일을 선택해주세요.</FormHelperText>}
+                    {errors.petBirth && <FormHelperText>반려동물의 생일을 선택해주세요.</FormHelperText>}
                 </FormControl>
             </LocalizationProvider>
 
@@ -72,45 +67,27 @@ const Step3 = () => {
                 {errors.petWeight && <FormHelperText>몸무게를 입력해주세요.</FormHelperText>}
             </FormControl>
 
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBodyType}>
-                <FormHelperText>
-                    체형을 선택해 주세요 <ReqUi />
-                </FormHelperText>
-                <RadioGroup
-                    row
-                    id="petBodyType"
-                    name="petBodyType"
-                    value={formData.petBodyType}
-                    onChange={handleChange}
-                >
-                    <FormControlLabel value="날씬" control={<Radio />} label="날씬" />
-                    <FormControlLabel value="적당" control={<Radio />} label="적당" />
-                    <FormControlLabel value="통통" control={<Radio />} label="통통" />
-                </RadioGroup>
-                {errors.petBodyType && <FormHelperText>체형을 선택해주세요.</FormHelperText>}
-            </FormControl>
-
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petIntroduction}>
                 <FormHelperText>
                     아이를 소개해 주세요 <ReqUi />
                 </FormHelperText>
                 <TextareaAutosize
-                    id="petIntroduction"
-                    name="petIntroduction"
+                    id="petInfo"
+                    name="petInfo"
                     minRows={3}
                     placeholder="아이의 특징을 적어주세요"
                     style={{
                         width: "100%",
                         padding: "10px",
                         borderRadius: "5px",
-                        borderColor: errors.petIntroduction ? "red" : "#ccc",
+                        borderColor: errors.petInfo ? "red" : "#ccc",
                         borderWidth: "1px",
                         borderStyle: "solid",
                     }}
-                    value={formData.petIntroduction}
+                    value={formData.petInfo}
                     onChange={handleChange}
                 />
-                {errors.petIntroduction && <FormHelperText>소개글을 입력해주세요.</FormHelperText>}
+                {errors.petInfo && <FormHelperText>소개글을 입력해주세요.</FormHelperText>}
             </FormControl>
 
             <Button variant="contained" onClick={prevStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
@@ -120,18 +97,6 @@ const Step3 = () => {
             <Button variant="contained" onClick={handleNext} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
-
-            {/* 디버깅 정보 */}
-            <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5" }}>
-                <Typography variant="subtitle2" fontWeight="bold">디버깅 정보 (Step 3)</Typography>
-                <Typography variant="body2">토큰: {token || "없음"}</Typography>
-                <Typography variant="body2">이메일: {email || "없음"}</Typography>
-                <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
-                <Typography variant="body2">반려동물 생일: {formData.petBirthday || "없음"}</Typography>
-                <Typography variant="body2">반려동물 몸무게: {formData.petWeight || "없음"}</Typography>
-                <Typography variant="body2">반려동물 체형: {formData.petBodyType || "없음"}</Typography>
-                <Typography variant="body2">반려동물 소개: {formData.petIntroduction || "없음"}</Typography>
-            </Paper>
         </Box>
     );
 };

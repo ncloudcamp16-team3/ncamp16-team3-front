@@ -1,16 +1,22 @@
 import * as React from "react";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, FormHelperText, InputLabel, Typography, Paper } from "@mui/material";
+import { Box, Button, FormHelperText, Grid, InputLabel, Typography } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState } from "react";
 
 const Step2 = () => {
-    const { nextStep, handleChange, formData, prevStep, token, email, nickname } = useRegister();
+    const { nextStep, handleChange, formData, prevStep } = useRegister();
+
+    const petTypes = [
+        { id: 1, label: "강아지", value: "1" },
+        { id: 2, label: "고양이", value: "2" },
+        { id: 3, label: "햄스터", value: "3" },
+        { id: 4, label: "앵무새", value: "4" },
+        { id: 5, label: "물고기", value: "5" },
+        { id: 6, label: "기타", value: "6" },
+    ];
 
     const [errors, setErrors] = useState({
         petName: false,
@@ -21,7 +27,7 @@ const Step2 = () => {
     const handleNext = () => {
         const newErrors = {
             petName: !formData.petName || formData.petName.trim().length < 1 || formData.petName.trim().length > 16,
-            petRegistration: !formData.petRegistration || formData.petRegistration.trim().length < 1,
+            petTypeId: !formData.petTypeId || formData.petTypeId.trim().length < 1,
             petGender: !formData.petGender,
         };
 
@@ -47,29 +53,63 @@ const Step2 = () => {
                 {errors.petName && <FormHelperText>반려동물 이름은 1~16자 이내로 입력해주세요.</FormHelperText>}
             </FormControl>
 
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petRegistration}>
-                <InputLabel htmlFor="petRegistration">
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petTypeId}>
+                <FormHelperText sx={{ mb: 1 }}>
                     반려동물을 등록해주세요 <ReqUi />
-                </InputLabel>
-                <Input
-                    required
-                    id="petRegistration"
-                    name="petRegistration"
-                    placeholder="애완동물을 입력해주세요"
-                    value={formData.petRegistration}
-                    onChange={handleChange}
-                />
-                {errors.petRegistration && <FormHelperText>반려동물 종류를 입력해주세요.</FormHelperText>}
+                </FormHelperText>
+                <Grid container spacing={1}>
+                    {petTypes.map((type) => (
+                        <Grid item size={4} key={type.id}>
+                            <Button
+                                fullWidth
+                                variant={formData.petTypeId === type.value ? "contained" : "outlined"}
+                                onClick={() => handleChange({ target: { name: "petTypeId", value: type.value } })}
+                                sx={{
+                                    width: "100%",
+                                    backgroundColor: formData.petTypeId === type.value ? "#E9A260" : "inherit",
+                                    color: formData.petTypeId === type.value ? "#fff" : "inherit",
+                                    borderColor: "#E9A260",
+                                    "&:hover": {
+                                        backgroundColor: "#e08a3a",
+                                        borderColor: "#e08a3a",
+                                    },
+                                }}
+                            >
+                                {type.label}
+                            </Button>
+                        </Grid>
+                    ))}
+                </Grid>
+                {errors.petTypeId && <FormHelperText>반려동물 종류를 선택해주세요.</FormHelperText>}
             </FormControl>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petGender}>
-                <FormHelperText>
+                <FormHelperText sx={{ mb: 1 }}>
                     아이의 성별을 선택해주세요 <ReqUi />
                 </FormHelperText>
-                <RadioGroup row id="petGender" name="petGender" value={formData.petGender} onChange={handleChange}>
-                    <FormControlLabel value="남아" control={<Radio />} label="남아" />
-                    <FormControlLabel value="여아" control={<Radio />} label="여아" />
-                </RadioGroup>
+                <Grid container spacing={1}>
+                    {["남아", "여아"].map((gender) => (
+                        <Grid item size={6} key={gender}>
+                            <Button
+                                fullWidth
+                                variant={formData.petGender === gender ? "contained" : "outlined"}
+                                onClick={() => handleChange({ target: { name: "petGender", value: gender } })}
+                                sx={{
+                                    height: "48px",
+                                    backgroundColor: formData.petGender === gender ? "#E9A260" : "inherit",
+                                    color: formData.petGender === gender ? "#fff" : "inherit",
+                                    borderColor: "#E9A260",
+                                    "&:hover": {
+                                        backgroundColor: "#e08a3a",
+                                        borderColor: "#e08a3a",
+                                    },
+                                }}
+                            >
+                                {gender}
+                            </Button>
+                        </Grid>
+                    ))}
+                </Grid>
                 {errors.petGender && <FormHelperText>성별을 선택해주세요.</FormHelperText>}
             </FormControl>
 
@@ -80,17 +120,6 @@ const Step2 = () => {
             <Button variant="contained" onClick={handleNext} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
-
-            {/* 디버깅 정보 */}
-            <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5" }}>
-                <Typography variant="subtitle2" fontWeight="bold">디버깅 정보 (Step 2)</Typography>
-                <Typography variant="body2">토큰: {token || "없음"}</Typography>
-                <Typography variant="body2">이메일: {email || "없음"}</Typography>
-                <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
-                <Typography variant="body2">반려동물 이름: {formData.petName || "없음"}</Typography>
-                <Typography variant="body2">반려동물 종류: {formData.petRegistration || "없음"}</Typography>
-                <Typography variant="body2">반려동물 성별: {formData.petGender || "없음"}</Typography>
-            </Paper>
         </Box>
     );
 };

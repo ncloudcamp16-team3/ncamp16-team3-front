@@ -32,10 +32,10 @@ const Step5 = () => {
                         petTypeId: pet.petTypeId || 1,
                         name: pet.petName,
                         gender: pet.petGender,
-                        birth: pet.petBirthday,
+                        birth: pet.petBirth,
                         weight: pet.petWeight,
-                        info: pet.petIntroduction,
-                        neutured: pet.petNeutered === "Y",
+                        info: pet.petInfo,
+                        neutered: pet.petNeutered === "Y",
                         activityStatus: "NONE",
 
                         photos: petPhotos.map((photo, index) => ({
@@ -114,15 +114,15 @@ const Step5 = () => {
                                         {pet.petGender === "M" ? "수컷" : "암컷"} •{" "}
                                         {pet.petNeutered === "Y" ? "중성화 완료" : "중성화 미완료"}
                                     </Typography>
-                                    {pet.petBirthday && (
+                                    {pet.petBirth && (
                                         <Typography variant="body2">
-                                            생년월일: {dayjs(pet.petBirthday).format("YYYY년 MM월 DD일")}
+                                            생년월일: {dayjs(pet.petBirth).format("YYYY년 MM월 DD일")}
                                         </Typography>
                                     )}
                                     {pet.petWeight && <Typography variant="body2">체중: {pet.petWeight}kg</Typography>}
                                 </Box>
                             </Box>
-                            {pet.petIntroduction && (
+                            {pet.petInfo && (
                                 <>
                                     <Divider sx={{ my: 2 }} />
                                     <Typography variant="body1">{pet.petIntroduction}</Typography>
@@ -156,20 +156,6 @@ const Step5 = () => {
                     {submitError}
                 </Typography>
             )}
-
-            {/* 디버깅 정보 */}
-            <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5", width: "100%" }}>
-                <Typography variant="subtitle2" fontWeight="bold">
-                    디버깅 정보 (Step 5)
-                </Typography>
-                <Typography variant="body2">토큰: {token || "없음"}</Typography>
-                <Typography variant="body2">이메일: {email || "없음"}</Typography>
-                <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
-                <Typography variant="body2">
-                    SNS 타입 ID: {snsTypeId || "없음"} (타입: {typeof snsTypeId})
-                </Typography>
-                <Typography variant="body2">반려동물 수: {petDataList.length}</Typography>
-            </Paper>
         </Box>
     );
 };
