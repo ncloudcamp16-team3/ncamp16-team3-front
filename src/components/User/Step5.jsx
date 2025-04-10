@@ -16,43 +16,39 @@ const Step5 = () => {
         setSubmitError(null);
 
         try {
-            // snsTypeId가 숫자인지 확인
             const snsTypeIdNum = snsTypeId ? Number(snsTypeId) : null;
-            console.log("SNS 타입 ID 타입:", typeof snsTypeId, "값:", snsTypeId);
 
-            // 폼 데이터 준비
             const formData = {
-                snsAccountId: email,
-                snsTypeId: snsTypeIdNum, // 숫자로 변환된 값 사용
                 nickname: nickname,
+                snsAccountId: email,
+                snsTypeId: snsTypeIdNum,
+                fileId: 1, // 기본 파일
+
                 pets: petDataList.map((pet) => {
-                    // File 객체를 URL로 변환
-                    const petPhotos = pet.petPhotos
-                        ? pet.petPhotos.map((photo) => {
-                              if (photo instanceof File) {
-                                  return URL.createObjectURL(photo);
-                              }
-                              return photo;
-                          })
-                        : [];
+                    const petPhotos = pet.petPhotos || []; // 파일 리스트
+                    const mainIndex = pet.mainPhotoIndex ?? 0; // 대표 사진 인덱스 지정 (없으면 0번)
 
                     return {
+                        petTypeId: pet.petTypeId || 1,
                         name: pet.petName,
-                        registrationNumber: pet.petRegistration,
                         gender: pet.petGender,
-                        birthday: pet.petBirthday,
+                        birth: pet.petBirthday,
                         weight: pet.petWeight,
-                        bodyType: pet.petBodyType,
-                        introduction: pet.petIntroduction,
-                        neutered: pet.petNeutered,
-                        favoriteActivities: pet.petFavorite,
-                        photos: petPhotos,
-                        mainPhotoIndex: pet.mainPhotoIndex || 0,
+                        info: pet.petIntroduction,
+                        neutured: pet.petNeutered === "Y",
+                        activityStatus: "NONE",
+
+                        photos: petPhotos.map((photo, index) => ({
+                            type: "PHOTO",
+                            path: photo.name,
+                            uuid: "", // 서버에서 UUID 생성
+                            thumbnail: index === mainIndex,
+                        })),
                     };
                 }),
             };
 
-            console.log("전송할 데이터:", formData);
+            console.log("📦 전송할 formData:", formData);
 
             // API 호출
             const response = await fetch("http://localhost:8080/api/auth/register", {
