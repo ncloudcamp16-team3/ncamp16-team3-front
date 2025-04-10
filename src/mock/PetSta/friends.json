@@ -1,42 +1,38 @@
 [
   {
-    "user_name" : "고맴이",
-    "file_name" : "cat1.png",
-    "is_view" : "false"
+    "userId" : 1,
+    "userName" : "고맴이",
+    "photo" : "cat1.png",
+    "isView" : "false"
   },
   {
-    "user_name" : "억울이",
-    "file_name" : "dog1.png",
-    "is_view" : "false"
+    "userId" : 2,
+    "userName" : "억울이",
+    "photo" : "dog1.png",
+    "isView" : "false"
   },
   {
-    "user_name" : "호떡",
-    "file_name" : "dog2.png",
-    "is_view" : "true"
+    "userId" : 3,
+    "userName" : "호떡",
+    "photo" : "dog2.png",
+    "isView" : "true"
   },
   {
-    "user_name" : "개화남",
-    "file_name" : "dog3.png",
-    "is_view" : "true"
+    "userId" : 4,
+    "userName" : "개화남",
+    "photo" : "dog3.png",
+    "isView" : "true"
   },
   {
-    "user_name" : "고맴이",
-    "file_name" : "cat1.png",
-    "is_view" : "false"
+    "userId" : 5,
+    "userName" : "해피해피해피",
+    "photo" : "happyman.svg",
+    "isView" : "true"
   },
   {
-    "user_name" : "억울이",
-    "file_name" : "dog1.png",
-    "is_view" : "false"
-  },
-  {
-    "user_name" : "호떡",
-    "file_name" : "dog2.png",
-    "is_view" : "true"
-  },
-  {
-    "user_name" : "개화남",
-    "file_name" : "dog3.png",
-    "is_view" : "true"
+    "userId" : 6,
+    "userName" : "허언증환자",
+    "photo" : "badman.svg",
+    "isView" : "false"
   }
 ]

@@ -1,0 +1,103 @@
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "userId": 2,
+    "content": "해피해피한 영상이네요! 👍",
+    "parentId": null,
+    "createdAt": "2025-03-31 15:00:00",
+    "reply_count": 2
+  },
+  {
+    "id": 2,
+    "postId": 1,
+    "userId": 3,
+    "content": "ㅋㅋㅋ 너무 신나요!",
+    "parentId": null,
+    "createdAt": "2025-03-31 15:05:00",
+    "reply_count": 1
+  },
+  {
+    "id": 3,
+    "postId": 1,
+    "userId": 4,
+    "content": "@억울이 저도 해피해지고 싶어요 😂",
+    "parentId": 1,
+    "createdAt": "2025-03-31 15:10:00",
+    "reply_count": 0
+  },
+  {
+    "id": 4,
+    "postId": 1,
+    "userId": 5,
+    "content": "@호떡 맞아요 완전 신나요!",
+    "parentId": 2,
+    "createdAt": "2025-03-31 15:12:00",
+    "reply_count": 0
+  },
+  {
+    "id": 5,
+    "postId": 1,
+    "userId": 1,
+    "content": "이거 어디서 찍은 거예요?",
+    "parentId": null,
+    "createdAt": "2025-03-31 15:15:00",
+    "reply_count": 0
+  },
+
+  {
+    "id": 11,
+    "postId": 2,
+    "userId": 1,
+    "content": "삑삑삑삑 귀여워요 🐦",
+    "parentId": null,
+    "createdAt": "2025-03-31 13:00:00",
+    "reply_count": 1
+  },
+  {
+    "id": 12,
+    "postId": 2,
+    "userId": 3,
+    "content": "@고맴이 진짜 귀엽다 ㅋㅋ",
+    "parentId": 11,
+    "createdAt": "2025-03-31 13:05:00",
+    "reply_count": 0
+  },
+  {
+    "id": 13,
+    "postId": 2,
+    "userId": 4,
+    "content": "새소리가 너무 좋아요 😍",
+    "parentId": null,
+    "createdAt": "2025-03-31 13:10:00",
+    "reply_count": 0
+  },
+
+  {
+    "id": 21,
+    "postId": 3,
+    "userId": 2,
+    "content": "사진 멋져요! 어디예요?",
+    "parentId": null,
+    "createdAt": "2025-03-17 10:00:00",
+    "reply_count": 2
+  },
+  {
+    "id": 22,
+    "postId": 3,
+    "userId": 5,
+    "content": "@억울이 멋져요! 제주도인가요?",
+    "parentId": 21,
+    "createdAt": "2025-03-17 10:05:00",
+    "reply_count": 0
+  },
+  {
+    "id": 23,
+    "postId": 3,
+    "userId": 6,
+    "content": "@해피해피해피 멋져요! 색감이 예쁘네요.",
+    "parentId": 21,
+    "createdAt": "2025-03-17 10:07:00",
+    "reply_count": 0
+  }
+]

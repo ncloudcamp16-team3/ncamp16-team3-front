@@ -1,32 +1,29 @@
 import React from "react";
 import { Box } from "@mui/material";
 import PostProfile from "./PostProfile.jsx";
-import PostBottom from "./PostBottom.jsx"; // 좋아요, 댓글 아이콘
+import PostBottom from "./PostBottom.jsx";
+import { useNavigate } from "react-router-dom";
 
-const PhotoPost = ({
-    user_name,
-    user_photo,
-    file_name,
-    likes,
-    comments,
-    content,
-    created_at,
-}) => {
-    console.log({ user_name, user_photo });
+const PhotoPost = ({ postId, userId, userName, userPhoto, fileName, likes, comments, content, createdAt }) => {
+    const navigate = useNavigate();
+    const handlePostClick = () => {
+        navigate(`/petsta/post/${postId}`);
+    };
+
     return (
         <Box sx={{ width: "100%", maxHeight: "100vh", marginBottom: 1 }}>
             <Box sx={{ position: "relative" }}>
-                <PostProfile user_name={user_name} user_photo={user_photo} />
-                <img
-                    style={{ width: "100%" }}
-                    src={`./mock/PetSta/images/${file_name}`}
-                />
+                <PostProfile userId={userId} userName={userName} userPhoto={userPhoto} />
+                <Box onClick={handlePostClick}>
+                    <img style={{ width: "100%" }} src={`/mock/PetSta/images/${fileName}`} />
+                </Box>
             </Box>
 
             <PostBottom
-                user_name={user_name}
+                postId={postId}
+                userName={userName}
                 content={content}
-                created_at={created_at}
+                createdAt={createdAt}
                 comments={comments}
                 likes={likes}
             />

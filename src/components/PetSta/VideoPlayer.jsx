@@ -1,22 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import AudioOff from "../../assets/images/PetSta/audio-off.png";
+import AudioOn from "../../assets/images/PetSta/audio-on.png";
+import { Box } from "@mui/material";
+import { Context } from "../../context/Context.jsx";
+import { useNavigate } from "react-router-dom";
 
-const VideoPlayer = ({ file_name, isWide = false }) => {
+const VideoPlayer = ({ fileName, postId, isWide = false }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const { isMute, toggleMute } = useContext(Context);
+    const currentTime = useRef(0);
+    const navigate = useNavigate();
+
+    const handlePostClick = () => {
+        navigate(`/petsta/post/${postId}`, { state: { currentTime: currentTime.current } });
+    };
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        // 비디오가 50% 이상 보이면 재생 시작
                         const video = entry.target;
                         if (video && !isPlaying) {
                             video.play();
                             setIsPlaying(true);
                         }
                     } else {
-                        // 비디오가 화면에서 벗어나면 일시 정지
                         const video = entry.target;
                         if (video) {
                             video.pause();
@@ -25,9 +35,7 @@ const VideoPlayer = ({ file_name, isWide = false }) => {
                     }
                 });
             },
-            {
-                threshold: 0.75, // 비디오가 화면의 50% 이상 보일 때
-            }
+            { threshold: 0.75 }
         );
 
         const videoElement = videoRef.current;
@@ -35,7 +43,6 @@ const VideoPlayer = ({ file_name, isWide = false }) => {
             observer.observe(videoElement);
         }
 
-        // Clean up observer on unmount
         return () => {
             if (videoElement) {
                 observer.unobserve(videoElement);
@@ -44,21 +51,53 @@ const VideoPlayer = ({ file_name, isWide = false }) => {
     }, [isPlaying]);
 
     return (
-        <video
-            ref={videoRef}
-            style={{
-                width: "100%",
-                objectFit: "contain",
-                height: isWide ? "" : "100%",
-                transform: isWide ? "" : "scale(0.999",
-            }}
-            muted // 음소거 상태로 자동 재생을 허용
-        >
-            <source
-                src={`./mock/PetSta/videos/${file_name}`}
-                type="video/mp4"
-            />
-        </video>
+        <Box position="relative" width="100%" height={isWide ? "auto" : "100%"} overflow="hidden">
+            <video
+                onClick={handlePostClick}
+                ref={videoRef}
+                style={{
+                    width: "100%",
+                    height: isWide ? "auto" : "100%",
+                    objectFit: "contain",
+                    transform: isWide ? "" : "scale(0.999)",
+                }}
+                muted={isMute}
+                onTimeUpdate={() => {
+                    if (videoRef.current) {
+                        currentTime.current = videoRef.current.currentTime;
+                    }
+                }}
+            >
+                <source src={`/mock/PetSta/videos/${fileName}`} type="video/mp4" />
+            </video>
+
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                borderRadius="50%"
+                position="absolute"
+                bottom="10px"
+                right="10px"
+                backgroundColor="#262626"
+                color="white"
+                width="25px"
+                height="25px"
+                onClick={(event) => {
+                    event.stopPropagation();
+                    toggleMute();
+                }}
+                sx={{ cursor: "pointer" }}
+            >
+                <img
+                    src={isMute ? AudioOff : AudioOn}
+                    alt={isMute ? "Mute" : "Unmute"}
+                    style={{ objectFit: "cover" }}
+                    width="13px"
+                    height="13px"
+                />
+            </Box>
+        </Box>
     );
 };
 

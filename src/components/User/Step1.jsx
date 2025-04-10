@@ -1,85 +1,61 @@
-import React from "react";
-import joinLogo from "/src/assets/images/User/join_logo.png";
-import KakaoLogo from "/src/assets/images/User/Kakao Login.png";
-import NaverLogo from "/src/assets/images/User/Naver Login.png";
-import GoogleLogo from "/src/assets/images/User/Google Login.png";
-import { Box, Typography } from "@mui/material";
+import * as React from "react";
+import Input from "@mui/material/Input";
+import FormControl from "@mui/material/FormControl";
+import { Box, Button, InputLabel, Typography, FormHelperText } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import ReqUi from "./ReqUi.jsx";
+import { useRegister } from "./RegisterContext.jsx";
+import { useState } from "react";
+const Step1 = () => {
+    const { nextStep, nickname, setNickname } = useRegister();
 
-const Step1 = ({ nextStep }) => {
-    const handleGoogleLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/kakao";
+    const navigate = useNavigate();
+    const [error, setError] = useState(false);
+
+    const handleNext = () => {
+        if (!nickname || nickname.trim().length < 2 || nickname.trim().length > 16) {
+            setError(true);
+            return;
+        }
+        setError(false);
+        nextStep();
     };
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            textAlign="center"
-        >
-            <Typography variant="h6" fontWeight="bold" mb={4}>
-                꼬리친구들
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
+            <Typography variant="h6" fontWeight="bold" textAlign="center">
+                환영합니다
             </Typography>
-            <Box component="img" src={joinLogo} alt="logo" width={300} mb={4} />
-            <Typography variant="h6" fontWeight="bold" mb={4}>
-                다양한 애완동물을 위한 컨텐츠!
-            </Typography>
-            <Typography variant="body1" mb={10} sx={{ color: "#C8C8C8" }}>
-                꼬리친구들을 만나볼까요?
+            <Typography variant="body1" textAlign="center" mb={2}>
+                회원가입이 완료되었어요! 닉네임을 설정해주세요.
             </Typography>
 
-            <Box
-                width="90%"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                gap={2}
+            <FormControl variant="standard" fullWidth error={error}>
+                <InputLabel htmlFor="nickname">
+                    닉네임 <ReqUi />
+                </InputLabel>
+                <Input
+                    required
+                    id="nickname"
+                    name="nickname"
+                    placeholder="2~16자 이내로 입력해주세요"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                />
+                {error && <FormHelperText>닉네임은 2~16자 이내로 입력해주세요.</FormHelperText>}
+            </FormControl>
+
+            <Button
+                variant="contained"
+                onClick={() => navigate("/login")}
+                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
             >
-                <Box
-                    component="button"
-                    onClick={handleGoogleLogin}
-                    border="none"
-                    bgcolor="white"
-                    width="100%"
-                >
-                    <Box
-                        component="img"
-                        src={KakaoLogo}
-                        alt="Kakao Login"
-                        width="100%"
-                    />
-                </Box>
-                <Box
-                    component="button"
-                    onClick={nextStep}
-                    border="none"
-                    bgcolor="white"
-                    width="100%"
-                >
-                    <Box
-                        component="img"
-                        src={NaverLogo}
-                        alt="Naver Login"
-                        width="100%"
-                    />
-                </Box>
-                <Box
-                    component="button"
-                    onClick={nextStep}
-                    border="none"
-                    bgcolor="white"
-                    width="100%"
-                >
-                    <Box
-                        component="img"
-                        src={GoogleLogo}
-                        alt="Google Login"
-                        width="100%"
-                    />
-                </Box>
-            </Box>
+                뒤로
+            </Button>
+
+            <Button variant="contained" onClick={handleNext} sx={{ mt: 2, width: "100%", backgroundColor: "#E9A260" }}>
+                다음
+            </Button>
         </Box>
     );
 };
