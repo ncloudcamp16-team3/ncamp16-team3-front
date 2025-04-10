@@ -125,7 +125,7 @@ const Step5 = () => {
                             {pet.petInfo && (
                                 <>
                                     <Divider sx={{ my: 2 }} />
-                                    <Typography variant="body1">{pet.petIntroduction}</Typography>
+                                    <Typography variant="body1">{pet.petInfo}</Typography>
                                 </>
                             )}
                         </Paper>

@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 const RegisterContext = createContext();
 
@@ -24,7 +23,6 @@ export const RegisterProvider = ({ children }) => {
     const [snsTypeId, setSnsTypeId] = useState(null);
     const [previews, setPreviews] = useState([]);
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
-    const [searchParams] = useSearchParams();
 
     const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
     const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -86,25 +84,41 @@ export const RegisterProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        const token = searchParams.get("token");
-        const email = searchParams.get("email");
-        const snsTypeIdStr = searchParams.get("snsTypeId");
+        const fetchOAuth2SessionInfo = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get("sessionId");
 
-        // snsTypeId를 숫자로 변환
-        const snsTypeId = snsTypeIdStr ? parseInt(snsTypeIdStr, 10) : null;
+            if (!sessionId) return;
 
-        if (token) setToken(token);
-        if (email) setEmail(email);
-        if (snsTypeId) setSnsTypeId(snsTypeId);
+            try {
+                const response = await fetch(`http://localhost:8080/api/auth/oauth2/session?sessionId=${sessionId}`);
 
-        console.log("Step1 - URL 파라미터:", {
-            token,
-            email,
-            snsTypeId,
-            snsTypeIdStr,
-            allParams: Object.fromEntries(searchParams.entries()),
-        });
-    }, [searchParams, setToken, setEmail, setSnsTypeId]);
+                if (!response.ok) {
+                    throw new Error("세션 정보 가져오기 실패");
+                }
+
+                const data = await response.json();
+                const { token, email, snsTypeId } = data;
+
+                if (token) {
+                    setToken(token);
+                    setStep(2); // SNS 로그인 사용자, 회원가입 시작
+                }
+                if (email) setEmail(email);
+                if (snsTypeId) setSnsTypeId(snsTypeId);
+
+                console.log("✅ OAuth2 세션 로그인 정보 수신:", { token, email, snsTypeId });
+
+                // URL에서 sessionId 제거
+                const cleanUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            } catch (err) {
+                console.error("❌ 세션 로그인 정보 fetch 실패:", err);
+            }
+        };
+
+        fetchOAuth2SessionInfo();
+    }, []);
 
     return (
         <RegisterContext.Provider
