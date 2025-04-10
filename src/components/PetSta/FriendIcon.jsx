@@ -9,7 +9,7 @@ const FriendIcon = React.memo(({ friend }) => {
         <Box display="flex" flexDirection="column" alignItems="center">
             <UserIcon userInfo={friend} />
             <Typography marginTop="4px" fontSize="11px" color={theme.secondary}>
-                {friend.user_name}
+                {friend.userName}
             </Typography>
         </Box>
     );

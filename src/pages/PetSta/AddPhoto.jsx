@@ -5,6 +5,7 @@ import AddPhotoDetail from "../../components/PetSta/AddPhotoDetail.jsx";
 const AddPhoto = () => {
     const [step, setStep] = useState(1);
     const [imagePreview, setImagePreview] = useState(null);
+
     return (
         <>
             {step === 1 && (

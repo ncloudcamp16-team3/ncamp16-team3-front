@@ -11,8 +11,8 @@ const PostCommentPage = () => {
     const [commentContent, setCommentContent] = useState(""); // ← 댓글 내용 상태
     const [isReply, setIsReply] = useState(false);
     const inputRef = useRef(null); // 👈 Input 태그를 위한 ref
-    const { post_id } = useParams();
-    const file_name = "haribo.jpg";
+    const { postId } = useParams();
+    const fileName = "haribo.jpg";
     const theme = useTheme();
 
     const handleReply = (userName) => {
@@ -31,9 +31,9 @@ const PostCommentPage = () => {
         setCommentContent("");
     };
 
-    // post_id에 해당하는 댓글 중 parent_id가 null인 것만 필터링
+    // postId에 해당하는 댓글 중 parentId가 null인 것만 필터링
     const filteredComments = comments.filter(
-        (comment) => comment.post_id === Number(post_id) && comment.parent_id === null
+        (comment) => comment.postId === Number(postId) && comment.parentId === null
     );
 
     return (
@@ -95,7 +95,7 @@ const PostCommentPage = () => {
                     >
                         <Box
                             component="img"
-                            src={`/mock/Global/images/${file_name}`}
+                            src={`/mock/Global/images/${fileName}`}
                             alt="profile"
                             sx={{
                                 maxWidth: "100%",

@@ -6,9 +6,9 @@ import PetStaBookmark from "../../assets/images/PetSta/petsta-bookmark.svg";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 
-const PostBottom = ({ user_name, post_id, likes, comments, content, created_at }) => {
-    const [like_count, setLike_count] = useState("");
-    const [comment_count, setComment_count] = useState("");
+const PostBottom = ({ userName, postId, likes, comments, content, createdAt }) => {
+    const [likeCount, setLikeCount] = useState("");
+    const [commentCount, setCommentCount] = useState("");
     const [isExpended, setIsExpended] = useState(false);
 
     const [createTime, setCreateTime] = useState("");
@@ -20,23 +20,23 @@ const PostBottom = ({ user_name, post_id, likes, comments, content, created_at }
 
     useEffect(() => {
         if (likes >= 10000) {
-            setLike_count((likes / 10000).toFixed(1) + "만");
+            setLikeCount((likes / 10000).toFixed(1) + "만");
         } else {
-            setLike_count(likes.toString());
+            setLikeCount(likes.toString());
         }
     }, [likes]);
 
     useEffect(() => {
         if (comments >= 10000) {
-            setComment_count((comments / 10000).toFixed(1) + "만");
+            setCommentCount((comments / 10000).toFixed(1) + "만");
         } else {
-            setComment_count(comments.toString());
+            setCommentCount(comments.toString());
         }
     }, [comments]);
 
     useEffect(() => {
         const currentTime = new Date();
-        const createdTime = new Date(created_at);
+        const createdTime = new Date(createdAt);
 
         // 24시간 이내인지 확인
         const timeDifference = currentTime - createdTime; // 밀리초 단위 차이
@@ -60,7 +60,7 @@ const PostBottom = ({ user_name, post_id, likes, comments, content, created_at }
             const day = createdTime.getDate();
             setCreateTime(`${month}월 ${day}일`);
         }
-    }, [created_at]);
+    }, [createdAt]);
 
     const renderContent = (text) => {
         return text.split("\n").map((line, index) => (
@@ -75,10 +75,10 @@ const PostBottom = ({ user_name, post_id, likes, comments, content, created_at }
             <Box display="flex" justifyContent="space-between">
                 <Box sx={{ padding: 1, display: "flex", alignItems: "center" }}>
                     <img src={PetStaHeart} alt="Like Icon" />
-                    <Typography sx={{ marginRight: 2 }}>{like_count}</Typography> {/* marginRight가 sx로 적용됨 */}
-                    <Box display="flex" onClick={() => navigate(`/petsta/post/comment/${post_id}`)}>
+                    <Typography sx={{ marginRight: 2 }}>{likeCount}</Typography> {/* marginRight가 sx로 적용됨 */}
+                    <Box display="flex" onClick={() => navigate(`/petsta/post/comment/${postId}`)}>
                         <img src={PetStaComment} alt="Comment Icon" />
-                        <Typography>{comment_count}</Typography>
+                        <Typography>{commentCount}</Typography>
                     </Box>
                 </Box>
                 <Box sx={{ padding: 1, display: "flex", alignItems: "center" }}>
@@ -100,7 +100,7 @@ const PostBottom = ({ user_name, post_id, likes, comments, content, created_at }
                         whiteSpace: "nowrap", // 이름이 줄 바뀌지 않도록 설정
                     }}
                 >
-                    {user_name}
+                    {userName}
                 </Typography>
                 <Typography
                     component="span"
