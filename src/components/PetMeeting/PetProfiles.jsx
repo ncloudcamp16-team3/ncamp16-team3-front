@@ -19,7 +19,7 @@ const PetProfiles = () => {
                 const end = start + PAGE_SIZE;
                 const newPets = PetFriends.slice(start, end);
                 resolve(newPets);
-            }, 400);
+            }, 600);
         });
     };
 
