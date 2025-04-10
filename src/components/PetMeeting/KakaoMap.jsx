@@ -37,22 +37,10 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
             const map = new window.kakao.maps.Map(container, options);
             mapInstanceRef.current = map;
 
-            // 클릭 이벤트 등록
             window.kakao.maps.event.addListener(map, "click", function (mouseEvent) {
                 const latlng = mouseEvent.latLng;
 
-                // 기존 마커 제거
-                if (markerRef.current) {
-                    markerRef.current.setMap(null);
-                }
-
-                // 새 마커 생성
-                const marker = new window.kakao.maps.Marker({
-                    position: latlng,
-                });
-
-                marker.setMap(map);
-                markerRef.current = marker;
+                placeMarker(latlng.getLat(), latlng.getLng());
             });
         };
     }, []);
@@ -65,18 +53,50 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
                 const firstResult = data[0];
                 const lat = firstResult.y;
                 const lng = firstResult.x;
-                const newPosition = new window.kakao.maps.LatLng(lat, lng);
 
+                const newPosition = new window.kakao.maps.LatLng(lat, lng);
                 mapInstanceRef.current.setCenter(newPosition);
+
+                placeMarker(lat, lng);
             } else {
                 alert("검색 결과가 없습니다.");
             }
         });
     };
 
+    const placeMarker = (lat, lng) => {
+        const map = mapInstanceRef.current;
+
+        if (!map) return;
+
+        if (markerRef.current) {
+            markerRef.current.setMap(null);
+        }
+
+        const newPosition = new window.kakao.maps.LatLng(lat, lng);
+        const marker = new window.kakao.maps.Marker({
+            position: newPosition,
+            map: map,
+        });
+
+        markerRef.current = marker;
+
+        // 주소 정보 가져오기 (역지오코딩)
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        geocoder.coord2Address(lng, lat, (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK && result[0]) {
+                const address = result[0].address.address_name; // 전체 주소
+                const dong = result[0].address.region_3depth_name; // 동 이름
+
+                setAddress(address); // 예: 서울 강남구 역삼동 123
+                setDongName(dong); // 예: 역삼동
+            }
+        });
+    };
+
     return (
         <Box>
-            <div ref={mapRef} style={{ width: "100%", height: "400px" }} />
+            <div ref={mapRef} style={{ width: "100%", height: "350px" }} />
             <Box
                 sx={{
                     display: "flex",

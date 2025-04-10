@@ -10,24 +10,26 @@ const LocationConfig = () => {
     const { setView, pet, setPet } = useContext(PetMeetingContext);
     const [address, setAddress] = useState(null);
     const [dongName, setDongName] = useState(null);
-    const [distance, setDistance] = useState(null);
+    const [distance, setDistance] = useState(2);
 
     useEffect(() => {
         if (pet?.owner) {
-            setAddress(pet.owner?.address || "");
-            setDongName(pet.owner?.dongName || "");
-            setDistance(pet.owner?.distance || "");
+            setAddress(pet.owner?.address || null);
+            setDongName(pet.owner?.dongName || null);
+            setDistance(pet.owner?.distance || 2);
         }
     }, []);
 
     const saveLocation = () => {
         setPet((prev) => ({
-            ...prev.owner,
-            address: address,
-            dongName: dongName,
-            distance: distance,
+            ...prev,
+            owner: {
+                ...prev.owner,
+                address: address,
+                dongName: dongName,
+                distance: distance,
+            },
         }));
-        alert("위치저장성공 ㅋ");
     };
 
     return (
@@ -73,7 +75,7 @@ const LocationConfig = () => {
             </Box>
 
             <KakaoMap address={address} setAddress={setAddress} dongName={dongName} setDongName={setDongName} />
-            <Distance dongName={dongName} />
+            <Distance dongName={dongName} distance={distance} setDistance={setDistance} />
             <LocationConfigBtns saveLocation={saveLocation} />
         </Box>
     );

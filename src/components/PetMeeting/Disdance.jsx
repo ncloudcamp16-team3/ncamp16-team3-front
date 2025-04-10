@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography } from "@mui/material";
 
-const Distance = ({ dongName }) => {
-    const steps = [0, 1, 2, 3];
-    const [currentStep, setCurrentStep] = useState(1);
+const Distance = ({ dongName, distance, setDistance }) => {
+    const steps = [1, 2, 3, 4];
 
     return (
         <Box
@@ -23,6 +22,7 @@ const Distance = ({ dongName }) => {
                 }}
             >
                 <Typography sx={{ fontSize: "22px" }}>동네위치</Typography>
+
                 <Typography
                     sx={{
                         backgroundColor: "#E9A260",
@@ -37,7 +37,7 @@ const Distance = ({ dongName }) => {
                         flexShrink: 0,
                     }}
                 >
-                    {dongName}
+                    {dongName ? dongName : "주소선택"}
                 </Typography>
             </Box>
 
@@ -70,12 +70,12 @@ const Distance = ({ dongName }) => {
                 {steps.map((step) => (
                     <Box
                         key={step}
-                        onClick={() => setCurrentStep(step)}
+                        onClick={() => setDistance(step)}
                         sx={{
                             width: 20,
                             height: 20,
                             borderRadius: "50%",
-                            backgroundColor: step === currentStep ? "#E9A260" : "#D9D9D9",
+                            backgroundColor: step === distance ? "#E9A260" : "#D9D9D9",
                             zIndex: 3,
                             cursor: "pointer",
                         }}

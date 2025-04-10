@@ -28,7 +28,6 @@ const PetCard = ({ friend }) => {
             <Box
                 component="img"
                 src={thumbnailPhoto.url}
-                alt={friend?.name}
                 sx={{
                     borderRadius: "50%",
                     width: "50%",
