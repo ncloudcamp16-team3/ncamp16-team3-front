@@ -3,27 +3,26 @@ import { Box, Typography } from "@mui/material";
 
 const Distance = ({ dongName }) => {
     const steps = [0, 1, 2, 3];
-    const [currentStep, setCurrentStep] = useState(1); // 기본 선택된 위치
+    const [currentStep, setCurrentStep] = useState(1);
 
     return (
-        <>
+        <Box
+            sx={{
+                width: "100%",
+                mx: "auto",
+                px: 2,
+            }}
+        >
+            {/* Header */}
             <Box
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    p: "0 25px",
+                    mb: 2,
                 }}
             >
-                <Typography
-                    sx={{
-                        textAlign: "center",
-                        fontSize: "25px",
-                        ml: "5px",
-                    }}
-                >
-                    동네위치
-                </Typography>
+                <Typography sx={{ fontSize: "22px" }}>동네위치</Typography>
                 <Typography
                     sx={{
                         backgroundColor: "#E9A260",
@@ -35,21 +34,23 @@ const Distance = ({ dongName }) => {
                         color: "white",
                         fontWeight: "bold",
                         fontSize: "18px",
+                        flexShrink: 0,
                     }}
                 >
                     {dongName}
                 </Typography>
             </Box>
+
+            {/* Stepper */}
             <Box
                 sx={{
                     position: "relative",
                     width: "100%",
-                    maxWidth: "450px",
                     height: "24px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    margin: "25px auto",
+                    mb: 2,
                 }}
             >
                 <Box
@@ -59,8 +60,8 @@ const Distance = ({ dongName }) => {
                         left: 0,
                         right: 0,
                         height: "6px",
-                        width: "96%",
                         backgroundColor: "#D9D9D9",
+                        width: "97%",
                         transform: "translateY(-50%)",
                         zIndex: 1,
                     }}
@@ -81,17 +82,13 @@ const Distance = ({ dongName }) => {
                     />
                 ))}
             </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    p: "0 25px",
-                }}
-            >
+
+            {/* Labels */}
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography>가까운 동네</Typography>
                 <Typography>먼 동네</Typography>
             </Box>
-        </>
+        </Box>
     );
 };
 

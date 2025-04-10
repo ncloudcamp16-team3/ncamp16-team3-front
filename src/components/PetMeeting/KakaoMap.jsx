@@ -20,11 +20,11 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
                 const lng = position.coords.longitude;
                 const center = new window.kakao.maps.LatLng(lat, lng);
 
-                initMap(center); // 현재 위치 중심
+                initMap(center);
             },
             () => {
                 const fallbackCenter = new window.kakao.maps.LatLng(37.5665, 126.978);
-                initMap(fallbackCenter); // 실패 시 기본 중심 (서울)
+                initMap(fallbackCenter);
             }
         );
 
@@ -82,6 +82,7 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    width: "100%",
                 }}
             >
                 <Box
@@ -92,7 +93,7 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
                         borderRadius: "30px",
                         paddingX: 2,
                         paddingY: 0.5,
-                        width: "450px",
+                        width: "90%",
                         p: "10px",
                         m: 2,
                     }}
@@ -114,15 +115,17 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
                     />
                 </Box>
             </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    m: "10px 0 15px 25px",
-                }}
-            >
-                <Box component="img" src={Mappin}></Box>
-                <Typography sx={{ m: "0 5px", fontSize: "20px" }}>{address}</Typography>
-            </Box>
+            {address && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        m: "0 16px 16px 16px",
+                    }}
+                >
+                    <Box component="img" src={Mappin}></Box>
+                    <Typography sx={{ m: "0 5px", fontSize: "20px" }}>{address}</Typography>
+                </Box>
+            )}
         </Box>
     );
 };
