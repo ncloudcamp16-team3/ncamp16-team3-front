@@ -1,0 +1,35 @@
+.dateRangeContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    gap: 0.5rem;
+}
+
+.inputGroup {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dateInput {
+    border: 1px solid #D1D5DB;
+    border-radius: 20px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.875rem;
+    width: 6rem;
+}
+
+.separator {
+    font-size: 0.875rem;
+    align-self: center;
+}
+
+.searchButton {
+    border: 1px solid #D1D5DB;
+    background-color: #F97316;
+    color: white;
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}

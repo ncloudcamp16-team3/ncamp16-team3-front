@@ -11,6 +11,7 @@ import Notification from "./pages/Notification/Notification.jsx";
 import Container from "./components/Global/Container.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
+import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 function App() {
@@ -26,6 +27,7 @@ function App() {
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
+                            <Route path="/payment" element={<Payment />} />
                             <Route
                                 path="/notification"
                                 element={<Notification />}

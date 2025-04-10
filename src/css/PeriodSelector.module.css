@@ -1,0 +1,20 @@
+.periodSelectorContainer {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.periodButton {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    background-color: #E5E7EB;
+    color: #4B5563;
+    border: 1px solid #D1D5DB;
+}
+
+.periodButton.selected {
+    background-color: #F97316;
+    border: 1px solid #D1D5DB;
+    color: white;
+}
