@@ -49,12 +49,12 @@ const Step1 = () => {
             <Button
                 variant="contained"
                 onClick={() => navigate("/login")}
-                sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}
+                sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
             >
                 뒤로
             </Button>
 
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 2, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
         </Box>

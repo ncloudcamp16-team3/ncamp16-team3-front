@@ -113,11 +113,11 @@ const Step2 = () => {
                 {errors.petGender && <FormHelperText>성별을 선택해주세요.</FormHelperText>}
             </FormControl>
 
-            <Button variant="contained" onClick={prevStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button variant="contained" onClick={prevStep} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
                 뒤로
             </Button>
 
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
                 다음
             </Button>
         </Box>
