@@ -1,45 +1,27 @@
-import React, { useState, useEffect } from "react";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
+import React, { useState } from "react";
 import FormControl from "@mui/material/FormControl";
-import { Avatar, Box, Button, FormHelperText, InputLabel, Stack, Typography, IconButton } from "@mui/material";
+import { Avatar, Box, Button, FormHelperText, Stack, Typography, IconButton, Grid } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ReqUi from "./ReqUi.jsx";
-import Input from "@mui/material/Input";
 import { useRegister } from "./RegisterContext.jsx";
 
 const Step4 = () => {
-    const { handleChange, formData, prevStep, handleStep4Next } = useRegister();
-
-    const [previews, setPreviews] = useState([]);
-    const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
+    const {
+        handleChange,
+        formData,
+        prevStep,
+        handleStep4Next,
+        mainPhotoIndex,
+        previews,
+        removePhoto,
+        selectMainPhoto,
+    } = useRegister();
 
     const [errors, setErrors] = useState({
         petNeutered: false,
         petPhotos: false,
     });
-
-    useEffect(() => {
-        // 새로운 URL 생성
-        const loadedPreviews = (formData.petPhotos || []).map((file) =>
-            typeof file === "string" ? file : URL.createObjectURL(file)
-        );
-
-        setPreviews((prev) => {
-            prev.forEach((url) => URL.revokeObjectURL(url)); // 기존 URL 제거
-            return loadedPreviews;
-        });
-
-        return () => {
-            // unmount 시 URL 정리
-            loadedPreviews.forEach((url) => {
-                if (typeof url === "string") return;
-                URL.revokeObjectURL(url);
-            });
-        };
-    }, [formData.petPhotos]);
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
@@ -55,28 +37,6 @@ const Step4 = () => {
         });
 
         e.target.value = null;
-    };
-
-    const removePhoto = (index) => {
-        const updatedPhotos = [...formData.petPhotos];
-        updatedPhotos.splice(index, 1);
-
-        handleChange({
-            target: {
-                name: "petPhotos",
-                value: updatedPhotos,
-            },
-        });
-
-        if (mainPhotoIndex === index) {
-            setMainPhotoIndex(0);
-        } else if (mainPhotoIndex > index) {
-            setMainPhotoIndex(mainPhotoIndex - 1);
-        }
-    };
-
-    const selectMainPhoto = (index) => {
-        setMainPhotoIndex(index);
     };
 
     const handleNext = () => {
@@ -101,34 +61,48 @@ const Step4 = () => {
         <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
             {/* 중성화 여부 */}
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petNeutered}>
-                <FormHelperText>
+                <FormHelperText sx={{ mb: 1 }}>
                     중성화 여부를 알려주세요 <ReqUi />
                 </FormHelperText>
-                <RadioGroup
-                    row
-                    id="petNeutered"
-                    name="petNeutered"
-                    value={formData.petNeutered}
-                    onChange={handleChange}
-                >
-                    <FormControlLabel value="Y" control={<Radio />} label="O" />
-                    <FormControlLabel value="N" control={<Radio />} label="X" />
-                </RadioGroup>
-                {errors.petNeutered && "중성화 여부를 선택해 주세요."}
-            </FormControl>
-
-            {/* 좋아하는 것 */}
-            <FormControl variant="standard" fullWidth sx={{ mb: 4 }}>
-                <InputLabel htmlFor="petFavorite" sx={{ mb: 4 }}>
-                    좋아하는 것을 알려주세요
-                </InputLabel>
-                <Input
-                    id="petFavorite"
-                    name="petFavorite"
-                    placeholder="ex) 공놀이, 산책"
-                    value={formData.petFavorite}
-                    onChange={handleChange}
-                />
+                <Grid container spacing={1}>
+                    <Grid item size={6}>
+                        <Button
+                            fullWidth
+                            variant={formData.petNeutered === "Y" ? "contained" : "outlined"}
+                            onClick={() => handleChange({ target: { name: "petNeutered", value: "Y" } })}
+                            sx={{
+                                backgroundColor: formData.petNeutered === "Y" ? "#E9A260" : "inherit",
+                                color: formData.petNeutered === "Y" ? "#fff" : "inherit",
+                                borderColor: "#E9A260",
+                                "&:hover": {
+                                    backgroundColor: "#e08a3a",
+                                    borderColor: "#e08a3a",
+                                },
+                            }}
+                        >
+                            O
+                        </Button>
+                    </Grid>
+                    <Grid item size={6}>
+                        <Button
+                            fullWidth
+                            variant={formData.petNeutered === "N" ? "contained" : "outlined"}
+                            onClick={() => handleChange({ target: { name: "petNeutered", value: "N" } })}
+                            sx={{
+                                backgroundColor: formData.petNeutered === "N" ? "#E9A260" : "inherit",
+                                color: formData.petNeutered === "N" ? "#fff" : "inherit",
+                                borderColor: "#E9A260",
+                                "&:hover": {
+                                    backgroundColor: "#e08a3a",
+                                    borderColor: "#e08a3a",
+                                },
+                            }}
+                        >
+                            X
+                        </Button>
+                    </Grid>
+                </Grid>
+                {errors.petNeutered && <FormHelperText>중성화 여부를 선택해 주세요.</FormHelperText>}
             </FormControl>
 
             {/* 사진 업로드 */}
@@ -206,11 +180,11 @@ const Step4 = () => {
             </FormControl>
 
             {/* 이동 버튼 */}
-            <Button variant="contained" onClick={prevStep} sx={{ mt: 3, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button variant="contained" onClick={prevStep} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
                 뒤로
             </Button>
 
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 2, width: "100%", backgroundColor: "#E9A260" }}>
+            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
                 작성 완료
             </Button>
         </Box>
