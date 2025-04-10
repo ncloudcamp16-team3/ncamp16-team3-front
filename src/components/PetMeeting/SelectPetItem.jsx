@@ -7,7 +7,7 @@ const SelectPetItem = ({ pet, selected, setSelectedPet }) => {
     return (
         <Box
             sx={{
-                padding: "12px 0",
+                padding: "8.5px 0",
                 display: "flex",
                 justifyContent: "center",
                 backgroundColor: selected ? "#E9A260" : "#F2DFCE",
@@ -22,7 +22,7 @@ const SelectPetItem = ({ pet, selected, setSelectedPet }) => {
                 setDrop();
             }}
         >
-            {pet}
+            {pet.name}
         </Box>
     );
 };

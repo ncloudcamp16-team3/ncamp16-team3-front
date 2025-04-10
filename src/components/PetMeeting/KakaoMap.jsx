@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Box, InputBase, Typography } from "@mui/material";
+import { Box, Button, InputBase, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Mappin from "../../assets/images/PetMeeting/map-pin.svg";
 
@@ -7,6 +7,7 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
     const mapRef = useRef(null);
     const markerRef = useRef(null);
     const mapInstanceRef = useRef(null);
+    const searchKeyword = useRef("");
 
     useEffect(() => {
         if (!window.kakao || !window.kakao.maps) return;
@@ -45,8 +46,9 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
         };
     }, []);
 
-    const searchAndMove = (keyword) => {
+    const searchAndMove = () => {
         const ps = new window.kakao.maps.services.Places();
+        const keyword = searchKeyword.current;
 
         ps.keywordSearch(keyword, function (data, status) {
             if (status === window.kakao.maps.services.Status.OK) {
@@ -81,15 +83,14 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
 
         markerRef.current = marker;
 
-        // 주소 정보 가져오기 (역지오코딩)
         const geocoder = new window.kakao.maps.services.Geocoder();
         geocoder.coord2Address(lng, lat, (result, status) => {
             if (status === window.kakao.maps.services.Status.OK && result[0]) {
-                const address = result[0].address.address_name; // 전체 주소
-                const dong = result[0].address.region_3depth_name; // 동 이름
+                const address = result[0].address.address_name;
+                const dong = result[0].address.region_3depth_name;
 
-                setAddress(address); // 예: 서울 강남구 역삼동 123
-                setDongName(dong); // 예: 역삼동
+                setAddress(address);
+                setDongName(dong);
             }
         });
     };
@@ -116,23 +117,53 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
                         width: "90%",
                         p: "10px",
                         m: 2,
+                        justifyContent: "space-between",
+                        position: "relative",
                     }}
                 >
-                    <SearchIcon sx={{ color: "#000", m: "0 10px" }} />
-                    <InputBase
-                        placeholder="장소 검색"
+                    <Box
                         sx={{
-                            color: "black",
-                            "& input": {
-                                padding: 0,
-                            },
+                            display: "flex",
+                            alignItems: "center",
                         }}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                searchAndMove(e.target.value);
-                            }
+                    >
+                        <SearchIcon sx={{ color: "#000", m: "0 10px" }} />
+                        <InputBase
+                            placeholder="장소 검색"
+                            sx={{
+                                color: "black",
+                                "& input": {
+                                    padding: 0,
+                                },
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    searchAndMove();
+                                }
+                            }}
+                            onChange={(e) => {
+                                searchKeyword.current = e.target.value;
+                            }}
+                        />
+                    </Box>
+                    <Button
+                        onClick={() => searchAndMove()}
+                        sx={{
+                            position: "absolute",
+                            right: "0",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            height: "100%",
+                            borderRadius: "30px",
+                            backgroundColor: "#E9A260",
+                            color: "white",
+                            px: 2,
+                            minWidth: "unset",
+                            width: "100px",
                         }}
-                    />
+                    >
+                        검색
+                    </Button>
                 </Box>
             </Box>
             {address && (

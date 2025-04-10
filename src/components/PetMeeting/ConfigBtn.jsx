@@ -5,6 +5,7 @@ import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 const ConfigBtn = ({ img, label, type }) => {
     const { pet, setOpenPetConfigModal, setView, setOpenActivityModal } = useContext(PetMeetingContext);
     const handleClick = () => {
+        alert(pet?.id);
         switch (type) {
             case "pet":
                 setOpenPetConfigModal(true);
@@ -13,7 +14,7 @@ const ConfigBtn = ({ img, label, type }) => {
                 setView("locationConfig");
                 break;
             case "activity":
-                if (pet.activity_status === "NONE" || pet.activity_status === undefined) {
+                if (pet?.activityStatus === "NONE" || pet?.activityStatus === undefined || pet?.id == null) {
                     setOpenPetConfigModal(true);
                 } else {
                     setOpenActivityModal(true);

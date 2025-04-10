@@ -89,6 +89,7 @@ const PetConfigModal = () => {
                                 backgroundColor: "#E9A260",
                                 borderRadius: 2,
                                 color: "white",
+                                fontSize: "16px",
                             }}
                             onClick={() => setDrop((prev) => !prev)}
                         >
@@ -309,6 +310,7 @@ const LocationSaveModal = ({ message, onClose }) => {
                         boxShadow: 24,
                         p: 4,
                         textAlign: "center",
+                        backgroundColor: "#FDF1E5",
                     }}
                 >
                     <Typography variant="h6" component="h2" gutterBottom>

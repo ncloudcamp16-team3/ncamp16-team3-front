@@ -3,7 +3,8 @@ import { Box, Button, Typography } from "@mui/material";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PetRegister = () => {
-    const { pet, setOpen, friendType } = useContext(PetMeetingContext);
+    const { pet, setOpenPetConfigModal, friendType } = useContext(PetMeetingContext);
+    console.log(pet);
     return (
         <Box
             sx={{
@@ -24,7 +25,7 @@ const PetRegister = () => {
                         padding: "7px 20px",
                         color: "white",
                     }}
-                    onClick={() => setOpen(true)}
+                    onClick={() => setOpenPetConfigModal(true)}
                 >
                     놀러가기
                 </Button>

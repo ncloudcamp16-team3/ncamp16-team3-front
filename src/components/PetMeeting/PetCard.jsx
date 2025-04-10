@@ -9,7 +9,7 @@ const PetCard = ({ friend }) => {
             sx={{
                 borderRadius: "20px",
                 width: "100%",
-                minHeight: "260px",
+                height: "100%",
                 cursor: "pointer",
                 mb: 4,
                 boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
@@ -85,7 +85,7 @@ const PetCard = ({ friend }) => {
                         maxWidth: "100%",
                     }}
                 >
-                    몸무게: {friend.weight}kg
+                    무게: {friend.weight}kg
                 </Typography>
                 <Typography
                     sx={{
@@ -96,7 +96,7 @@ const PetCard = ({ friend }) => {
                         maxWidth: "100%",
                     }}
                 >
-                    동네: {friend.owner.dongName}
+                    주소: {friend.owner.dongName}
                 </Typography>
             </Box>
         </Box>
