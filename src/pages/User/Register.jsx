@@ -5,24 +5,23 @@ import Step3 from "../../components/User/Step3";
 import Step4 from "../../components/User/Step4";
 import Step5 from "../../components/User/Step5";
 import { RegisterProvider, useRegister } from "../../components/User/RegisterContext";
+import DebugInfo from "../../components/User/DebugInfo"; // 디버깅용 컴포넌트
+import { useLocation } from "react-router-dom";
+
+const steps = [<Step1 />, <Step2 />, <Step3 />, <Step4 />, <Step5 />];
 
 const StepRenderer = () => {
     const { step } = useRegister();
+    const location = useLocation();
 
-    switch (step) {
-        case 1:
-            return <Step1 />;
-        case 2:
-            return <Step2 />;
-        case 3:
-            return <Step3 />;
-        case 4:
-            return <Step4 />;
-        case 5:
-            return <Step5 />;
-        default:
-            return null;
-    }
+    const debugInfo = Object.fromEntries(new URLSearchParams(location.search));
+
+    return (
+        <>
+            {steps[step - 1] || null}
+            <DebugInfo debugInfo={debugInfo} />
+        </>
+    );
 };
 
 const Register = () => {
