@@ -5,12 +5,14 @@ import Arrow from "../../assets/images/Global/arrow.svg";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import LocationConfigBtns from "./LocationConfigBtns.jsx";
 import Distance from "./Disdance.jsx";
+import { LocationSaveModal } from "./PetMeetingModals.jsx";
 
 const LocationConfig = () => {
     const { setView, pet, setPet } = useContext(PetMeetingContext);
     const [address, setAddress] = useState(null);
     const [dongName, setDongName] = useState(null);
     const [distance, setDistance] = useState(2);
+    const [modalMessage, setModalMessage] = useState(null);
 
     useEffect(() => {
         if (pet?.owner) {
@@ -30,6 +32,12 @@ const LocationConfig = () => {
                 distance: distance,
             },
         }));
+
+        if (address && dongName && distance) {
+            setModalMessage("위치 저장 완료");
+        } else {
+            setModalMessage("주소를 선택해주세요");
+        }
     };
 
     return (
@@ -77,6 +85,12 @@ const LocationConfig = () => {
             <KakaoMap address={address} setAddress={setAddress} dongName={dongName} setDongName={setDongName} />
             <Distance dongName={dongName} distance={distance} setDistance={setDistance} />
             <LocationConfigBtns saveLocation={saveLocation} />
+            {modalMessage && (
+                <LocationSaveModal
+                    message={modalMessage}
+                    onClose={() => setModalMessage(null)} // 언마운트
+                />
+            )}
         </Box>
     );
 };

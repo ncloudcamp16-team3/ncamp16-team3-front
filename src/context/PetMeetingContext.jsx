@@ -20,19 +20,19 @@ export const PetMeetingProvider = ({ children }) => {
         () => ({
             pet,
             openPetConfigModal,
+            openActivityModal,
             drop,
             friendType,
             view,
-            openActivityModal,
             setPet,
             setOpenPetConfigModal,
+            setOpenActivityModal,
             setDrop,
             setFriendType,
             setView,
-            setOpenActivityModal,
             setClose,
         }),
-        [pet, openPetConfigModal, drop, friendType, view, openActivityModal]
+        [pet, openPetConfigModal, openActivityModal, drop, friendType, view]
     );
 
     useEffect(() => {

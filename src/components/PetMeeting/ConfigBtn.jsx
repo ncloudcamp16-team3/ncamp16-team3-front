@@ -13,7 +13,7 @@ const ConfigBtn = ({ img, label, type }) => {
                 setView("locationConfig");
                 break;
             case "activity":
-                if (pet.activity_status === "NONE") {
+                if (pet.activity_status === "NONE" || pet.activity_status === undefined) {
                     setOpenPetConfigModal(true);
                 } else {
                     setOpenActivityModal(true);
