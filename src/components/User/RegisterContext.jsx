@@ -13,6 +13,24 @@ const initialPetData = {
     petPhotos: [],
 };
 
+function getSignupInfo() {
+    const cookies = document.cookie.split(";").reduce((acc, cookieStr) => {
+        const [key, value] = cookieStr.trim().split("=");
+        acc[key] = decodeURIComponent(value);
+        return acc;
+    }, {});
+    if (cookies.signupInfo) {
+        try {
+            const parsed = JSON.parse(cookies.signupInfo);
+            console.log("🔍 회원가입 쿠키 정보:", parsed);
+            return parsed;
+        } catch {
+            console.warn("⚠️ signupInfo 쿠키 파싱 실패");
+        }
+    }
+    return null;
+}
+
 export const RegisterProvider = ({ children }) => {
     const [step, setStep] = useState(1);
     const [nickname, setNickname] = useState("");
@@ -38,7 +56,7 @@ export const RegisterProvider = ({ children }) => {
 
     const goToStep2 = () => {
         setFormData(initialPetData);
-        setStep(2);
+        setStep(1);
     };
 
     const removePhoto = (index) => {
@@ -55,7 +73,7 @@ export const RegisterProvider = ({ children }) => {
         if (mainPhotoIndex === index) {
             setMainPhotoIndex(0);
         } else if (mainPhotoIndex > index) {
-            setMainPhotoIndex(mainPhotoIndex - 1);
+            setMainPhotoIndex((prev) => prev - 1);
         }
     };
 
@@ -63,29 +81,47 @@ export const RegisterProvider = ({ children }) => {
         setMainPhotoIndex(index);
     };
 
-    // ✅ HttpOnly 쿠키 기반 사용자 인증 정보 가져오기
+    // ✅ 회원가입 초기 정보 설정
     useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const res = await fetch("http://localhost:8080/api/auth/me", {
-                    credentials: "include", // 쿠키 포함
-                });
+        const initUserInfo = async () => {
+            const cookieInfo = getSignupInfo();
+            const urlParams = new URLSearchParams(window.location.search);
+            const emailParam = urlParams.get("email");
+            const snsTypeParam = urlParams.get("snsTypeId");
 
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log("🔐 사용자 인증 정보:", data);
-                    setEmail(data.email);
-                    setSnsTypeId(data.snsTypeId);
-                    setStep(2); // 사용자 인증 완료되었으면 회원가입 시작
-                } else {
-                    console.warn("❌ 인증되지 않은 사용자");
+            if (cookieInfo) {
+                setEmail(cookieInfo.email);
+                setSnsTypeId(cookieInfo.snsTypeId);
+            } else if (emailParam || snsTypeParam) {
+                if (emailParam) setEmail(emailParam);
+                if (snsTypeParam) setSnsTypeId(Number(snsTypeParam));
+            } else {
+                try {
+                    const res = await fetch("http://localhost:8080/api/auth/check", {
+                        credentials: "include",
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        console.log("🔐 사용자 인증 정보:", data);
+
+                        if (data.userId === -1) {
+                            // SNS 로그인은 되었으나 회원가입은 안 된 상태
+                            setEmail(data.email);
+                            setSnsTypeId(data.snsTypeId);
+                            goToStep2();
+                        } else {
+                            console.log("✅ 이미 가입된 사용자입니다. userId:", data.userId);
+                            // 필요한 경우 메인 페이지로 이동 등 처리
+                        }
+                    }
+                } catch (err) {
+                    console.error("🚨 사용자 정보 조회 실패:", err);
                 }
-            } catch (err) {
-                console.error("🚨 사용자 정보 조회 실패:", err);
             }
         };
 
-        fetchUserInfo();
+        initUserInfo();
     }, []);
 
     // ✅ 이미지 미리보기 처리
@@ -106,16 +142,6 @@ export const RegisterProvider = ({ children }) => {
             });
         };
     }, [formData.petPhotos]);
-
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has("email")) {
-            setEmail(urlParams.get("email"));
-        }
-        if (urlParams.has("snsTypeId")) {
-            setSnsTypeId(Number(urlParams.get("snsTypeId")));
-        }
-    }, []);
 
     return (
         <RegisterContext.Provider

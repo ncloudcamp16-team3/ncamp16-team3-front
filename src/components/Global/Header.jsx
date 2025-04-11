@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/Global/icon1.svg";
 import notification from "../../assets/images/Global/notification2.svg";
@@ -17,6 +17,35 @@ const Header = () => {
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        fetch("http://localhost:8080/api/auth/check", {
+            credentials: "include", // 중요! 쿠키 전송을 위해 필요
+        })
+            .then((res) => {
+                if (res.ok) {
+                    setIsLoggedIn(true);
+                } else {
+                    setIsLoggedIn(false);
+                }
+            })
+            .catch(() => setIsLoggedIn(false));
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await fetch("http://localhost:8080/api/auth/logout", {
+                method: "POST",
+                credentials: "include", // 쿠키 포함 필수!
+            });
+            setIsLoggedIn(false);
+        } catch (err) {
+            console.error("로그아웃 실패", err);
+        } finally {
+            toggleMenu(); // 메뉴 닫기
+        }
+    };
 
     const toggleMenu = (event) => {
         if (anchorEl) {
@@ -31,13 +60,7 @@ const Header = () => {
         navigate(link);
     };
     return (
-        <Box
-            component="div"
-            className="header"
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-        >
+        <Box component="div" className="header" display="flex" flexDirection="row" justifyContent="space-between">
             <Box
                 sx={{
                     borderRadius: "50%",
@@ -84,11 +107,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Bookmark}
-                        alt="북마크"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Bookmark} alt="북마크" style={{ width: "24px", height: "24px" }} />
                     <span>북마크</span>
                 </MenuItem>
 
@@ -103,11 +122,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Calendar}
-                        alt="캘린더"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Calendar} alt="캘린더" style={{ width: "24px", height: "24px" }} />
                     <span>캘린더</span>
                 </MenuItem>
 
@@ -122,11 +137,7 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Info}
-                        alt="회원정보"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Info} alt="회원정보" style={{ width: "24px", height: "24px" }} />
                     <span>회원정보</span>
                 </MenuItem>
 
@@ -141,33 +152,28 @@ const Header = () => {
                         minHeight: "32px",
                     }}
                 >
-                    <img
-                        src={Purchase}
-                        alt="결제내역"
-                        style={{ width: "24px", height: "24px" }}
-                    />
+                    <img src={Purchase} alt="결제내역" style={{ width: "24px", height: "24px" }} />
                     <span>결제내역</span>
                 </MenuItem>
 
-                <MenuItem
-                    onClick={() => alert("로그아웃 만들어주실분?")}
-                    sx={{
-                        display: "flex",
-                        alignItems: "flex-end",
-                        gap: 1.5,
-                        fontWeight: "600",
-                        padding: "4px 8px 4px 8px",
-                        minHeight: "32px",
-                        color: "red",
-                    }}
-                >
-                    <img
-                        src={Logout}
-                        alt="로그아웃"
-                        style={{ width: "24px", height: "24px" }}
-                    />
-                    <span>로그아웃</span>
-                </MenuItem>
+                {isLoggedIn ? "로그인됨" : "로그인 안됨"}
+                {isLoggedIn && (
+                    <MenuItem
+                        onClick={handleLogout}
+                        sx={{
+                            display: "flex",
+                            alignItems: "flex-end",
+                            gap: 1.5,
+                            fontWeight: "600",
+                            padding: "4px 8px 4px 8px",
+                            minHeight: "32px",
+                            color: "red",
+                        }}
+                    >
+                        <img src={Logout} alt="로그아웃" style={{ width: "24px", height: "24px" }} />
+                        <span>로그아웃</span>
+                    </MenuItem>
+                )}
             </Menu>
             <Box display="flex" alignItems="center">
                 <Box

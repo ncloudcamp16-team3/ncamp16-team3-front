@@ -40,6 +40,7 @@ import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import * as PropTypes from "prop-types";
+import OAuth2Success from "./components/User/OAuth2Success.jsx";
 
 function PrivateRoute(props) {
     return null;
@@ -67,6 +68,7 @@ function App() {
                             <Route path="facility/add" element={<AdminFacilityAdd />} />
                         </Route>
                         <Route element={<Layout0 />}>
+                            <Route path="/oauth2/success" element={<OAuth2Success />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
@@ -76,14 +78,7 @@ function App() {
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
-                            <Route
-                                path="/calendar"
-                                element={
-                                    <PrivateRoute>
-                                        <Cal />
-                                    </PrivateRoute>
-                                }
-                            />
+                            <Route path="/calendar" element={<Cal />} />
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/add-pet" element={<AddPet />} />
@@ -98,10 +93,7 @@ function App() {
                             </Route>
                             <Route path="/chat" element={<ChatList />} />
                             <Route path="/payment" element={<Payment />} />
-                            <Route
-                                path="/notification"
-                                element={<Notification />}
-                            />
+                            <Route path="/notification" element={<Notification />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

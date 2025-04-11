@@ -7,27 +7,8 @@ import { Box, Typography } from "@mui/material";
 
 const Login = () => {
     const handleOAuthLogin = (provider) => {
-        window.open(`http://localhost:8080/oauth2/authorization/${provider}`, "_blank", "width=500,height=600");
-
-        const handleMessage = (event) => {
-            // 출처 확인
-            if (event.origin !== "http://localhost:8080") return;
-
-            const { type, isNewUser } = event.data;
-
-            if (type === "OAUTH_SUCCESS") {
-                const clientBaseUrl = "http://localhost:5173";
-                if (isNewUser) {
-                    window.location.href = `${clientBaseUrl}/register`;
-                } else {
-                    window.location.href = `${clientBaseUrl}/home`;
-                }
-
-                window.removeEventListener("message", handleMessage);
-            }
-        };
-
-        window.addEventListener("message", handleMessage);
+        // ✅ 리다이렉트 방식으로 이동
+        window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
     };
 
     return (
