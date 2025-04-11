@@ -14,6 +14,7 @@ import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
+import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
@@ -96,6 +97,11 @@ function App() {
                                 <Route path="following" element={<FollowersTab />} />
                             </Route>
                             <Route path="/chat" element={<ChatList />} />
+                            <Route path="/payment" element={<Payment />} />
+                            <Route
+                                path="/notification"
+                                element={<Notification />}
+                            />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
