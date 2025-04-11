@@ -18,7 +18,6 @@ export const RegisterProvider = ({ children }) => {
     const [nickname, setNickname] = useState("");
     const [formData, setFormData] = useState(initialPetData);
     const [petDataList, setPetDataList] = useState([]);
-    const [token, setToken] = useState("");
     const [email, setEmail] = useState("");
     const [snsTypeId, setSnsTypeId] = useState(null);
     const [previews, setPreviews] = useState([]);
@@ -42,25 +41,6 @@ export const RegisterProvider = ({ children }) => {
         setStep(2);
     };
 
-    // 이미지 미리보기 관리
-    useEffect(() => {
-        const loadedPreviews = (formData.petPhotos || []).map((file) =>
-            typeof file === "string" ? file : URL.createObjectURL(file)
-        );
-
-        setPreviews((prev) => {
-            prev.forEach((url) => URL.revokeObjectURL(url));
-            return loadedPreviews;
-        });
-
-        return () => {
-            loadedPreviews.forEach((url) => {
-                if (typeof url === "string") return;
-                URL.revokeObjectURL(url);
-            });
-        };
-    }, [formData.petPhotos]);
-
     const removePhoto = (index) => {
         const updatedPhotos = [...formData.petPhotos];
         updatedPhotos.splice(index, 1);
@@ -83,41 +63,58 @@ export const RegisterProvider = ({ children }) => {
         setMainPhotoIndex(index);
     };
 
+    // ✅ HttpOnly 쿠키 기반 사용자 인증 정보 가져오기
     useEffect(() => {
-        const fetchOAuth2SessionInfo = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const sessionId = urlParams.get("sessionId");
-
-            if (!sessionId) return;
-
+        const fetchUserInfo = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/auth/oauth2/session?sessionId=${sessionId}`);
+                const res = await fetch("http://localhost:8080/api/auth/me", {
+                    credentials: "include", // 쿠키 포함
+                });
 
-                if (!response.ok) {
-                    throw new Error("세션 정보 가져오기 실패");
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log("🔐 사용자 인증 정보:", data);
+                    setEmail(data.email);
+                    setSnsTypeId(data.snsTypeId);
+                    setStep(2); // 사용자 인증 완료되었으면 회원가입 시작
+                } else {
+                    console.warn("❌ 인증되지 않은 사용자");
                 }
-
-                const data = await response.json();
-                const { token, email, snsTypeId } = data;
-
-                if (token) {
-                    setToken(token);
-                    setStep(2); // SNS 로그인 사용자, 회원가입 시작
-                }
-                if (email) setEmail(email);
-                if (snsTypeId) setSnsTypeId(snsTypeId);
-
-                console.log("✅ OAuth2 세션 로그인 정보 수신:", { token, email, snsTypeId });
-
-                // URL에서 sessionId 제거
-                const cleanUrl = window.location.origin + window.location.pathname;
-                window.history.replaceState({}, document.title, cleanUrl);
             } catch (err) {
-                console.error("❌ 세션 로그인 정보 fetch 실패:", err);
+                console.error("🚨 사용자 정보 조회 실패:", err);
             }
         };
 
-        fetchOAuth2SessionInfo();
+        fetchUserInfo();
+    }, []);
+
+    // ✅ 이미지 미리보기 처리
+    useEffect(() => {
+        const loadedPreviews = (formData.petPhotos || []).map((file) =>
+            typeof file === "string" ? file : URL.createObjectURL(file)
+        );
+
+        setPreviews((prev) => {
+            prev.forEach((url) => URL.revokeObjectURL(url));
+            return loadedPreviews;
+        });
+
+        return () => {
+            loadedPreviews.forEach((url) => {
+                if (typeof url === "string") return;
+                URL.revokeObjectURL(url);
+            });
+        };
+    }, [formData.petPhotos]);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("email")) {
+            setEmail(urlParams.get("email"));
+        }
+        if (urlParams.has("snsTypeId")) {
+            setSnsTypeId(Number(urlParams.get("snsTypeId")));
+        }
     }, []);
 
     return (
@@ -136,8 +133,6 @@ export const RegisterProvider = ({ children }) => {
                 handleChange,
                 handleStep4Next,
                 goToStep2,
-                token,
-                setToken,
                 email,
                 setEmail,
                 snsTypeId,

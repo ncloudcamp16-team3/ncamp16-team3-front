@@ -5,13 +5,28 @@ import { Box, Button, InputLabel, Typography, FormHelperText } from "@mui/materi
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Step1 = () => {
-    const { nextStep, nickname, setNickname } = useRegister();
-
+    const { nextStep, nickname, setNickname, email, snsTypeId } = useRegister(); // ✅ email, snsTypeId 가져오기
     const navigate = useNavigate();
     const [error, setError] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        if (!email || !snsTypeId) {
+            // 데이터를 아직 못 받았으면 기다림
+            return;
+        }
+
+        setLoaded(true);
+    }, [email, snsTypeId]);
+
+    useEffect(() => {
+        if (loaded && (!email || !snsTypeId)) {
+            navigate("/login");
+        }
+    }, [loaded, email, snsTypeId]);
 
     const handleNext = () => {
         if (!nickname || nickname.trim().length < 2 || nickname.trim().length > 16) {
