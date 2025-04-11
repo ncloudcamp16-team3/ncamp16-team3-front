@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const PetCard = ({ friend }) => {
     const thumbnailPhoto = friend?.photos.find((photo) => photo.id === friend.thumbnail);
+    const navigate = useNavigate();
 
     return (
         <Box
@@ -23,7 +25,7 @@ const PetCard = ({ friend }) => {
                     boxShadow: "4px 8px 15px rgba(0, 0, 0, 0.2)",
                 },
             }}
-            onClick={() => {}}
+            onClick={() => navigate(`/petdetails/${friend.id}`)}
         >
             <Box
                 component="img"

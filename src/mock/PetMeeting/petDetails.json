@@ -1,0 +1,26 @@
+{
+  "id": 1,
+  "owner": {
+    "id": 3,
+    "nickname": "라이언",
+    "address": "서울시 강남구 역삼동",
+    "detailAddress": "101동 402호",
+    "dongName": "역삼동",
+    "latitude": 37.5001,
+    "longitude": 127.035
+  },
+  "petType": "DOG",
+  "name": "백구",
+  "gender": "MALE",
+  "birth": "2022-05-01",
+  "weight": 14.2,
+  "info": "사교적인 푸들입니다",
+  "neutured": true,
+  "activityStatus": "WALK",
+  "photos": [
+    { "id": 10, "url": "/mock/PetMeeting/images/pet6.jpg" },
+    { "id": 11, "url": "/mock/PetMeeting/images/pet7.jpg" },
+    { "id": 12, "url": "/mock/PetMeeting/images/pet2.jpg" }
+  ],
+  "thumbnail": 12
+}

@@ -7,20 +7,17 @@ import SelectPetDropdown from "./SelectPetDropdown.jsx";
 const PetConfigModal = () => {
     const { pet, setPet, openPetConfigModal, drop, setDrop, setClose } = useContext(PetMeetingContext);
     const [selectedPet, setSelectedPet] = useState(null);
-    const [selectedActivity, setSelectedActivity] = useState(null);
 
     useEffect(() => {
         if (pet) {
-            setSelectedPet(pet.name);
-            setSelectedActivity(pet.activityStatus);
+            setSelectedPet(pet);
         } else {
             setSelectedPet(null);
-            setSelectedActivity(null);
         }
     }, [pet, openPetConfigModal]);
 
     const petRegister = () => {
-        setPet((prev) => ({ ...prev, name: selectedPet, activityStatus: selectedActivity }));
+        setPet(selectedPet);
         setClose();
     };
 
@@ -93,7 +90,7 @@ const PetConfigModal = () => {
                             }}
                             onClick={() => setDrop((prev) => !prev)}
                         >
-                            {selectedPet ? selectedPet : "친구 선택"}
+                            {selectedPet?.name ? selectedPet.name : "친구 선택"}
                         </Button>
                         {drop && <SelectPetDropdown selectedPet={selectedPet} setSelectedPet={setSelectedPet} />}
                     </Box>
@@ -119,14 +116,19 @@ const PetConfigModal = () => {
                                 padding: "7px 0",
                                 borderRadius: "8px",
                                 cursor: "pointer",
-                                backgroundColor: selectedActivity === "WALK" ? "#E9A260" : "transparent",
-                                color: selectedActivity === "WALK" ? "white" : "black",
+                                backgroundColor: selectedPet?.activityStatus === "WALK" ? "#E9A260" : "transparent",
+                                color: selectedPet?.activityStatus === "WALK" ? "white" : "black",
                                 transition: "0.3s",
                                 width: "50%",
                                 textAlign: "center",
                                 margin: "3px 0 3px 3px",
                             }}
-                            onClick={() => setSelectedActivity("WALK")}
+                            onClick={() =>
+                                setSelectedPet((prev) => ({
+                                    ...prev,
+                                    activityStatus: "WALK",
+                                }))
+                            }
                         >
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                 산책가기
@@ -138,14 +140,19 @@ const PetConfigModal = () => {
                                 padding: "7px 0",
                                 borderRadius: "8px",
                                 cursor: "pointer",
-                                backgroundColor: selectedActivity === "PLAY" ? "#E9A260" : "transparent",
-                                color: selectedActivity === "PLAY" ? "white" : "black",
+                                backgroundColor: selectedPet?.activityStatus === "PLAY" ? "#E9A260" : "transparent",
+                                color: selectedPet?.activityStatus === "PLAY" ? "white" : "black",
                                 transition: "0.3s",
                                 width: "50%",
                                 textAlign: "center",
                                 margin: "3px 3px 3px 0px",
                             }}
-                            onClick={() => setSelectedActivity("PLAY")}
+                            onClick={() =>
+                                setSelectedPet((prev) => ({
+                                    ...prev,
+                                    activityStatus: "PLAY",
+                                }))
+                            }
                         >
                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                 놀러가기
@@ -287,7 +294,7 @@ const ActivityModal = () => {
     );
 };
 
-const LocationSaveModal = ({ message, onClose }) => {
+const InfoModal = ({ title, message, onClose }) => {
     return (
         <Modal
             open
@@ -313,6 +320,11 @@ const LocationSaveModal = ({ message, onClose }) => {
                         backgroundColor: "#FDF1E5",
                     }}
                 >
+                    {title && (
+                        <Typography variant="h6" component="h2" gutterBottom>
+                            {title}
+                        </Typography>
+                    )}
                     <Typography variant="h6" component="h2" gutterBottom>
                         {message}
                     </Typography>
@@ -335,4 +347,4 @@ const LocationSaveModal = ({ message, onClose }) => {
     );
 };
 
-export { ActivityModal, PetConfigModal, LocationSaveModal };
+export { ActivityModal, PetConfigModal, InfoModal };

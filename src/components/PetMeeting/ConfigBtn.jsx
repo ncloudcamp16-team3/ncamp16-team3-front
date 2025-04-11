@@ -5,7 +5,6 @@ import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 const ConfigBtn = ({ img, label, type }) => {
     const { pet, setOpenPetConfigModal, setView, setOpenActivityModal } = useContext(PetMeetingContext);
     const handleClick = () => {
-        alert(pet?.id);
         switch (type) {
             case "pet":
                 setOpenPetConfigModal(true);

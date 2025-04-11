@@ -5,7 +5,7 @@ import Arrow from "../../assets/images/Global/arrow.svg";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import LocationConfigBtns from "./LocationConfigBtns.jsx";
 import Distance from "./Disdance.jsx";
-import { LocationSaveModal } from "./PetMeetingModals.jsx";
+import { InfoModal } from "./PetMeetingModals.jsx";
 
 const LocationConfig = () => {
     const { setView, pet, setPet } = useContext(PetMeetingContext);
@@ -13,6 +13,7 @@ const LocationConfig = () => {
     const [dongName, setDongName] = useState(null);
     const [distance, setDistance] = useState(2);
     const [modalMessage, setModalMessage] = useState(null);
+    const [modalTitle, setModalTitle] = useState(null);
 
     useEffect(() => {
         if (pet?.owner) {
@@ -26,7 +27,6 @@ const LocationConfig = () => {
         setPet((prev) => ({
             ...prev,
             owner: {
-                ...prev.owner,
                 address: address,
                 dongName: dongName,
                 distance: distance,
@@ -82,13 +82,24 @@ const LocationConfig = () => {
                 </Box>
             </Box>
 
-            <KakaoMap address={address} setAddress={setAddress} dongName={dongName} setDongName={setDongName} />
+            <KakaoMap
+                address={address}
+                setAddress={setAddress}
+                dongName={dongName}
+                setDongName={setDongName}
+                setModalMessage={setModalMessage}
+                setModalTitle={setModalTitle}
+            />
             <Distance dongName={dongName} distance={distance} setDistance={setDistance} />
             <LocationConfigBtns saveLocation={saveLocation} />
             {modalMessage && (
-                <LocationSaveModal
+                <InfoModal
+                    title={modalTitle}
                     message={modalMessage}
-                    onClose={() => setModalMessage(null)} // 언마운트
+                    onClose={() => {
+                        setModalMessage(null);
+                        setModalTitle(null);
+                    }} // 언마운트
                 />
             )}
         </Box>

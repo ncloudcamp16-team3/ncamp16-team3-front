@@ -32,7 +32,7 @@ const FindFriendConfigBtns = () => {
             sx={{
                 display: "flex",
                 justifyContent: "space-between",
-                margin: "10px 1.5em",
+                margin: "0 1.5em",
             }}
         >
             <ConfigBtn img={PetBtn} label={!pet?.name ? "애완동물" : pet?.name} type={"pet"} />
