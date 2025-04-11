@@ -7,11 +7,7 @@ import { Box, Typography } from "@mui/material";
 
 const Login = () => {
     const handleOAuthLogin = (provider) => {
-        const authWindow = window.open(
-            `http://localhost:8080/oauth2/authorization/${provider}`,
-            "_blank",
-            "width=500,height=600"
-        );
+        window.open(`http://localhost:8080/oauth2/authorization/${provider}`, "_blank", "width=500,height=600");
 
         const handleMessage = (event) => {
             // 출처 확인
@@ -20,7 +16,6 @@ const Login = () => {
             const { type, isNewUser } = event.data;
 
             if (type === "OAUTH_SUCCESS") {
-                // ✅ 쿠키로 이미 JWT가 저장되어 있으므로 상태 저장 불필요
                 const clientBaseUrl = "http://localhost:5173";
                 if (isNewUser) {
                     window.location.href = `${clientBaseUrl}/register`;

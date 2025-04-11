@@ -38,6 +38,13 @@ import ChatList from "./components/Chat/ChatList.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
+import * as PropTypes from "prop-types";
+
+function PrivateRoute(props) {
+    return null;
+}
+
+PrivateRoute.propTypes = { children: PropTypes.node };
 
 function App() {
     return (
@@ -68,7 +75,14 @@ function App() {
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
-                            <Route path="/calendar" element={<Cal />} />
+                            <Route
+                                path="/calendar"
+                                element={
+                                    <PrivateRoute>
+                                        <Cal />
+                                    </PrivateRoute>
+                                }
+                            />
                             <Route path="/notification" element={<Notification />} />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/add-pet" element={<AddPet />} />
