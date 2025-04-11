@@ -1,18 +1,19 @@
 .dateRangeContainer {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding-top: 0.5rem;
-    gap: 0.5rem;
+    gap: 5px;
+    flex: 0 0 calc(2rem); /* space-between으로 배치될 두 요소 중 하나 */
 }
 
 .inputGroup {
     display: flex;
-    gap: 0.5rem;
+    gap: 5px;
     align-items: center;
 }
 
 .dateInput {
+    height: 30px;
     border: 1px solid #D1D5DB;
     border-radius: 20px;
     padding: 0.25rem 0.7rem;
@@ -26,6 +27,8 @@
 }
 
 .searchButton {
+    width: 60px;
+    height: 30px;
     border: 1px solid #D1D5DB;
     background-color: #F97316;
     color: white;

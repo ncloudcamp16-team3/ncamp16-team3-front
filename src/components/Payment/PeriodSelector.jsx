@@ -1,4 +1,4 @@
-import styles from "../../css/PeriodSelector.module.css";
+import styles from "../../css/payment/PeriodSelector.module.css";
 
 export const PeriodSelector = ({ selected, onChange }) => {
     const periods = ["15일", "1개월", "3개월"];

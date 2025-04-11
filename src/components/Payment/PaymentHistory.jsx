@@ -1,5 +1,5 @@
 import { PaymentHistoryItem } from "./PaymentHistoryItem.jsx";
-import styles from "../../css/PaymentHistory.module.css";
+import styles from "../../css/payment/PaymentHistory.module.css";
 
 export const PaymentHistory = ({ payments, loading }) => {
     if (loading) {

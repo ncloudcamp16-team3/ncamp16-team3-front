@@ -1,5 +1,5 @@
 import { usePaymentsData } from "./hooks/usePaymentsData";
-import styles from "../../css/PaymentHistoryInterface.module.css";
+import styles from "../../css/payment/PaymentHistoryInterface.module.css";
 import { PaymentHistory } from "./PaymentHistory.jsx";
 import { useFilterOptions } from "./hooks/useFilterOptions.jsx";
 import { FilterSection } from "./FilterSection.jsx";

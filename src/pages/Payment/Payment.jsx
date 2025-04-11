@@ -1,6 +1,6 @@
 import React from "react";
 import { PaymentHistoryInterface } from "../../components/Payment/PaymentInterface.jsx";
-import "../../css/Payment.module.css";
+import "../../css/payment/Payment.module.css";
 
 const Payment = () => {
     return (

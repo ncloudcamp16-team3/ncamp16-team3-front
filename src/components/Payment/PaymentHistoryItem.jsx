@@ -1,5 +1,5 @@
-import { formatPrice } from "./utils/formatters.jsx";
-import styles from "../../css/paymentHistoryItem.module.css";
+import { formatDate, formatPrice } from "./utils/formatters.jsx";
+import styles from "../../css/payment/PaymentHistoryItem.module.css";
 
 export const PaymentHistoryItem = ({ payment, isLast }) => {
     return (
@@ -14,9 +14,9 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                 />
             </div>
             <div className={styles.paymentHistoryDetails}>
-                <h3 className={styles.paymentHistoryName}>{payment.name}</h3>
+                <p className={styles.paymentHistoryName}>{payment.name}</p>
                 <p className={styles.paymentHistoryDate}>
-                    {payment.date} | {payment.time}
+                    {formatDate(payment.created_at)}
                 </p>
                 <p className={styles.paymentHistoryPrice}>
                     {formatPrice(payment.price)}원

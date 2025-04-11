@@ -1,4 +1,4 @@
-import styles from "../../css/DateRangeSelector.module.css";
+import styles from "../../css/payment/DateRangeSelector.module.css";
 
 export const DateRangeSelector = ({
     startDate,

@@ -1,11 +1,14 @@
 .periodSelectorContainer {
     display: flex;
-    gap: 0.5rem;
+    gap: 5px;
     padding-top: 0.5rem;
+    flex: 0 0 calc(2rem); /* space-between으로 배치될 두 요소 중 하나 */
 }
 
 .periodButton {
-    padding: 0.25rem 0.75rem;
+    width: 60px;
+    height: 30px;
+    /*padding: 0.25rem 0.75rem;*/
     font-size: 0.75rem;
     border-radius: 20px;
     background-color: #E5E7EB;
