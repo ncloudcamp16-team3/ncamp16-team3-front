@@ -13,24 +13,29 @@ import Purchase from "../../assets/images/Global/modal-purchase.svg";
 
 const Header = () => {
     const navigate = useNavigate();
-
     const theme = useTheme();
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    // ✅ 로그인 상태 및 사용자 정보 확인
     useEffect(() => {
         fetch("http://localhost:8080/api/auth/check", {
-            credentials: "include", // 중요! 쿠키 전송을 위해 필요
+            credentials: "include", // 쿠키 포함
         })
-            .then((res) => {
-                if (res.ok) {
+            .then((res) => res.json())
+            .then((data) => {
+                if (!data.isNewUser) {
                     setIsLoggedIn(true);
                 } else {
                     setIsLoggedIn(false);
                 }
             })
-            .catch(() => setIsLoggedIn(false));
+            .catch(() => {
+                setIsLoggedIn(false);
+            });
     }, []);
 
     const handleLogout = async () => {
@@ -156,7 +161,6 @@ const Header = () => {
                     <span>결제내역</span>
                 </MenuItem>
 
-                {isLoggedIn ? "로그인됨" : "로그인 안됨"}
                 {isLoggedIn && (
                     <MenuItem
                         onClick={handleLogout}

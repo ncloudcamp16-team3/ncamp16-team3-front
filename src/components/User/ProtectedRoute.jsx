@@ -13,8 +13,11 @@ const ProtectedRoute = ({ children }) => {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    console.log("🔐 ProtectedRoute 로그인 상태:", data);
-                    setIsLoggedIn(data.loggedIn === true && data.userId !== -1);
+                    console.log("🔐 ProtectedRoute 응답 데이터:", data);
+
+                    // isNewUser === false이면 로그인된 상태로 간주
+                    const isLogged = data?.isNewUser === false;
+                    setIsLoggedIn(isLogged);
                 } else {
                     setIsLoggedIn(false);
                 }
@@ -33,12 +36,10 @@ const ProtectedRoute = ({ children }) => {
         return <div>로그인 상태 확인 중...</div>;
     }
 
-    // 로그인 안 되어 있으면 로그인 페이지로 리디렉트
     if (!isLoggedIn) {
         return <Navigate to="/login" replace />;
     }
 
-    // 로그인 되어있으면 children 그대로 렌더
     return children;
 };
 

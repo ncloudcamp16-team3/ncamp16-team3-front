@@ -55,8 +55,8 @@ const Step5 = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
                 },
+                credentials: "include", // ✅ 필수!
                 body: JSON.stringify(formData),
             });
 
