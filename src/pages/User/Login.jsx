@@ -6,16 +6,9 @@ import GoogleLogo from "/src/assets/images/User/google-logo.svg";
 import { Box, Typography } from "@mui/material";
 
 const Login = () => {
-    const handleKakaoLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
-    };
-
-    const handleNaverLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/naver";
-    };
-
-    const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    const handleOAuthLogin = (provider) => {
+        // ✅ 리다이렉트 방식으로 이동
+        window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
     };
 
     return (
@@ -52,7 +45,7 @@ const Login = () => {
                     alignItems="center"
                     gap="10px"
                     backgroundColor="#FEE500"
-                    onClick={handleKakaoLogin}
+                    onClick={() => handleOAuthLogin("kakao")}
                     width="90%"
                 >
                     <Box width="32px">
@@ -70,7 +63,7 @@ const Login = () => {
                     gap="10px"
                     backgroundColor="#27C250"
                     width="90%"
-                    onClick={handleNaverLogin}
+                    onClick={() => handleOAuthLogin("naver")}
                 >
                     <Box width="32px">
                         <Box component="img" src={NaverLogo} alt="Naver Login" width="32px" />
@@ -89,7 +82,7 @@ const Login = () => {
                     gap="10px"
                     backgroundColor="#FFFFFF"
                     width="90%"
-                    onClick={handleGoogleLogin}
+                    onClick={() => handleOAuthLogin("google")}
                 >
                     <Box width="32px">
                         <Box component="img" src={GoogleLogo} alt="Google Login" width="18px" />
