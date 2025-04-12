@@ -20,29 +20,32 @@ const Header = () => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // ✅ 로그인 상태 및 사용자 정보 확인
     useEffect(() => {
-        fetch("http://localhost:8080/api/auth/check", {
-            credentials: "include", // 쿠키 포함
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (!data.isNewUser) {
-                    setIsLoggedIn(true);
-                } else {
-                    setIsLoggedIn(false);
-                }
-            })
-            .catch(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/api/auth/check", {
+                    credentials: "include",
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch");
+
+                const data = await response.json();
+
+                setIsLoggedIn(data.isNewUser === false);
+            } catch (error) {
+                console.error("로그인 상태 확인 실패:", error);
                 setIsLoggedIn(false);
-            });
+            }
+        };
+
+        checkLoginStatus();
     }, []);
 
     const handleLogout = async () => {
         try {
             await fetch("http://localhost:8080/api/auth/logout", {
                 method: "POST",
-                credentials: "include", // 쿠키 포함 필수!
+                credentials: "include",
             });
             setIsLoggedIn(false);
         } catch (err) {
@@ -54,9 +57,9 @@ const Header = () => {
 
     const toggleMenu = (event) => {
         if (anchorEl) {
-            setAnchorEl(null); // 메뉴 닫기
+            setAnchorEl(null);
         } else {
-            setAnchorEl(event.currentTarget); // 메뉴 열기
+            setAnchorEl(event.currentTarget);
         }
     };
 
