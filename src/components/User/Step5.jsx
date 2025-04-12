@@ -9,7 +9,7 @@ const Step5 = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
 
-    const { nickname, petDataList, goToStep2, snsAccountId, snsTypeId } = useRegister();
+    const { nickname, petDataList, goToStep1, snsAccountId, snsTypeId } = useRegister();
 
     const handleSubmit = async () => {
         setIsSubmitting(true);
@@ -136,7 +136,7 @@ const Step5 = () => {
             <Box width="100%" display="flex" gap={2} mt={2}>
                 <Button
                     variant="outlined"
-                    onClick={goToStep2}
+                    onClick={goToStep1}
                     sx={{ flex: 1, borderColor: "#E9A260", color: "#E9A260" }}
                 >
                     반려동물 추가
