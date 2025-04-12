@@ -14,6 +14,7 @@ import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
+import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
 import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
@@ -74,6 +75,7 @@ function App() {
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
+                            <Route path="/petsitter-register" element={<PetSitterRegister />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
@@ -84,10 +86,7 @@ function App() {
                             </Route>
                             <Route path="/chat" element={<ChatList />} />
                             <Route path="/payment" element={<Payment />} />
-                            <Route
-                                path="/notification"
-                                element={<Notification />}
-                            />
+                            <Route path="/notification" element={<Notification />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
