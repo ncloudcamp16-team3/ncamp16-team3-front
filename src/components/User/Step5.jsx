@@ -9,7 +9,7 @@ const Step5 = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
 
-    const { nickname, petDataList, goToStep2, token, email, snsTypeId } = useRegister();
+    const { nickname, petDataList, goToStep2, snsAccountId, snsTypeId } = useRegister();
 
     const handleSubmit = async () => {
         setIsSubmitting(true);
@@ -20,7 +20,7 @@ const Step5 = () => {
 
             const formData = {
                 nickname: nickname,
-                snsAccountId: email,
+                snsAccountId: snsAccountId,
                 snsTypeId: snsTypeIdNum,
                 fileId: 1, // 기본 파일
 

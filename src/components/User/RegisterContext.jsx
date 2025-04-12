@@ -18,7 +18,7 @@ export const RegisterProvider = ({ children }) => {
     const [nickname, setNickname] = useState("");
     const [formData, setFormData] = useState(initialPetData);
     const [petDataList, setPetDataList] = useState([]);
-    const [email, setEmail] = useState("");
+    const [snsAccountId, setSnsAccountId] = useState("");
     const [snsTypeId, setSnsTypeId] = useState(null);
     const [previews, setPreviews] = useState([]);
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
@@ -36,7 +36,7 @@ export const RegisterProvider = ({ children }) => {
         setStep(5);
     };
 
-    const goToStep2 = () => {
+    const goToStep1 = () => {
         setFormData(initialPetData);
         setStep(1);
     };
@@ -75,10 +75,14 @@ export const RegisterProvider = ({ children }) => {
 
                     if (data.isNewUser) {
                         // 신규 사용자니까 회원가입 진행
-                        setEmail(data.email);
+                        setSnsAccountId(data.snsAccountId);
                         setSnsTypeId(data.snsTypeId);
-                        goToStep2();
+                        goToStep1();
                     } else {
+                        // 기존 사용자라면 필요한 정보를 설정하거나
+                        // 이미 회원가입이 완료되었으므로 리다이렉션 등의 처리를 할 수 있음
+                        console.log("기존 사용자 정보:", data);
+                        // 예: 이미 가입한 사용자에 대한 후속 처리 (리다이렉션, 데이터 세팅 등)
                     }
                 }
             } catch (err) {
@@ -123,9 +127,9 @@ export const RegisterProvider = ({ children }) => {
                 prevStep,
                 handleChange,
                 handleStep4Next,
-                goToStep2,
-                email,
-                setEmail,
+                goToStep1,
+                snsAccountId,
+                setSnsAccountId,
                 snsTypeId,
                 setSnsTypeId,
                 previews,

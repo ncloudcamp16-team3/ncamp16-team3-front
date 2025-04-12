@@ -3,14 +3,14 @@ import { Paper, Typography } from "@mui/material";
 import { useRegister } from "/src/components/User/RegisterContext.jsx";
 
 const DebugInfo = ({ debugInfo }) => {
-    const { email, nickname, snsTypeId, formData, petDataList, mainPhotoIndex } = useRegister();
+    const { snsAccountId, nickname, snsTypeId, formData, petDataList, mainPhotoIndex } = useRegister();
 
     return (
         <Paper elevation={3} sx={{ p: 2, mt: 4, backgroundColor: "#f5f5f5" }}>
             <Typography variant="subtitle2" fontWeight="bold">
                 디버깅 정보
             </Typography>
-            <Typography variant="body2">이메일: {email || "없음"}</Typography>
+            <Typography variant="body2">이메일: {snsAccountId || "없음"}</Typography>
             <Typography variant="body2">닉네임: {nickname || "없음"}</Typography>
             <Typography variant="body2">
                 SNS 타입 ID: {snsTypeId || "없음"} (타입: {typeof snsTypeId})
