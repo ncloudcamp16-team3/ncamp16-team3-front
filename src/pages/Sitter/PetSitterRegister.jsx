@@ -22,8 +22,8 @@ const PetSitterRegister = () => {
     });
 
     const [hasPet, setHasPet] = useState({
-        "네 키우고있습니다": true,
-        "키우고있지 않습니다": false,
+        "네, 키우고 있습니다": true,
+        "키우고 있지 않습니다": false,
     });
 
     const [petTypes, setPetTypes] = useState({
@@ -41,8 +41,8 @@ const PetSitterRegister = () => {
     });
 
     const [sitterExperience, setSitterExperience] = useState({
-        "네 해본적 있습니다": true,
-        "아니요 해본적 없습니다": false,
+        "네, 해본적 있습니다": true,
+        "아니요, 해본적 없습니다": false,
     });
 
     const [houseType, setHouseType] = useState({
@@ -68,6 +68,87 @@ const PetSitterRegister = () => {
     useEffect(() => {
         // 스크롤 방지
         document.body.style.overflow = "hidden";
+
+        // 기존 펫시터 정보 불러오기
+        const registrationCompleted = localStorage.getItem("petSitterRegistrationCompleted");
+        if (registrationCompleted === "true") {
+            try {
+                const sitterInfo = JSON.parse(localStorage.getItem("petSitterInfo") || "{}");
+
+                // 프로필 이미지 설정
+                if (sitterInfo.image) {
+                    setImagePreview(sitterInfo.image);
+                }
+
+                // 연령대 설정
+                if (sitterInfo.age) {
+                    const newAges = { ...selectedAges };
+                    Object.keys(newAges).forEach((key) => {
+                        newAges[key] = key === sitterInfo.age;
+                    });
+                    setSelectedAges(newAges);
+                }
+
+                // 반려동물 여부 설정
+                // 기존 정보에 반려동물 여부 정보가 있을 경우
+                if (sitterInfo.hasPetInfo) {
+                    setHasPet({
+                        "네, 키우고 있습니다": sitterInfo.hasPetInfo === "네, 키우고 있습니다",
+                        "키우고 있지 않습니다": sitterInfo.hasPetInfo === "키우고 있지 않습니다",
+                    });
+                }
+
+                // 반려동물 종류 설정
+                if (sitterInfo.petType) {
+                    const newPetTypes = { ...petTypes };
+                    Object.keys(newPetTypes).forEach((key) => {
+                        newPetTypes[key] = key === sitterInfo.petType;
+                    });
+                    setPetTypes(newPetTypes);
+
+                    // 기타 반려동물 텍스트 설정
+                    if (sitterInfo.petType === "기타" && sitterInfo.otherPetText) {
+                        setOtherPetText(sitterInfo.otherPetText);
+                    }
+                }
+
+                // 마릿수 설정
+                if (sitterInfo.petCount) {
+                    const newPetCount = { ...petCount };
+                    Object.keys(newPetCount).forEach((key) => {
+                        newPetCount[key] = key === sitterInfo.petCount;
+                    });
+                    setPetCount(newPetCount);
+                }
+
+                // 펫시터 경험 설정
+                if (sitterInfo.experience !== undefined) {
+                    setSitterExperience({
+                        "네, 해본적 있습니다":
+                            sitterInfo.experience === true || sitterInfo.experience === "네, 해본적 있습니다",
+                        "아니요, 해본적 없습니다":
+                            sitterInfo.experience === false || sitterInfo.experience === "아니요, 해본적 없습니다",
+                    });
+                }
+
+                // 주거형태 설정
+                if (sitterInfo.houseType) {
+                    const newHouseType = { ...houseType };
+                    Object.keys(newHouseType).forEach((key) => {
+                        newHouseType[key] = key === sitterInfo.houseType;
+                    });
+                    setHouseType(newHouseType);
+                }
+
+                // 한마디 설정
+                if (sitterInfo.comment) {
+                    setCommentText(sitterInfo.comment);
+                }
+            } catch (error) {
+                console.error("펫시터 정보 로드 오류:", error);
+            }
+        }
+
         return () => {
             document.body.style.overflow = "auto";
         };
@@ -118,6 +199,25 @@ const PetSitterRegister = () => {
             return acc;
         }, {});
         stateSetter(newState);
+    };
+    const handleComplete = () => {
+        // 등록 완료 상태와 함께 등록 정보도 저장
+        const sitterInfo = {
+            registered: true,
+            age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
+            petType: Object.keys(petTypes).find((key) => petTypes[key]) || "강아지",
+            petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
+            houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
+            comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
+            image: imagePreview,
+        };
+
+        // 로컬 스토리지에 정보 저장
+        localStorage.setItem("petSitterRegistrationCompleted", "true");
+        localStorage.setItem("petSitterInfo", JSON.stringify(sitterInfo));
+
+        // 마이페이지로 이동
+        navigate("/mypage");
     };
 
     // 연령대 선택 핸들러 (체크박스)
@@ -201,7 +301,7 @@ const PetSitterRegister = () => {
 
     const handleNext = () => {
         if (validateCurrentStep()) {
-            if (step === 3 && hasPet["키우고있지 않습니다"]) {
+            if (step === 3 && hasPet["키우고 있지 않습니다"]) {
                 // 반려동물을 키우지 않는 경우, 4(종류)와 5(마릿수) 단계를 건너뛰고 6(경험)으로 이동
                 setStep(6);
             } else if (step < 9) {
@@ -275,8 +375,9 @@ const PetSitterRegister = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            justifyContent: "center",
-                            pb: 10,
+                            justifyContent: "flex-start",
+                            pt: 20,
+                            pb: 15,
                         }}
                     >
                         <input
@@ -595,7 +696,8 @@ const PetSitterRegister = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            justifyContent: "center",
+                            justifyContent: "flex-start",
+                            pt: 6,
                             pt: 2,
                         }}
                     >
@@ -663,7 +765,7 @@ const PetSitterRegister = () => {
                             >
                                 <Typography fontWeight="bold">반려동물</Typography>
                                 <Typography>
-                                    {hasPet["네 키우고있습니다"] &&
+                                    {hasPet["네, 키우고있습니다"] &&
                                         `${Object.keys(petTypes).find((key) => petTypes[key]) || "강아지"} ${
                                             Object.keys(petCount).find((key) => petCount[key]) || "1마리"
                                         }`}
@@ -713,7 +815,7 @@ const PetSitterRegister = () => {
                         <Button
                             fullWidth
                             variant="contained"
-                            onClick={() => navigate("/mypage")}
+                            onClick={handleComplete}
                             sx={{
                                 bgcolor: "#E9A260",
                                 color: "white",
@@ -725,7 +827,7 @@ const PetSitterRegister = () => {
                                 mb: 2,
                             }}
                         >
-                            홈으로가기
+                            마이페이지로 돌아가기
                         </Button>
                     </Box>
                 );
@@ -837,7 +939,9 @@ const PetSitterRegister = () => {
             >
                 <ArrowBackIosNewIcon sx={{ mr: 1, cursor: "pointer", fontSize: "20px" }} onClick={handleBack} />
                 <Typography variant="h5" component="h1" fontWeight="700" color="#363636">
-                    펫시터 등록
+                    {localStorage.getItem("petSitterRegistrationCompleted") === "true"
+                        ? "펫시터 정보 수정"
+                        : "펫시터 등록"}
                 </Typography>
             </Box>
 
