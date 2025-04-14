@@ -10,7 +10,7 @@
     "longitude": 127.035
   },
   "petType": "DOG",
-  "name": "백구",
+  "name": "콩콩콩이이이",
   "gender": "MALE",
   "birth": "2022-05-01",
   "weight": 14.2,
@@ -18,9 +18,8 @@
   "neutured": true,
   "activityStatus": "WALK",
   "photos": [
-    { "id": 10, "url": "/mock/PetMeeting/images/pet6.jpg" },
-    { "id": 11, "url": "/mock/PetMeeting/images/pet7.jpg" },
-    { "id": 12, "url": "/mock/PetMeeting/images/pet2.jpg" }
+    { "id": 10, "url": "/mock/PetMeeting/images/pet1.jpg" },
+    { "id": 11, "url": "/mock/PetMeeting/images/pet2.jpg" }
   ],
-  "thumbnail": 12
+  "thumbnail": 10
 }
