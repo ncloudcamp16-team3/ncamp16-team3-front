@@ -1,51 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Button, Grid } from "@mui/material";
 import { useRegister } from "./RegisterContext.jsx";
 
 const Step4 = () => {
-    const {
-        handleChange,
-        formData,
-        prevStep,
-        handleStep4Next,
-        mainPhotoIndex,
-        previews,
-        removePhoto,
-        selectMainPhoto,
-    } = useRegister();
-
-    const [errors, setErrors] = useState({
-        petNeutered: false,
-        petPhotos: false,
-    });
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length === 0) return;
-
-        const updatedPhotos = [...(formData.petPhotos || []), ...files];
-
-        handleChange({
-            target: {
-                name: "petPhotos",
-                value: updatedPhotos,
-            },
-        });
-
-        e.target.value = null;
-    };
+    const { formData, prevStep, handleStep4Next, mainPhotoIndex } = useRegister();
 
     const handleNext = () => {
-        const newErrors = {
-            petNeutered: !formData.petNeutered,
-            petPhotos: !formData.petPhotos || formData.petPhotos.length === 0,
-        };
-
-        setErrors(newErrors);
-
-        const hasError = Object.values(newErrors).some((e) => e);
-        if (hasError) return;
-
         const newPetData = {
             ...formData,
             mainPhotoIndex,
