@@ -11,6 +11,7 @@ import { Box, Button, Typography } from "@mui/material";
 import PetImgSlide from "./PetImgSlide.jsx";
 import petTypes from "../../constants/petTypes.js";
 import { useNavigate } from "react-router-dom";
+import TitleBar from "../Global/TitleBar.jsx";
 
 const Petdetails = () => {
     const petData = useRef(PetData);
@@ -33,129 +34,134 @@ const Petdetails = () => {
     };
 
     return (
-        <Box
-            sx={{
-                width: "100% - 20px",
-                margin: "10px",
-                pb: "0",
-            }}
-        >
-            <PetImgSlide petDetails={petDetails} />
-            <Typography
-                sx={{
-                    mt: "0",
-                    fontSize: "25px",
-                    display: "inline",
-                    verticalAlign: "middle",
-                }}
-            >
-                {petDetails.name}
-            </Typography>
-            <Box
-                component="img"
-                src={petDetails.gender == "MALE" ? Male : Female}
-                sx={{
-                    verticalAlign: "middle",
-                    color: "blue",
-                }}
-            />
+        <Box>
+            <TitleBar name={"친구 프로필"} />
             <Box
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    m: "10px 0",
+                    width: "100% - 20px",
+                    margin: "0 10px 75px 10px",
+                    pb: "0",
                 }}
             >
+                <PetImgSlide petDetails={petDetails} />
                 <Typography
                     sx={{
-                        p: "5px 15px",
-                        borderRadius: "20px",
-                        backgroundColor: "#FFEBCD",
-                        fontSize: "20px",
+                        mt: "0",
+                        fontSize: "25px",
                         display: "inline",
                         verticalAlign: "middle",
-                        color: "rgba(0, 0, 0, 0.5)",
-                        margin: "0 2%",
                     }}
                 >
-                    {petTypes[petDetails.petType]}
+                    {petDetails.name}
+                </Typography>
+                <Box
+                    component="img"
+                    src={petDetails.gender == "MALE" ? Male : Female}
+                    sx={{
+                        verticalAlign: "middle",
+                        color: "blue",
+                    }}
+                />
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        m: "10px 0",
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            p: "5px 15px",
+                            borderRadius: "20px",
+                            backgroundColor: "#FFEBCD",
+                            fontSize: "20px",
+                            display: "inline",
+                            verticalAlign: "middle",
+                            color: "rgba(0, 0, 0, 0.5)",
+                            margin: "0 2%",
+                        }}
+                    >
+                        {petTypes[petDetails.petType]}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            p: "5px 15px",
+                            borderRadius: "20px",
+                            backgroundColor: "#E0CDFF",
+                            fontSize: "20px",
+                            display: "inline",
+                            verticalAlign: "middle",
+                            color: "rgba(0, 0, 0, 0.5)",
+                            margin: "0 2%",
+                        }}
+                    >
+                        {getAge(petDetails.birth)}세
+                    </Typography>
+                    <Typography
+                        sx={{
+                            p: "5px 15px",
+                            borderRadius: "20px",
+                            backgroundColor: "#FFCDD6",
+                            fontSize: "20px",
+                            display: "inline",
+                            verticalAlign: "middle",
+                            color: "rgba(0, 0, 0, 0.5)",
+                            margin: "0 2%",
+                        }}
+                    >
+                        {petDetails.weight}KG
+                    </Typography>
+                </Box>
+                <Typography
+                    sx={{
+                        fontSize: "20px",
+                    }}
+                >
+                    정보
                 </Typography>
                 <Typography
                     sx={{
-                        p: "5px 15px",
-                        borderRadius: "20px",
-                        backgroundColor: "#E0CDFF",
-                        fontSize: "20px",
-                        display: "inline",
-                        verticalAlign: "middle",
+                        fontSize: "16px",
                         color: "rgba(0, 0, 0, 0.5)",
-                        margin: "0 2%",
                     }}
                 >
-                    {getAge(petDetails.birth)}세
+                    생년월일 : {petDetails.birth}
+                    <br />
+                    중성화 : {petDetails.neutured ? "O" : "X"}
+                    <br />
+                    소개 : {petDetails.info}
                 </Typography>
-                <Typography
+                <Box
                     sx={{
-                        p: "5px 15px",
-                        borderRadius: "20px",
-                        backgroundColor: "#FFCDD6",
-                        fontSize: "20px",
-                        display: "inline",
-                        verticalAlign: "middle",
-                        color: "rgba(0, 0, 0, 0.5)",
-                        margin: "0 2%",
+                        position: "fixed",
+                        bottom: "60px",
+                        left: "10px",
+                        right: "10px",
+                        height: "75px",
+                        maxWidth: "480px",
+                        margin: "0 auto",
+                        backgroundColor: "white",
+                        zIndex: 999,
+                    }}
+                />
+                <Button
+                    onClick={() => navigate("/chat/room/undefined")}
+                    sx={{
+                        position: "fixed",
+                        bottom: "85px",
+                        left: "10px",
+                        right: "10px",
+                        maxWidth: "480px",
+                        backgroundColor: Theme.brand3,
+                        borderRadius: "10px",
+                        color: "white",
+                        zIndex: 1000,
+                        margin: "0 auto",
                     }}
                 >
-                    {petDetails.weight}KG
-                </Typography>
+                    채팅하기
+                </Button>
             </Box>
-            <Typography
-                sx={{
-                    fontSize: "20px",
-                }}
-            >
-                정보
-            </Typography>
-            <Typography
-                sx={{
-                    fontSize: "16px",
-                    color: "rgba(0, 0, 0, 0.5)",
-                    mb: "70px",
-                }}
-            >
-                생년월일 : {petDetails.birth}
-                <br />
-                중성화 : {petDetails.neutured ? "O" : "X"}
-                <br />
-                소개 : {petDetails.info}
-            </Typography>
-            <Box
-                sx={{
-                    position: "fixed",
-                    bottom: "60px",
-                    width: "100%",
-                    height: "70px",
-                    backgroundColor: "white",
-                    borderRadius: "10px",
-                    color: "white",
-                    zIndex: 999,
-                }}
-            ></Box>
-            <Button
-                onClick={() => navigate("/chat/room/undefined")}
-                sx={{
-                    position: "fixed",
-                    bottom: "85px",
-                    left: "10px",
-                    right: "10px",
-                    backgroundColor: Theme.brand3,
-                    borderRadius: "10px",
-                    color: "white",
-                    zIndex: 1000,
-                }}
-            >
-                채팅하기
-            </Button>
         </Box>
     );
 };

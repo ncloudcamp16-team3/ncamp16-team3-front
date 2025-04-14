@@ -53,37 +53,37 @@ const PetImgSlide = ({ petDetails }) => {
             <Box
                 className="swiper-button-prev-custom"
                 component="img"
-                src={RightArrow}
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "10px",
-                    zIndex: 10,
-                    transform: "translateY(-50%)",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "50px",
-                    height: "50px",
-                }}
-            ></Box>
-            <Box
-                className="swiper-button-next-custom"
-                component="img"
                 src={LeftArrow}
                 sx={{
                     position: "absolute",
                     top: "50%",
-                    right: "10px",
+                    left: "0",
                     zIndex: 10,
                     transform: "translateY(-50%)",
                     borderRadius: "50%",
                     cursor: "pointer",
                     userSelect: "none",
-                    width: "50px",
-                    height: "50px",
+                    width: "40px",
+                    height: "40px",
                 }}
-            ></Box>
+            />
+            <Box
+                className="swiper-button-next-custom"
+                component="img"
+                src={RightArrow}
+                sx={{
+                    position: "absolute",
+                    top: "50%",
+                    right: "0",
+                    zIndex: 10,
+                    transform: "translateY(-50%)",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                    userSelect: "none",
+                    width: "40px",
+                    height: "40px",
+                }}
+            />
         </Box>
     );
 };
