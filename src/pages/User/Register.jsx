@@ -5,8 +5,9 @@ import Step3 from "../../components/User/Step3";
 import Step4 from "../../components/User/Step4";
 import Step5 from "../../components/User/Step5";
 import { RegisterProvider, useRegister } from "../../components/User/RegisterContext";
-import DebugInfo from "../../components/User/DebugInfo"; // 디버깅용 컴포넌트
+// 디버깅용 컴포넌트
 import { useLocation } from "react-router-dom";
+import DebugInfo from "../../components/User/DebugInfo.jsx";
 
 const steps = [<Step1 />, <Step2 />, <Step3 />, <Step4 />, <Step5 />];
 
