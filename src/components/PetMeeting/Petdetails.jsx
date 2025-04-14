@@ -10,10 +10,12 @@ import "swiper/css/navigation";
 import { Box, Button, Typography } from "@mui/material";
 import PetImgSlide from "./PetImgSlide.jsx";
 import petTypes from "../../constants/petTypes.js";
+import { useNavigate } from "react-router-dom";
 
 const Petdetails = () => {
     const petData = useRef(PetData);
     const petDetails = petData.current;
+    const navigate = useNavigate();
 
     const getAge = (birthDateString) => {
         const birthDate = new Date(birthDateString);
@@ -140,7 +142,7 @@ const Petdetails = () => {
                 }}
             ></Box>
             <Button
-                onClick={{}}
+                onClick={() => navigate("/chat/room/undefined")}
                 sx={{
                     position: "fixed",
                     bottom: "85px",
