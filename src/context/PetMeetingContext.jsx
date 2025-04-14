@@ -1,5 +1,4 @@
-import { createContext, useEffect, useMemo, useState } from "react";
-import Pet from "../mock/PetMeeting/pet.json";
+import { createContext, useMemo, useState } from "react";
 
 export const PetMeetingContext = createContext(null);
 
@@ -35,9 +34,9 @@ export const PetMeetingProvider = ({ children }) => {
         [pet, openPetConfigModal, openActivityModal, drop, friendType, view]
     );
 
-    useEffect(() => {
+    /*    useEffect(() => {
         setPet(Pet);
-    }, []);
+    }, []);*/
 
     return <PetMeetingContext.Provider value={value}>{children}</PetMeetingContext.Provider>;
 };

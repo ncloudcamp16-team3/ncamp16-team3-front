@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { Box, Divider, Fade } from "@mui/material";
 import SelectPetItem from "./SelectPetItem.jsx";
-import myPets from "../../mock/PetMeeting/myPets.json";
+import MyPets from "../../mock/PetMeeting/myPets.json";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const SelectPetDropdown = ({ selectedPet, setSelectedPet }) => {
     const { drop } = useContext(PetMeetingContext);
-    const pets = myPets;
+    const pets = MyPets;
 
     return (
-        <Fade in={drop} timeout={400}>
+        <Fade in={drop} timeout={300}>
             <Box
                 sx={{
                     position: "absolute",
@@ -30,7 +30,7 @@ const SelectPetDropdown = ({ selectedPet, setSelectedPet }) => {
                             selected={selectedPet === petItem}
                             setSelectedPet={setSelectedPet}
                         />
-                        {index !== pets.length - 1 && <Divider sx={{ borderColor: "#000" }} />}
+                        {index !== pets.length - 1 && <Divider sx={{ borderColor: "#989898" }} />}
                     </React.Fragment>
                 ))}
             </Box>
