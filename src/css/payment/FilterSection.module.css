@@ -1,0 +1,67 @@
+.filterContainer {
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    z-index: 2;
+    position: fixed;
+    background-color: white; /* 배경색 추가로 겹칠 때 깔끔하게 보이게 */
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.leftFilterLabel {
+    font-size: 0.875rem;
+    color: #4B5563;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.rightFilterLabel {
+    font-size: 0.875rem;
+    color: #4B5563;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+/* 버튼 스타일 */
+.filterButton {
+    width: 40px;
+    /*padding: 8px 12px;*/
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.active {
+    background-color: orange;
+    color: white;
+    border: none;
+}
+
+.title {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1F2937;
+    margin-left: 1rem;
+    flex: 0 0 100%;
+    flex-wrap: nowrap;
+    order: -1; /* 가장 먼저 배치 (최상단) */
+}
+
+.filterWrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

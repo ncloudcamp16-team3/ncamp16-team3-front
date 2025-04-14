@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import UserFollows from "../../mock/PetSta/userFollows.json";
-import UserInfo from "../../mock/PetSta/userInfo.json";
+import UserFollows from "../../mock/PetSta/user-follows.json";
+import UserInfo from "../../mock/PetSta/user-info.json";
 import FollowBox from "../../components/PetSta/FollowBox.jsx";
 // context가 있다면
 

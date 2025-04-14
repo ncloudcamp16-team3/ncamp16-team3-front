@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom";
 import { Context } from "../../context/Context.jsx";
 import MyProfile from "../../components/PetSta/MyProfile.jsx";
 import UserProfile from "../../components/PetSta/UserProfile.jsx";
-import UserInfos from "../../mock/PetSta/UserInfo.json";
-import UserInfo from "../../mock/PetSta/UserInfo.json";
+import UserInfos from "../../mock/PetSta/user-info.json";
+import UserInfo from "../../mock/PetSta/user-info.json";
 
 const UserPage = () => {
     const { userId } = useParams();

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import UserIcon from "./UserIcon.jsx";
 import { Box, Typography, Button } from "@mui/material";
 import { Context } from "../../context/Context.jsx";
-import UserFollows from "../../mock/PetSta/userFollows.json";
+import UserFollows from "../../mock/PetSta/user-follows.json";
 
 const FollowBox = ({ userInfo }) => {
     const { user } = useContext(Context);

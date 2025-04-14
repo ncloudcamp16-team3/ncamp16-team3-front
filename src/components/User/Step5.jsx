@@ -1,13 +1,82 @@
-import React from "react";
-import { Box, Typography, Button, Avatar, Divider } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography, Button, Avatar, Divider, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { useRegister } from "./RegisterContext.jsx";
 
 const Step5 = () => {
     const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
 
-    const { nickname, petDataList, goToStep2 } = useRegister();
+    const { nickname, petDataList, goToStep2, token, email, snsTypeId } = useRegister();
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            const snsTypeIdNum = snsTypeId ? Number(snsTypeId) : null;
+
+            const formData = {
+                nickname: nickname,
+                snsAccountId: email,
+                snsTypeId: snsTypeIdNum,
+                fileId: 1, // 기본 파일
+
+                pets: petDataList.map((pet) => {
+                    const petPhotos = pet.petPhotos || []; // 파일 리스트
+                    const mainIndex = pet.mainPhotoIndex ?? 0; // 대표 사진 인덱스 지정 (없으면 0번)
+
+                    return {
+                        petTypeId: pet.petTypeId || 1,
+                        name: pet.petName,
+                        gender: pet.petGender,
+                        birth: pet.petBirth,
+                        weight: pet.petWeight,
+                        info: pet.petInfo,
+                        neutered: pet.petNeutered === "Y",
+                        activityStatus: "NONE",
+
+                        photos: petPhotos.map((photo, index) => ({
+                            type: "PHOTO",
+                            path: photo.name,
+                            uuid: "", // 서버에서 UUID 생성
+                            thumbnail: index === mainIndex,
+                        })),
+                    };
+                }),
+            };
+
+            console.log("📦 전송할 formData:", formData);
+
+            // API 호출
+            const response = await fetch("http://localhost:8080/api/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "회원가입 처리 중 오류가 발생했습니다.");
+            }
+
+            const result = await response.json();
+            console.log("회원가입 성공:", result);
+
+            // 성공 시 홈으로 이동
+            navigate("/");
+        } catch (error) {
+            console.error("회원가입 오류:", error);
+            setSubmitError(error.message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3}>
@@ -30,57 +99,63 @@ const Step5 = () => {
                     const mainPhoto = petPhotos[mainIndex];
 
                     const mainPhotoUrl = mainPhoto
-                        ? typeof mainPhoto === "string"
-                            ? mainPhoto
-                            : URL.createObjectURL(mainPhoto)
+                        ? mainPhoto instanceof File
+                            ? URL.createObjectURL(mainPhoto)
+                            : mainPhoto
                         : null;
 
                     return (
-                        <Box key={index} width="100%" border="1px solid #ddd" borderRadius={2} p={2} mb={2}>
-                            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
-                                반려동물 #{index + 1}
-                            </Typography>
-
-                            {mainPhotoUrl && (
-                                <Avatar
-                                    src={mainPhotoUrl}
-                                    alt={`대표사진-${index}`}
-                                    sx={{ width: 80, height: 80, mb: 1 }}
-                                    variant="rounded"
-                                />
-                            )}
-
-                            <Box ml={1}>
-                                <Typography>이름: {pet.petName}</Typography>
-                                <Typography>등록번호: {pet.petRegistration}</Typography>
-                                <Typography>성별: {pet.petGender}</Typography>
-                                <Typography>
-                                    생일: {pet.petBirthday ? dayjs(pet.petBirthday).format("YYYY-MM-DD") : "미입력"}
-                                </Typography>
-                                <Typography>몸무게: {pet.petWeight} kg</Typography>
-                                <Typography>체형: {pet.petBodyType}</Typography>
-                                <Typography>소개: {pet.petIntroduction}</Typography>
-                                <Typography>중성화 여부: {pet.petNeutered === "Y" ? "O" : "X"}</Typography>
-                                <Typography>좋아하는 것: {pet.petFavorite}</Typography>
+                        <Paper key={index} elevation={3} sx={{ p: 3, width: "100%" }}>
+                            <Box display="flex" alignItems="center" gap={2}>
+                                <Avatar src={mainPhotoUrl} alt={pet.petName} sx={{ width: 80, height: 80 }} />
+                                <Box>
+                                    <Typography variant="h6">{pet.petName}</Typography>
+                                    <Typography variant="body2">
+                                        {pet.petGender === "M" ? "수컷" : "암컷"} •{" "}
+                                        {pet.petNeutered === "Y" ? "중성화 완료" : "중성화 미완료"}
+                                    </Typography>
+                                    {pet.petBirth && (
+                                        <Typography variant="body2">
+                                            생년월일: {dayjs(pet.petBirth).format("YYYY년 MM월 DD일")}
+                                        </Typography>
+                                    )}
+                                    {pet.petWeight && <Typography variant="body2">체중: {pet.petWeight}kg</Typography>}
+                                </Box>
                             </Box>
-                        </Box>
+                            {pet.petInfo && (
+                                <>
+                                    <Divider sx={{ my: 2 }} />
+                                    <Typography variant="body1">{pet.petIntroduction}</Typography>
+                                </>
+                            )}
+                        </Paper>
                     );
                 })
             )}
 
-            <Divider sx={{ width: "100%", my: 2 }} />
+            <Box width="100%" display="flex" gap={2} mt={2}>
+                <Button
+                    variant="outlined"
+                    onClick={goToStep2}
+                    sx={{ flex: 1, borderColor: "#E9A260", color: "#E9A260" }}
+                >
+                    반려동물 추가
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    sx={{ flex: 1, backgroundColor: "#E9A260" }}
+                >
+                    {isSubmitting ? "처리 중..." : "가입 완료"}
+                </Button>
+            </Box>
 
-            <Button variant="outlined" sx={{ width: "100%" }} onClick={goToStep2}>
-                반려동물 추가
-            </Button>
-
-            <Button
-                variant="contained"
-                onClick={() => navigate("/")}
-                sx={{ width: "100%", backgroundColor: "#E9A260" }}
-            >
-                제출
-            </Button>
+            {submitError && (
+                <Typography color="error" sx={{ mt: 2 }}>
+                    {submitError}
+                </Typography>
+            )}
         </Box>
     );
 };

@@ -6,14 +6,12 @@ import LocationConfig from "./LocationConfig.jsx";
 const PetMeetingViewSwitch = () => {
     const { view } = useContext(PetMeetingContext);
 
-    switch (view) {
-        case "petMeeting":
-            return <PetMeeting />;
-        case "locationConfig":
-            return <LocationConfig />;
-        default:
-            return <div>Not Found</div>;
-    }
+    return (
+        <>
+            {view === "petMeeting" && <PetMeeting />}
+            {view === "locationConfig" && <LocationConfig />}
+        </>
+    );
 };
 
 export default PetMeetingViewSwitch;
