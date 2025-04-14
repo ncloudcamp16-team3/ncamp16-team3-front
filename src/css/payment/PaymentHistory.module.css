@@ -1,0 +1,10 @@
+.paymentHistoryListContainer {
+    padding-top: 145px;
+    background-color: white;
+}
+
+.loading, .empty {
+    padding: 2rem;
+    text-align: center;
+    color: #6B7280;
+}

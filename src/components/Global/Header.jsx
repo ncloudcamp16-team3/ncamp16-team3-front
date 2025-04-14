@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/Global/icon1.svg";
 import notification from "../../assets/images/Global/notification2.svg";
@@ -13,16 +13,53 @@ import Purchase from "../../assets/images/Global/modal-purchase.svg";
 
 const Header = () => {
     const navigate = useNavigate();
-
     const theme = useTheme();
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/api/auth/check", {
+                    credentials: "include",
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch");
+
+                const data = await response.json();
+
+                setIsLoggedIn(data.isNewUser === false);
+            } catch (error) {
+                console.error("로그인 상태 확인 실패:", error);
+                setIsLoggedIn(false);
+            }
+        };
+
+        checkLoginStatus();
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await fetch("http://localhost:8080/api/auth/logout", {
+                method: "POST",
+                credentials: "include",
+            });
+            setIsLoggedIn(false);
+        } catch (err) {
+            console.error("로그아웃 실패", err);
+        } finally {
+            toggleMenu(); // 메뉴 닫기
+        }
+    };
+
     const toggleMenu = (event) => {
         if (anchorEl) {
-            setAnchorEl(null); // 메뉴 닫기
+            setAnchorEl(null);
         } else {
-            setAnchorEl(event.currentTarget); // 메뉴 열기
+            setAnchorEl(event.currentTarget);
         }
     };
 
@@ -113,7 +150,7 @@ const Header = () => {
                 </MenuItem>
 
                 <MenuItem
-                    onClick={handleClickMenu("/purchase")}
+                    onClick={handleClickMenu("/payment")}
                     sx={{
                         display: "flex",
                         alignItems: "flex-end",
@@ -127,21 +164,23 @@ const Header = () => {
                     <span>결제내역</span>
                 </MenuItem>
 
-                <MenuItem
-                    onClick={() => alert("로그아웃 만들어주실분?")}
-                    sx={{
-                        display: "flex",
-                        alignItems: "flex-end",
-                        gap: 1.5,
-                        fontWeight: "600",
-                        padding: "4px 8px 4px 8px",
-                        minHeight: "32px",
-                        color: "red",
-                    }}
-                >
-                    <img src={Logout} alt="로그아웃" style={{ width: "24px", height: "24px" }} />
-                    <span>로그아웃</span>
-                </MenuItem>
+                {isLoggedIn && (
+                    <MenuItem
+                        onClick={handleLogout}
+                        sx={{
+                            display: "flex",
+                            alignItems: "flex-end",
+                            gap: 1.5,
+                            fontWeight: "600",
+                            padding: "4px 8px 4px 8px",
+                            minHeight: "32px",
+                            color: "red",
+                        }}
+                    >
+                        <img src={Logout} alt="로그아웃" style={{ width: "24px", height: "24px" }} />
+                        <span>로그아웃</span>
+                    </MenuItem>
+                )}
             </Menu>
             <Box display="flex" alignItems="center">
                 <Box

@@ -1,0 +1,38 @@
+.dateRangeContainer {
+    display: flex;
+    align-items: center;
+    padding-top: 0.5rem;
+    gap: 5px;
+    flex: 0 0 calc(2rem); /* space-between으로 배치될 두 요소 중 하나 */
+}
+
+.inputGroup {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.dateInput {
+    height: 30px;
+    border: 1px solid #D1D5DB;
+    border-radius: 20px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.875rem;
+    width: 6rem;
+}
+
+.separator {
+    font-size: 0.875rem;
+    align-self: center;
+}
+
+.searchButton {
+    width: 60px;
+    height: 30px;
+    border: 1px solid #D1D5DB;
+    background-color: #F97316;
+    color: white;
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}

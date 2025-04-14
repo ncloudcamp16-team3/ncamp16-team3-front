@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 const RegisterContext = createContext();
 
@@ -19,12 +18,10 @@ export const RegisterProvider = ({ children }) => {
     const [nickname, setNickname] = useState("");
     const [formData, setFormData] = useState(initialPetData);
     const [petDataList, setPetDataList] = useState([]);
-    const [token, setToken] = useState("");
-    const [email, setEmail] = useState("");
+    const [snsAccountId, setSnsAccountId] = useState("");
     const [snsTypeId, setSnsTypeId] = useState(null);
     const [previews, setPreviews] = useState([]);
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
-    const [searchParams] = useSearchParams();
 
     const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
     const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -39,12 +36,64 @@ export const RegisterProvider = ({ children }) => {
         setStep(5);
     };
 
-    const goToStep2 = () => {
+    const goToStep1 = () => {
         setFormData(initialPetData);
-        setStep(2);
+        setStep(1);
     };
 
-    // 이미지 미리보기 관리
+    const removePhoto = (index) => {
+        const updatedPhotos = [...formData.petPhotos];
+        updatedPhotos.splice(index, 1);
+
+        handleChange({
+            target: {
+                name: "petPhotos",
+                value: updatedPhotos,
+            },
+        });
+
+        if (mainPhotoIndex === index) {
+            setMainPhotoIndex(0);
+        } else if (mainPhotoIndex > index) {
+            setMainPhotoIndex((prev) => prev - 1);
+        }
+    };
+
+    const selectMainPhoto = (index) => {
+        setMainPhotoIndex(index);
+    };
+
+    useEffect(() => {
+        const initUserInfo = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/api/auth/check", {
+                    credentials: "include",
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+
+                    if (data.isNewUser) {
+                        // 신규 사용자니까 회원가입 진행
+                        setSnsAccountId(data.snsAccountId);
+                        setSnsTypeId(data.snsTypeId);
+                        goToStep1();
+                    } else {
+                        // 기존 사용자라면 필요한 정보를 설정하거나
+                        // 이미 회원가입이 완료되었으므로 리다이렉션 등의 처리를 할 수 있음
+                        console.log("기존 사용자 정보:", data);
+                        // 예: 이미 가입한 사용자에 대한 후속 처리 (리다이렉션, 데이터 세팅 등)
+                    }
+                }
+            } catch (err) {
+                console.error("🚨 사용자 정보 조회 실패:", err);
+            }
+        };
+
+        initUserInfo();
+    }, []);
+
+    // ✅ 이미지 미리보기 처리
     useEffect(() => {
         const loadedPreviews = (formData.petPhotos || []).map((file) =>
             typeof file === "string" ? file : URL.createObjectURL(file)
@@ -63,49 +112,6 @@ export const RegisterProvider = ({ children }) => {
         };
     }, [formData.petPhotos]);
 
-    const removePhoto = (index) => {
-        const updatedPhotos = [...formData.petPhotos];
-        updatedPhotos.splice(index, 1);
-
-        handleChange({
-            target: {
-                name: "petPhotos",
-                value: updatedPhotos,
-            },
-        });
-
-        if (mainPhotoIndex === index) {
-            setMainPhotoIndex(0);
-        } else if (mainPhotoIndex > index) {
-            setMainPhotoIndex(mainPhotoIndex - 1);
-        }
-    };
-
-    const selectMainPhoto = (index) => {
-        setMainPhotoIndex(index);
-    };
-
-    useEffect(() => {
-        const token = searchParams.get("token");
-        const email = searchParams.get("email");
-        const snsTypeIdStr = searchParams.get("snsTypeId");
-
-        // snsTypeId를 숫자로 변환
-        const snsTypeId = snsTypeIdStr ? parseInt(snsTypeIdStr, 10) : null;
-
-        if (token) setToken(token);
-        if (email) setEmail(email);
-        if (snsTypeId) setSnsTypeId(snsTypeId);
-
-        console.log("Step1 - URL 파라미터:", {
-            token,
-            email,
-            snsTypeId,
-            snsTypeIdStr,
-            allParams: Object.fromEntries(searchParams.entries()),
-        });
-    }, [searchParams, setToken, setEmail, setSnsTypeId]);
-
     return (
         <RegisterContext.Provider
             value={{
@@ -121,11 +127,9 @@ export const RegisterProvider = ({ children }) => {
                 prevStep,
                 handleChange,
                 handleStep4Next,
-                goToStep2,
-                token,
-                setToken,
-                email,
-                setEmail,
+                goToStep1,
+                snsAccountId,
+                setSnsAccountId,
                 snsTypeId,
                 setSnsTypeId,
                 previews,
