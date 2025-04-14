@@ -36,11 +36,9 @@ import AddPhoto from "./pages/PetSta/AddPhoto.jsx";
 import AddVideo from "./pages/PetSta/AddVideo.jsx";
 import UserPage from "./pages/PetSta/UserPage.jsx";
 import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
-import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
-import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
+import ChatRoom from "./components/Chat/ChatRoom.jsx";
 
 function App() {
     return (
@@ -85,6 +83,7 @@ function App() {
                                 <Route path="following" element={<FollowersTab />} />
                             </Route>
                             <Route path="/chat" element={<ChatList />} />
+                            <Route path="/chat/room/:roomId" element={<ChatRoom />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
