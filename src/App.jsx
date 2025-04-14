@@ -7,7 +7,6 @@ import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
 import Reserve from "./pages/Reserve/Reserve.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
-import Notification from "./pages/Notification/Notification.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
@@ -39,6 +38,9 @@ import ChatList from "./components/Chat/ChatList.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
+import OAuth2Success from "./components/User/OAuth2Success.jsx";
+import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
+// 경로 맞춰서 import
 
 function App() {
     return (
@@ -60,6 +62,7 @@ function App() {
                             <Route path="facility/add" element={<AdminFacilityAdd />} />
                         </Route>
                         <Route element={<Layout0 />}>
+                            <Route path="/oauth2/success" element={<OAuth2Success />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
@@ -70,7 +73,14 @@ function App() {
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
-                            <Route path="/notification" element={<Notification />} />
+                            <Route
+                                path="/notification"
+                                element={
+                                    <ProtectedRoute>
+                                        <Notification />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
@@ -84,10 +94,6 @@ function App() {
                             </Route>
                             <Route path="/chat" element={<ChatList />} />
                             <Route path="/payment" element={<Payment />} />
-                            <Route
-                                path="/notification"
-                                element={<Notification />}
-                            />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
