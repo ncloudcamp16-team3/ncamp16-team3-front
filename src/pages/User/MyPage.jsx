@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Box, Typography, Button, Card, CardContent, IconButton, Link, Tooltip, Avatar } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import petEx from "/src/assets/images/User/pet_ex.svg";
 import sitter from "/src/assets/images/User/petsit_req.svg";
@@ -25,7 +24,41 @@ const MyPage = () => {
 
     useEffect(() => {
         setPets(petsData);
-        setSitterStatus(sitterStatusData[0]);
+
+        // 펫시터 상태 확인
+        const fetchSitterStatus = async () => {
+            try {
+                // 기본 상태 설정
+                setSitterStatus(sitterStatusData[0]);
+
+                // 로컬 스토리지에서 펫시터 등록 완료 상태와 정보 확인
+                const registrationCompleted = localStorage.getItem("petSitterRegistrationCompleted");
+                if (registrationCompleted === "true") {
+                    // 등록 정보도 함께 가져옴
+                    const sitterInfo = JSON.parse(localStorage.getItem("petSitterInfo") || "{}");
+
+                    // 상태 업데이트
+                    setSitterStatus((prev) => ({
+                        ...prev,
+                        registered: true,
+                        age: sitterInfo.age || "20대",
+                        petType: sitterInfo.petType || "강아지",
+                        petCount: sitterInfo.petCount || "1마리",
+                        houseType: sitterInfo.houseType || "아파트",
+                        comment: sitterInfo.comment || "제 가족이라는 마음으로 돌봐드려요 ♥",
+                        image: sitterInfo.image,
+                    }));
+
+                    // 상태 확인 후 로컬 스토리지 초기화 (선택사항)
+                    // localStorage.removeItem("petSitterRegistrationCompleted");
+                    // localStorage.removeItem("petSitterInfo");
+                }
+            } catch (error) {
+                console.error("펫시터 상태 로드 오류:", error);
+            }
+        };
+
+        fetchSitterStatus();
     }, []);
 
     const handleEditPet = (petId) => {
@@ -89,6 +122,16 @@ const MyPage = () => {
 
     const handleProfileClick = () => {
         fileInputRef.current.click();
+    };
+
+    const handleSitterAction = () => {
+        if (sitterStatus.registered) {
+            // 이미 등록된 경우, 재등록 페이지로 이동
+            navigate("/petsitter-register");
+        } else {
+            // 미등록된 경우, 등록 페이지로 이동
+            navigate("/petsitter-register");
+        }
     };
 
     return (
@@ -268,27 +311,129 @@ const MyPage = () => {
                 </Typography>
                 <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "90%", mx: "auto" }}>
                     <CardContent sx={{ p: 2 }}>
-                        <Box
-                            component="img"
-                            src={sitter}
-                            alt="펫시터 이미지"
-                            sx={{
-                                width: "100%",
-                                height: "auto",
-                                mb: 2,
-                                maxWidth: "200px",
-                                mx: "auto",
-                                display: "block",
-                            }}
-                        />
-                        <Typography variant="body2" align="center" sx={{ mb: 1.5 }}>
-                            소중한 반려동물들에게
-                            <br />
-                            펫시터가 찾아갑니다!
-                        </Typography>
+                        {sitterStatus.registered ? (
+                            // 등록된 펫시터의 경우 - PetSitterRegister.jsx와 유사한 형식으로 변경
+                            <>
+                                {/* 프로필 이미지 */}
+                                <Box
+                                    sx={{
+                                        width: 120,
+                                        height: 120,
+                                        borderRadius: "50%",
+                                        overflow: "hidden",
+                                        mb: 3,
+                                        mx: "auto",
+                                    }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={sitterStatus.image || "/mock/Global/images/haribo.jpg"}
+                                        alt="프로필"
+                                        sx={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                </Box>
+
+                                {/* 등록 정보 테이블 */}
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">연령대</Typography>
+                                        <Typography>{sitterStatus.age || "40대"}</Typography>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">반려동물</Typography>
+                                        <Typography>
+                                            {sitterStatus.petType || "강아지"} {sitterStatus.petCount || "1마리"}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">펫시터 경험</Typography>
+                                        <Typography>{sitterStatus.experience ? "있음" : "없음"}</Typography>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">주거 형태</Typography>
+                                        <Typography>{sitterStatus.houseType || "오피스텔"}</Typography>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">한마디</Typography>
+                                        <Typography noWrap sx={{ maxWidth: "70%", textOverflow: "ellipsis" }}>
+                                            {sitterStatus.comment || "제 아이라는 마음으로 돌봐드려요 😊"}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </>
+                        ) : (
+                            // 미등록 펫시터의 경우
+                            <>
+                                <Box
+                                    component="img"
+                                    src={sitter}
+                                    alt="펫시터 이미지"
+                                    sx={{
+                                        width: "100%",
+                                        height: "auto",
+                                        mb: 2,
+                                        maxWidth: "200px",
+                                        mx: "auto",
+                                        display: "block",
+                                    }}
+                                />
+                                <Typography variant="body2" align="center" sx={{ mb: 1.5 }}>
+                                    소중한 반려동물들에게
+                                    <br />
+                                    펫시터가 찾아갑니다!
+                                </Typography>
+                            </>
+                        )}
+
                         <Button
                             variant="contained"
                             fullWidth
+                            onClick={handleSitterAction}
                             sx={{
                                 bgcolor: "#E9A260",
                                 "&:hover": { bgcolor: "#d0905a" },
