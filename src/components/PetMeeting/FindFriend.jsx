@@ -15,11 +15,10 @@ const FindFriend = () => {
                 display: "flex",
                 flexDirection: "column",
                 padding: "20px",
-                margin: "5px 0",
             }}
         >
-            <PetRegister />
             <FindFriendConfigBtns />
+            <PetRegister />
             {pet?.owner?.address ? <PetProfiles /> : <SetLocation />}
         </Box>
     );

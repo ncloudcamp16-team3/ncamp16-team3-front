@@ -1,1 +1,76 @@
-["초코", "크릉이", "흰둥이"]
+[
+  {
+    "id": 1,
+    "owner": {
+      "id": 3,
+      "nickname": "라이언",
+      "address": "서울시 강남구 역삼동",
+      "detailAddress": "101동 402호",
+      "dongName": "역삼동",
+      "latitude": 37.5001,
+      "longitude": 127.035
+    },
+    "petTypeId": 1,
+    "name": "백구",
+    "gender": "MALE",
+    "birth": "2022-05-01",
+    "weight": 14.2,
+    "info": "사교적인 푸들입니다",
+    "neutured": true,
+    "activityStatus": "WALK",
+    "photos": [
+      { "id": 10, "url": "/mock/PetMeeting/images/pet1.jpg" },
+      { "id": 11, "url": "/mock/PetMeeting/images/def.jpg" }
+    ],
+    "thumbnail": 10
+  },
+  {
+    "id": 2,
+    "owner": {
+      "id": 4,
+      "nickname": "어피치",
+      "address": "서울시 송파구 잠실동",
+      "detailAddress": "302호",
+      "dongName": "잠실동",
+      "latitude": 37.5141,
+      "longitude": 127.105
+    },
+    "petTypeId": 1,
+    "name": "황구",
+    "gender": "FEMALE",
+    "birth": "2021-12-10",
+    "weight": 3.8,
+    "info": "겁이 많지만 귀여워요",
+    "neutured": false,
+    "activityStatus": "NONE",
+    "photos": [
+      { "id": 12, "url": "/mock/PetMeeting/images/abc.jpg" },
+      { "id": 13, "url": "/mock/PetMeeting/images/pet2.jpg" }
+    ],
+    "thumbnail": 13
+  },
+  {
+    "id": 3,
+    "owner": {
+      "id": 5,
+      "nickname": "무지",
+      "address": "서울시 마포구 합정동",
+      "detailAddress": "303호",
+      "dongName": "합정동",
+      "latitude": 37.5499,
+      "longitude": 126.913
+    },
+    "petTypeId": 2,
+    "name": "흑구",
+    "gender": "MALE",
+    "birth": "2020-08-20",
+    "weight": 5.1,
+    "info": "조용하고 온순해요",
+    "neutured": true,
+    "activityStatus": "PLAY",
+    "photos": [
+      { "id": 14, "url": "/mock/PetMeeting/images/pet3.jpg" }
+    ],
+    "thumbnail": 14
+  }
+]

@@ -40,6 +40,7 @@ import ChatRoom from "./components/Chat/ChatRoom.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
+import Petdetails from "./components/PetMeeting/Petdetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 // 경로 맞춰서 import
@@ -70,6 +71,7 @@ function App() {
                         </Route>
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
+                            <Route path="/petdetails/:petId" element={<Petdetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />

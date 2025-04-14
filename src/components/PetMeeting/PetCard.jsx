@@ -1,15 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PetCard = ({ friend }) => {
+    const { pet } = useContext(PetMeetingContext);
     const thumbnailPhoto = friend?.photos.find((photo) => photo.id === friend.thumbnail);
+    const navigate = useNavigate();
+
+    const goDetails = () => {
+        sessionStorage.setItem("pet", JSON.stringify(pet));
+        navigate(`/petdetails/${friend.id}`);
+    };
 
     return (
         <Box
             sx={{
                 borderRadius: "20px",
                 width: "100%",
-                minHeight: "260px",
+                height: "100%",
                 cursor: "pointer",
                 mb: 4,
                 boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
@@ -23,7 +32,7 @@ const PetCard = ({ friend }) => {
                     boxShadow: "4px 8px 15px rgba(0, 0, 0, 0.2)",
                 },
             }}
-            onClick={() => {}}
+            onClick={goDetails}
         >
             <Box
                 component="img"
@@ -85,7 +94,7 @@ const PetCard = ({ friend }) => {
                         maxWidth: "100%",
                     }}
                 >
-                    몸무게: {friend.weight}kg
+                    무게: {friend.weight}kg
                 </Typography>
                 <Typography
                     sx={{
@@ -96,7 +105,7 @@ const PetCard = ({ friend }) => {
                         maxWidth: "100%",
                     }}
                 >
-                    동네: {friend.owner.dongName}
+                    주소: {friend.owner.dongName}
                 </Typography>
             </Box>
         </Box>

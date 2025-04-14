@@ -3,17 +3,26 @@ import { Box, Button, Typography } from "@mui/material";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PetRegister = () => {
-    const { pet, setOpen, friendType } = useContext(PetMeetingContext);
+    const { pet, setOpenPetConfigModal, friendType } = useContext(PetMeetingContext);
     return (
         <Box
             sx={{
                 display: "flex",
                 justifyContent: "space-between",
+                alignItems: "center",
                 height: "40px",
+                m: "5px 0 10px 0",
             }}
         >
             <Box>
-                <Typography variant="h5">{friendType}</Typography>
+                <Typography
+                    variant="h5"
+                    sx={{
+                        textAlign: "center",
+                    }}
+                >
+                    {friendType}
+                </Typography>
             </Box>
             {!pet && (
                 <Button
@@ -24,7 +33,7 @@ const PetRegister = () => {
                         padding: "7px 20px",
                         color: "white",
                     }}
-                    onClick={() => setOpen(true)}
+                    onClick={() => setOpenPetConfigModal(true)}
                 >
                     놀러가기
                 </Button>
