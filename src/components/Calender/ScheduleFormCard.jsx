@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-    Box,
-    Button,
-    Card,
-    FormControl,
-    FormHelperText,
-    Input,
-    InputLabel,
-    TextField,
-    Typography,
-} from "@mui/material";
+import { Box, Button, Card, FormControl, FormHelperText, Input, InputLabel, Typography } from "@mui/material";
 import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import DaumPost from "./DaumPost.jsx";
 
@@ -48,45 +38,66 @@ const ScheduleFormCard = ({
         >
             <Box sx={{ width: "40px", backgroundColor: "#EB5757" }} />
             <Box sx={{ flex: 1, p: 2 }}>
-                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <FormControl variant="standard" fullWidth sx={{ mb: 1.5 }}>
                     <InputLabel>제목</InputLabel>
-                    <Input name="title" value={formData.title} onChange={onInputChange} />
+                    <Box sx={{ mt: 1 }}>
+                        <Input
+                            name="title"
+                            value={formData.title}
+                            onChange={onInputChange}
+                            fullWidth
+                            sx={{ height: 36 }}
+                        />
+                    </Box>
                 </FormControl>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <FormHelperText>일정</FormHelperText>
-                    <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                    <FormHelperText sx={{ mb: 0.5 }}>일정</FormHelperText>
+                    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>
                         <MobileDateTimePicker
                             label="시작일"
                             value={formData.start_date}
                             onChange={(val) => onDateChange("start_date", val)}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            slotProps={{ textField: { fullWidth: true, size: "small" } }}
                         />
                         <MobileDateTimePicker
                             label="종료일"
                             value={formData.end_date}
                             onChange={(val) => onDateChange("end_date", val)}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            slotProps={{ textField: { fullWidth: true, size: "small" } }}
                         />
                     </Box>
                 </LocalizationProvider>
 
-                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <FormControl variant="standard" fullWidth sx={{ mt: 1, mb: 0.5 }}>
                     <InputLabel>장소</InputLabel>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Input name="address" value={formData.address} onChange={onInputChange} fullWidth />
+                    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>
+                        <Input
+                            name="address"
+                            value={formData.address}
+                            onChange={onInputChange}
+                            fullWidth
+                            sx={{ height: 36 }}
+                        />
                         <DaumPost setAddressObj={setAddressObj} />
                     </Box>
                 </FormControl>
 
-                <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
+                <FormControl variant="standard" fullWidth sx={{ mb: 1.5 }}>
                     <InputLabel>내용</InputLabel>
-                    <Input name="content" value={formData.content} onChange={onInputChange} />
+                    <Box sx={{ mt: 1 }}>
+                        <Input
+                            name="content"
+                            value={formData.content}
+                            onChange={onInputChange}
+                            fullWidth
+                            sx={{ height: 36 }}
+                        />
+                    </Box>
                 </FormControl>
 
-                {/* 위도/경도 디버깅용 출력 */}
                 {formData.latitude && formData.longitude && (
-                    <Box sx={{ mb: 2 }}>
+                    <Box sx={{ mb: 1.5 }}>
                         <Typography variant="body2" color="textSecondary">
                             위도: {formData.latitude}, 경도: {formData.longitude}
                         </Typography>

@@ -286,6 +286,8 @@ const Cal = () => {
                 <Box
                     sx={{
                         width: "40px",
+                        minWidth: "40px", // 추가!
+                        maxWidth: "40px", // 추가!
                         backgroundColor: colors[type],
                         borderTopLeftRadius: "12px",
                         borderBottomLeftRadius: "12px",
