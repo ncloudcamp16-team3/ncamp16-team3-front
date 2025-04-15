@@ -41,13 +41,13 @@ import ChatRoom from "./components/Chat/ChatRoom.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
-import PetDetails from "./components/PetMeeting/PetDetails.jsx";
+import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
 import AddPost from "./components/Board/AddPost.jsx";
-import PostDetails from "./components/Board/PostDetails.jsx";
+import PostDetails from "./pages/Board/PostDetails.jsx";
 
 function App() {
     return (

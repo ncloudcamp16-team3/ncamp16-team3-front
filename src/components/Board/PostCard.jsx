@@ -1,7 +1,8 @@
 import React from "react";
 import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
 import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ postItem }) => {
@@ -83,8 +84,8 @@ const PostCard = ({ postItem }) => {
 
                 <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "10px" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                        <VisibilityIcon sx={{ fontSize: 16, marginTop: "2px" }} />
-                        <span sx={{ marginTop: "2px" }}>{postItem.viewCount}</span>
+                        <FavoriteIcon sx={{ fontSize: 16, marginTop: "2px" }} />
+                        <span sx={{ marginTop: "2px" }}>{postItem.likeCount}</span>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center", gap: "3px" }}>
                         <ChatBubbleIcon sx={{ fontSize: 16, marginTop: "2px" }} />

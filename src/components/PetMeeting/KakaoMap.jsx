@@ -16,21 +16,7 @@ const KakaoMap = ({ address, setAddress, setDongName, setModalMessage, setModalT
 
         const container = mapRef.current;
 
-        if (pet?.owner?.address) {
-            const ps = new window.kakao.maps.services.Places();
-
-            ps.keywordSearch(pet?.owner?.address, function (data, status) {
-                if (status === window.kakao.maps.services.Status.OK) {
-                    const firstResult = data[0];
-                    const lat = firstResult.y;
-                    const lng = firstResult.x;
-
-                    const center = new window.kakao.maps.LatLng(lat, lng);
-                    initMap(center);
-                    placeMarker(lat, lng);
-                }
-            });
-        } else {
+        const currentCenter = () => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
@@ -44,7 +30,7 @@ const KakaoMap = ({ address, setAddress, setDongName, setModalMessage, setModalT
                     initMap(fallbackCenter);
                 }
             );
-        }
+        };
 
         const initMap = (center) => {
             const options = {
@@ -61,6 +47,27 @@ const KakaoMap = ({ address, setAddress, setDongName, setModalMessage, setModalT
                 placeMarker(latlng.getLat(), latlng.getLng());
             });
         };
+
+        if (pet?.owner?.address) {
+            const ps = new window.kakao.maps.services.Places();
+
+            ps.keywordSearch(pet?.owner?.address, function (data, status) {
+                if (status === window.kakao.maps.services.Status.OK) {
+                    const firstResult = data[0];
+                    const lat = firstResult.y;
+                    const lng = firstResult.x;
+
+                    const center = new window.kakao.maps.LatLng(lat, lng);
+                    alert(center);
+                    initMap(center);
+                    placeMarker(lat, lng);
+                } else {
+                    currentCenter();
+                }
+            });
+        } else {
+            currentCenter();
+        }
     }, []);
 
     const searchAndMove = () => {
