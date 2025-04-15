@@ -14,6 +14,7 @@ import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
+import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
@@ -44,7 +45,7 @@ import Petdetails from "./components/PetMeeting/Petdetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
-// 경로 맞춰서 import
+
 
 function App() {
     return (
@@ -92,6 +93,7 @@ function App() {
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsitter-register" element={<PetSitterRegister />} />
+                            <Route path="/petsitter-finder" element={<PetSitterFinder />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
