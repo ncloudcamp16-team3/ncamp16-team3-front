@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailfriends-front-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tailfriends-front
+  template:
+    metadata:
+      labels:
+        app: tailfriends-front
+    spec:
+      containers:
+      - name: tailfriends-front
+        image: s9kpv31a.kr.private-ncr.ntruss.com/tailfriends/tailfriends-front:latest
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: regcred
+apiVersion: v1
+kind: Service
+metadata:
+  name: tailfriends-front-service
+spec:
+  selector:
+    app: tailfriends-front
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
