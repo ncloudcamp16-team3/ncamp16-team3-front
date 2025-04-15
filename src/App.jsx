@@ -40,9 +40,12 @@ import ChatRoom from "./components/Chat/ChatRoom.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
-import Petdetails from "./components/PetMeeting/Petdetails.jsx";
+import PetDetails from "./components/PetMeeting/PetDetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
+import Announce from "./pages/Board/Announce.jsx";
+import AddPost from "./components/Board/AddPost.jsx";
+import PostDetails from "./components/Board/PostDetails.jsx";
 // 경로 맞춰서 import
 
 function App() {
@@ -71,9 +74,12 @@ function App() {
                         </Route>
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
-                            <Route path="/petdetails/:petId" element={<Petdetails />} />
+                            <Route path="/announce/:announceId" element={<Announce />} />
+                            <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
+                            <Route path="/post/:postId" element={<PostDetails />} />
+                            <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
@@ -101,7 +107,6 @@ function App() {
                             <Route path="/chat/room/:roomId" element={<ChatRoom />} />
                             <Route path="/payment" element={<Payment />} />
                             <Route path="/notification" element={<Notification />} />
-
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

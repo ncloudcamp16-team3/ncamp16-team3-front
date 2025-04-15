@@ -10,7 +10,7 @@ const PetCard = ({ friend }) => {
 
     const goDetails = () => {
         sessionStorage.setItem("pet", JSON.stringify(pet));
-        navigate(`/petdetails/${friend.id}`);
+        navigate(`/pet/${friend.id}`);
     };
 
     return (

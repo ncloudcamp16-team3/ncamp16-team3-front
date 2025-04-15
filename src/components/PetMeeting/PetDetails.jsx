@@ -13,7 +13,7 @@ import petTypes from "../../constants/petTypes.js";
 import { useNavigate } from "react-router-dom";
 import TitleBar from "../Global/TitleBar.jsx";
 
-const Petdetails = () => {
+const PetDetails = () => {
     const petData = useRef(PetData);
     const petDetails = petData.current;
     const navigate = useNavigate();
@@ -166,4 +166,4 @@ const Petdetails = () => {
     );
 };
 
-export default Petdetails;
+export default PetDetails;
