@@ -145,7 +145,7 @@ const AccordionHeaderButton = styled(ListItemButton)(({ open }) => ({
 }));
 
 const Layout = ({ children }) => {
-    const { setSelectedMenu } = useAdmin();
+    const { setSelectedMenu, logout } = useAdmin();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -175,7 +175,8 @@ const Layout = ({ children }) => {
         }
     };
 
-    const logout = () => {
+    const handleLogout = () => {
+        logout();
         navigate("/admin");
     };
 
@@ -463,7 +464,7 @@ const Layout = ({ children }) => {
                 <Box sx={{ flexGrow: 1 }} />
 
                 <Box sx={{ p: 2 }}>
-                    <StyledListItemButton2 onClick={logout}>
+                    <StyledListItemButton2 onClick={handleLogout}>
                         <ListItemIcon>
                             <LogoutIcon />
                         </ListItemIcon>
