@@ -49,16 +49,18 @@ function App() {
                     <Routes>
                         <Route path="/admin" element={<AdminLayout />}>
                             <Route index element={<Admin />} />
-                            <Route path="board/list" element={<AdminDashboard />} />
-                            <Route path="board/:id" element={<AdminPostDetail />} />
-                            <Route path="board/post" element={<AdminNotice />} />
-                            <Route path="petsitter/list" element={<AdminPetsitterList />} />
-                            <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
-                            <Route path="petsitter/apply" element={<AdminPetSitterApplyList />} />
-                            <Route path="petsitter/apply/:id" element={<AdminPetSitterApplyDetail />} />
-                            <Route path="facility/list" element={<AdminFacilityList />} />
-                            <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
-                            <Route path="facility/add" element={<AdminFacilityAdd />} />
+                            <Route path="" elemtent={<Protected.../>}>
+                                <Route path="board/list" element={<AdminDashboard />} />
+                                <Route path="board/:id" element={<AdminPostDetail />} />
+                                <Route path="board/post" element={<AdminNotice />} />
+                                <Route path="petsitter/list" element={<AdminPetsitterList />} />
+                                <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
+                                <Route path="petsitter/apply" element={<AdminPetSitterApplyList />} />
+                                <Route path="petsitter/apply/:id" element={<AdminPetSitterApplyDetail />} />
+                                <Route path="facility/list" element={<AdminFacilityList />} />
+                                <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
+                                <Route path="facility/add" element={<AdminFacilityAdd />} />
+                            </Route>
                         </Route>
                         <Route element={<Layout0 />}>
                             <Route path="/login" element={<Login />} />
