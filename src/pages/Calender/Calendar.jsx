@@ -53,7 +53,7 @@ const Cal = () => {
     }, [showForm]);
 
     useEffect(() => {
-        fetch("src/mock/Calendar/calender_schedules.json")
+        fetch("src/mock/Calendar/schedules.json")
             .then((res) => res.json())
             .then(setSchedules)
             .catch((err) => console.error("Error loading schedules:", err));
