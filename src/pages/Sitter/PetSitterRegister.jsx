@@ -698,7 +698,6 @@ const PetSitterRegister = () => {
                             alignItems: "center",
                             justifyContent: "flex-start",
                             pt: 6,
-                            pt: 2,
                         }}
                     >
                         <Typography
