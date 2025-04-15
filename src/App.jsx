@@ -14,6 +14,7 @@ import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
+import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
@@ -43,7 +44,6 @@ import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import Petdetails from "./components/PetMeeting/Petdetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
-// 경로 맞춰서 import
 
 function App() {
     return (
@@ -89,6 +89,7 @@ function App() {
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsitter-register" element={<PetSitterRegister />} />
+                            <Route path="/petsitter-finder" element={<PetSitterFinder />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
@@ -101,7 +102,6 @@ function App() {
                             <Route path="/chat/room/:roomId" element={<ChatRoom />} />
                             <Route path="/payment" element={<Payment />} />
                             <Route path="/notification" element={<Notification />} />
-
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

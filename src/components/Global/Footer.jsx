@@ -20,7 +20,7 @@ const Footer = () => {
                 <img src={main} />
             </Box>
             <BottomButton icon={reserve} label="예약" onClick={() => navigate("/reserve")} />
-            <BottomButton icon={petsitter} label="임보구해요" onClick={() => navigate("/petsitter")} />
+            <BottomButton icon={petsitter} label="임보구해요" onClick={() => navigate("/petsitter-finder")} />
         </Box>
     );
 };
