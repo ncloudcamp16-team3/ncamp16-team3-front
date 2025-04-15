@@ -45,7 +45,7 @@ import Petdetails from "./components/PetMeeting/Petdetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
-
+import Notifi from "./pages/Notification/Notification.jsx";
 
 function App() {
     return (
@@ -85,7 +85,7 @@ function App() {
                                 path="/notification"
                                 element={
                                     <ProtectedRoute>
-                                        <Notification />
+                                        <Notifi />
                                     </ProtectedRoute>
                                 }
                             />
@@ -105,7 +105,6 @@ function App() {
                             <Route path="/chat" element={<ChatList />} />
                             <Route path="/chat/room/:roomId" element={<ChatRoom />} />
                             <Route path="/payment" element={<Payment />} />
-                            <Route path="/notification" element={<Notification />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
