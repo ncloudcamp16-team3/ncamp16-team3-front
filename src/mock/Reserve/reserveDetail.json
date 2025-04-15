@@ -1,0 +1,145 @@
+[
+  {
+    "id": 1,
+    "name": "멍브로",
+    "address": "경기 성남시 수정구 태평동",
+    "mainImage": "../../assets/images/Reserve/facility01.svg",
+    "rating": 4.5,
+    "reviewCount": 30,
+    "tags": ["호텔", "미용실", "애견 카페"],
+    "openHours": "월–금 13:00 - 21:00",
+    "score": {
+      "5Stars": 5,
+      "4Stars": 4,
+      "3Stars": 3,
+      "2Stars": 2,
+      "1Star": 1
+    },
+    "reviews": [
+      {
+        "user": "뽀삐맘",
+        "avatar": "/images/user1.jpg",
+        "star": 5,
+        "content": "우리 애가 너무 잘 지내다 왔어요! 깨끗하고 직원 분들도 너무 친절하세요. 다음에도 재방문할 예정이에요~",
+        "image": "../../assets/images/review01.svg",
+        "date": "2025-03-19"
+      },
+      {
+        "user": "멍돌이",
+        "avatar": "/images/user2.jpg",
+        "star": 4,
+        "content": "강아지가 너무 좋아하네요! 전용 놀이터도 잘 되어있고 믿고 맡길 수 있어요.",
+        "image": "../../assets/images/review02.svg",
+        "date": "2025-03-17"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "댕댕하우스",
+    "address": "서울 강남구 논현동",
+    "mainImage": "../../assets/images/facility01.svg",
+    "rating": 4.2,
+    "reviewCount": 22,
+    "tags": ["호텔", "애견 카페"],
+    "openHours": "화–일 10:00 - 20:00",
+    "score": {
+      "5Stars": 5,
+      "4Stars": 4,
+      "3Stars": 3,
+      "2Stars": 2,
+      "1Star": 1
+    },
+    "reviews": [
+      {
+        "user": "귀요미엄마",
+        "avatar": "/images/user3.jpg",
+        "star": 3,
+        "content": "시설이 예쁘고 깨끗해요~ 다음엔 친구랑 같이 예약할게요!",
+        "image": "../../assets/images/review02.svg",
+        "date": "2025-03-15"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "하이펫",
+    "address": "부산 해운대구 우동",
+    "mainImage": "../../assets/images/facility01.svg",
+    "rating": 4.0,
+    "reviewCount": 18,
+    "tags": ["미용실"],
+    "openHours": "월–토 11:00 - 19:00",
+    "score": {
+      "5Stars": 5,
+      "4Stars": 4,
+      "3Stars": 3,
+      "2Stars": 2,
+      "1Star": 1
+    },
+    "reviews": [
+      {
+        "user": "치즈누나",
+        "avatar": "/images/user4.jpg",
+        "star": 4,
+        "content": "미용사님이 강아지를 너무 다정하게 다뤄주셔서 감동했어요.",
+        "image": "../../assets/images/review01.svg",
+        "date": "2025-03-12"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "애견천국",
+    "address": "대전 서구 둔산동",
+    "mainImage": "../../assets/images/facility01.svg",
+    "rating": 3.9,
+    "reviewCount": 25,
+    "tags": ["호텔", "미용실"],
+    "openHours": "매일 10:00 - 20:00",
+    "score": {
+      "5Stars": 5,
+      "4Stars": 4,
+      "3Stars": 3,
+      "2Stars": 2,
+      "1Star": 1
+    },
+    "reviews": [
+      {
+        "user": "럭키주인",
+        "avatar": "/images/user5.jpg",
+        "star": 3,
+        "content": "전반적으로 만족하지만 주차공간이 좁아서 불편했어요.",
+        "image": "../../assets/images/review02.svg",
+        "date": "2025-03-10"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "포독스파",
+    "address": "인천 연수구 송도동",
+    "mainImage": "../../assets/images/facility01.svg",
+    "rating": 4.7,
+    "reviewCount": 40,
+    "tags": ["미용실", "스파"],
+    "openHours": "화–일 09:00 - 18:00",
+    "score": {
+      "5Stars": 5,
+      "4Stars": 4,
+      "3Stars": 3,
+      "2Stars": 2,
+      "1Star": 1
+    },
+    "reviews": [
+      {
+        "user": "코코아빠",
+        "avatar": "/images/user6.jpg",
+        "star": 4,
+        "content": "강아지 스파 받는 거 처음 봤어요ㅋㅋ 너무 만족!",
+        "image": "../../assets/images/review01.svg",
+        "date": "2025-03-08"
+      }
+    ]
+  }
+]

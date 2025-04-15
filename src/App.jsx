@@ -6,6 +6,7 @@ import Login from "./pages/User/Login.jsx";
 import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
 import Reserve from "./pages/Reserve/Reserve.jsx";
+import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
@@ -46,7 +47,6 @@ import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 
-
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -79,6 +79,7 @@ function App() {
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
+                            <Route path="/reserve/:id" element={<ReserveDetail />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
                             <Route
