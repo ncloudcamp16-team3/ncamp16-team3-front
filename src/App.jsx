@@ -45,7 +45,7 @@ import Petdetails from "./components/PetMeeting/Petdetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
-import Notifi from "./pages/Notification/Notification.jsx";
+import Notify from "./pages/Notification/Notification.jsx";
 
 function App() {
     return (
@@ -85,7 +85,7 @@ function App() {
                                 path="/notification"
                                 element={
                                     <ProtectedRoute>
-                                        <Notifi />
+                                        <Notify />
                                     </ProtectedRoute>
                                 }
                             />
