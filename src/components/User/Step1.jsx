@@ -1,7 +1,7 @@
 import * as React from "react";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, InputLabel, Typography, FormHelperText } from "@mui/material";
+import { Box, Button, InputLabel, Typography, FormHelperText, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
@@ -15,7 +15,6 @@ const Step1 = () => {
 
     useEffect(() => {
         if (!snsAccountId || !snsTypeId) {
-            // 데이터를 아직 못 받았으면 기다림
             return;
         }
 
@@ -61,17 +60,27 @@ const Step1 = () => {
                 {error && <FormHelperText>닉네임은 2~16자 이내로 입력해주세요.</FormHelperText>}
             </FormControl>
 
-            <Button
-                variant="contained"
-                onClick={() => navigate("/login")}
-                sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
-            >
-                뒤로
-            </Button>
+            <Grid container spacing={1}>
+                <Grid item size={6}>
+                    <Button
+                        variant="contained"
+                        onClick={() => navigate("/login")}
+                        sx={{ mt: 1, width: "100%", backgroundColor: "#fff", color: "black" }}
+                    >
+                        뒤로
+                    </Button>
+                </Grid>
 
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                다음
-            </Button>
+                <Grid item size={6}>
+                    <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
+                    >
+                        다음
+                    </Button>
+                </Grid>
+            </Grid>
         </Box>
     );
 };

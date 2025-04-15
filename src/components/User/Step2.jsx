@@ -5,6 +5,10 @@ import { Box, Button, FormHelperText, Grid, InputLabel, Typography } from "@mui/
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState } from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import dayjs from "dayjs";
 
 const Step2 = () => {
     const { nextStep, handleChange, formData, prevStep } = useRegister();
@@ -22,6 +26,8 @@ const Step2 = () => {
         petName: false,
         petRegistration: false,
         petGender: false,
+        petBirth: false,
+        petWeight: false,
     });
 
     const handleNext = () => {
@@ -29,6 +35,8 @@ const Step2 = () => {
             petName: !formData.petName || formData.petName.trim().length < 1 || formData.petName.trim().length > 16,
             petTypeId: !formData.petTypeId || formData.petTypeId.trim().length < 1,
             petGender: !formData.petGender,
+            petBirth: !formData.petBirth,
+            petWeight: !formData.petWeight || formData.petWeight.trim().length === 0,
         };
 
         setErrors(newErrors);
@@ -37,6 +45,10 @@ const Step2 = () => {
         if (hasError) return;
 
         nextStep();
+    };
+
+    const handleDateChange = (newValue) => {
+        handleChange({ target: { name: "petBirth", value: newValue ? newValue.format("YYYY-MM-DD") : "" } });
     };
 
     return (
@@ -113,13 +125,55 @@ const Step2 = () => {
                 {errors.petGender && <FormHelperText>성별을 선택해주세요.</FormHelperText>}
             </FormControl>
 
-            <Button variant="contained" onClick={prevStep} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                뒤로
-            </Button>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
+                    <FormHelperText>
+                        아이의 생일은 언제인가요? <ReqUi />
+                    </FormHelperText>
+                    <MobileDatePicker
+                        value={formData.petBirth ? dayjs(formData.petBirth) : null}
+                        onChange={handleDateChange}
+                    />
+                    {errors.petBirth && <FormHelperText>반려동물의 생일을 선택해주세요.</FormHelperText>}
+                </FormControl>
+            </LocalizationProvider>
 
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                다음
-            </Button>
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
+                <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
+                    몸무게를 입력해 주세요 <ReqUi />
+                </InputLabel>
+                <Input
+                    required
+                    id="petWeight"
+                    name="petWeight"
+                    placeholder="몸무게를 입력해 주세요"
+                    value={formData.petWeight}
+                    onChange={handleChange}
+                />
+                {errors.petWeight && <FormHelperText>몸무게를 입력해주세요.</FormHelperText>}
+            </FormControl>
+
+            <Grid container spacing={1}>
+                <Grid item size={6}>
+                    <Button
+                        variant="contained"
+                        onClick={prevStep}
+                        sx={{ mt: 1, width: "100%", backgroundColor: "#fff", color: "black" }}
+                    >
+                        뒤로
+                    </Button>
+                </Grid>
+
+                <Grid item size={6}>
+                    <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
+                    >
+                        다음
+                    </Button>
+                </Grid>
+            </Grid>
         </Box>
     );
 };
