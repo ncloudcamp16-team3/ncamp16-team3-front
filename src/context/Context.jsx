@@ -10,12 +10,18 @@ export function Provider({ children }) {
         photo: "haribo.jpg",
         id: 3212,
     });
+
+    const [boardType, setBoardType] = useState({
+        id: 1,
+        name: "자유게시판",
+    });
+
     const toggleMute = () => {
         setIsMute((prev) => !prev);
     };
 
     return (
-        <Context.Provider value={{ isMute, address, setAddress, toggleMute, user, setUser }}>
+        <Context.Provider value={{ isMute, address, setAddress, toggleMute, user, setUser, boardType, setBoardType }}>
             {children}
         </Context.Provider>
     );
