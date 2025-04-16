@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "title": "시스템 점검 안내",
+  "content": "안녕하세요. 시스템 점검으로 인해 4월 20일(토) 오전 2시부터 4시까지 서비스 이용이 제한됩니다. 양해 부탁드립니다. 안녕하세요. 시스템 점검으로 인해 4월 20일(토) 오전 2시부터 4시까지 서비스 이용이 제한됩니다. 양해 부탁드립니다. 안녕하세요. 시스템 점검으로 인해 4월 20일(토) 오전 2시부터 4시까지 서비스 이용이 제한됩니다. 양해 부탁드립니다.",
+  "created_at": "2025-04-10T09:00:00",
+  "board_type_id": 1,
+  "photos": [
+    { "id": 10, "url": "/mock/PetMeeting/images/pet4.jpg" },
+    { "id": 11, "url": "/mock/PetMeeting/images/pet5.jpg" },
+    { "id": 12, "url": "/mock/PetMeeting/images/pet6.jpg" },
+    { "id": 13, "url": "/mock/PetMeeting/images/pet7.jpg" }
+  ]
+}

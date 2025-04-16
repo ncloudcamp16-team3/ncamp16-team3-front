@@ -34,9 +34,5 @@ export const PetMeetingProvider = ({ children }) => {
         [pet, openPetConfigModal, openActivityModal, drop, friendType, view]
     );
 
-    /*    useEffect(() => {
-        setPet(Pet);
-    }, []);*/
-
     return <PetMeetingContext.Provider value={value}>{children}</PetMeetingContext.Provider>;
 };
