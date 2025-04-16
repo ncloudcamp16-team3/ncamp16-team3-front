@@ -8,6 +8,8 @@
     "reviewCount": 30,
     "tags": ["호텔", "미용실", "애견 카페"],
     "openHours": "월–금 13:00 - 21:00",
+    "latitude": "37.4419",
+    "longitude": "127.1295",
     "score": {
       "5Stars": 5,
       "4Stars": 4,
