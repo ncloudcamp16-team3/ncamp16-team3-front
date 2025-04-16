@@ -45,9 +45,9 @@ const Step1 = () => {
             mx="auto"
             gap={2}
             sx={{
-                position: "relative", // 버튼 절대 위치 기준
-                minHeight: "100vh", // 최소 높이 확보 (스크롤 안 생기게)
-                paddingBottom: "80px", // 버튼 높이만큼 여유 공간
+                position: "relative",
+                minHeight: "100vh", // 화면 최소 높이 확보
+                paddingBottom: "80px", // 버튼 공간 고려정
             }}
         >
             <Typography variant="h6" fontWeight="bold" textAlign="center" mt={3}>
@@ -78,20 +78,22 @@ const Step1 = () => {
                     onChange={(e) => setNickname(e.target.value)}
                 />
             </FormControl>
-            {/* 고정된 버튼 영역 */}
+
             <Box
                 sx={{
-                    position: "absolute",
+                    position: "fixed",
+                    maxWidth: "500px",
                     bottom: 0,
-                    left: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
                     width: "100%", // 화면 전체
                     backgroundColor: "#fff",
                     zIndex: 1000,
                     p: 1,
                 }}
             >
-                <Grid container spacing={1}>
-                    <Grid item xs={6}>
+                <Grid container spacing={2}>
+                    <Grid item size={6}>
                         <Button
                             fullWidth
                             variant="contained"
@@ -104,7 +106,7 @@ const Step1 = () => {
                             뒤로
                         </Button>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item size={6}>
                         <Button
                             fullWidth
                             variant="contained"

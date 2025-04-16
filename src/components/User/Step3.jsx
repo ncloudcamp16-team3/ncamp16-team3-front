@@ -97,7 +97,19 @@ const Step3 = () => {
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" mt={3}>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="left"
+            width="90%"
+            mx="auto"
+            mt={3}
+            sx={{
+                position: "relative",
+                minHeight: "100vh", // 화면 최소 높이 확보
+                paddingBottom: "80px", // 버튼 공간 고려
+            }}
+        >
             {/* 중성화 여부 */}
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petNeutered}>
                 <FormHelperText sx={{ mb: 1 }}>
@@ -260,27 +272,41 @@ const Step3 = () => {
                 />
             </FormControl>
 
-            <Grid container spacing={1}>
-                <Grid item size={6}>
-                    <Button
-                        variant="contained"
-                        onClick={prevStep}
-                        sx={{ mt: 1, width: "100%", backgroundColor: "#fff", color: "black" }}
-                    >
-                        뒤로
-                    </Button>
-                </Grid>
+            <Box
+                sx={{
+                    position: "fixed",
+                    maxWidth: "500px",
+                    bottom: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "100%", // 화면 전체
+                    backgroundColor: "#fff",
+                    zIndex: 1000,
+                    p: 1,
+                }}
+            >
+                <Grid container spacing={2}>
+                    <Grid item size={6}>
+                        <Button
+                            variant="contained"
+                            onClick={prevStep}
+                            sx={{ mt: 1, width: "100%", backgroundColor: "#fff", color: "black" }}
+                        >
+                            뒤로
+                        </Button>
+                    </Grid>
 
-                <Grid item size={6}>
-                    <Button
-                        variant="contained"
-                        onClick={handleNext}
-                        sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
-                    >
-                        다음
-                    </Button>
+                    <Grid item size={6}>
+                        <Button
+                            variant="contained"
+                            onClick={handleNext}
+                            sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
+                        >
+                            저장
+                        </Button>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         </Box>
     );
 };

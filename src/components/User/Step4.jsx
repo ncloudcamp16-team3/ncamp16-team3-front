@@ -79,7 +79,20 @@ const Step4 = () => {
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3} mt={3}>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            width="90%"
+            mx="auto"
+            gap={3}
+            mt={3}
+            sx={{
+                position: "relative",
+                minHeight: "100vh", // 화면 최소 높이 확보
+                paddingBottom: "80px", // 버튼 공간 고려
+            }}
+        >
             <Typography variant="h6" fontWeight="bold" textAlign="center">
                 입력한 정보를 확인하세요
             </Typography>
@@ -133,29 +146,43 @@ const Step4 = () => {
                 })
             )}
 
-            <Box width="100%" display="flex" gap={2} mt={2}>
-                <Button
-                    variant="outlined"
-                    onClick={goToStep1}
-                    sx={{ flex: 1, borderColor: "#E9A260", color: "#E9A260" }}
-                >
-                    반려동물 추가
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    sx={{ flex: 1, backgroundColor: "#E9A260" }}
-                >
-                    {isSubmitting ? "처리 중..." : "가입 완료"}
-                </Button>
-            </Box>
+            <Box
+                sx={{
+                    position: "fixed",
+                    maxWidth: "500px",
+                    bottom: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "100%", // 화면 전체
+                    backgroundColor: "#fff",
+                    zIndex: 1000,
+                    p: 1,
+                }}
+            >
+                <Box width="100%" display="flex" gap={2} mt={2}>
+                    <Button
+                        variant="outlined"
+                        onClick={goToStep1}
+                        sx={{ flex: 1, borderColor: "#E9A260", color: "#E9A260" }}
+                    >
+                        반려동물 추가
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                        sx={{ flex: 1, backgroundColor: "#E9A260" }}
+                    >
+                        {isSubmitting ? "처리 중..." : "가입 완료"}
+                    </Button>
+                </Box>
 
-            {submitError && (
-                <Typography color="error" sx={{ mt: 2 }}>
-                    {submitError}
-                </Typography>
-            )}
+                {submitError && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {submitError}
+                    </Typography>
+                )}
+            </Box>
         </Box>
     );
 };
