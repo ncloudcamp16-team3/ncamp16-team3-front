@@ -61,7 +61,7 @@ const LocationConfig = () => {
                     onClose={() => {
                         setModalMessage(null);
                         setModalTitle(null);
-                    }} // 언마운트
+                    }}
                 />
             )}
         </Box>

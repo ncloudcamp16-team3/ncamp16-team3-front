@@ -1,0 +1,63 @@
+{
+  "id": 7,
+  "boardTypeId": 1,
+  "title": "일곱 번째 게시글",
+  "content": "일곱 번째 게시글입니다.",
+  "user": {
+    "id": 3212,
+    "nickname": "JohnDoe",
+    "sns_account_id": "sns_account_1234",
+    "sns_type_id": 1,
+    "file_id": 1,
+    "address": "서울시 강남구 논현동 150-12",
+    "dong_name": "논현동",
+    "latitude": 37.5101,
+    "longitude": 127.0175,
+    "distance": "2"
+  },
+  "createdAt": "2025-04-07 15:10:00",
+  "likeCount": 4,
+  "viewCount": 8,
+  "photos": [
+    { "id": 13, "url": "/mock/PetMeeting/images/pet7.jpg" },
+    { "id": 14, "url": "/mock/PetMeeting/images/pet8.jpg" },
+    { "id": 15, "url": "/mock/PetMeeting/images/pet9.jpg" }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "userId": 1021,
+      "boardId": 7,
+      "content": "첫 번째 댓글입니다. 너무 재밌어요!",
+      "createdAt": "2025-04-07 16:00:00"
+    },
+    {
+      "id": 2,
+      "userId": 1022,
+      "boardId": 7,
+      "content": "정말 좋은 정보 감사합니다!",
+      "createdAt": "2025-04-07 16:10:00"
+    },
+    {
+      "id": 3,
+      "userId": 1023,
+      "boardId": 7,
+      "content": "유용한 게시글이네요. 잘 봤습니다.",
+      "createdAt": "2025-04-07 16:20:00"
+    },
+    {
+      "id": 4,
+      "userId": 1024,
+      "boardId": 7,
+      "content": "좋은 글 감사해요! 다시 오겠습니다.",
+      "createdAt": "2025-04-07 16:30:00"
+    },
+    {
+      "id": 5,
+      "userId": 1025,
+      "boardId": 7,
+      "content": "이런 정보가 필요한 사람들에게 큰 도움이 될 것 같아요!",
+      "createdAt": "2025-04-07 16:40:00"
+    }
+  ]
+}
