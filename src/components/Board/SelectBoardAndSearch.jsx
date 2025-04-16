@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Upbtn from "../../assets/images/Board/upBoardList.svg";
 import Downbtn from "../../assets/images/Board/downBoardList.svg";
-import BoardDropdown from "./BoardDropdown.jsx";
+import DropdownBoard from "./DropdownBoard.jsx";
 import SearchBar from "./SearchBar.jsx";
 import { Context } from "../../context/Context.jsx";
 
@@ -37,7 +37,7 @@ const SelectBoardAndSearch = ({ requestBoardList }) => {
                         }}
                     />
                 </Box>
-                <BoardDropdown dropList={dropList} setDroplist={setDroplist} />
+                <DropdownBoard dropList={dropList} setDroplist={setDroplist} />
                 <SearchBar openSearch={openSearch} setOpenSearch={setOpenSearch} requestBoardList={requestBoardList} />
             </Box>
         </Box>

@@ -65,6 +65,10 @@ const PetImgSlide = ({ petDetails }) => {
                     userSelect: "none",
                     width: "40px",
                     height: "40px",
+                    "&:hover": {
+                        transform: "translateY(-50%) scale(1.15)",
+                        filter: "brightness(1.2)",
+                    },
                 }}
             />
             <Box
@@ -82,6 +86,10 @@ const PetImgSlide = ({ petDetails }) => {
                     userSelect: "none",
                     width: "40px",
                     height: "40px",
+                    "&:hover": {
+                        transform: "translateY(-50%) scale(1.15)",
+                        filter: "brightness(1.2)",
+                    },
                 }}
             />
         </Box>

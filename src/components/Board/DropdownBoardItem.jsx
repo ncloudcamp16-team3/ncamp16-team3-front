@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import { Context } from "../../context/Context.jsx";
 
-const BoardDropdownItem = ({ icon, selectedBoardType, setDroplist }) => {
+const DropdownBoardItem = ({ icon, selectedBoardType, setDroplist }) => {
     const { setBoardType } = useContext(Context);
 
     const setBoardAndSetDrop = () => {
@@ -38,4 +38,4 @@ const BoardDropdownItem = ({ icon, selectedBoardType, setDroplist }) => {
     );
 };
 
-export default BoardDropdownItem;
+export default DropdownBoardItem;
