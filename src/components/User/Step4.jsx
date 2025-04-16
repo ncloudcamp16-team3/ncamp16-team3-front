@@ -51,7 +51,7 @@ const Step4 = () => {
             console.log("📦 전송할 formData:", formData);
 
             // API 호출
-            const response = await fetch("http://localhost:8080/api/auth/register", {
+            const response = await fetch(`/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

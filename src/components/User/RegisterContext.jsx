@@ -66,7 +66,7 @@ export const RegisterProvider = ({ children }) => {
     useEffect(() => {
         const initUserInfo = async () => {
             try {
-                const res = await fetch("http://localhost:8080/api/auth/check", {
+                const res = await fetch(`/api/auth/check`, {
                     credentials: "include",
                 });
 
