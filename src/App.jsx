@@ -52,8 +52,8 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
+                        <Route path="/admin" element={<Admin />} />
                         <Route path="/admin" element={<AdminLayout />}>
-                            <Route index element={<Admin />} />
                             <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
                                 <Route path="board/:id" element={<AdminPostDetail />} />
