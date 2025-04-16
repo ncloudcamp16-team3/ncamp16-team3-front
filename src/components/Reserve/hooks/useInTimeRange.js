@@ -25,8 +25,7 @@ const useInTimeRange = (openHours) => {
 
         try {
             // "화–일 09:00 - 18:00" 형태 파싱
-            const [dayPart, timePart] = openHours.split(" ");
-            const [startTimeStr, endTimeStr] = timePart.split(" - ");
+            const [dayPart, startTimeStr, , endTimeStr] = openHours.split(" ");
 
             let startDay, endDay;
 
@@ -54,6 +53,8 @@ const useInTimeRange = (openHours) => {
                     ...Array.from({ length: endDay + 1 }, (_, i) => i),
                 ];
             }
+            // console.log("오픈시간: " + startTimeStr);
+            // console.log("마감시간: " + endTimeStr);
 
             // 시간 계산
             const [startHour, startMin] = startTimeStr.split(":").map(Number);

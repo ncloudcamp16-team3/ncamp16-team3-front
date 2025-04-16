@@ -3,9 +3,23 @@ import { useParams } from "react-router-dom";
 import reserveDetailData from "../../mock/Reserve/reserveDetail.json";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 // MUI Components
-import { Box, Typography, Button, Card, CardContent, CardMedia, Avatar, Grid, Stack, Divider } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Button,
+    Card,
+    CardContent,
+    CardMedia,
+    Avatar,
+    Grid,
+    Stack,
+    Divider,
+    Chip,
+} from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
+import TitleBar from "../../components/Global/TitleBar.jsx";
+import useInTimeRange from "../../components/Reserve/hooks/useInTimeRange.js";
 
 // 예시 데이터 변환 함수
 const transformScoreToChartData = (score) => {
@@ -29,6 +43,7 @@ const ReserveDetail = () => {
         const found = reserveDetailData.find((item) => item.id === Number(id));
         if (found) setDetail(found);
     }, [id]);
+    const inRange = useInTimeRange(detail?.openHours ?? "");
 
     if (!detail) return <Typography>Loading...</Typography>;
 
@@ -36,184 +51,198 @@ const ReserveDetail = () => {
     const filledStars = detail.rating === 5 ? 5 : Math.round(detail.rating);
 
     return (
-        <Box sx={{ p: 3 }}>
-            {/* 상단 이미지 */}
-            <Card sx={{ mb: 4 }}>
-                <CardMedia component="img" height="300" image={detail.mainImage} alt={detail.name} />
-            </Card>
-
-            {/* 기본 정보 */}
-            <Typography variant="h4" gutterBottom>
-                {detail.name}
-            </Typography>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="body1" color="text.secondary" gutterBottom>
-                    ・ {detail.address}
-                </Typography>
-                <Typography
-                    onClick={() => setIsMapOpen(!isMapOpen)}
-                    role="button"
-                    tabIndex={0}
-                    sx={{
-                        cursor: "pointer",
-                        color: "primary.main",
-                        fontWeight: 500,
-                        userSelect: "none",
-                    }}
-                >
-                    {isMapOpen ? "지도접기 ▲" : "지도열기 ▼"}
-                </Typography>
-            </Box>
-
-            <Divider />
-
-            {/* 지도 */}
-            {isMapOpen && (
-                <Box sx={{ my: 2 }}>
-                    <ReserveMap address={address} setAddress={setAddress} />
-                    <Divider />
-                </Box>
-            )}
-            <Divider />
-
-            <Box>
-                <Divider />
-                {/* 예약 버튼 */}
-                <Box sx={{ my: 2 }}>
-                    <Button variant="contained" color="primary" size="large" fullWidth>
-                        예약하기
-                    </Button>
-                </Box>
-            </Box>
-
-            <Divider />
-
-            <Stack direction="row" spacing={4} sx={{ my: 4, width: "100%" }} alignItems="stretch">
-                {/* 이용자 평점 */}
-                <Box
-                    sx={{
-                        flex: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        height: 200,
-                        bgcolor: "#FFF7EF",
-                    }}
-                >
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold", ml: 3, mt: 2 }}>
-                        이용자 평점
+        <Box>
+            <TitleBar sx={{ pt: 2 }} name={"편의시설 상세정보"}></TitleBar>
+            <Divider sx={{ width: "100%", mb: 3 }} />
+            <Box sx={{ pl: 3, pr: 3, pb: 3 }}>
+                {/* 상단 이미지 */}
+                <Card sx={{ mb: 2, width: "100%" }}>
+                    <CardMedia component="img" height="300" image={detail.mainImage} alt={detail.name} />
+                </Card>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography variant="h4" gutterBottom>
+                        {detail.name}
                     </Typography>
-                    <Typography variant="h6" sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}>
-                        {detail.rating}/5.0
-                    </Typography>
-                    <Box sx={{ mb: 1, ml: 3 }}>
-                        {Array.from({ length: 5 }).map((_, index) => (
-                            <StarIcon
-                                key={index}
-                                fontSize="medium"
-                                sx={{ color: index < filledStars ? "#FFC107" : "#E0E0E0" }}
-                            />
-                        ))}
+                    <Box sx={{ display: "flex", pb: 2, gap: 1 }}>
+                        <Chip size="small" label={inRange ? "영업중" : "영업종료"} sx={{ color: "#fff" }} />
+                        <Typography sx={{ fontWeight: "bold" }}>{detail.openHours}</Typography>
                     </Box>
-                    <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
-                        {detail.reviewCount}명 참여
+                </Box>
+                {/* 기본 정보 */}
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="body1" color="text.secondary" gutterBottom>
+                        ・ {detail.address}
+                    </Typography>
+                    <Typography
+                        onClick={() => setIsMapOpen(!isMapOpen)}
+                        role="button"
+                        tabIndex={0}
+                        sx={{
+                            cursor: "pointer",
+                            color: "primary.main",
+                            fontWeight: 500,
+                            userSelect: "none",
+                        }}
+                    >
+                        {isMapOpen ? "지도접기 ▲" : "지도열기 ▼"}
                     </Typography>
                 </Box>
 
-                {/* 점수 비율 그래프 */}
-                <Box sx={{ flex: 1, height: 200, ml: 0, bgcolor: "#FFF7EF" }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold", ml: 3, mt: 2 }}>
-                        점수 비율
-                    </Typography>
-                    <Box sx={{ position: "relative", width: "100%", height: 150 }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                layout="vertical"
-                                data={chartData}
-                                margin={{ top: 10, right: 40, left: 10, bottom: 10 }}
-                                barCategoryGap={2}
-                                barGap={1}
-                            >
-                                <XAxis type="number" hide />
-                                <YAxis
-                                    dataKey="name"
-                                    type="category"
-                                    width={20}
-                                    tick={{ fontSize: 13, fill: "#FF5555", fontWeight: 500 }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <Tooltip formatter={(value) => `${value}명`} />
-                                <Bar
-                                    dataKey="value"
-                                    fill="#1976d2"
-                                    barSize={8}
-                                    radius={30}
-                                    background={{ fill: "#E0E0E0", radius: 30 }}
-                                ></Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                <Divider />
 
-                        {/* 절대 위치 텍스트 */}
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                top: 16,
-                                right: 0,
-                                height: "86%",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "space-around",
-                                alignItems: "flex-end",
-                                pr: 2,
-                                pointerEvents: "none", // 마우스 방해 방지
-                            }}
-                        >
-                            {chartData.map((entry, idx) => (
-                                <Typography
-                                    key={idx}
-                                    sx={{ fontSize: "10px", color: "#FF5555", height: `${100 / chartData.length}%` }}
-                                >
-                                    {entry.percentage}%
-                                </Typography>
+                {/* 지도 */}
+                {isMapOpen && (
+                    <Box sx={{ my: 2 }}>
+                        <ReserveMap address={address} setAddress={setAddress} />
+                        <Divider />
+                    </Box>
+                )}
+                <Divider />
+
+                <Box>
+                    <Divider />
+                    {/* 예약 버튼 */}
+                    <Box sx={{ my: 2 }}>
+                        <Button variant="contained" sx={{ bgcolor: "#E9A260" }} size="large" fullWidth>
+                            예약하기
+                        </Button>
+                    </Box>
+                </Box>
+
+                <Divider />
+
+                <Stack direction="row" spacing={4} sx={{ my: 4, width: "100%" }} alignItems="stretch">
+                    {/* 이용자 평점 */}
+                    <Box
+                        sx={{
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            height: 200,
+                            bgcolor: "#FFF7EF",
+                            borderRadius: 5,
+                        }}
+                    >
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold", ml: 3, mt: 2 }}>
+                            이용자 평점
+                        </Typography>
+                        <Typography variant="h6" sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}>
+                            {detail.rating}/5.0
+                        </Typography>
+                        <Box sx={{ mb: 1, ml: 3 }}>
+                            {Array.from({ length: 5 }).map((_, index) => (
+                                <StarIcon
+                                    key={index}
+                                    fontSize="medium"
+                                    sx={{ color: index < filledStars ? "#FFC107" : "#E0E0E0" }}
+                                />
                             ))}
                         </Box>
+                        <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
+                            {detail.reviewCount}명 참여
+                        </Typography>
                     </Box>
-                </Box>
-            </Stack>
 
-            <Divider sx={{ my: 4 }} />
+                    {/* 점수 비율 그래프 */}
+                    <Box sx={{ flex: 1, height: 200, ml: 0, bgcolor: "#FFF7EF", borderRadius: 5 }}>
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold", ml: 3, mt: 2 }}>
+                            점수 비율
+                        </Typography>
+                        <Box sx={{ position: "relative", width: "100%", height: 150 }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    layout="vertical"
+                                    data={chartData}
+                                    margin={{ top: 5, right: 40, left: 30, bottom: 20 }}
+                                    barCategoryGap={2}
+                                    barGap={1}
+                                >
+                                    <XAxis type="number" hide />
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        width={20}
+                                        tick={{ fontSize: 13, fill: "#FF5555", fontWeight: 500 }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+                                    <Tooltip formatter={(value) => `${value}명`} />
+                                    <Bar
+                                        dataKey="value"
+                                        fill="#1976d2"
+                                        barSize={8}
+                                        radius={30}
+                                        background={{ fill: "#E0E0E0", radius: 30 }}
+                                    ></Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
 
-            {/* 리뷰 목록 */}
-            <Typography variant="h6" gutterBottom>
-                이용자 리뷰
-            </Typography>
-            <Grid container spacing={3}>
-                {detail.reviews.map((review, idx) => (
-                    <Grid item xs={12} md={6} key={idx}>
-                        <Card sx={{ height: "100%" }}>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-                                    <Avatar src={review.avatar} />
-                                    <Typography variant="subtitle1">{review.user}</Typography>
-                                </Stack>
-                                <CardMedia
-                                    component="img"
-                                    height="180"
-                                    image={review.image}
-                                    alt="review"
-                                    sx={{ borderRadius: 1, mb: 2 }}
-                                />
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    {review.content}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                    {review.date}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
+                            {/* 절대 위치 텍스트 */}
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    top: 9,
+                                    right: 0,
+                                    height: "83%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-around",
+                                    alignItems: "flex-end",
+                                    pr: 2,
+                                    pointerEvents: "none", // 마우스 방해 방지
+                                }}
+                            >
+                                {chartData.map((entry, idx) => (
+                                    <Typography
+                                        key={idx}
+                                        sx={{
+                                            fontSize: "10px",
+                                            color: "#FF5555",
+                                            height: `${100 / chartData.length}%`,
+                                        }}
+                                    >
+                                        {entry.percentage}%
+                                    </Typography>
+                                ))}
+                            </Box>
+                        </Box>
+                    </Box>
+                </Stack>
+
+                <Divider sx={{ my: 4 }} />
+
+                {/* 리뷰 목록 */}
+                <Typography variant="h6" gutterBottom>
+                    이용자 리뷰
+                </Typography>
+                <Grid container spacing={3}>
+                    {detail.reviews.map((review, idx) => (
+                        <Grid item xs={12} md={6} key={idx}>
+                            <Card sx={{ height: "100%" }}>
+                                <CardContent>
+                                    <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+                                        <Avatar src={review.avatar} />
+                                        <Typography variant="subtitle1">{review.user}</Typography>
+                                    </Stack>
+                                    <CardMedia
+                                        component="img"
+                                        height="180"
+                                        image={review.image}
+                                        alt="review"
+                                        sx={{ borderRadius: 1, mb: 2 }}
+                                    />
+                                    <Typography variant="body2" sx={{ mb: 1 }}>
+                                        {review.content}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {review.date}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Box>
         </Box>
     );
 };
