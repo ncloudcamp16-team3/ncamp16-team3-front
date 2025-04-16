@@ -2,8 +2,9 @@ import React from "react";
 import { Box, Collapse, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setUpdateAble }) => {
+const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setOpenUpdateModal, updateAble }) => {
     const theme = useTheme();
+
     return (
         <Box
             sx={{
@@ -19,7 +20,9 @@ const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setU
             <Collapse in={dropPostBtn} unmountOnExit>
                 <Box
                     onClick={() => {
-                        setUpdateAble(true);
+                        if (!updateAble) {
+                            setOpenUpdateModal(true);
+                        }
                         setDropPostBtn(false);
                     }}
                     sx={{
