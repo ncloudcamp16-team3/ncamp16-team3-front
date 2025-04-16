@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, Collapse } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import BoardDropdownItem from "./BoardDropdownItem.jsx";
+import DropdownBoardItem from "./DropdownBoardItem.jsx";
 import BoardTypeList from "../../mock/Board/boardTypeList.json";
 import BoardIcons from "../../constants/boardIcons.js";
 
-const BoardDropdown = ({ dropList, setDroplist }) => {
+const DropdownBoard = ({ dropList, setDroplist }) => {
     const theme = useTheme();
 
     return (
@@ -27,7 +27,7 @@ const BoardDropdown = ({ dropList, setDroplist }) => {
                 >
                     {BoardTypeList.map((boardType, index) => {
                         return (
-                            <BoardDropdownItem
+                            <DropdownBoardItem
                                 icon={BoardIcons[index % BoardIcons.length]}
                                 selectedBoardType={boardType}
                                 setDroplist={setDroplist}
@@ -40,4 +40,4 @@ const BoardDropdown = ({ dropList, setDroplist }) => {
     );
 };
 
-export default BoardDropdown;
+export default DropdownBoard;
