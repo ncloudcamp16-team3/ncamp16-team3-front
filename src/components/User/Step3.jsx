@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, Box, Button, FormHelperText, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Button, FormHelperText, Grid, IconButton, Typography } from "@mui/material";
 import { useRegister } from "./RegisterContext.jsx";
 import FormControl from "@mui/material/FormControl";
 import ReqUi from "./ReqUi.jsx";
@@ -43,11 +43,43 @@ const Step3 = () => {
         handleStep4Next(newPetData);
     };
 
+    // const handleFileChange = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     if (files.length === 0) return;
+    //
+    //     const updatedPhotos = [...(formData.petPhotos || []), ...files];
+    //
+    //     handleChange({
+    //         target: {
+    //             name: "petPhotos",
+    //             value: updatedPhotos,
+    //         },
+    //     });
+    //
+    //     e.target.value = null;
+    // };
+
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
 
-        const updatedPhotos = [...(formData.petPhotos || []), ...files];
+        const currentPhotos = formData.petPhotos || [];
+        const maxPhotos = 6;
+
+        // 새로 추가 가능한 개수 계산
+        const remainingSlots = maxPhotos - currentPhotos.length;
+
+        // 이미 6장 이상이면 막기
+        if (remainingSlots <= 0) {
+            alert("사진은 최대 6장까지 등록할 수 있어요!");
+            e.target.value = null;
+            return;
+        }
+
+        // 새로 추가할 사진을 제한해서 자르기
+        const filesToAdd = files.slice(0, remainingSlots);
+
+        const updatedPhotos = [...currentPhotos, ...filesToAdd];
 
         handleChange({
             target: {
@@ -56,15 +88,23 @@ const Step3 = () => {
             },
         });
 
-        e.target.value = null;
+        // 사용자 피드백 (선택한 개수보다 적게 들어갔을 경우)
+        if (filesToAdd.length < files.length) {
+            alert("사진은 최대 6장까지만 등록할 수 있어요!");
+        }
+
+        e.target.value = null; // 파일 선택 초기화
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" mt={3}>
             {/* 중성화 여부 */}
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petNeutered}>
                 <FormHelperText sx={{ mb: 1 }}>
-                    중성화 여부를 알려주세요 <ReqUi />
+                    <>
+                        중성화 여부를 알려주세요 <ReqUi />
+                        {errors.petNeutered && ` (중성화 여부를 선택해 주세요.)`}
+                    </>
                 </FormHelperText>
                 <Grid container spacing={1}>
                     <Grid item size={6}>
@@ -104,85 +144,103 @@ const Step3 = () => {
                         </Button>
                     </Grid>
                 </Grid>
-                {errors.petNeutered && <FormHelperText>중성화 여부를 선택해 주세요.</FormHelperText>}
             </FormControl>
             {/* 사진 업로드 */}
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petPhotos}>
+            <FormControl variant="standard" fullWidth error={errors.petPhotos}>
                 <Typography variant="body1" mt={3} mb={2}>
                     아이 사진등록하기
                 </Typography>
                 <FormHelperText sx={{ mb: 1 }}>
-                    첫번째 사진으로 프로필 사진이 등록됩니다 <ReqUi />
+                    <>
+                        사진을 등록해 주세요 <ReqUi />
+                        {errors.petPhotos && ` (사진을 한 장 이상 등록해 주세요.)`}
+                    </>
                 </FormHelperText>
 
-                <Button variant="outlined" component="label" sx={{ borderColor: "#E9A260", color: "#E9A260", mb: 2 }}>
+                <Button
+                    variant="outlined"
+                    component="label"
+                    sx={{ borderColor: "#E9A260", color: "#E9A260", mb: 2 }}
+                    disabled={previews.length >= 6} // 👉 버튼 비활성화 조건
+                >
                     사진 업로드
-                    <input type="file" accept="image/*" hidden multiple onChange={handleFileChange} />
+                    <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        multiple
+                        onChange={handleFileChange}
+                        disabled={previews.length >= 6} // 👉 input 자체도 비활성화
+                    />
                 </Button>
 
-                {previews.length > 0 && (
-                    <Stack direction="row" spacing={2} flexWrap="wrap">
-                        {previews.map((src, index) => (
-                            <Box key={index} position="relative" textAlign="center">
-                                {/* 삭제 버튼 */}
-                                <IconButton
-                                    size="small"
-                                    onClick={() => removePhoto(index)}
-                                    sx={{
-                                        position: "absolute",
-                                        top: -10,
-                                        right: -10,
-                                        backgroundColor: "white",
-                                        zIndex: 1,
-                                    }}
-                                >
-                                    <CancelIcon fontSize="small" />
-                                </IconButton>
+                <Box sx={{ minHeight: 230 }}>
+                    {previews.length > 0 ? (
+                        <Grid container spacing={2}>
+                            {previews.map((src, index) => (
+                                <Grid item size={4} key={index}>
+                                    <Box position="relative" textAlign="center">
+                                        {/* 삭제 버튼 */}
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => removePhoto(index)}
+                                            sx={{
+                                                position: "absolute",
+                                                top: -10,
+                                                right: -10,
+                                                backgroundColor: "white",
+                                                zIndex: 1,
+                                            }}
+                                        >
+                                            <CancelIcon fontSize="small" />
+                                        </IconButton>
 
-                                {/* 대표사진 선택 */}
-                                <IconButton
-                                    size="small"
-                                    onClick={() => selectMainPhoto(index)}
-                                    sx={{
-                                        position: "absolute",
-                                        top: -10,
-                                        left: -10,
-                                        backgroundColor: "white",
-                                        zIndex: 1,
-                                        color: index === mainPhotoIndex ? "#E9A260" : "gray",
-                                    }}
-                                >
-                                    <CheckCircleIcon fontSize="small" />
-                                </IconButton>
+                                        {/* 대표사진 선택 */}
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => selectMainPhoto(index)}
+                                            sx={{
+                                                position: "absolute",
+                                                top: -10,
+                                                left: -10,
+                                                backgroundColor: "white",
+                                                zIndex: 1,
+                                                color: index === mainPhotoIndex ? "#E9A260" : "gray",
+                                            }}
+                                        >
+                                            <CheckCircleIcon fontSize="small" />
+                                        </IconButton>
 
-                                <Avatar
-                                    src={src}
-                                    alt={`preview-${index}`}
-                                    sx={{
-                                        width: 80,
-                                        height: 80,
-                                        border: index === mainPhotoIndex ? "2px solid #E9A260" : "none",
-                                    }}
-                                    variant="rounded"
-                                />
-                                <Typography variant="caption">
-                                    {index === mainPhotoIndex ? "대표사진" : `사진 ${index + 1}`}
-                                </Typography>
-                            </Box>
-                        ))}
-                    </Stack>
-                )}
-
-                {errors.petPhotos && (
-                    <FormHelperText error sx={{ mt: 1 }}>
-                        사진을 한 장 이상 등록해 주세요.
-                    </FormHelperText>
-                )}
+                                        <Avatar
+                                            src={src}
+                                            alt={`preview-${index}`}
+                                            sx={{
+                                                width: 80,
+                                                height: 80,
+                                                border: index === mainPhotoIndex ? "2px solid #E9A260" : "none",
+                                                margin: "0 auto",
+                                            }}
+                                            variant="rounded"
+                                        />
+                                        <Typography variant="caption">
+                                            {index === mainPhotoIndex ? "대표사진" : `사진 ${index + 1}`}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    ) : (
+                        <Box sx={{ height: 230 }} />
+                    )}
+                </Box>
             </FormControl>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petInfo}>
                 <FormHelperText>
-                    아이를 소개해 주세요 <ReqUi />
+                    <>
+                        아이를 소개해 주세요 <ReqUi />
+                        {errors.petInfo && ` (소개글을 입력해주세요.)`}
+                    </>
                 </FormHelperText>
                 <TextareaAutosize
                     id="petInfo"
@@ -200,7 +258,6 @@ const Step3 = () => {
                     value={formData.petInfo}
                     onChange={handleChange}
                 />
-                {errors.petInfo && <FormHelperText>소개글을 입력해주세요.</FormHelperText>}
             </FormControl>
 
             <Grid container spacing={1}>

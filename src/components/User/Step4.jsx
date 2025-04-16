@@ -79,7 +79,7 @@ const Step4 = () => {
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3}>
+        <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3} mt={3}>
             <Typography variant="h6" fontWeight="bold" textAlign="center">
                 입력한 정보를 확인하세요
             </Typography>

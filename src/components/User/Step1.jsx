@@ -1,7 +1,7 @@
 import * as React from "react";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, InputLabel, Typography, FormHelperText, Grid } from "@mui/material";
+import { Box, Button, InputLabel, Typography, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
@@ -37,8 +37,20 @@ const Step1 = () => {
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
-            <Typography variant="h6" fontWeight="bold" textAlign="center">
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="left"
+            width="90%"
+            mx="auto"
+            gap={2}
+            sx={{
+                position: "relative", // 버튼 절대 위치 기준
+                minHeight: "100vh", // 최소 높이 확보 (스크롤 안 생기게)
+                paddingBottom: "80px", // 버튼 높이만큼 여유 공간
+            }}
+        >
+            <Typography variant="h6" fontWeight="bold" textAlign="center" mt={3}>
                 환영합니다
             </Typography>
             <Typography variant="body1" textAlign="center" mb={2}>
@@ -47,7 +59,15 @@ const Step1 = () => {
 
             <FormControl variant="standard" fullWidth error={error}>
                 <InputLabel htmlFor="nickname">
-                    닉네임 <ReqUi />
+                    {error ? (
+                        <>
+                            닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
+                        </>
+                    ) : (
+                        <>
+                            닉네임 <ReqUi />
+                        </>
+                    )}
                 </InputLabel>
                 <Input
                     required
@@ -57,30 +77,47 @@ const Step1 = () => {
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                 />
-                {error && <FormHelperText>닉네임은 2~16자 이내로 입력해주세요.</FormHelperText>}
             </FormControl>
-
-            <Grid container spacing={1}>
-                <Grid item size={6}>
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate("/login")}
-                        sx={{ mt: 1, width: "100%", backgroundColor: "#fff", color: "black" }}
-                    >
-                        뒤로
-                    </Button>
+            {/* 고정된 버튼 영역 */}
+            <Box
+                sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    width: "100%", // 화면 전체
+                    backgroundColor: "#fff",
+                    zIndex: 1000,
+                    p: 1,
+                }}
+            >
+                <Grid container spacing={1}>
+                    <Grid item xs={6}>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            onClick={() => navigate("/login")}
+                            sx={{
+                                backgroundColor: "#fff",
+                                color: "black",
+                            }}
+                        >
+                            뒤로
+                        </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            onClick={handleNext}
+                            sx={{
+                                backgroundColor: "#E9A260",
+                            }}
+                        >
+                            다음
+                        </Button>
+                    </Grid>
                 </Grid>
-
-                <Grid item size={6}>
-                    <Button
-                        variant="contained"
-                        onClick={handleNext}
-                        sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
-                    >
-                        다음
-                    </Button>
-                </Grid>
-            </Grid>
+            </Box>
         </Box>
     );
 };
