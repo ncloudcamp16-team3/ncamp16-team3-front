@@ -22,7 +22,7 @@ import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
-import Cal from "./pages/Calender/Calendar.jsx";
+import Cal from "./pages/Calender/Cal.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
@@ -49,6 +49,7 @@ import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
 import AddPost from "./components/Board/AddPost.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
+import Notify from "./pages/Notification/Notification.jsx";
 
 
 function App() {
@@ -93,7 +94,7 @@ function App() {
                                 path="/notification"
                                 element={
                                     <ProtectedRoute>
-                                        <Notification />
+                                        <Notify />
                                     </ProtectedRoute>
                                 }
                             />
@@ -113,7 +114,6 @@ function App() {
                             <Route path="/chat" element={<ChatList />} />
                             <Route path="/chat/room/:roomId" element={<ChatRoom />} />
                             <Route path="/payment" element={<Payment />} />
-                            <Route path="/notification" element={<Notification />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

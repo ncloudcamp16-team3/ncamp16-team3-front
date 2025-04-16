@@ -52,22 +52,25 @@ const Step2 = () => {
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" mt={3} gap={2}>
             <Typography variant="body1" fontWeight="bold" mb={1}>
                 어떤 반려동물과 함께하고 계신가요?
             </Typography>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petName}>
                 <InputLabel htmlFor="petName">
-                    이름 <ReqUi />
+                    <>
+                        이름 <ReqUi /> {errors.petName && ` (반려동물 이름은 1~16자 이내로 입력해주세요.)`}
+                    </>
                 </InputLabel>
                 <Input required id="petName" name="petName" value={formData.petName} onChange={handleChange} />
-                {errors.petName && <FormHelperText>반려동물 이름은 1~16자 이내로 입력해주세요.</FormHelperText>}
             </FormControl>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petTypeId}>
                 <FormHelperText sx={{ mb: 1 }}>
-                    반려동물을 등록해주세요 <ReqUi />
+                    <>
+                        반려동물을 등록해주세요 <ReqUi /> {errors.petTypeId && `(반려동물 종류를 선택해주세요.)`}
+                    </>
                 </FormHelperText>
                 <Grid container spacing={1}>
                     {petTypes.map((type) => (
@@ -92,12 +95,13 @@ const Step2 = () => {
                         </Grid>
                     ))}
                 </Grid>
-                {errors.petTypeId && <FormHelperText>반려동물 종류를 선택해주세요.</FormHelperText>}
             </FormControl>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petGender}>
                 <FormHelperText sx={{ mb: 1 }}>
-                    아이의 성별을 선택해주세요 <ReqUi />
+                    <>
+                        아이의 성별을 선택해주세요 <ReqUi /> {errors.petGender && `(성별을 선택해주세요.)`}
+                    </>
                 </FormHelperText>
                 <Grid container spacing={1}>
                     {["남아", "여아"].map((gender) => (
@@ -122,25 +126,27 @@ const Step2 = () => {
                         </Grid>
                     ))}
                 </Grid>
-                {errors.petGender && <FormHelperText>성별을 선택해주세요.</FormHelperText>}
             </FormControl>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
                     <FormHelperText>
-                        아이의 생일은 언제인가요? <ReqUi />
+                        <>
+                            아이의 생일은 언제인가요? <ReqUi /> {errors.petBirth && `(반려동물의 생일을 선택해주세요.)`}
+                        </>
                     </FormHelperText>
                     <MobileDatePicker
                         value={formData.petBirth ? dayjs(formData.petBirth) : null}
                         onChange={handleDateChange}
                     />
-                    {errors.petBirth && <FormHelperText>반려동물의 생일을 선택해주세요.</FormHelperText>}
                 </FormControl>
             </LocalizationProvider>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
                 <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
-                    몸무게를 입력해 주세요 <ReqUi />
+                    <>
+                        몸무게를 입력해 주세요 <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
+                    </>
                 </InputLabel>
                 <Input
                     required
@@ -150,7 +156,6 @@ const Step2 = () => {
                     value={formData.petWeight}
                     onChange={handleChange}
                 />
-                {errors.petWeight && <FormHelperText>몸무게를 입력해주세요.</FormHelperText>}
             </FormControl>
 
             <Grid container spacing={1}>

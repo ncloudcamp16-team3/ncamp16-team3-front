@@ -51,7 +51,7 @@ const Step4 = () => {
             console.log("📦 전송할 formData:", formData);
 
             // API 호출
-            const response = await fetch("http://localhost:8080/api/auth/register", {
+            const response = await fetch(`/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const Step4 = () => {
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3}>
+        <Box display="flex" flexDirection="column" alignItems="center" width="90%" mx="auto" gap={3} mt={3}>
             <Typography variant="h6" fontWeight="bold" textAlign="center">
                 입력한 정보를 확인하세요
             </Typography>
