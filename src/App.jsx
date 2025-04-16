@@ -15,6 +15,7 @@ import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
 import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
+import PetSitterDetail from "./pages/Sitter/PetSitterDetail.jsx";
 import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
@@ -48,6 +49,7 @@ import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
 import AddPost from "./components/Board/AddPost.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
+
 
 function App() {
     return (
@@ -85,6 +87,7 @@ function App() {
                             <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
+                            <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
                             <Route path="/calendar" element={<Cal />} />
                             <Route
                                 path="/notification"
