@@ -14,13 +14,15 @@ import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
+import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
+import PetSitterDetail from "./pages/Sitter/PetSitterDetail.jsx";
 import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
-import Cal from "./pages/Calender/Calendar.jsx";
+import Cal from "./pages/Calender/Cal.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
@@ -40,11 +42,15 @@ import ChatRoom from "./components/Chat/ChatRoom.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
-import Petdetails from "./components/PetMeeting/Petdetails.jsx";
+import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
 import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
-// 경로 맞춰서 import
+import Announce from "./pages/Board/Announce.jsx";
+import AddPost from "./components/Board/AddPost.jsx";
+import PostDetails from "./pages/Board/PostDetails.jsx";
+import Notify from "./pages/Notification/Notification.jsx";
+
 
 function App() {
     return (
@@ -74,17 +80,21 @@ function App() {
                         </Route>
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
-                            <Route path="/petdetails/:petId" element={<Petdetails />} />
+                            <Route path="/announce/:announceId" element={<Announce />} />
+                            <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
+                            <Route path="/post/:postId" element={<PostDetails />} />
+                            <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
+                            <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
                             <Route path="/calendar" element={<Cal />} />
                             <Route
                                 path="/notification"
                                 element={
                                     <ProtectedRoute>
-                                        <Notification />
+                                        <Notify />
                                     </ProtectedRoute>
                                 }
                             />
@@ -92,6 +102,7 @@ function App() {
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsitter-register" element={<PetSitterRegister />} />
+                            <Route path="/petsitter-finder" element={<PetSitterFinder />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
@@ -103,7 +114,6 @@ function App() {
                             <Route path="/chat" element={<ChatList />} />
                             <Route path="/chat/room/:roomId" element={<ChatRoom />} />
                             <Route path="/payment" element={<Payment />} />
-                            <Route path="/notification" element={<Notification />} />
                         </Route>
                         <Route element={<Layout2 />}>
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />

@@ -5,6 +5,10 @@ import { Box, Button, FormHelperText, Grid, InputLabel, Typography } from "@mui/
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState } from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import dayjs from "dayjs";
 
 const Step2 = () => {
     const { nextStep, handleChange, formData, prevStep } = useRegister();
@@ -22,6 +26,8 @@ const Step2 = () => {
         petName: false,
         petRegistration: false,
         petGender: false,
+        petBirth: false,
+        petWeight: false,
     });
 
     const handleNext = () => {
@@ -29,6 +35,8 @@ const Step2 = () => {
             petName: !formData.petName || formData.petName.trim().length < 1 || formData.petName.trim().length > 16,
             petTypeId: !formData.petTypeId || formData.petTypeId.trim().length < 1,
             petGender: !formData.petGender,
+            petBirth: !formData.petBirth,
+            petWeight: !formData.petWeight || formData.petWeight.trim().length === 0,
         };
 
         setErrors(newErrors);
@@ -39,23 +47,30 @@ const Step2 = () => {
         nextStep();
     };
 
+    const handleDateChange = (newValue) => {
+        handleChange({ target: { name: "petBirth", value: newValue ? newValue.format("YYYY-MM-DD") : "" } });
+    };
+
     return (
-        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
+        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" mt={3} gap={2}>
             <Typography variant="body1" fontWeight="bold" mb={1}>
                 어떤 반려동물과 함께하고 계신가요?
             </Typography>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petName}>
                 <InputLabel htmlFor="petName">
-                    이름 <ReqUi />
+                    <>
+                        이름 <ReqUi /> {errors.petName && ` (반려동물 이름은 1~16자 이내로 입력해주세요.)`}
+                    </>
                 </InputLabel>
                 <Input required id="petName" name="petName" value={formData.petName} onChange={handleChange} />
-                {errors.petName && <FormHelperText>반려동물 이름은 1~16자 이내로 입력해주세요.</FormHelperText>}
             </FormControl>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petTypeId}>
                 <FormHelperText sx={{ mb: 1 }}>
-                    반려동물을 등록해주세요 <ReqUi />
+                    <>
+                        반려동물을 등록해주세요 <ReqUi /> {errors.petTypeId && `(반려동물 종류를 선택해주세요.)`}
+                    </>
                 </FormHelperText>
                 <Grid container spacing={1}>
                     {petTypes.map((type) => (
@@ -80,12 +95,13 @@ const Step2 = () => {
                         </Grid>
                     ))}
                 </Grid>
-                {errors.petTypeId && <FormHelperText>반려동물 종류를 선택해주세요.</FormHelperText>}
             </FormControl>
 
             <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petGender}>
                 <FormHelperText sx={{ mb: 1 }}>
-                    아이의 성별을 선택해주세요 <ReqUi />
+                    <>
+                        아이의 성별을 선택해주세요 <ReqUi /> {errors.petGender && `(성별을 선택해주세요.)`}
+                    </>
                 </FormHelperText>
                 <Grid container spacing={1}>
                     {["남아", "여아"].map((gender) => (
@@ -110,16 +126,59 @@ const Step2 = () => {
                         </Grid>
                     ))}
                 </Grid>
-                {errors.petGender && <FormHelperText>성별을 선택해주세요.</FormHelperText>}
             </FormControl>
 
-            <Button variant="contained" onClick={prevStep} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                뒤로
-            </Button>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
+                    <FormHelperText>
+                        <>
+                            아이의 생일은 언제인가요? <ReqUi /> {errors.petBirth && `(반려동물의 생일을 선택해주세요.)`}
+                        </>
+                    </FormHelperText>
+                    <MobileDatePicker
+                        value={formData.petBirth ? dayjs(formData.petBirth) : null}
+                        onChange={handleDateChange}
+                    />
+                </FormControl>
+            </LocalizationProvider>
 
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                다음
-            </Button>
+            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
+                <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
+                    <>
+                        몸무게를 입력해 주세요 <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
+                    </>
+                </InputLabel>
+                <Input
+                    required
+                    id="petWeight"
+                    name="petWeight"
+                    placeholder="몸무게를 입력해 주세요"
+                    value={formData.petWeight}
+                    onChange={handleChange}
+                />
+            </FormControl>
+
+            <Grid container spacing={1}>
+                <Grid item size={6}>
+                    <Button
+                        variant="contained"
+                        onClick={prevStep}
+                        sx={{ mt: 1, width: "100%", backgroundColor: "#fff", color: "black" }}
+                    >
+                        뒤로
+                    </Button>
+                </Grid>
+
+                <Grid item size={6}>
+                    <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
+                    >
+                        다음
+                    </Button>
+                </Grid>
+            </Grid>
         </Box>
     );
 };
