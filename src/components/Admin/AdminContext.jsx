@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import axios from "axios";
 
 // Context 생성
 const AdminContext = createContext();
@@ -15,11 +14,17 @@ export const AdminProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             const token = localStorage.getItem("adminToken");
+            console.log("인증토큰: " + token);
 
             if (token) {
                 try {
-                    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                    const response = await axios.get(`/admin/auth/${token}`);
+                    const response = await fetch("api/admin/auth/validate", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("토큰 검증 실패");
+                    }
 
                     const adminEmail = localStorage.getItem("adminEmail");
                     setAdminEmail(adminEmail || "");
@@ -28,7 +33,6 @@ export const AdminProvider = ({ children }) => {
                     console.log(error);
                     localStorage.removeItem("adminToken");
                     localStorage.removeItem("adminEmail");
-                    delete axios.defaults.headers.common["Authorization"];
                 }
             }
             setLoading(false);
@@ -39,21 +43,29 @@ export const AdminProvider = ({ children }) => {
     //로그인 함수
     const login = async (email, password) => {
         try {
-            const response = await axios.post(`/admin/login`, {
-                email,
-                password,
+            const response = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
             });
 
-            const { token, email: responseEmail } = response.data;
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "로그인에 실패했습니다");
+            }
+
+            const data = await response.json();
+            const { token, email: responseEmail } = data;
 
             localStorage.setItem("adminToken", token);
-            localStorage.setItem("adminEmail", responseEmail);
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("adminEmail", email);
 
             setAdminEmail(responseEmail);
             setIsAuthenticated(true);
 
-            return response.data;
+            return data;
         } catch (error) {
             console.log(error);
             throw error;
@@ -61,14 +73,27 @@ export const AdminProvider = ({ children }) => {
     };
 
     //로그아웃 함수
-    const logout = () => {
+    const logout = async () => {
+        const token = localStorage.getItem("adminToken");
+
+        if (token) {
+            try {
+                await fetch("/api/admin/logout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         localStorage.removeItem("adminToken");
         localStorage.removeItem("adminEmail");
-        delete axios.defaults.headers.common["Authorization"];
-
         setAdminEmail("");
         setIsAuthenticated(false);
-
         setSelectedMenu("");
     };
 

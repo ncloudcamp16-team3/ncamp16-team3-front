@@ -9,7 +9,6 @@
     "reserve_status": true,
     "address": "서울특별시 강남구 테헤란로 123",
     "detail_address": "B동 3층",
-    "dong_name": "삼성동",
     "latitude": 37.506051,
     "longitude": 127.056325
   },
@@ -23,7 +22,6 @@
     "reserve_status": false,
     "address": "부산광역시 해운대구 센텀로 45",
     "detail_address": "1층",
-    "dong_name": "우동",
     "latitude": 35.169551,
     "longitude": 129.130654
   }

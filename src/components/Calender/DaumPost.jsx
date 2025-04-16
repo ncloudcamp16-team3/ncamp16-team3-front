@@ -1,5 +1,6 @@
 import React from "react";
 import { useDaumPostcodePopup } from "react-daum-postcode";
+import { Button } from "@mui/material";
 
 const postcodeScriptUrl = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
 
@@ -49,21 +50,24 @@ const DaumPost = ({ setAddressObj }) => {
     };
 
     return (
-        <button
-            type="button"
+        <Button
             onClick={handleClick}
-            style={{
-                marginLeft: "8px",
-                padding: "6px 12px",
+            variant="contained"
+            size="small"
+            sx={{
+                ml: 1,
+                mt: 1,
+                borderRadius: "8px",
                 backgroundColor: "#1976d2",
                 color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
+                textTransform: "none",
+                "&:hover": {
+                    backgroundColor: "#115293",
+                },
             }}
         >
-            주소 찾기
-        </button>
+            찾기
+        </Button>
     );
 };
 

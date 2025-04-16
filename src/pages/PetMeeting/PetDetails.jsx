@@ -8,12 +8,12 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import { Box, Button, Typography } from "@mui/material";
-import PetImgSlide from "./PetImgSlide.jsx";
+import PetImgSlide from "../../components/PetMeeting/PetImgSlide.jsx";
 import petTypes from "../../constants/petTypes.js";
 import { useNavigate } from "react-router-dom";
-import TitleBar from "../Global/TitleBar.jsx";
+import TitleBar from "../../components/Global/TitleBar.jsx";
 
-const Petdetails = () => {
+const PetDetails = () => {
     const petData = useRef(PetData);
     const petDetails = petData.current;
     const navigate = useNavigate();
@@ -166,4 +166,4 @@ const Petdetails = () => {
     );
 };
 
-export default Petdetails;
+export default PetDetails;

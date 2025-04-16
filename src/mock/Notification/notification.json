@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "userId": 101,
+    "notifyTypeId": 1,
+    "notifyType": "BOARD_COMMENT",
+    "content": "당신의 게시글에 새로운 댓글이 달렸습니다.",
+    "readStatus": false,
+    "createdAt": "2025-04-15T09:32:10"
+  },
+  {
+    "id": 2,
+    "userId": 101,
+    "notifyTypeId": 2,
+    "notifyType": "PETSTA_COMMENT",
+    "content": "당신의 펫스타 사진에 댓글이 달렸습니다.",
+    "readStatus": false,
+    "createdAt": "2025-04-15T10:12:05"
+  },
+  {
+    "id": 3,
+    "userId": 101,
+    "notifyTypeId": 3,
+    "notifyType": "FACILITY_DATE",
+    "content": "예약하신 시설 이용일이 내일입니다.",
+    "readStatus": true,
+    "createdAt": "2025-04-14T15:24:00"
+  },
+  {
+    "id": 4,
+    "userId": 101,
+    "notifyTypeId": 4,
+    "notifyType": "CHAT",
+    "content": "새로운 채팅 메시지가 도착했습니다.",
+    "readStatus": false,
+    "createdAt": "2025-04-15T11:45:33"
+  },
+  {
+    "id": 5,
+    "userId": 101,
+    "notifyTypeId": 5,
+    "notifyType": "GLOBAL",
+    "content": "오늘은 강아지의 날! 특별한 혜택을 확인하세요.",
+    "readStatus": true,
+    "createdAt": "2025-04-13T08:10:10"
+  }
+]
