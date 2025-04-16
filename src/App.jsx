@@ -21,7 +21,7 @@ import { ThemeProvider } from "@mui/material";
 import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
-import Cal from "./pages/Calender/Calendar.jsx";
+import Cal from "./pages/Calender/Cal.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";

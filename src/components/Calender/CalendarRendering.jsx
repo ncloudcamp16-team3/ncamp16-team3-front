@@ -9,7 +9,7 @@ import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
 const { kakao } = window;
 
-const Cal = () => {
+const CalendarRendering = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentViewMonth, setCurrentViewMonth] = useState(new Date()); // 현재 보이
     const [schedules, setSchedules] = useState([]);
@@ -466,4 +466,4 @@ const Cal = () => {
     );
 };
 
-export default Cal;
+export default CalendarRendering;
