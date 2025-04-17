@@ -25,11 +25,9 @@ const StepRenderer = () => {
 
 const Register = () => {
     return (
-        <>
-            <RegisterProvider>
-                <StepRenderer />
-            </RegisterProvider>
-        </>
+        <RegisterProvider>
+            <StepRenderer />
+        </RegisterProvider>
     );
 };
 
