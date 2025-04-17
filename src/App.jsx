@@ -10,7 +10,6 @@ import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
 import ReservationList from "./pages/Reserve/ReservationList.jsx";
 import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
-import Notification from "./pages/Notification/Notification.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
@@ -56,7 +55,6 @@ import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
 import PostSave from "./pages/Board/PostSave.jsx";
-import AddPost from "./components/Board/AddPost.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
 
 function App() {
@@ -96,7 +94,6 @@ function App() {
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/post/:post_id" element={<PostDetail />} />
-                            <Route path="/addPost" element={<AddPost />} />
                             <Route path="/board/:postId" element={<PostDetails />} />
                             <Route path="/board/update/:postId" element={<PostSave />} />
                             <Route path="/board/add" element={<PostSave />} />
