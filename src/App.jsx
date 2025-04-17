@@ -10,7 +10,6 @@ import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
 import ReservationList from "./pages/Reserve/ReservationList.jsx";
 import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
-import Notification from "./pages/Notification/Notification.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
@@ -30,7 +29,6 @@ import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Cal.jsx";
-import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
@@ -56,6 +54,7 @@ import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
 import AddPost from "./components/Board/AddPost.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
 function App() {
     return (

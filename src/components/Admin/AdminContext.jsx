@@ -18,9 +18,12 @@ export const AdminProvider = ({ children }) => {
 
             if (token) {
                 try {
+                    console.log("Token validation request initiated");
                     const response = await fetch("/api/admin/auth/validate", {
                         headers: { Authorization: `Bearer ${token}` },
                     });
+
+                    console.log("Token validation response status:", response.status);
 
                     if (!response.ok) {
                         throw new Error("토큰 검증 실패");
