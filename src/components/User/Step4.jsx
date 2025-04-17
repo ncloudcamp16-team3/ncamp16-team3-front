@@ -89,7 +89,6 @@ const Step4 = () => {
             mt={3}
             sx={{
                 position: "relative",
-                minHeight: "100vh",
                 paddingBottom: "80px",
             }}
         >

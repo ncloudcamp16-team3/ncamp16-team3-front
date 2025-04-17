@@ -63,7 +63,6 @@ const Step2 = () => {
                 gap={2}
                 sx={{
                     position: "relative",
-                    minHeight: "100vh",
                     paddingBottom: "80px",
                 }}
             >

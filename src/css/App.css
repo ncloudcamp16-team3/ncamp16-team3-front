@@ -85,7 +85,7 @@ body.modal-open {
 /*푸터,헤더가 없을떄*/
 .back-view0{
     background-color: #FFFFFF;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /*푸터, 헤더가 있을때*/
