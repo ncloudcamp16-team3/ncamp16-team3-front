@@ -13,6 +13,9 @@ import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
+import Bookmark from "./pages/User/Bookmark";
+import PetstaBookmarks from "./pages/User/PetstaBookmarks";
+import PostBookmarks from "./pages/User/PostBookmarks";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
 import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import PetSitterDetail from "./pages/Sitter/PetSitterDetail.jsx";
@@ -51,7 +54,6 @@ import AddPost from "./components/Board/AddPost.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
 
-
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -87,6 +89,9 @@ function App() {
                             <Route path="/post/:postId" element={<PostDetails />} />
                             <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
+                            <Route path="/bookmark" element={<Bookmark />} />
+                            <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
+                            <Route path="/bookmarks/posts" element={<PostBookmarks />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
                             <Route path="/calendar" element={<Cal />} />
