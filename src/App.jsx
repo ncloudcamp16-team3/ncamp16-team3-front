@@ -6,6 +6,9 @@ import Login from "./pages/User/Login.jsx";
 import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
 import Reserve from "./pages/Reserve/Reserve.jsx";
+import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
+import ReservationList from "./pages/Reserve/ReservationList.jsx";
+import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
@@ -13,6 +16,9 @@ import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
+import Bookmark from "./pages/User/Bookmark";
+import PetstaBookmarks from "./pages/User/PetstaBookmarks";
+import PostBookmarks from "./pages/User/PostBookmarks";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
 import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import PetSitterDetail from "./pages/Sitter/PetSitterDetail.jsx";
@@ -90,6 +96,15 @@ function App() {
                             <Route path="/post/:postId" element={<PostDetails />} />
                             <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
+
+                            <Route path="/bookmark" element={<Bookmark />} />
+                            <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
+                            <Route path="/bookmarks/posts" element={<PostBookmarks />} />
+
+                            <Route path="/reserve/:id" element={<ReserveDetail />} />
+                            <Route path="/reserve/list" element={<ReservationList />} />
+                            <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
+
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
                             <Route path="/calendar" element={<Cal />} />
