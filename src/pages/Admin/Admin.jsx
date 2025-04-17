@@ -1,4 +1,3 @@
-// Admin.jsx (로그인 페이지로 변경)
 import React, { useState } from "react";
 import { Box, Paper, TextField, Button, DialogActions, DialogContent, DialogContentText, Modal } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +15,6 @@ const Admin = () => {
 
         if (!email || !password) {
             setError("아이디와 비밀번호를 입력해주세요");
-            // setOpenSnackbar(true);
             setOpenDialog(true);
             return;
         }
@@ -31,7 +29,8 @@ const Admin = () => {
             });
 
             if (!response.ok) {
-                throw new Error("로그인 실패!\n아이디와 비밀번호를 확인해주세요");
+                const errorData = await response.json();
+                throw new Error(errorData.message || "로그인에 실패했습니다");
             }
 
             const data = await response.json();

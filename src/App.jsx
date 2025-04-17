@@ -51,15 +51,18 @@ import AddPost from "./components/Board/AddPost.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
 
-
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Provider>
                 <Router>
                     <Routes>
+                        {/* 로그인 페이지는 별도 경로로 유지 */}
                         <Route path="/admin" element={<Admin />} />
-                        <Route path="/admin" element={<AdminLayout />}>
+
+                        {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
+                        <Route path="/admin/*" element={<AdminLayout />}>
+                            {/* 인증 보호 라우트 */}
                             <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
                                 <Route path="board/:id" element={<AdminPostDetail />} />
