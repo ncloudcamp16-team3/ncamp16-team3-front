@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "name": "퍼피하우스 호텔",
+    "address": "서울 강남구 도산대로 45길 10",
+    "type": "호텔",
+    "status": true,
+    "entry_time": {
+      "start": "2025-05-01T15:00:00",
+      "end": "2025-05-03T11:00:00"
+    },
+    "amount": 320000,
+    "image": "../../mock/Reserve/facility01.svg"
+  },
+  {
+    "id": 2,
+    "name": "멍스타 카페",
+    "address": "부산 해운대구 달맞이길 20",
+    "type": "카페",
+    "status": false,
+    "entry_time": {
+      "start": "2025-05-04T14:00:00"
+    },
+    "amount": 20000
+  },
+  {
+    "id": 3,
+    "name": "꼬리살랑 미용실",
+    "address": "경기 성남시 분당구 정자일로 77",
+    "type": "미용실",
+    "status": true,
+    "entry_time": {
+      "start": "2025-05-06T10:00:00"
+    },
+    "amount": 50000
+  },
+  {
+    "id": 4,
+    "name": "바우호텔 강북점",
+    "address": "서울 강북구 오패산로 15",
+    "type": "호텔",
+    "status": false,
+    "entry_time": {
+      "start": "2025-05-07T16:00:00",
+      "end": "2025-05-09T12:00:00"
+    },
+    "amount": 270000
+  },
+  {
+    "id": 5,
+    "name": "냥이네 테라스",
+    "address": "제주 제주시 애월읍 곽지리 123-4",
+    "type": "카페",
+    "status": true,
+    "entry_time": {
+      "start": "2025-05-10T13:30:00"
+    },
+    "amount": 150000
+  }
+]
