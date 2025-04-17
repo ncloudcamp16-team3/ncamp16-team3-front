@@ -6,6 +6,9 @@ import ReqUi from "./ReqUi.jsx";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
+import dayjs from "dayjs";
+import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step3 = () => {
     const {

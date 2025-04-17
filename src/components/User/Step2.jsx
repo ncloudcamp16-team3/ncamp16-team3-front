@@ -9,6 +9,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import dayjs from "dayjs";
+import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+dayjs.locale("ko"); // ✅ 한글 설정
+import { koKR } from "@mui/x-date-pickers/locales";
 
 const Step2 = () => {
     const { nextStep, handleChange, formData, prevStep } = useRegister();
@@ -144,7 +147,11 @@ const Step2 = () => {
                     </Grid>
                 </FormControl>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <LocalizationProvider
+                    dateAdapter={AdapterDayjs}
+                    adapterLocale="ko" // ✅ 핵심: dayjs 한글 적용
+                    localeText={koKR.components.MuiLocalizationProvider.defaultProps.localeText}
+                >
                     <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
                         <FormHelperText sx={{ mb: 1 }}>
                             <>

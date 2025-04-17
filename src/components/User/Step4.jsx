@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Avatar, Divider, Paper, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 import { useRegister } from "./RegisterContext.jsx";
+import dayjs from "dayjs";
+import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step4 = () => {
     const navigate = useNavigate();

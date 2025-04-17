@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
+import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step1 = () => {
     const { nextStep, nickname, setNickname, snsAccountId, snsTypeId } = useRegister(); // ✅ email, snsTypeId 가져오기
