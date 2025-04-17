@@ -22,12 +22,10 @@ const Login = () => {
 
         try {
             await login(email, password);
-
             navigate("/admin/board/list");
         } catch (error) {
             console.log(error);
-
-            setError(error.response?.data?.message || "로그인 실패. 아이디와 비밀번호를 확인해주세요");
+            setError(error.message || "로그인 실패. 아이디와 비밀번호를 확인해주세요");
             setOpenSnackbar(true);
         }
     };
@@ -86,6 +84,7 @@ const Login = () => {
                 <Button
                     variant="contained"
                     color="primary"
+                    type="submit"
                     style={{
                         backgroundColor: "#E9A260",
                         height: "50px",
