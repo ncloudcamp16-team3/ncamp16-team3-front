@@ -9,7 +9,7 @@ const Step5 = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
 
-    const { nickname, petDataList, goToStep2, token, email, snsTypeId } = useRegister();
+    const { nickname, petDataList, goToStep1, snsAccountId, snsTypeId } = useRegister();
 
     const handleSubmit = async () => {
         setIsSubmitting(true);
@@ -20,7 +20,7 @@ const Step5 = () => {
 
             const formData = {
                 nickname: nickname,
-                snsAccountId: email,
+                snsAccountId: snsAccountId,
                 snsTypeId: snsTypeIdNum,
                 fileId: 1, // 기본 파일
 
@@ -55,8 +55,8 @@ const Step5 = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
                 },
+                credentials: "include", // ✅ 필수!
                 body: JSON.stringify(formData),
             });
 
@@ -125,7 +125,7 @@ const Step5 = () => {
                             {pet.petInfo && (
                                 <>
                                     <Divider sx={{ my: 2 }} />
-                                    <Typography variant="body1">{pet.petIntroduction}</Typography>
+                                    <Typography variant="body1">{pet.petInfo}</Typography>
                                 </>
                             )}
                         </Paper>
@@ -136,7 +136,7 @@ const Step5 = () => {
             <Box width="100%" display="flex" gap={2} mt={2}>
                 <Button
                     variant="outlined"
-                    onClick={goToStep2}
+                    onClick={goToStep1}
                     sx={{ flex: 1, borderColor: "#E9A260", color: "#E9A260" }}
                 >
                     반려동물 추가

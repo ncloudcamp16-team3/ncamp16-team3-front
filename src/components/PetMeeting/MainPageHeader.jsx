@@ -42,8 +42,8 @@ const MainPageHeader = () => {
                     src={chatLogo}
                     alt="Comment Icon"
                     sx={{
-                        width: 40,
-                        height: 40,
+                        width: "35px",
+                        height: "35px",
                         objectFit: "cover", // 이미지 비율 유지
                     }}
                 />

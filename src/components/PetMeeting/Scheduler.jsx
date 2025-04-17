@@ -31,7 +31,9 @@ const Scheduler = () => {
                 >
                     일정관리
                 </Typography>
-                <Typography variant="body1">{pet?.name}의 일정을 관리해보아요</Typography>
+                <Typography variant="body1" sx={{ minHeight: "24px" }}>
+                    {pet?.name ? `${pet.name}의 일정을 관리해보아요` : ""}
+                </Typography>
             </Box>
             <Box
                 component="img"

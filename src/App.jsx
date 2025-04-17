@@ -14,6 +14,8 @@ import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
+import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
+import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import Payment from "./pages/Payment/Payment.jsx";
 import theme from "./theme/theme.js";
 import { ThemeProvider } from "@mui/material";
@@ -40,6 +42,11 @@ import ChatRoom from "./components/Chat/ChatRoom.jsx";
 import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
+import Petdetails from "./components/PetMeeting/Petdetails.jsx";
+import OAuth2Success from "./components/User/OAuth2Success.jsx";
+import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
+import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
+
 
 function App() {
     return (
@@ -49,7 +56,7 @@ function App() {
                     <Routes>
                         <Route path="/admin" element={<AdminLayout />}>
                             <Route index element={<Admin />} />
-                            <Route path="" elemtent={<Protected.../>}>
+                            <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
                                 <Route path="board/:id" element={<AdminPostDetail />} />
                                 <Route path="board/post" element={<AdminNotice />} />
@@ -63,20 +70,31 @@ function App() {
                             </Route>
                         </Route>
                         <Route element={<Layout0 />}>
+                            <Route path="/oauth2/success" element={<OAuth2Success />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
+                            <Route path="/petdetails/:petId" element={<Petdetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
-                            <Route path="/notification" element={<Notification />} />
+                            <Route
+                                path="/notification"
+                                element={
+                                    <ProtectedRoute>
+                                        <Notification />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="/mypage" element={<MyPage />} />
                             <Route path="/add-pet" element={<AddPet />} />
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
+                            <Route path="/petsitter-register" element={<PetSitterRegister />} />
+                            <Route path="/petsitter-finder" element={<PetSitterFinder />} />
                             <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />

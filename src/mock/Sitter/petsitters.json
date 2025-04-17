@@ -1,0 +1,167 @@
+[
+  {
+    "id": 1,
+    "name": "펫시터 마스터",
+    "image": "/mock/Sitter/images/sitter1.jpg",
+    "age": "20대",
+    "experience": true,
+    "description": "인텔리전트 테리어 모모입니다. 다양 종류로 돌봄 가능합니다.",
+    "pet_type": "Dog",
+    "pet_count": 2,
+    "house_type": "아파트"
+  },
+  {
+    "id": 2,
+    "name": "사랑이 펫시터",
+    "image": "/mock/Sitter/images/sitter2.jpg",
+    "age": "30대",
+    "experience": true,
+    "description": "6년간의 애견 카페 운영 경험으로 안전하게 케어해드립니다.",
+    "pet_type": "Cat",
+    "pet_count": 1,
+    "house_type": "주택"
+  },
+  {
+    "id": 3,
+    "name": "행복한 펫케어",
+    "image": "/mock/Sitter/images/sitter3.jpg",
+    "age": "40대",
+    "experience": false,
+    "description": "반려견과 함께 10년, 넓은 마당이 있는 환경입니다.",
+    "pet_type": "Dog",
+    "pet_count": 3,
+    "house_type": "오피스텔"
+  },
+  {
+    "id": 4,
+    "name": "멍냥 돌보미",
+    "image": "/mock/Sitter/images/sitter4.jpg",
+    "age": "20대",
+    "experience": true,
+    "description": "수의대생 펫시터입니다. 전문적인 케어 가능합니다.",
+    "pet_type": "Dog",
+    "pet_count": 1,
+    "house_type": "아파트"
+  },
+  {
+    "id": 5,
+    "name": "고양이 전문가",
+    "image": "/mock/Sitter/images/sitter5.jpg",
+    "age": "30대",
+    "experience": true,
+    "description": "고양이 행동 전문가 자격증 보유, 까다로운 고양이도 OK",
+    "pet_type": "Cat",
+    "pet_count": 2,
+    "house_type": "주택"
+  },
+  {
+    "id": 6,
+    "name": "펫시터 유니",
+    "image": "/mock/Sitter/images/sitter6.jpg",
+    "age": "20대",
+    "experience": false,
+    "description": "신규 펫시터지만 동물을 진심으로 사랑하는 마음으로 케어합니다.",
+    "pet_type": "Dog",
+    "pet_count": 0,
+    "house_type": "아파트"
+  },
+  {
+    "id": 7,
+    "name": "도그 마스터",
+    "image": "/mock/Sitter/images/sitter7.jpg",
+    "age": "50대이상",
+    "experience": true,
+    "description": "20년 경력 훈련사 출신, 문제행동 교정 전문가입니다.",
+    "pet_type": "Dog",
+    "pet_count": 4,
+    "house_type": "주택"
+  },
+  {
+    "id": 8,
+    "name": "소동물 케어",
+    "image": "/mock/Sitter/images/sitter8.jpg",
+    "age": "30대",
+    "experience": true,
+    "description": "햄스터, 토끼 등 소형동물 전문 펫시터입니다.",
+    "pet_type": "Other",
+    "pet_count": 3,
+    "house_type": "오피스텔"
+  },
+  {
+    "id": 9,
+    "name": "반려동물 친구",
+    "image": "/mock/Sitter/images/sitter9.jpg",
+    "age": "40대",
+    "experience": true,
+    "description": "넓은 공간에서 자유롭게 뛰어놀 수 있는 환경 제공합니다.",
+    "pet_type": "Dog",
+    "pet_count": 2,
+    "house_type": "주택"
+  },
+  {
+    "id": 10,
+    "name": "캣맘 케어",
+    "image": "/mock/Sitter/images/sitter10.jpg",
+    "age": "30대",
+    "experience": true,
+    "description": "고양이 행동 심리 전문가, 까다로운 고양이도 케어 가능합니다.",
+    "pet_type": "Cat",
+    "pet_count": 2,
+    "house_type": "아파트"
+  },
+  {
+    "id": 11,
+    "name": "펫 홀리데이",
+    "image": "/mock/Sitter/images/sitter6.jpg",
+    "age": "20대",
+    "experience": false,
+    "description": "반려동물 양육 5년차, 정성 가득한 케어를 약속드립니다.",
+    "pet_type": "Dog",
+    "pet_count": 1,
+    "house_type": "주택"
+  },
+  {
+    "id": 12,
+    "name": "동물친구 돌봄이",
+    "image": "/mock/Sitter/images/sitter7.jpg",
+    "age": "50대이상",
+    "experience": true,
+    "description": "은퇴 후 시작한 펫시팅, 따뜻한 마음으로 책임감 있게 돌봅니다.",
+    "pet_type": "Dog",
+    "pet_count": 0,
+    "house_type": "아파트"
+  },
+  {
+    "id": 13,
+    "name": "행복한 산책러",
+    "image": "/mock/Sitter/images/sitter8.jpg",
+    "age": "30대",
+    "experience": true,
+    "description": "하루 3번 산책 보장, 활동량이 많은 강아지에게 추천합니다.",
+    "pet_type": "Dog",
+    "pet_count": 1,
+    "house_type": "주택"
+  },
+  {
+    "id": 14,
+    "name": "푸들 전문가",
+    "image": "/mock/Sitter/images/sitter9.jpg",
+    "age": "40대",
+    "experience": true,
+    "description": "푸들 브리더 출신, 소형견 전문 펫시터입니다.",
+    "pet_type": "Dog",
+    "pet_count": 2,
+    "house_type": "아파트"
+  },
+  {
+    "id": 15,
+    "name": "펫 파라다이스",
+    "image": "/mock/Sitter/images/sitter10.jpg",
+    "age": "20대",
+    "experience": false,
+    "description": "인텔리전트 테리어 모모입니다. 다양 종류로 돌봄 가능합니다.",
+    "pet_type": "Cat",
+    "pet_count": 1,
+    "house_type": "오피스텔"
+  }
+]

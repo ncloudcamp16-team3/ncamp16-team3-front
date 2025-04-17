@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import KakaoMap from "./KakaoMap.jsx";
-import Arrow from "../../assets/images/Global/arrow.svg";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import LocationConfigBtns from "./LocationConfigBtns.jsx";
 import Distance from "./Disdance.jsx";
-import { LocationSaveModal } from "./PetMeetingModals.jsx";
+import { InfoModal } from "./PetMeetingModals.jsx";
+import TitleBar from "../Global/TitleBar.jsx";
 
 const LocationConfig = () => {
     const { setView, pet, setPet } = useContext(PetMeetingContext);
@@ -13,6 +13,7 @@ const LocationConfig = () => {
     const [dongName, setDongName] = useState(null);
     const [distance, setDistance] = useState(2);
     const [modalMessage, setModalMessage] = useState(null);
+    const [modalTitle, setModalTitle] = useState(null);
 
     useEffect(() => {
         if (pet?.owner) {
@@ -26,7 +27,6 @@ const LocationConfig = () => {
         setPet((prev) => ({
             ...prev,
             owner: {
-                ...prev.owner,
                 address: address,
                 dongName: dongName,
                 distance: distance,
@@ -42,53 +42,26 @@ const LocationConfig = () => {
 
     return (
         <Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    p: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    height: "55px",
-                    position: "relative",
-                }}
-            >
-                <Box
-                    onClick={() => setView("petMeeting")}
-                    sx={{
-                        p: "20px",
-                        display: "block",
-                        cursor: "pointer",
-                        position: "absolute",
-                    }}
-                >
-                    <Box
-                        component="img"
-                        src={Arrow}
-                        sx={{
-                            width: "15px",
-                            height: "15px",
-                            display: "block", // inline 기본값이면 하단 여백 생길 수 있어요
-                        }}
-                    />
-                </Box>
-                <Box
-                    sx={{
-                        width: "100%",
-                        textAlign: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Typography sx={{ fontSize: "18px", fontWeight: "900" }}>내 위치정보 설정</Typography>
-                </Box>
-            </Box>
+            <TitleBar name={"내 위치정보 설정"} onBack={() => setView("petMeeting")} />
 
-            <KakaoMap address={address} setAddress={setAddress} dongName={dongName} setDongName={setDongName} />
+            <KakaoMap
+                address={address}
+                setAddress={setAddress}
+                dongName={dongName}
+                setDongName={setDongName}
+                setModalMessage={setModalMessage}
+                setModalTitle={setModalTitle}
+            />
             <Distance dongName={dongName} distance={distance} setDistance={setDistance} />
             <LocationConfigBtns saveLocation={saveLocation} />
             {modalMessage && (
-                <LocationSaveModal
+                <InfoModal
+                    title={modalTitle}
                     message={modalMessage}
-                    onClose={() => setModalMessage(null)} // 언마운트
+                    onClose={() => {
+                        setModalMessage(null);
+                        setModalTitle(null);
+                    }} // 언마운트
                 />
             )}
         </Box>
