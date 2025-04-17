@@ -7,6 +7,8 @@ import PetSta from "./pages/PetSta/PetSta.jsx";
 import Board from "./pages/Board/Board.jsx";
 import Reserve from "./pages/Reserve/Reserve.jsx";
 import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
+import ReservationList from "./pages/Reserve/ReservationList.jsx";
+import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
@@ -84,7 +86,6 @@ function App() {
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/reserve" element={<Reserve />} />
-                            <Route path="/reserve/:id" element={<ReserveDetail />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />
                             <Route
@@ -151,6 +152,9 @@ function App() {
                             <Route path="/post/:postId" element={<PostDetails />} />
                             <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
+                            <Route path="/reserve/:id" element={<ReserveDetail />} />
+                            <Route path="/reserve/list" element={<ReservationList />} />
+                            <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
                             <Route path="/calendar" element={<Cal />} />

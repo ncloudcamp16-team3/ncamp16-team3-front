@@ -8,43 +8,66 @@ const ReserveMap = ({ address, setAddress }) => {
     const mapInstanceRef = useRef(null);
 
     useEffect(() => {
-        if (!window.kakao || !window.kakao.maps) return;
+        // 카카오맵 API가 로드되었는지 확인
+        const checkKakaoMap = setInterval(() => {
+            if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
+                clearInterval(checkKakaoMap);
 
-        const container = mapRef.current;
+                // 현재 위치 가져오기
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const center = new window.kakao.maps.LatLng(lat, lng);
 
-        // 현재 위치 가져오기
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const center = new window.kakao.maps.LatLng(lat, lng);
-
-                initMap(center);
-            },
-            () => {
-                const fallbackCenter = new window.kakao.maps.LatLng(37.5665, 126.978);
-                initMap(fallbackCenter);
+                        initMap(center);
+                    },
+                    () => {
+                        const fallbackCenter = new window.kakao.maps.LatLng(37.5665, 126.978);
+                        initMap(fallbackCenter);
+                    }
+                );
             }
-        );
+        }, 300);
 
-        const initMap = (center) => {
-            const options = {
-                center,
-                level: 3,
-            };
-
-            const map = new window.kakao.maps.Map(container, options);
-            mapInstanceRef.current = map;
-
-            window.kakao.maps.event.addListener(map, "click", function (mouseEvent) {
-                const latlng = mouseEvent.latLng;
-
-                placeMarker(latlng.getLat(), latlng.getLng());
-            });
-        };
+        // 컴포넌트 언마운트 시 인터벌 정리
+        return () => clearInterval(checkKakaoMap);
     }, []);
 
+    // 주소가 변경될 때 해당 주소로 지도 이동
+    useEffect(() => {
+        if (address && window.kakao && window.kakao.maps && mapInstanceRef.current) {
+            searchAndMove(address);
+        }
+    }, [address, mapInstanceRef.current]);
+
+    const initMap = (center) => {
+        const container = mapRef.current;
+        const options = {
+            center,
+            level: 3,
+        };
+
+        const map = new window.kakao.maps.Map(container, options);
+        mapInstanceRef.current = map;
+
+        window.kakao.maps.event.addListener(map, "click", function (mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            placeMarker(latlng.getLat(), latlng.getLng());
+        });
+
+        // 초기 주소가 있으면 해당 위치로 이동
+        if (address) {
+            searchAndMove(address);
+        }
+    };
+
     const searchAndMove = (keyword) => {
+        if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+            console.error("카카오맵 API가 로드되지 않았습니다.");
+            return;
+        }
+
         const ps = new window.kakao.maps.services.Places();
 
         ps.keywordSearch(keyword, function (data, status) {
@@ -58,7 +81,7 @@ const ReserveMap = ({ address, setAddress }) => {
 
                 placeMarker(lat, lng);
             } else {
-                alert("검색 결과가 없습니다.");
+                console.warn("검색 결과가 없습니다:", keyword);
             }
         });
     };
@@ -84,9 +107,10 @@ const ReserveMap = ({ address, setAddress }) => {
         const geocoder = new window.kakao.maps.services.Geocoder();
         geocoder.coord2Address(lng, lat, (result, status) => {
             if (status === window.kakao.maps.services.Status.OK && result[0]) {
-                const address = result[0].address.address_name; // 전체 주소
-
-                setAddress(address); // 예: 서울 강남구 역삼동 123
+                const addressResult = result[0].address.address_name;
+                if (setAddress && typeof setAddress === "function") {
+                    setAddress(addressResult);
+                }
             }
         });
     };
@@ -94,23 +118,18 @@ const ReserveMap = ({ address, setAddress }) => {
     return (
         <Box>
             <div ref={mapRef} style={{ width: "100%", height: "350px" }} />
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    width: "100%",
-                }}
-            ></Box>
             {address && (
                 <Box
                     sx={{
                         display: "flex",
                         m: "0 16px 16px 16px",
+                        alignItems: "center",
                     }}
                 >
-                    <Box component="img" src={Mappin}></Box>
-                    <Typography sx={{ m: "0 5px", fontSize: "20px" }}>{address}</Typography>
+                    <Box component="img" src={Mappin} alt="위치 마커" />
+                    <Typography component="div" sx={{ m: "0 5px", fontSize: "20px" }}>
+                        {address}
+                    </Typography>
                 </Box>
             )}
         </Box>
