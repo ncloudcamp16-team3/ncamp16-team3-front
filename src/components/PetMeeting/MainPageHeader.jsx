@@ -40,7 +40,7 @@ const MainPageHeader = () => {
                 <Box
                     component="img"
                     src={chatLogo}
-                    alt="Comment Icon"
+                    alt="CommentCard Icon"
                     sx={{
                         width: "35px",
                         height: "35px",

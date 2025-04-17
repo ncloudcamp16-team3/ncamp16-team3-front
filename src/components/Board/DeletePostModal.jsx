@@ -1,20 +1,27 @@
 import React from "react";
+import { Modal, Box, Button, Fade, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Box, Button, Fade, Modal, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const PostUpdateModal = ({ openUpdateModal, setOpenUpdateModal, setUpdateAble }) => {
+const DeletePostModal = ({ openDeleteModal, setOpenDeleteModal, postId }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
+    const requestPostDelete = () => {
+        alert(postId + "번 게시글 삭제 요청");
+        setOpenDeleteModal(false);
+        navigate(-1);
+    };
 
     return (
         <Modal
-            open={openUpdateModal}
-            onClose={() => setOpenUpdateModal(false)}
+            open={openDeleteModal}
+            onClose={() => setOpenDeleteModal(false)}
             disableScrollLock
             sx={{
                 zIndex: 10000,
             }}
         >
-            <Fade in={openUpdateModal}>
+            <Fade in={openDeleteModal}>
                 <Box
                     sx={{
                         position: "absolute",
@@ -30,10 +37,10 @@ const PostUpdateModal = ({ openUpdateModal, setOpenUpdateModal, setUpdateAble })
                     }}
                 >
                     <Typography variant="h6" gutterBottom>
-                        "게시글 수정"
+                        게시글 삭제
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        "수정하시겠습니까?"
+                        삭제하시겠습니까?
                     </Typography>
                     <Box
                         sx={{
@@ -44,10 +51,7 @@ const PostUpdateModal = ({ openUpdateModal, setOpenUpdateModal, setUpdateAble })
                     >
                         <Button
                             variant="contained"
-                            onClick={() => {
-                                setOpenUpdateModal(false);
-                                setUpdateAble(true);
-                            }}
+                            onClick={requestPostDelete}
                             sx={{
                                 mt: 2,
                                 borderRadius: 2,
@@ -60,7 +64,7 @@ const PostUpdateModal = ({ openUpdateModal, setOpenUpdateModal, setUpdateAble })
                         </Button>
                         <Button
                             variant="contained"
-                            onClick={() => setOpenUpdateModal(false)}
+                            onClick={() => setOpenDeleteModal(false)}
                             sx={{
                                 mt: 2,
                                 borderRadius: 2,
@@ -79,4 +83,4 @@ const PostUpdateModal = ({ openUpdateModal, setOpenUpdateModal, setUpdateAble })
     );
 };
 
-export default PostUpdateModal;
+export default DeletePostModal;

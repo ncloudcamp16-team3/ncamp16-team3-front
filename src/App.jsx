@@ -46,8 +46,8 @@ import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
-import AddPost from "./components/Board/AddPost.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
+import PostSave from "./pages/Board/PostSave.jsx";
 
 function App() {
     return (
@@ -81,8 +81,9 @@ function App() {
                             <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
-                            <Route path="/post/:postId" element={<PostDetails />} />
-                            <Route path="/addPost" element={<AddPost />} />
+                            <Route path="/board/:postId" element={<PostDetails />} />
+                            <Route path="/board/update/:postId" element={<PostSave />} />
+                            <Route path="/board/add" element={<PostSave />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/calendar" element={<Cal />} />

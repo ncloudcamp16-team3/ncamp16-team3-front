@@ -5,9 +5,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTheme } from "@mui/material/styles";
 import Arrow from "../../assets/images/Global/left-arrow-brand.svg";
 import { useNavigate } from "react-router-dom";
-import DropdownPostBtn from "./DropdownPostBtn.jsx";
+import DropdownPostBtns from "./DropdownPostBtns.jsx";
 
-const PostTitleBar = ({ writer, setOpenDeleteModal, updateAble, setOpenUpdateModal }) => {
+const PostTitleBar = ({ writer, setOpenDeleteModal, setOpenUpdateModal }) => {
     const { boardType, user } = useContext(Context);
     const [dropPostBtn, setDropPostBtn] = useState(false);
     const theme = useTheme();
@@ -44,12 +44,11 @@ const PostTitleBar = ({ writer, setOpenDeleteModal, updateAble, setOpenUpdateMod
                     }}
                 />
             )}
-            <DropdownPostBtn
+            <DropdownPostBtns
                 dropPostBtn={dropPostBtn}
                 setDropPostBtn={setDropPostBtn}
                 setOpenDeleteModal={setOpenDeleteModal}
                 setOpenUpdateModal={setOpenUpdateModal}
-                updateAble={updateAble}
             />
         </Box>
     );

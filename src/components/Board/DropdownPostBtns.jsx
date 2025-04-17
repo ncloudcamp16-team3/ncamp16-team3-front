@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Collapse, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setOpenUpdateModal, updateAble }) => {
+const DropdownPostBtns = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setOpenUpdateModal }) => {
     const theme = useTheme();
 
     return (
@@ -20,10 +20,8 @@ const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setO
             <Collapse in={dropPostBtn} unmountOnExit>
                 <Box
                     onClick={() => {
-                        if (!updateAble) {
-                            setOpenUpdateModal(true);
-                        }
                         setDropPostBtn(false);
+                        setOpenUpdateModal(true);
                     }}
                     sx={{
                         cursor: "pointer",
@@ -31,7 +29,7 @@ const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setO
                         p: "5px 10px",
                     }}
                 >
-                    <Typography sx={{ m: "5px 10px" }}>글 수정하기</Typography>
+                    <Typography sx={{ m: "5px 10px" }}>게시글 수정하기</Typography>
                 </Box>
                 <Box
                     onClick={() => {
@@ -44,11 +42,11 @@ const DropdownPostBtn = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, setO
                         p: "5px 10px",
                     }}
                 >
-                    <Typography sx={{ m: "0px 10px 5px 10px" }}>글 삭제하기</Typography>
+                    <Typography sx={{ m: "0px 10px 5px 10px" }}>게시글 삭제하기</Typography>
                 </Box>
             </Collapse>
         </Box>
     );
 };
 
-export default DropdownPostBtn;
+export default DropdownPostBtns;
