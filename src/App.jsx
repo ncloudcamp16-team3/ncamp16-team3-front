@@ -10,6 +10,7 @@ import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
 import ReservationList from "./pages/Reserve/ReservationList.jsx";
 import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
+import Notification from "./pages/Notification/Notification.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
