@@ -204,8 +204,8 @@ const Step3 = () => {
                                                 onClick={() => removePhoto(index)}
                                                 sx={{
                                                     position: "absolute",
-                                                    top: -10,
-                                                    right: -10,
+                                                    top: -15,
+                                                    right: 15,
                                                     backgroundColor: "white",
                                                     zIndex: 1,
                                                 }}
@@ -219,8 +219,8 @@ const Step3 = () => {
                                                 onClick={() => selectMainPhoto(index)}
                                                 sx={{
                                                     position: "absolute",
-                                                    top: -10,
-                                                    left: -10,
+                                                    top: -15,
+                                                    left: 15,
                                                     backgroundColor: "white",
                                                     zIndex: 1,
                                                     color: index === mainPhotoIndex ? "#E9A260" : "gray",
