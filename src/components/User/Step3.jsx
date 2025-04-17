@@ -251,7 +251,7 @@ const Step3 = () => {
                 </FormControl>
 
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petInfo}>
-                    <FormHelperText>
+                    <FormHelperText sx={{ mb: 1 }}>
                         <>
                             아이를 소개해 주세요 <ReqUi />
                             {errors.petInfo && ` (소개글을 입력해주세요.)`}

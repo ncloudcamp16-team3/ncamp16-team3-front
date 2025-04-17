@@ -146,7 +146,7 @@ const Step2 = () => {
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
-                        <FormHelperText>
+                        <FormHelperText sx={{ mb: 1 }}>
                             <>
                                 아이의 생일은 언제인가요? <ReqUi />{" "}
                                 {errors.petBirth && `(반려동물의 생일을 선택해주세요.)`}
