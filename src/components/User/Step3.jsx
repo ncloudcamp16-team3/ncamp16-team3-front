@@ -106,8 +106,8 @@ const Step3 = () => {
             mt={3}
             sx={{
                 position: "relative",
-                minHeight: "100vh", // 화면 최소 높이 확보
-                paddingBottom: "80px", // 버튼 공간 고려
+                minHeight: "100vh",
+                paddingBottom: "80px",
             }}
         >
             {/* 중성화 여부 */}

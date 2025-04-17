@@ -52,136 +52,139 @@ const Step2 = () => {
     };
 
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="left"
-            width="90%"
-            mx="auto"
-            mt={3}
-            gap={2}
-            sx={{
-                position: "relative",
-                minHeight: "100vh", // 화면 최소 높이 확보
-                paddingBottom: "80px", // 버튼 공간 고려
-            }}
-        >
-            <Typography variant="body1" fontWeight="bold" mb={1}>
-                어떤 반려동물과 함께하고 계신가요?
-            </Typography>
+        <>
+            <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="left"
+                width="90%"
+                mx="auto"
+                mt={3}
+                gap={2}
+                sx={{
+                    position: "relative",
+                    minHeight: "100vh",
+                    paddingBottom: "80px",
+                }}
+            >
+                <Typography variant="body1" fontWeight="bold" mb={1}>
+                    어떤 반려동물과 함께하고 계신가요?
+                </Typography>
 
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petName}>
-                <InputLabel htmlFor="petName">
-                    <>
-                        이름 <ReqUi /> {errors.petName && ` (반려동물 이름은 1~16자 이내로 입력해주세요.)`}
-                    </>
-                </InputLabel>
-                <Input required id="petName" name="petName" value={formData.petName} onChange={handleChange} />
-            </FormControl>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petTypeId}>
-                <FormHelperText sx={{ mb: 1 }}>
-                    <>
-                        반려동물을 등록해주세요 <ReqUi /> {errors.petTypeId && `(반려동물 종류를 선택해주세요.)`}
-                    </>
-                </FormHelperText>
-                <Grid container spacing={1}>
-                    {petTypes.map((type) => (
-                        <Grid item size={4} key={type.id}>
-                            <Button
-                                fullWidth
-                                variant={formData.petTypeId === type.value ? "contained" : "outlined"}
-                                onClick={() => handleChange({ target: { name: "petTypeId", value: type.value } })}
-                                sx={{
-                                    width: "100%",
-                                    backgroundColor: formData.petTypeId === type.value ? "#E9A260" : "inherit",
-                                    color: formData.petTypeId === type.value ? "#fff" : "inherit",
-                                    borderColor: "#E9A260",
-                                    "&:hover": {
-                                        backgroundColor: "#e08a3a",
-                                        borderColor: "#e08a3a",
-                                    },
-                                }}
-                            >
-                                {type.label}
-                            </Button>
-                        </Grid>
-                    ))}
-                </Grid>
-            </FormControl>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petGender}>
-                <FormHelperText sx={{ mb: 1 }}>
-                    <>
-                        아이의 성별을 선택해주세요 <ReqUi /> {errors.petGender && `(성별을 선택해주세요.)`}
-                    </>
-                </FormHelperText>
-                <Grid container spacing={1}>
-                    {["남아", "여아"].map((gender) => (
-                        <Grid item size={6} key={gender}>
-                            <Button
-                                fullWidth
-                                variant={formData.petGender === gender ? "contained" : "outlined"}
-                                onClick={() => handleChange({ target: { name: "petGender", value: gender } })}
-                                sx={{
-                                    height: "48px",
-                                    backgroundColor: formData.petGender === gender ? "#E9A260" : "inherit",
-                                    color: formData.petGender === gender ? "#fff" : "inherit",
-                                    borderColor: "#E9A260",
-                                    "&:hover": {
-                                        backgroundColor: "#e08a3a",
-                                        borderColor: "#e08a3a",
-                                    },
-                                }}
-                            >
-                                {gender}
-                            </Button>
-                        </Grid>
-                    ))}
-                </Grid>
-            </FormControl>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
-                    <FormHelperText>
+                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petName}>
+                    <InputLabel htmlFor="petName">
                         <>
-                            아이의 생일은 언제인가요? <ReqUi /> {errors.petBirth && `(반려동물의 생일을 선택해주세요.)`}
+                            이름 <ReqUi /> {errors.petName && ` (반려동물 이름은 1~16자 이내로 입력해주세요.)`}
+                        </>
+                    </InputLabel>
+                    <Input required id="petName" name="petName" value={formData.petName} onChange={handleChange} />
+                </FormControl>
+
+                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petTypeId}>
+                    <FormHelperText sx={{ mb: 1 }}>
+                        <>
+                            반려동물을 등록해주세요 <ReqUi /> {errors.petTypeId && `(반려동물 종류를 선택해주세요.)`}
                         </>
                     </FormHelperText>
-                    <MobileDatePicker
-                        value={formData.petBirth ? dayjs(formData.petBirth) : null}
-                        onChange={handleDateChange}
+                    <Grid container spacing={1}>
+                        {petTypes.map((type) => (
+                            <Grid item size={4} key={type.id}>
+                                <Button
+                                    fullWidth
+                                    variant={formData.petTypeId === type.value ? "contained" : "outlined"}
+                                    onClick={() => handleChange({ target: { name: "petTypeId", value: type.value } })}
+                                    sx={{
+                                        width: "100%",
+                                        backgroundColor: formData.petTypeId === type.value ? "#E9A260" : "inherit",
+                                        color: formData.petTypeId === type.value ? "#fff" : "inherit",
+                                        borderColor: "#E9A260",
+                                        "&:hover": {
+                                            backgroundColor: "#e08a3a",
+                                            borderColor: "#e08a3a",
+                                        },
+                                    }}
+                                >
+                                    {type.label}
+                                </Button>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </FormControl>
+
+                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petGender}>
+                    <FormHelperText sx={{ mb: 1 }}>
+                        <>
+                            아이의 성별을 선택해주세요 <ReqUi /> {errors.petGender && `(성별을 선택해주세요.)`}
+                        </>
+                    </FormHelperText>
+                    <Grid container spacing={1}>
+                        {["남아", "여아"].map((gender) => (
+                            <Grid item size={6} key={gender}>
+                                <Button
+                                    fullWidth
+                                    variant={formData.petGender === gender ? "contained" : "outlined"}
+                                    onClick={() => handleChange({ target: { name: "petGender", value: gender } })}
+                                    sx={{
+                                        height: "48px",
+                                        backgroundColor: formData.petGender === gender ? "#E9A260" : "inherit",
+                                        color: formData.petGender === gender ? "#fff" : "inherit",
+                                        borderColor: "#E9A260",
+                                        "&:hover": {
+                                            backgroundColor: "#e08a3a",
+                                            borderColor: "#e08a3a",
+                                        },
+                                    }}
+                                >
+                                    {gender}
+                                </Button>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </FormControl>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
+                        <FormHelperText>
+                            <>
+                                아이의 생일은 언제인가요? <ReqUi />{" "}
+                                {errors.petBirth && `(반려동물의 생일을 선택해주세요.)`}
+                            </>
+                        </FormHelperText>
+                        <MobileDatePicker
+                            value={formData.petBirth ? dayjs(formData.petBirth) : null}
+                            onChange={handleDateChange}
+                        />
+                    </FormControl>
+                </LocalizationProvider>
+
+                <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
+                    <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
+                        <>
+                            몸무게를 입력해 주세요 <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
+                        </>
+                    </InputLabel>
+                    <Input
+                        required
+                        id="petWeight"
+                        name="petWeight"
+                        placeholder="몸무게를 입력해 주세요"
+                        value={formData.petWeight}
+                        onChange={handleChange}
                     />
                 </FormControl>
-            </LocalizationProvider>
-
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
-                <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
-                    <>
-                        몸무게를 입력해 주세요 <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
-                    </>
-                </InputLabel>
-                <Input
-                    required
-                    id="petWeight"
-                    name="petWeight"
-                    placeholder="몸무게를 입력해 주세요"
-                    value={formData.petWeight}
-                    onChange={handleChange}
-                />
-            </FormControl>
+            </Box>
 
             <Box
                 sx={{
                     position: "fixed",
-                    maxWidth: "500px",
                     bottom: 0,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: "100%", // 화면 전체
+                    width: "100%",
+                    maxWidth: "500px", // 최대 너비 설정
                     backgroundColor: "#fff",
                     zIndex: 1000,
                     p: 1,
+                    display: "flex",
+                    justifyContent: "center", // 가로 중앙 정렬
                 }}
             >
                 <Grid container spacing={2}>
@@ -206,7 +209,7 @@ const Step2 = () => {
                     </Grid>
                 </Grid>
             </Box>
-        </Box>
+        </>
     );
 };
 
