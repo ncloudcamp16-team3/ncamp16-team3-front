@@ -15,6 +15,9 @@ FROM nginx:alpine
 # 빌드된 Vite 파일을 Nginx에 복사
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# 커스텀 nginx.conf 복사
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # 80번 포트로 접근 가능하게 설정
 EXPOSE 80
 
