@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box,  Grid } from "@mui/material";
+import { Box,Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import bookmarkData from "../../mock/Bookmark/bookmarkData.json";
 
 const mockPetstaBookmarks = [
     {

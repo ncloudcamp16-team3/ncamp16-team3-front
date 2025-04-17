@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Card, Tab, Tabs, Checkbox, FormControlLabel } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import bookmarkData from "../../mock/Bookmark/bookmarkData.json";
 
 // 게시판 타입에 따른 이름 매핑
 const boardTypeMap = {
