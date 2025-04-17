@@ -4,7 +4,7 @@ import FormControl from "@mui/material/FormControl";
 import { Box, Button, FormHelperText, Grid, InputLabel, Typography } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
@@ -12,6 +12,10 @@ import dayjs from "dayjs";
 
 const Step2 = () => {
     const { nextStep, handleChange, formData, prevStep } = useRegister();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []); // 화면 이동시 스크롤 맨 위로
 
     const petTypes = [
         { id: 1, label: "강아지", value: "1" },
@@ -176,17 +180,17 @@ const Step2 = () => {
             <Box
                 sx={{
                     position: "fixed",
+                    maxWidth: "500px",
                     bottom: 0,
-                    width: "100%",
-                    maxWidth: "500px", // 최대 너비 설정
+                    width: "100%", // 화면 전체
                     backgroundColor: "#fff",
                     zIndex: 1000,
                     p: 1,
                     display: "flex",
-                    justifyContent: "center", // 가로 중앙 정렬
+                    justifyContent: "center",
                 }}
             >
-                <Grid container spacing={2}>
+                <Grid container spacing={2} sx={{ width: "100%" }}>
                     <Grid item size={6}>
                         <Button
                             variant="contained"
