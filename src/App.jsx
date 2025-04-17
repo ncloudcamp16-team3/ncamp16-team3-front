@@ -62,8 +62,12 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
+                        {/* 로그인 페이지는 별도 경로로 유지 */}
                         <Route path="/admin" element={<Admin />} />
-                        <Route path="/admin" element={<AdminLayout />}>
+
+                        {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
+                        <Route path="/admin/*" element={<AdminLayout />}>
+                            {/* 인증 보호 라우트 */}
                             <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
                                 <Route path="board/:id" element={<AdminPostDetail />} />
