@@ -63,69 +63,6 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
-                        <Route path="/admin" element={<AdminLayout />}>
-                            <Route index element={<Admin />} />
-                            <Route element={<ProtectedAdminRoute />}>
-                                <Route path="board/list" element={<AdminDashboard />} />
-                                <Route path="board/:id" element={<AdminPostDetail />} />
-                                <Route path="board/post" element={<AdminNotice />} />
-                                <Route path="petsitter/list" element={<AdminPetsitterList />} />
-                                <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
-                                <Route path="petsitter/apply" element={<AdminPetSitterApplyList />} />
-                                <Route path="petsitter/apply/:id" element={<AdminPetSitterApplyDetail />} />
-                                <Route path="facility/list" element={<AdminFacilityList />} />
-                                <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
-                                <Route path="facility/add" element={<AdminFacilityAdd />} />
-                            </Route>
-                        </Route>
-                        <Route element={<Layout0 />}>
-                            <Route path="/oauth2/success" element={<OAuth2Success />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                        </Route>
-                        <Route element={<Layout1 />}>
-                            <Route path="/" element={<Main />} />
-                            <Route path="/petdetails/:petId" element={<PetDetails />} />
-                            <Route path="/petsta" element={<PetSta />} />
-                            <Route path="/board" element={<Board />} />
-                            <Route path="/reserve" element={<Reserve />} />
-                            <Route path="/petsitter" element={<PetSitter />} />
-                            <Route path="/calendar" element={<Cal />} />
-                            <Route
-                                path="/notification"
-                                element={
-                                    <ProtectedRoute>
-                                        <Notification />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route path="/mypage" element={<MyPage />} />
-                            <Route path="/add-pet" element={<AddPet />} />
-                            <Route path="/pet/edit/:petId" element={<EditPet />} />
-                            <Route path="/petsitter-register" element={<PetSitterRegister />} />
-                            <Route path="/petsitter-finder" element={<PetSitterFinder />} />
-                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
-                            <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
-                            <Route path="/petsta/post/add/video" element={<AddVideo />} />
-                            <Route path="/petsta/user/:userId" element={<UserLayout />}>
-                                <Route path="" element={<UserPage />} />
-                                <Route path="follower" element={<FollowersTab />} />
-                                <Route path="following" element={<FollowersTab />} />
-                            </Route>
-                            <Route path="/chat" element={<ChatList />} />
-                            <Route path="/chat/room/:roomId" element={<ChatRoom />} />
-                            <Route path="/payment" element={<Payment />} />
-                            <Route path="/notification" element={<Notification />} />
-                        </Route>
-                        <Route element={<Layout2 />}>
-                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
-                        </Route>
-                    </Routes>
-                </Router>
-            </Provider>
-            <Provider>
-                <Router>
-                    <Routes>
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/admin" element={<AdminLayout />}>
                             <Route element={<ProtectedAdminRoute />}>
