@@ -6,6 +6,8 @@ import ReserveMap from "../../components/Reserve/map/ReserveMap";
 import useReserveFilter from "../../components/Reserve/hooks/useReserveFilter";
 import data from "../../mock/Reserve/reserve.json";
 import { Box, Container } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const Reserve = () => {
     const [category, setCategory] = useState("호텔");
@@ -13,16 +15,18 @@ const Reserve = () => {
     const filteredData = useReserveFilter(data, category, sortType);
 
     return (
-        <Container>
-            <CategoryTabs category={category} setCategory={setCategory} />
-            <Box my={2}>
-                <SortFilter sortType={sortType} setSortType={setSortType} />
-            </Box>
-            <ReserveList data={filteredData} />
-            <Box mt={4}>
-                <ReserveMap data={filteredData} />
-            </Box>
-        </Container>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Container>
+                <CategoryTabs category={category} setCategory={setCategory} />
+                <Box my={2}>
+                    <SortFilter sortType={sortType} setSortType={setSortType} />
+                </Box>
+                <ReserveList data={filteredData} />
+                <Box mt={4}>
+                    <ReserveMap data={filteredData} />
+                </Box>
+            </Container>
+        </LocalizationProvider>
     );
 };
 

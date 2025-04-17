@@ -6,7 +6,7 @@
     "mainImage": "../../mock/Reserve/facility01.svg",
     "rating": 4.5,
     "reviewCount": 30,
-    "tags": ["호텔", "미용실", "애견 카페"],
+    "tags": "호텔",
     "openHours": "월–금 13:00 - 21:00",
     "latitude": "37.4419",
     "longitude": "127.1295",
@@ -43,7 +43,7 @@
     "mainImage": "../../mock/Reserve/facility01.svg",
     "rating": 4.2,
     "reviewCount": 22,
-    "tags": ["호텔", "애견 카페"],
+    "tags": "애견 카페",
     "openHours": "화–일 10:00 - 20:00",
     "score": {
       "5Stars": 5,
@@ -70,7 +70,7 @@
     "mainImage": "../../mock/Reserve/facility01.svg",
     "rating": 4.0,
     "reviewCount": 18,
-    "tags": ["미용실"],
+    "tags": "미용실",
     "openHours": "월–토 11:00 - 19:00",
     "score": {
       "5Stars": 5,
@@ -97,7 +97,7 @@
     "mainImage": "../../mock/Reserve/facility01.svg",
     "rating": 3.9,
     "reviewCount": 25,
-    "tags": ["호텔", "미용실"],
+    "tags": "호텔",
     "openHours": "매일 10:00 - 20:00",
     "score": {
       "5Stars": 5,
@@ -124,7 +124,7 @@
     "mainImage": "../../mock/Reserve/facility01.svg",
     "rating": 4.7,
     "reviewCount": 40,
-    "tags": ["미용실", "스파"],
+    "tags": "미용실",
     "openHours": "화–일 09:00 - 18:00",
     "score": {
       "5Stars": 5,
