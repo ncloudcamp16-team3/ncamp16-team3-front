@@ -285,15 +285,16 @@ const Step3 = () => {
                     position: "fixed",
                     maxWidth: "500px",
                     bottom: 0,
-                    width: "100%",
+                    width: "100%", // 화면 전체
                     backgroundColor: "#fff",
                     zIndex: 1000,
-                    p: 1,
+                    paddingX: 1,
+                    paddingBottom: 1,
                     display: "flex",
                     justifyContent: "center",
                 }}
             >
-                <Grid container spacing={2} sx={{ width: "100%" }}>
+                <Grid container spacing={2} sx={{ width: "95%" }}>
                     <Grid item size={6}>
                         <Button
                             variant="contained"
