@@ -9,7 +9,7 @@ import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
 const { kakao } = window;
 
-const Cal = () => {
+const CalendarRendering = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentViewMonth, setCurrentViewMonth] = useState(new Date()); // 현재 보이
     const [schedules, setSchedules] = useState([]);
@@ -53,7 +53,7 @@ const Cal = () => {
     }, [showForm]);
 
     useEffect(() => {
-        fetch("src/mock/Calendar/calender_schedules.json")
+        fetch("src/mock/Calendar/schedules.json")
             .then((res) => res.json())
             .then(setSchedules)
             .catch((err) => console.error("Error loading schedules:", err));
@@ -286,6 +286,9 @@ const Cal = () => {
                 <Box
                     sx={{
                         width: "40px",
+                        minWidth: "40px",
+                        maxWidth: "40px",
+                        flexShrink: 0,
                         backgroundColor: colors[type],
                         borderTopLeftRadius: "12px",
                         borderBottomLeftRadius: "12px",
@@ -463,4 +466,4 @@ const Cal = () => {
     );
 };
 
-export default Cal;
+export default CalendarRendering;

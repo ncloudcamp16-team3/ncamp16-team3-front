@@ -1,0 +1,106 @@
+{
+  "petstaBookmarks": [
+    {
+      "id": 1,
+      "userId": 5,
+      "userName": "해피해피해피",
+      "userPhoto": "happyman.svg",
+      "fileName": "pet5.jpg",
+      "fileType": "photo",
+      "likes": 35000,
+      "comments": 234,
+      "content": "해피해피해피 우리 강아지",
+      "createdAt": "2025-04-16 14:30:00",
+      "isBookmarked": true
+    },
+    {
+      "id": 2,
+      "userId": 4,
+      "userName": "개화남",
+      "userPhoto": "dog3.png",
+      "fileName": "pet2.jpg",
+      "fileType": "photo",
+      "likes": 24800,
+      "comments": 180,
+      "content": "오늘 산책 나갔어요",
+      "createdAt": "2025-04-15 12:30:00",
+      "isBookmarked": true
+    },
+    {
+      "id": 3,
+      "userId": 2,
+      "userName": "억울이",
+      "userPhoto": "dog1.png",
+      "fileName": "pet3.jpg",
+      "fileType": "photo",
+      "likes": 15600,
+      "comments": 98,
+      "content": "산책 가고 싶어요!",
+      "createdAt": "2025-04-14 16:45:00",
+      "isBookmarked": true
+    },
+    {
+      "id": 4,
+      "userId": 3,
+      "userName": "호떡",
+      "userPhoto": "dog2.png",
+      "fileName": "pet4.jpg",
+      "fileType": "video",
+      "likes": 42300,
+      "comments": 312,
+      "content": "호떡이의 귀여운 모습",
+      "createdAt": "2025-04-13 11:20:00",
+      "isBookmarked": true
+    }
+  ],
+  "postBookmarks": [
+    {
+      "id": 1,
+      "boardTypeId": 1,
+      "title": "강아지 사료 추천 부탁드립니다",
+      "content": "우리 아이가 사료를 잘 안먹네요. 추천해주세요!",
+      "author": "초보견주",
+      "createdAt": "2025-04-16 10:40:00",
+      "likeCount": 12,
+      "commentCount": 8,
+      "photos": [{ "id": 1, "url": "/mock/Global/images/haribo.jpg" }],
+      "isBookmarked": true
+    },
+    {
+      "id": 2,
+      "boardTypeId": 2,
+      "title": "2025 서울리 대회",
+      "content": "반려동물 전시회에 초대합니다. 많은 참여 부탁드려요!",
+      "author": "이벤트팀",
+      "createdAt": "2025-04-14 09:20:00",
+      "likeCount": 45,
+      "commentCount": 22,
+      "photos": [{ "id": 1, "url": "/mock/PetMeeting/images/pet4.jpg" }],
+      "isBookmarked": true
+    },
+    {
+      "id": 3,
+      "boardTypeId": 3,
+      "title": "강아지 산책 모임 구합니다",
+      "content": "주말마다 강아지 산책 모임을 하실 분들 구합니다. 평소 산책하기 심심하시죠?",
+      "author": "산책매니아",
+      "createdAt": "2025-04-12 15:35:00",
+      "likeCount": 33,
+      "commentCount": 17,
+      "photos": [{ "id": 1, "url": "/mock/PetMeeting/images/pet8.jpg" }],
+      "isBookmarked": true
+    },
+    {
+      "id": 4,
+      "boardTypeId": 4,
+      "title": "강아지 여름 건강 관리법",
+      "content": "여름철 반려견의 건강을 지키기 위한 관리법을 알려드립니다.",
+      "author": "동물병원의사",
+      "createdAt": "2025-04-10 11:15:00",
+      "likeCount": 87,
+      "commentCount": 42,
+      "photos": [{ "id": 1, "url": "/mock/PetMeeting/images/pet10.jpg" }],
+      "isBookmarked": true
+    }
+  ]
+}

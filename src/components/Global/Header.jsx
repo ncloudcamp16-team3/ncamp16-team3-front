@@ -23,7 +23,7 @@ const Header = () => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/auth/check", {
+                const response = await fetch("/api/auth/check", {
                     credentials: "include",
                 });
 
@@ -43,7 +43,7 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await fetch("http://localhost:8080/api/auth/logout", {
+            await fetch("/api/auth/logout", {
                 method: "POST",
                 credentials: "include",
             });
