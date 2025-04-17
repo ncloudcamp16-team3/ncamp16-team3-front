@@ -94,7 +94,6 @@ const Step4 = () => {
                 mt={3}
                 sx={{
                     position: "relative",
-                    paddingBottom: "80px",
                 }}
             >
                 <Typography variant="h6" fontWeight="bold" textAlign="center">
@@ -174,26 +173,25 @@ const Step4 = () => {
                 <Grid container spacing={2} sx={{ width: "100%" }}>
                     <Grid item size={6}>
                         <Button
-                            fullWidth
                             variant="outlined"
                             onClick={goToStep1}
                             sx={{
                                 borderColor: "#E9A260",
                                 color: "#E9A260",
+                                width: "100%",
                             }}
                         >
-                            반려동물 추가
+                            추가
                         </Button>
                     </Grid>
                     <Grid item size={6}>
                         <Button
-                            fullWidth
                             variant="contained"
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            sx={{ backgroundColor: "#E9A260" }}
+                            sx={{ backgroundColor: "#E9A260", width: "100%" }}
                         >
-                            {isSubmitting ? "처리 중..." : "가입 완료"}
+                            {isSubmitting ? "처리 중..." : "가입"}
                         </Button>
                     </Grid>
                 </Grid>

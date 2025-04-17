@@ -111,7 +111,6 @@ const Step3 = () => {
                 mt={3}
                 sx={{
                     position: "relative",
-                    paddingBottom: "80px",
                 }}
             >
                 {/* 중성화 여부 */}

@@ -67,7 +67,6 @@ const Step2 = () => {
                 gap={2}
                 sx={{
                     position: "relative",
-                    paddingBottom: "80px",
                 }}
             >
                 <Typography variant="body1" fontWeight="bold" mb={1}>
