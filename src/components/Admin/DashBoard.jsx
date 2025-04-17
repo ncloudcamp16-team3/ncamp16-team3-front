@@ -61,26 +61,35 @@ function DashBoard() {
             setLoading(true);
             setError(null);
 
+            console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
+
             const boardTypeId = boardTypeMapping[currentFilter];
             const response = await fetchBoards(page, 10, boardTypeId);
 
-            // API 응답 가공
-            const transformApiResponse = (apiData) => {
-                return apiData.map((item) => ({
-                    id: item.id,
-                    title: item.title,
-                    content: item.content,
-                    author: item.authorNickname,
-                    image: item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0].url : null,
-                    likeCount: item.likeCount,
-                    date: new Date(item.createdAt().toLocaleString()),
-                }));
-            };
+            console.log("API Response: " + response);
 
-            // API 호출 결과 반환 및 업데이트
-            const transformData = transformApiResponse(response.content || []);
-            setRows(transformData);
-            setFilteredRows(transformData);
+            //데이터가 있는지 확인
+            if (!response || !response.content) {
+                console.warn("API 응답에 데이터가 없습니다: " + response);
+                setRows([]);
+                setFilteredRows([]);
+                setTotalPage(0);
+                return;
+            }
+
+            // API 응답 가공
+            const transformedData = response.content.map((item) => ({
+                id: item.id,
+                title: item.title,
+                content: item.content,
+                author: item.authorNickname,
+                image: item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0].url : null,
+                likeCount: item.likeCount,
+                date: new Date(item.createdAt).toLocaleString(),
+            }));
+
+            setRows(transformedData);
+            setFilteredRows(transformedData);
             setTotalPage(response.totalPage || 0);
         } catch (error) {
             console.error("Error loading board data: " + error);
