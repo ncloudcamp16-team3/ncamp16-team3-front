@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
-import PetSitterDetail from "./PetSitterDetail";
+import { useNavigate } from "react-router-dom";
 
 const PetSitterResults = ({ filteredPetsitters }) => {
-    const [selectedSitter, setSelectedSitter] = useState(null);
-    const [detailOpen, setDetailOpen] = useState(false);
+    const navigate = useNavigate();
 
-    // 펫시터 클릭 핸들러
+    // 펫시터 클릭 핸들러 - 상세 페이지로 이동
     const handleSitterClick = (sitter) => {
-        setSelectedSitter(sitter);
-        setDetailOpen(true);
-    };
-
-    // 모달 닫기 핸들러
-    const handleCloseDetail = () => {
-        setDetailOpen(false);
+        navigate(`/petsitter/detail/${sitter.id}`);
     };
 
     // 펫시터 카드 렌더링
@@ -80,20 +73,15 @@ const PetSitterResults = ({ filteredPetsitters }) => {
     };
 
     return (
-        <>
-            <Box sx={{ mt: 2, mb: 8 }}>
-                {filteredPetsitters.length > 0 ? (
-                    filteredPetsitters.map(renderPetsitterCard)
-                ) : (
-                    <Box sx={{ textAlign: "center", p: 4 }}>
-                        <Typography>조건에 맞는 펫시터가 없습니다.</Typography>
-                    </Box>
-                )}
-            </Box>
-
-            {/* 상세 정보 모달 */}
-            <PetSitterDetail sitter={selectedSitter} open={detailOpen} onClose={handleCloseDetail} />
-        </>
+        <Box sx={{ mt: 2, mb: 8 }}>
+            {filteredPetsitters.length > 0 ? (
+                filteredPetsitters.map(renderPetsitterCard)
+            ) : (
+                <Box sx={{ textAlign: "center", p: 4 }}>
+                    <Typography>조건에 맞는 펫시터가 없습니다.</Typography>
+                </Box>
+            )}
+        </Box>
     );
 };
 

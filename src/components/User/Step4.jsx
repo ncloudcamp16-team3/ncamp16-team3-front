@@ -1,193 +1,205 @@
-import React, { useState } from "react";
-import FormControl from "@mui/material/FormControl";
-import { Avatar, Box, Button, FormHelperText, Stack, Typography, IconButton, Grid } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ReqUi from "./ReqUi.jsx";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Button, Avatar, Divider, Paper, Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useRegister } from "./RegisterContext.jsx";
+import dayjs from "dayjs";
+import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step4 = () => {
-    const {
-        handleChange,
-        formData,
-        prevStep,
-        handleStep4Next,
-        mainPhotoIndex,
-        previews,
-        removePhoto,
-        selectMainPhoto,
-    } = useRegister();
+    const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
 
-    const [errors, setErrors] = useState({
-        petNeutered: false,
-        petPhotos: false,
-    });
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []); // 화면 이동시 스크롤 맨 위로
 
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length === 0) return;
+    const { nickname, petDataList, goToStep1, snsAccountId, snsTypeId } = useRegister();
 
-        const updatedPhotos = [...(formData.petPhotos || []), ...files];
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        setSubmitError(null);
 
-        handleChange({
-            target: {
-                name: "petPhotos",
-                value: updatedPhotos,
-            },
-        });
+        try {
+            const snsTypeIdNum = snsTypeId ? Number(snsTypeId) : null;
 
-        e.target.value = null;
-    };
+            const formData = {
+                nickname: nickname,
+                snsAccountId: snsAccountId,
+                snsTypeId: snsTypeIdNum,
+                fileId: 1, // 기본 파일
 
-    const handleNext = () => {
-        const newErrors = {
-            petNeutered: !formData.petNeutered,
-            petPhotos: !formData.petPhotos || formData.petPhotos.length === 0,
-        };
+                pets: petDataList.map((pet) => {
+                    const petPhotos = pet.petPhotos || []; // 파일 리스트
+                    const mainIndex = pet.mainPhotoIndex ?? 0; // 대표 사진 인덱스 지정 (없으면 0번)
 
-        setErrors(newErrors);
+                    return {
+                        petTypeId: pet.petTypeId || 1,
+                        name: pet.petName,
+                        gender: pet.petGender,
+                        birth: pet.petBirth,
+                        weight: pet.petWeight,
+                        info: pet.petInfo,
+                        neutered: pet.petNeutered === "Y",
+                        activityStatus: "NONE",
 
-        const hasError = Object.values(newErrors).some((e) => e);
-        if (hasError) return;
+                        photos: petPhotos.map((photo, index) => ({
+                            type: "PHOTO",
+                            path: photo.name,
+                            uuid: "", // 서버에서 UUID 생성
+                            thumbnail: index === mainIndex,
+                        })),
+                    };
+                }),
+            };
 
-        const newPetData = {
-            ...formData,
-            mainPhotoIndex,
-        };
-        handleStep4Next(newPetData);
+            console.log("📦 전송할 formData:", formData);
+
+            // API 호출
+            const response = await fetch(`/api/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include", // ✅ 필수!
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "회원가입 처리 중 오류가 발생했습니다.");
+            }
+
+            const result = await response.json();
+            console.log("회원가입 성공:", result);
+
+            // 성공 시 홈으로 이동
+            navigate("/");
+        } catch (error) {
+            console.error("회원가입 오류:", error);
+            setSubmitError(error.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="left" width="90%" mx="auto" gap={2}>
-            {/* 중성화 여부 */}
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petNeutered}>
-                <FormHelperText sx={{ mb: 1 }}>
-                    중성화 여부를 알려주세요 <ReqUi />
-                </FormHelperText>
-                <Grid container spacing={1}>
+        <>
+            <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                width="90%"
+                mx="auto"
+                gap={3}
+                mt={3}
+                sx={{
+                    position: "relative",
+                }}
+            >
+                <Typography variant="h6" fontWeight="bold" textAlign="center">
+                    입력한 정보를 확인하세요
+                </Typography>
+
+                <Box width="100%">
+                    <Typography variant="h5" fontWeight="bold">
+                        닉네임: {nickname}
+                    </Typography>
+                </Box>
+
+                {petDataList.length === 0 ? (
+                    <Typography>아직 등록된 반려동물이 없습니다.</Typography>
+                ) : (
+                    petDataList.map((pet, index) => {
+                        const mainIndex = pet.mainPhotoIndex ?? 0;
+                        const petPhotos = pet.petPhotos || [];
+                        const mainPhoto = petPhotos[mainIndex];
+
+                        const mainPhotoUrl = mainPhoto
+                            ? mainPhoto instanceof File
+                                ? URL.createObjectURL(mainPhoto)
+                                : mainPhoto
+                            : null;
+
+                        return (
+                            <Paper key={index} elevation={3} sx={{ p: 3, width: "100%" }}>
+                                <Box display="flex" alignItems="center" gap={2}>
+                                    <Avatar src={mainPhotoUrl} alt={pet.petName} sx={{ width: 80, height: 80 }} />
+                                    <Box>
+                                        <Typography variant="h6">{pet.petName}</Typography>
+                                        <Typography variant="body2">
+                                            {pet.petGender === "M" ? "수컷" : "암컷"} •{" "}
+                                            {pet.petNeutered === "Y" ? "중성화 완료" : "중성화 미완료"}
+                                        </Typography>
+                                        {pet.petBirth && (
+                                            <Typography variant="body2">
+                                                생년월일: {dayjs(pet.petBirth).format("YYYY년 MM월 DD일")}
+                                            </Typography>
+                                        )}
+                                        {pet.petWeight && (
+                                            <Typography variant="body2">체중: {pet.petWeight}kg</Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+                                {pet.petInfo && (
+                                    <>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Typography variant="body1">{pet.petInfo}</Typography>
+                                    </>
+                                )}
+                            </Paper>
+                        );
+                    })
+                )}
+                {submitError && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {submitError}
+                    </Typography>
+                )}
+            </Box>
+
+            <Box
+                sx={{
+                    position: "fixed",
+                    maxWidth: "500px",
+                    bottom: 0,
+                    width: "100%", // 화면 전체
+                    backgroundColor: "#fff",
+                    zIndex: 1000,
+                    paddingX: 1,
+                    paddingBottom: 1,
+                    display: "flex",
+                    justifyContent: "center",
+                }}
+            >
+                <Grid container spacing={2} sx={{ width: "95%" }}>
                     <Grid item size={6}>
                         <Button
-                            fullWidth
-                            variant={formData.petNeutered === "Y" ? "contained" : "outlined"}
-                            onClick={() => handleChange({ target: { name: "petNeutered", value: "Y" } })}
+                            variant="outlined"
+                            onClick={goToStep1}
                             sx={{
-                                backgroundColor: formData.petNeutered === "Y" ? "#E9A260" : "inherit",
-                                color: formData.petNeutered === "Y" ? "#fff" : "inherit",
                                 borderColor: "#E9A260",
-                                "&:hover": {
-                                    backgroundColor: "#e08a3a",
-                                    borderColor: "#e08a3a",
-                                },
+                                color: "#E9A260",
+                                width: "100%",
                             }}
                         >
-                            O
+                            추가
                         </Button>
                     </Grid>
                     <Grid item size={6}>
                         <Button
-                            fullWidth
-                            variant={formData.petNeutered === "N" ? "contained" : "outlined"}
-                            onClick={() => handleChange({ target: { name: "petNeutered", value: "N" } })}
-                            sx={{
-                                backgroundColor: formData.petNeutered === "N" ? "#E9A260" : "inherit",
-                                color: formData.petNeutered === "N" ? "#fff" : "inherit",
-                                borderColor: "#E9A260",
-                                "&:hover": {
-                                    backgroundColor: "#e08a3a",
-                                    borderColor: "#e08a3a",
-                                },
-                            }}
+                            variant="contained"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            sx={{ backgroundColor: "#E9A260", width: "100%" }}
                         >
-                            X
+                            {isSubmitting ? "처리 중..." : "가입"}
                         </Button>
                     </Grid>
                 </Grid>
-                {errors.petNeutered && <FormHelperText>중성화 여부를 선택해 주세요.</FormHelperText>}
-            </FormControl>
-
-            {/* 사진 업로드 */}
-            <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petPhotos}>
-                <Typography variant="body1" mt={3} mb={2}>
-                    아이 사진등록하기
-                </Typography>
-                <FormHelperText sx={{ mb: 1 }}>
-                    첫번째 사진으로 프로필 사진이 등록됩니다 <ReqUi />
-                </FormHelperText>
-
-                <Button variant="outlined" component="label" sx={{ borderColor: "#E9A260", color: "#E9A260", mb: 2 }}>
-                    사진 업로드
-                    <input type="file" accept="image/*" hidden multiple onChange={handleFileChange} />
-                </Button>
-
-                {previews.length > 0 && (
-                    <Stack direction="row" spacing={2} flexWrap="wrap">
-                        {previews.map((src, index) => (
-                            <Box key={index} position="relative" textAlign="center">
-                                {/* 삭제 버튼 */}
-                                <IconButton
-                                    size="small"
-                                    onClick={() => removePhoto(index)}
-                                    sx={{
-                                        position: "absolute",
-                                        top: -10,
-                                        right: -10,
-                                        backgroundColor: "white",
-                                        zIndex: 1,
-                                    }}
-                                >
-                                    <CancelIcon fontSize="small" />
-                                </IconButton>
-
-                                {/* 대표사진 선택 */}
-                                <IconButton
-                                    size="small"
-                                    onClick={() => selectMainPhoto(index)}
-                                    sx={{
-                                        position: "absolute",
-                                        top: -10,
-                                        left: -10,
-                                        backgroundColor: "white",
-                                        zIndex: 1,
-                                        color: index === mainPhotoIndex ? "#E9A260" : "gray",
-                                    }}
-                                >
-                                    <CheckCircleIcon fontSize="small" />
-                                </IconButton>
-
-                                <Avatar
-                                    src={src}
-                                    alt={`preview-${index}`}
-                                    sx={{
-                                        width: 80,
-                                        height: 80,
-                                        border: index === mainPhotoIndex ? "2px solid #E9A260" : "none",
-                                    }}
-                                    variant="rounded"
-                                />
-                                <Typography variant="caption">
-                                    {index === mainPhotoIndex ? "대표사진" : `사진 ${index + 1}`}
-                                </Typography>
-                            </Box>
-                        ))}
-                    </Stack>
-                )}
-
-                {errors.petPhotos && (
-                    <FormHelperText error sx={{ mt: 1 }}>
-                        사진을 한 장 이상 등록해 주세요.
-                    </FormHelperText>
-                )}
-            </FormControl>
-
-            {/* 이동 버튼 */}
-            <Button variant="contained" onClick={prevStep} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                뒤로
-            </Button>
-
-            <Button variant="contained" onClick={handleNext} sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}>
-                작성 완료
-            </Button>
-        </Box>
+            </Box>
+        </>
     );
 };
 
