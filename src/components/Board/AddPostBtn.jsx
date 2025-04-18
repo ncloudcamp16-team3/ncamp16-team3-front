@@ -1,51 +1,35 @@
-import React, { useEffect, useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import { Box } from "@mui/material";
+import React from "react";
 import { useTheme } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
-const AddPostBtn = () => {
-    const [rightPosition, setRightPosition] = useState();
-    const navigate = useNavigate();
+const AddPostBtn = ({ requestAddPost }) => {
     const theme = useTheme();
 
-    useEffect(() => {
-        const updatePosition = () => {
-            const windowWidth = window.innerWidth;
-            const layoutWidth = 500;
-
-            if (windowWidth <= layoutWidth) {
-                setRightPosition("20px");
-            } else {
-                const sideGap = (windowWidth - layoutWidth) / 2 + 20; // 20은 내부 여백
-                setRightPosition(`${sideGap}px`);
-            }
-        };
-
-        updatePosition();
-        window.addEventListener("resize", updatePosition);
-
-        return () => window.removeEventListener("resize", updatePosition);
-    }, []);
     return (
-        <Box
-            onClick={() => navigate("/addPost")}
+        <Button
+            onClick={requestAddPost}
             sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
                 position: "fixed",
-                bottom: "80px",
-                right: rightPosition,
-                zIndex: 10,
-                bgcolor: theme.brand3,
-                borderRadius: "100%",
-                width: "50px",
+                bottom: "85px",
+                left: "10px",
+                right: "10px",
                 height: "50px",
+                maxWidth: "480px",
+                backgroundColor: theme.brand3,
+                borderRadius: "10px",
+                color: "white",
+                zIndex: 1000,
+                margin: "0 auto",
+                alignItems: "center",
+                fontSize: "20px",
+                "&:hover": {
+                    backgroundColor: "#d88e4f",
+                    boxShadow: "none",
+                },
             }}
         >
-            <AddIcon sx={{ fontSize: "35px", color: "white" }} />
-        </Box>
+            작성완료
+        </Button>
     );
 };
 

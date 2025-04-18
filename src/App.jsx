@@ -18,6 +18,9 @@ import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
+import Bookmark from "./pages/User/Bookmark";
+import PetstaBookmarks from "./pages/User/PetstaBookmarks";
+import PostBookmarks from "./pages/User/PostBookmarks";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
 import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import PetSitterDetail from "./pages/Sitter/PetSitterDetail.jsx";
@@ -28,7 +31,6 @@ import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Cal.jsx";
-import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
@@ -44,7 +46,7 @@ import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
 import ChatRoom from "./components/Chat/ChatRoom.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
@@ -52,9 +54,10 @@ import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
-import AddPost from "./components/Board/AddPost.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
+import PostSave from "./pages/Board/PostSave.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
 function App() {
     return (
@@ -62,8 +65,12 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
-                        <Route path="/admin" element={<Admin />} />
-                        <Route path="/admin" element={<AdminLayout />}>
+                      {/* 로그인 페이지는 별도 경로로 유지 */}
+                      <Route path="/admin" element={<Admin />} />
+
+                      {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
+                      <Route path="/admin/*" element={<AdminLayout />}>
+                        {/* 인증 보호 라우트 */}
                             <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
                                 <Route path="board/:id" element={<AdminPostDetail />} />
@@ -88,9 +95,13 @@ function App() {
                             <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
-                            <Route path="/post/:postId" element={<PostDetails />} />
-                            <Route path="/addPost" element={<AddPost />} />
+                            <Route path="/board/:postId" element={<PostDetails />} />
+                            <Route path="/board/update/:postId" element={<PostSave />} />
+                            <Route path="/board/add" element={<PostSave />} />
                             <Route path="/reserve" element={<Reserve />} />
+                            <Route path="/bookmark" element={<Bookmark />} />
+                            <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
+                            <Route path="/bookmarks/posts" element={<PostBookmarks />} />
                             <Route path="/reserve/:id" element={<ReserveDetail />} />
                             <Route path="/reserve/list" element={<ReservationList />} />
                             <Route path="/reserve/success/:id" element={<Reservation />} />
@@ -112,7 +123,7 @@ function App() {
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsitter-register" element={<PetSitterRegister />} />
                             <Route path="/petsitter-finder" element={<PetSitterFinder />} />
-                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
+                            <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
                             <Route path="/petsta/user/:userId" element={<UserLayout />}>
@@ -125,7 +136,7 @@ function App() {
                             <Route path="/payment" element={<Payment />} />
                         </Route>
                         <Route element={<Layout2 />}>
-                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
+                            <Route path="/petsta/post/:postId" element={<PostDetail />} />
                         </Route>
                     </Routes>
                 </Router>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Arrow from "../../assets/images/Global/left-arrow-brand.svg";
 import { Box, Typography } from "@mui/material";
 
-const TitleBar = ({ name, onBack }) => {
+const TitleBar = ({ name, onBack, children }) => {
     const navigate = useNavigate();
 
     const handleBack = () => {
@@ -23,6 +23,9 @@ const TitleBar = ({ name, onBack }) => {
                 <Typography fontWeight="bold" fontSize="20px">
                     {name}
                 </Typography>
+            </Box>
+            <Box position="absolute" right={10} pr={1}>
+                {children}
             </Box>
         </Box>
     );

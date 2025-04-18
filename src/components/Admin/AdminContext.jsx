@@ -14,26 +14,40 @@ export const AdminProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             const token = localStorage.getItem("adminToken");
-            console.log("인증토큰: " + token);
+            console.log("인증토큰: ", token ? "토큰 있음" : "토큰 없음");
 
             if (token) {
                 try {
-                    const response = await fetch("api/admin/auth/validate", {
+                    console.log("Token validation request initiated");
+                    const response = await fetch("/api/admin/auth/validate", {
                         headers: { Authorization: `Bearer ${token}` },
                     });
+
+                    console.log("Token validation response status:", response.status);
 
                     if (!response.ok) {
                         throw new Error("토큰 검증 실패");
                     }
 
-                    const adminEmail = localStorage.getItem("adminEmail");
-                    setAdminEmail(adminEmail || "");
-                    setIsAuthenticated(true);
+                    const data = await response.json();
+                    console.log("토큰 검증 성공: " + data);
+
+                    if (data.valid) {
+                        const adminEmail = localStorage.getItem("adminEmail") || data.email;
+                        setAdminEmail(adminEmail);
+                        setIsAuthenticated(true);
+                        console.log("인증 상태 설정 완료: " + adminEmail);
+                    } else {
+                        throw new Error("유효하지 않은 토큰");
+                    }
                 } catch (error) {
-                    console.log(error);
+                    console.log("인증 확인 오류: " + error);
                     localStorage.removeItem("adminToken");
                     localStorage.removeItem("adminEmail");
+                    setIsAuthenticated(false);
                 }
+            } else {
+                setIsAuthenticated(false);
             }
             setLoading(false);
         };
@@ -43,6 +57,7 @@ export const AdminProvider = ({ children }) => {
     //로그인 함수
     const login = async (email, password) => {
         try {
+            console.log("로그인 시도: " + email);
             const response = await fetch("/api/admin/login", {
                 method: "POST",
                 headers: {
@@ -57,17 +72,17 @@ export const AdminProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            const { token, email: responseEmail } = data;
+            console.log("로그인 성공: " + data);
 
-            localStorage.setItem("adminToken", token);
+            localStorage.setItem("adminToken", data.token);
             localStorage.setItem("adminEmail", email);
 
-            setAdminEmail(responseEmail);
+            setAdminEmail(email);
             setIsAuthenticated(true);
 
             return data;
         } catch (error) {
-            console.log(error);
+            console.log("로그인 오류: " + error);
             throw error;
         }
     };
@@ -85,8 +100,9 @@ export const AdminProvider = ({ children }) => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                console.log("로그아웃 API 호출 성공");
             } catch (error) {
-                console.log(error);
+                console.log("로그아웃 API 오류: " + error);
             }
         }
 
@@ -95,15 +111,22 @@ export const AdminProvider = ({ children }) => {
         setAdminEmail("");
         setIsAuthenticated(false);
         setSelectedMenu("");
+        console.log("로그아웃 처리 완료");
     };
 
-    return (
-        <AdminContext.Provider
-            value={{ selectedMenu, setSelectedMenu, isAuthenticated, loading, adminEmail, login, logout }}
-        >
-            {children}
-        </AdminContext.Provider>
-    );
+    const contextValue = {
+        selectedMenu,
+        setSelectedMenu,
+        isAuthenticated,
+        loading,
+        adminEmail,
+        login,
+        logout,
+    };
+
+    console.log("AdminContext 현재 상태: ", { isAuthenticated, loading, adminEmail });
+
+    return <AdminContext.Provider value={contextValue}>{children}</AdminContext.Provider>;
 };
 
 // 커스텀 Hook으로 Context 사용을 간편하게

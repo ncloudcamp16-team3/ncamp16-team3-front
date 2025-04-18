@@ -347,4 +347,4 @@ const InfoModal = ({ title, message, onClose }) => {
     );
 };
 
-export { ActivityModal, PetConfigModal, InfoModal };
+export { ActivityModal, PetConfigModal };

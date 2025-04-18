@@ -14,11 +14,12 @@ spec:
     spec:
       containers:
       - name: tailfriends-front
-        image: s9kpv31a.kr.private-ncr.ntruss.com/tailfriends/tailfriends-front:latest
+        image: s9kpv31a.kr.private-ncr.ntruss.com/tailfriends/tailfriends-front:__TAG__
         ports:
         - containerPort: 80
       imagePullSecrets:
       - name: regcred
+---
 apiVersion: v1
 kind: Service
 metadata:

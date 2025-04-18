@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import { Bell, MessageSquareText, CalendarCheck, Globe, PawPrint } from "lucide-react";
+import { Bell, MessageSquareText, CalendarCheck, Globe, PawPrint, Trash2 } from "lucide-react";
+import { styled } from "@mui/material/styles";
 
 // notifyType에 따라 아이콘 매핑
 const getIconByType = (type) => {
@@ -39,6 +40,20 @@ const Notification = () => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
     };
 
+    const deleteAll = () => {
+        setNotifications([]); // 모든 알림 제거
+    };
+
+    const HoverTrash = styled(Trash2)(({ theme }) => ({
+        cursor: "pointer",
+        marginLeft: "auto",
+        color: "grey",
+        transition: "color 0.2s ease",
+        "&:hover": {
+            color: theme.palette.error.main, // 빨간색은 MUI 테마의 error 컬러 사용
+        },
+    }));
+
     return (
         <div
             style={{
@@ -49,7 +64,9 @@ const Notification = () => {
             }}
         >
             <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
-                <TitleBar name="알림" />
+                <TitleBar name="알림">
+                    <HoverTrash onClick={deleteAll} />
+                </TitleBar>
             </div>
 
             <div style={{ padding: "16px" }}>

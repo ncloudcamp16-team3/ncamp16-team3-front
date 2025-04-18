@@ -23,7 +23,7 @@ export const RegisterProvider = ({ children }) => {
     const [previews, setPreviews] = useState([]);
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
 
-    const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
+    const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
     const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
     const handleChange = (e) => {
@@ -33,7 +33,7 @@ export const RegisterProvider = ({ children }) => {
 
     const handleStep4Next = (newPetData) => {
         setPetDataList([...petDataList, newPetData]);
-        setStep(5);
+        setStep(4);
     };
 
     const goToStep1 = () => {

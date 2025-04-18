@@ -77,7 +77,7 @@ const PostBottom = ({ userName, postId, likes, comments, content, createdAt }) =
                     <img src={PetStaHeart} alt="Like Icon" />
                     <Typography sx={{ marginRight: 2 }}>{likeCount}</Typography> {/* marginRight가 sx로 적용됨 */}
                     <Box display="flex" onClick={() => navigate(`/petsta/post/comment/${postId}`)}>
-                        <img src={PetStaComment} alt="Comment Icon" />
+                        <img src={PetStaComment} alt="CommentCard Icon" />
                         <Typography>{commentCount}</Typography>
                     </Box>
                 </Box>

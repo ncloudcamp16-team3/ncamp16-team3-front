@@ -2,17 +2,12 @@ import React from "react";
 import { useTheme } from "@mui/material/styles";
 import { Button } from "@mui/material";
 
-const UpdateBtn = ({ postTitle, postContent, postId, postPhotos }) => {
+const UpdatePostBtn = ({ requestUpdatePost }) => {
     const theme = useTheme();
-
-    const requestPostUpdate = () => {
-        alert(postId + "번 게시물" + "\n제목=" + postTitle + "\n내용=" + postContent + "\n으로 수정요청");
-        window.location.reload();
-    };
 
     return (
         <Button
-            onClick={requestPostUpdate}
+            onClick={requestUpdatePost}
             sx={{
                 position: "fixed",
                 bottom: "85px",
@@ -38,4 +33,4 @@ const UpdateBtn = ({ postTitle, postContent, postId, postPhotos }) => {
     );
 };
 
-export default UpdateBtn;
+export default UpdatePostBtn;
