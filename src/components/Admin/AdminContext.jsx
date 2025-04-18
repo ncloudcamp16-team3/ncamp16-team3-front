@@ -1,7 +1,15 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect, useMemo } from "react";
 
 // Context 생성
 const AdminContext = createContext();
+
+// 메뉴별 필터 매핑 정의
+const menuFiltersMap = {
+    "게시글 목록": ["자유 게시판", "중고 장터", "정보 게시판"],
+    "펫시터 목록": ["ID", "사용자 아이디", "코멘트"],
+    "펫시터 신청목록": ["ID", "사용자 아이디", "코멘트"],
+    "업체 목록": ["호텔", "미용실", "카페"],
+};
 
 // Context Provider 컴포넌트
 export const AdminProvider = ({ children }) => {
@@ -9,6 +17,17 @@ export const AdminProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
     const [adminEmail, setAdminEmail] = useState("");
+    const [currentFilter, setCurrentFilter] = useState("");
+
+    const availableFilters = useMemo(() => {
+        return menuFiltersMap[selectedMenu] || [];
+    }, [selectedMenu]);
+
+    useEffect(() => {
+        if (selectedMenu && availableFilters.length > 0) {
+            setCurrentFilter(availableFilters[0]);
+        }
+    }, [selectedMenu, availableFilters]);
 
     // 로컬 스토리지에서 토큰 확인
     useEffect(() => {
@@ -122,6 +141,9 @@ export const AdminProvider = ({ children }) => {
         adminEmail,
         login,
         logout,
+        currentFilter,
+        setCurrentFilter,
+        availableFilters,
     };
 
     console.log("AdminContext 현재 상태: ", { isAuthenticated, loading, adminEmail });

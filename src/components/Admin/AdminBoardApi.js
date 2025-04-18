@@ -1,9 +1,6 @@
-export const fetchBoards = async (page = 0, size = 10, boardTypeId = null) => {
+export const fetchBoards = async (page = 1, size = 10, boardTypeId = 1) => {
     try {
-        let url = `/api/admin/board/list?page=${page}&size=${size}`;
-        if (boardTypeId) {
-            url += `&boardTypeId=${boardTypeId}`;
-        }
+        let url = `/api/admin/board/list?page=${page}&size=${size}&boardTypeId=${boardTypeId}`;
 
         const token = localStorage.getItem("adminToken");
         console.log("Using token: " + token ? "Valid token exists" : "No token found");

@@ -1,14 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
 import rows from "../../mock/Admin/facility.json";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Box } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
+import { useAdmin } from "./AdminContext.jsx";
 
 function FacilityList() {
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentFilter, setCurrentFilter] = useState("자유 게시판");
+    const [currentFilter, setCurrentFilter] = useAdmin();
     const [filteredRows, setFilteredRows] = useState(rows);
+
+    // 편의시설 타입 매핑
+    const facilityTypeMapping = {
+        호텔: "HOTEL",
+        미용실: "BEAUTY",
+        카페: "CAFE",
+    };
+
+    useEffect(() => {
+        if (currentFilter && currentFilter != "전체") {
+            const filtered = rows.filter((row) => row.facilityType === facilityTypeMapping[currentFilter]);
+            setFilteredRows(filtered);
+        } else {
+            setFilteredRows(rows);
+        }
+    }, [currentFilter]);
 
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
@@ -72,12 +89,7 @@ function FacilityList() {
 
     return (
         <Layout>
-            <AdminHeader
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-                selectedFilter={currentFilter}
-                filters={["자유 게시판", "질문 게시판", "정보 게시판", "중고장터"]}
-            />
+            <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />
 
             {/* 테이블 부분 */}
             <Box>

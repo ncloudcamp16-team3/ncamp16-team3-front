@@ -30,6 +30,8 @@ const Admin = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                console.log(response);
+                console.log(errorData);
                 throw new Error(errorData.message || "로그인에 실패했습니다");
             }
 

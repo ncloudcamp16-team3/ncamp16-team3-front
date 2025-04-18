@@ -66,15 +66,9 @@ const FilterButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const AdminHeader = ({
-    onSearch,
-    onFilterChange,
-    filters = ["자유 게시판", "질문 게시판", "정보 게시판", "중고장터"],
-    selectedFilter = "자유 게시판",
-}) => {
-    const { selectedMenu } = useAdmin();
+const AdminHeader = ({ onSearch, onFilterChange }) => {
+    const { selectedMenu, currentFilter, setCurrentFilter, availableFilters } = useAdmin();
     const [anchorEl, setAnchorEl] = useState(null);
-    const [currentFilter, setCurrentFilter] = useState(selectedFilter);
     const [searchTerm, setSearchTerm] = useState("");
 
     const open = Boolean(anchorEl);
@@ -160,41 +154,46 @@ const AdminHeader = ({
                             width: "100%",
                         }}
                     >
-                        <FilterButton
-                            variant="contained"
-                            startIcon={<FilterListIcon />}
-                            endIcon={<KeyboardArrowDownIcon />}
-                            onClick={handleFilterClick}
-                            disableElevation
-                            sx={{ height: "41px", width: "200px" }}
-                        >
-                            {currentFilter}
-                        </FilterButton>
-
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleFilterClose}
-                            elevation={2}
-                            sx={{
-                                width: 405, // 픽셀 단위로 지정 (더 정확한 크기 조절)
-                                "& .MuiPaper-root": {
-                                    width: 405, // 내부 Paper 컴포넌트의 너비도 같이 설정
-                                    maxWidth: "49%", // 화면 크기에 따른 최대 너비 제한
-                                },
-                            }}
-                        >
-                            {filters.map((filter) => (
-                                <MenuItem
-                                    key={filter}
-                                    onClick={() => handleFilterSelect(filter)}
-                                    selected={filter === currentFilter}
-                                    sx={{ width: "100%" }} // MenuItem의 너비를 부모 컨테이너에 맞춤
+                        {/* 필터 버튼 - 필터가 있을 때만 표시 */}
+                        {availableFilters.length > 0 && (
+                            <>
+                                <FilterButton
+                                    variant="contained"
+                                    startIcon={<FilterListIcon />}
+                                    endIcon={<KeyboardArrowDownIcon />}
+                                    onClick={handleFilterClick}
+                                    disableElevation
+                                    sx={{ height: "41px", width: "200px" }}
                                 >
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                                    {currentFilter}
+                                </FilterButton>
+
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClose={handleFilterClose}
+                                    elevation={2}
+                                    sx={{
+                                        width: 405,
+                                        "& .MuiPaper-root": {
+                                            width: 405,
+                                            maxWidth: "49%",
+                                        },
+                                    }}
+                                >
+                                    {availableFilters.map((filter) => (
+                                        <MenuItem
+                                            key={filter}
+                                            onClick={() => handleFilterSelect(filter)}
+                                            selected={filter === currentFilter}
+                                            sx={{ width: "100%" }}
+                                        >
+                                            {filter}
+                                        </MenuItem>
+                                    ))}
+                                </Menu>
+                            </>
+                        )}
 
                         <Search>
                             <SearchIconWrapper>

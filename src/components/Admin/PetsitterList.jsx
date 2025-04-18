@@ -67,7 +67,7 @@ const PetsitterList = () => {
                 onSearch={handleSearch}
                 onFilterChange={handleFilterChange}
                 selectedFilter={currentFilter}
-                filters={["자유 게시판", "질문 게시판", "정보 게시판", "중고장터"]}
+                filters={["자유 게시판", "중고 장터", "정보 게시판"]}
             />
 
             {/* 테이블 부분 */}
