@@ -89,7 +89,7 @@ function App() {
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
                             <Route path="/announce/:announceId" element={<Announce />} />
-                            <Route path="/petdetails/:petId" element={<PetDetails />} />
+                            <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
