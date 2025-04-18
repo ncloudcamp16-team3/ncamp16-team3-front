@@ -6,7 +6,7 @@ import { Context } from "../../context/Context.jsx";
 import PostCard from "../../components/Board/PostCard.jsx";
 import BoardItems from "../../mock/Board/boardItemList.json";
 import BoardItems2 from "../../mock/Board/boardItemList2.json";
-import AddPostBtn from "../../components/Board/AddPostBtn.jsx";
+import AddBtn from "../../components/Board/AddBtn.jsx";
 
 const Board = () => {
     const { boardType } = useContext(Context);
@@ -45,7 +45,7 @@ const Board = () => {
                 return <PostCard postItem={item} />;
             })}
 
-            <AddPostBtn />
+            <AddBtn />
         </Box>
     );
 };

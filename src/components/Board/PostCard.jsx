@@ -12,7 +12,7 @@ const PostCard = ({ postItem }) => {
 
     return (
         <Card
-            onClick={() => navigate(`/post/${postItem.id}`)}
+            onClick={() => navigate(`/board/${postItem.id}`)}
             sx={{
                 display: "flex",
                 alignItems: "flex-start",

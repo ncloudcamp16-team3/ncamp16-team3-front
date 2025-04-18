@@ -1,29 +1,11 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { IconButton } from "@mui/material";
-import { produce } from "immer";
 
-const LikeBtn = ({ liked, setLiked, setPostData }) => {
-    const likeBtnClick = () => {
-        if (liked) {
-            setPostData(
-                produce((draft) => {
-                    draft.likeCount -= 1;
-                })
-            );
-        } else {
-            setPostData(
-                produce((draft) => {
-                    draft.likeCount += 1;
-                })
-            );
-        }
-        setLiked(!liked);
-    };
-
+const LikeBtn = ({ liked, likeBtnClick, fontSize }) => {
     return (
         <IconButton
-            onClick={likeBtnClick}
+            onClick={() => likeBtnClick()}
             sx={{
                 transition: "transform 0.2s ease-in-out",
                 "&:active": {
@@ -32,9 +14,9 @@ const LikeBtn = ({ liked, setLiked, setPostData }) => {
             }}
         >
             {liked ? (
-                <FavoriteIcon sx={{ color: "red", fontSize: "35px" }} />
+                <FavoriteIcon sx={{ color: "red", fontSize: fontSize }} />
             ) : (
-                <FavoriteBorderIcon sx={{ color: "gray", fontSize: "35px" }} />
+                <FavoriteBorderIcon sx={{ color: "gray", fontSize: fontSize }} />
             )}
         </IconButton>
     );
