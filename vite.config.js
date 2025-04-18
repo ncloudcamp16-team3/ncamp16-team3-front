@@ -8,6 +8,11 @@ export default defineConfig(({ mode }) => {
             react(),
             VitePWA({
                 registerType: "autoUpdate",
+                    workbox: {
+                        cleanupOutdatedCaches: true,
+                        skipWaiting: true,
+                        clientsClaim: true,
+                    },
                 manifest: {
                     name: "My App",
                     short_name: "App",
