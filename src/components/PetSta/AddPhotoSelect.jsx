@@ -5,15 +5,16 @@ import { Box } from "@mui/material";
 import Photo from "../../assets/images/PetSta/photo-icon.svg";
 import { useTheme } from "@mui/material/styles"; // 실제 경로로 변경하세요
 
-const AddPhotoSelect = ({ imagePreview, setImagePreview, goNext }) => {
+const AddPhotoSelect = ({ imagePreview, setImagePreview, setImageFile, goNext }) => {
     const theme = useTheme();
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setImageFile(file); // 파일 저장
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImagePreview(reader.result);
+                setImagePreview(reader.result); // 프리뷰 저장
             };
             reader.readAsDataURL(file);
         }

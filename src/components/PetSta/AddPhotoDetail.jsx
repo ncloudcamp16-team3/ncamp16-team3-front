@@ -2,9 +2,30 @@ import React from "react";
 import { Box, TextareaAutosize } from "@mui/material";
 import TitleBar from "../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
+import { addphoto } from "../../services/petstaService.js";
+import { useNavigate } from "react-router-dom";
 
-const AddPhotoDetail = ({ imagePreview, onBack }) => {
+const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {
     const theme = useTheme();
+    const [content, setContent] = React.useState(""); // 내용 저장
+    const navigate = useNavigate();
+
+    const handleShare = async () => {
+        try {
+            const formData = new FormData();
+            formData.append("content", content);
+            formData.append("image", imageFile);
+
+            await addphoto(formData);
+
+            alert("게시물이 업로드되었습니다!");
+            navigate("/petsta");
+        } catch (error) {
+            console.error(error);
+            alert("업로드 실패!");
+        }
+    };
+
     return (
         <Box>
             <TitleBar name="게시물 업로드" onBack={onBack} />
@@ -13,11 +34,9 @@ const AddPhotoDetail = ({ imagePreview, onBack }) => {
                 {imagePreview && (
                     <Box
                         overflow="hidden"
-                        minHeight="20%"
+                        height="100%"
                         minWidth="20%"
                         borderRadius="25px"
-                        position="relative"
-                        sx={{}}
                         display="flex"
                         justifyContent="center"
                         alignItems="center"
@@ -43,6 +62,8 @@ const AddPhotoDetail = ({ imagePreview, onBack }) => {
                 <TextareaAutosize
                     minRows={8}
                     placeholder="내용을 적어주세요"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                     style={{
                         width: "100%",
                         padding: "12px",
@@ -54,6 +75,7 @@ const AddPhotoDetail = ({ imagePreview, onBack }) => {
                     }}
                 />
             </Box>
+
             <Box
                 display="flex"
                 justifyContent="center"
@@ -66,6 +88,8 @@ const AddPhotoDetail = ({ imagePreview, onBack }) => {
                 color="white"
                 fontSize="18px"
                 fontWeight="bold"
+                onClick={handleShare}
+                sx={{ cursor: "pointer" }}
             >
                 공유
             </Box>
