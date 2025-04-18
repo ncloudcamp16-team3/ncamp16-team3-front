@@ -15,7 +15,7 @@ const PhotoPost = ({ postId, userId, userName, userPhoto, fileName, likes, comme
             <Box sx={{ position: "relative" }}>
                 <PostProfile userId={userId} userName={userName} userPhoto={userPhoto} />
                 <Box onClick={handlePostClick}>
-                    <img style={{ width: "100%" }} src={`/mock/PetSta/images/${fileName}`} />
+                    <img style={{ width: "100%" }} src={`${fileName}`} />
                 </Box>
             </Box>
 

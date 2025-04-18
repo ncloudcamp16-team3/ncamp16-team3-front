@@ -2,7 +2,7 @@ import React from "react";
 import { Box, TextareaAutosize } from "@mui/material";
 import TitleBar from "../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
-import { addphoto } from "../../services/petstaService.js";
+import { addPhoto } from "../../services/petstaService.js";
 import { useNavigate } from "react-router-dom";
 
 const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {
@@ -10,13 +10,13 @@ const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {
     const [content, setContent] = React.useState(""); // 내용 저장
     const navigate = useNavigate();
 
-    const handleShare = async () => {
+    const handleShare = () => {
         try {
             const formData = new FormData();
             formData.append("content", content);
             formData.append("image", imageFile);
 
-            await addphoto(formData);
+            addPhoto(formData);
 
             alert("게시물이 업로드되었습니다!");
             navigate("/petsta");
