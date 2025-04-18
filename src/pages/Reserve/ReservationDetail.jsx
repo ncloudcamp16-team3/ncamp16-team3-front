@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Container, Box, List, ListItem, Typography } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import { Container, Box, List, ListItem, Typography, Button, Divider } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import reserveList from "../../mock/Reserve/reserveList.json";
@@ -10,6 +10,7 @@ const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
     const [address, setAddress] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const found = reserveList.find((r) => r.id === parseInt(id));
@@ -32,7 +33,7 @@ const ReservationDetail = () => {
         <Container>
             <TitleBar name="예약 상세" />
             <Box sx={{ m: 2 }}>
-                <Box my={2}>
+                <Box my={2} sx={{ cursor: "pointer" }} onClick={() => navigate(`/reserve/${reservation.id}`)}>
                     <Typography variant="h5" fontWeight="bold">
                         {reservation.name}
                     </Typography>
@@ -68,6 +69,19 @@ const ReservationDetail = () => {
                         </Box>
                     </ListItem>
                 </List>
+                <Divider />
+                <Button
+                    variant="contained"
+                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
+                    size="large"
+                    onClick={() => navigate(`/reserve/review/${reservation.id}`)}
+                    fullWidth
+                >
+                    리뷰작성
+                </Button>
+                <Button variant="contained" sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }} size="large" fullWidth>
+                    예약취소
+                </Button>
             </Box>
         </Container>
     );
