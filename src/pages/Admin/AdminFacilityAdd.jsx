@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import Layout from "../../components/Admin/Layout.jsx";
 import FacilityAdd from "../../components/Admin/FacilityAdd.jsx";
 
-const AdminFacilityList = () => {
+const AdminFacilityAdd = () => {
     return (
         <Box height="100vh" backgroundColor="white">
             <Layout />
@@ -12,4 +12,4 @@ const AdminFacilityList = () => {
     );
 };
 
-export default AdminFacilityList;
+export default AdminFacilityAdd;

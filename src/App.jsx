@@ -44,7 +44,7 @@ import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
 import ChatRoom from "./components/Chat/ChatRoom.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
@@ -92,7 +92,7 @@ function App() {
                             <Route path="/petdetails/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
-                            <Route path="/post/:post_id" element={<PostDetail />} />
+                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
                             <Route path="/addPost" element={<AddPost />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/bookmark" element={<Bookmark />} />
