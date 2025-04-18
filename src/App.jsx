@@ -8,7 +8,9 @@ import Board from "./pages/Board/Board.jsx";
 import Reserve from "./pages/Reserve/Reserve.jsx";
 import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
 import ReservationList from "./pages/Reserve/ReservationList.jsx";
+import Reservation from "./pages/Reserve/Reservation.jsx";
 import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
+import Review from "./pages/Reserve/Review.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
@@ -44,7 +46,7 @@ import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
 import ChatRoom from "./components/Chat/ChatRoom.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
@@ -63,12 +65,12 @@ function App() {
             <Provider>
                 <Router>
                     <Routes>
-                        {/* 로그인 페이지는 별도 경로로 유지 */}
-                        <Route path="/admin" element={<Admin />} />
+                      {/* 로그인 페이지는 별도 경로로 유지 */}
+                      <Route path="/admin" element={<Admin />} />
 
-                        {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
-                        <Route path="/admin/*" element={<AdminLayout />}>
-                            {/* 인증 보호 라우트 */}
+                      {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
+                      <Route path="/admin/*" element={<AdminLayout />}>
+                        {/* 인증 보호 라우트 */}
                             <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
                                 <Route path="board/:id" element={<AdminPostDetail />} />
@@ -90,10 +92,9 @@ function App() {
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
                             <Route path="/announce/:announceId" element={<Announce />} />
-                            <Route path="/petdetails/:petId" element={<PetDetails />} />
+                            <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
-                            <Route path="/post/:post_id" element={<PostDetail />} />
                             <Route path="/board/:postId" element={<PostDetails />} />
                             <Route path="/board/update/:postId" element={<PostSave />} />
                             <Route path="/board/add" element={<PostSave />} />
@@ -103,7 +104,9 @@ function App() {
                             <Route path="/bookmarks/posts" element={<PostBookmarks />} />
                             <Route path="/reserve/:id" element={<ReserveDetail />} />
                             <Route path="/reserve/list" element={<ReservationList />} />
+                            <Route path="/reserve/success/:id" element={<Reservation />} />
                             <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
+                            <Route path="/reserve/review/:id" element={<Review />} />
                             <Route path="/petsitter" element={<PetSitter />} />
                             <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
                             <Route path="/calendar" element={<Cal />} />
@@ -120,7 +123,7 @@ function App() {
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsitter-register" element={<PetSitterRegister />} />
                             <Route path="/petsitter-finder" element={<PetSitterFinder />} />
-                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
+                            <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
                             <Route path="/petsta/user/:userId" element={<UserLayout />}>
@@ -133,7 +136,7 @@ function App() {
                             <Route path="/payment" element={<Payment />} />
                         </Route>
                         <Route element={<Layout2 />}>
-                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
+                            <Route path="/petsta/post/:postId" element={<PostDetail />} />
                         </Route>
                     </Routes>
                 </Router>
