@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"; // React Router 사용 가정
 import { Box, Typography, Card, Button, Grid, CardContent, Rating } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import facilityData from "../../mock/Admin/facility.json";
+import { useAdmin } from "./AdminContext.jsx";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value, isRating = false }) => (
@@ -32,9 +33,25 @@ const FacilityDetail = () => {
     const [facility, setFacility] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentFilter, setCurrentFilter] = useState("자유 게시판");
+    const [currentFilter, setCurrentFilter] = useAdmin();
     const [filteredRows, setFilteredRows] = useState([]);
     const [rows, setRows] = useState([]);
+
+    // 편의시설 타입 매핑
+    const facilityTypeMapping = {
+        호텔: "HOTEL",
+        미용실: "BEAUTY",
+        카페: "CAFE",
+    };
+
+    useEffect(() => {
+        if (currentFilter && currentFilter != "전체") {
+            const filtered = rows.filter((row) => row.facilityType === facilityTypeMapping[currentFilter]);
+            setFilteredRows(filtered);
+        } else {
+            setFilteredRows(rows);
+        }
+    }, [currentFilter]);
 
     // 검색 핸들러
     const handleSearch = (term) => {
@@ -98,12 +115,7 @@ const FacilityDetail = () => {
 
     return (
         <Box>
-            <AdminHeader
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-                selectedFilter={currentFilter}
-                filters={["자유 게시판", "질문 게시판", "정보 게시판", "중고장터"]}
-            />
+            <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />
             <Box sx={{ p: 3, maxWidth: "90%", mx: "auto", ml: 50, mr: 5 }}>
                 <Card sx={{ borderRadius: 2, border: "1px solid #cccccc", boxShadow: 0, mt: 5 }}>
                     <CardContent>

@@ -15,26 +15,29 @@ import {
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { fetchBoards } from "./AdminBoardApi.js";
+import { useAdmin } from "./AdminContext.jsx";
 
 function DashBoard() {
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentFilter, setCurrentFilter] = useState("자유 게시판");
+    const adminContext = useAdmin();
+    const currentFilter = adminContext.currentFilter;
+    const setCurrentFilter = adminContext.setCurrentFilter;
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(0);
 
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
-        id: { width: 80, minWidth: 80, maxWidth: 80 },
-        title: { width: 200, minWidth: 200, maxWidth: 200 },
+        id: { width: 50, minWidth: 50, maxWidth: 50 },
+        title: { width: 150, minWidth: 150, maxWidth: 150 },
         image: { width: 100, minWidth: 100, maxWidth: 100 },
         content: { width: 350, minWidth: 350, maxWidth: 350 },
-        authorNickname: { width: 80, minWidth: 80, maxWidth: 80 },
-        likeCount: { width: 80, minWidth: 80, maxWidth: 80 },
-        date: { width: 200, minWidth: 200, maxWidth: 200 },
+        authorNickname: { width: 100, minWidth: 100, maxWidth: 100 },
+        likeCount: { width: 100, minWidth: 100, maxWidth: 100 },
+        date: { width: 100, minWidth: 100, maxWidth: 100 },
     };
 
     // 공통 스타일 (텍스트 오버플로우 처리)
@@ -64,7 +67,8 @@ function DashBoard() {
             console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
 
             const boardTypeId = boardTypeMapping[currentFilter];
-            const response = await fetchBoards(page, 10, boardTypeId);
+            const apiPage = Math.max(0, page - 1);
+            const response = await fetchBoards(apiPage, 10, boardTypeId);
 
             console.log("API Response: " + response);
 
@@ -82,7 +86,7 @@ function DashBoard() {
                 id: item.id,
                 title: item.title,
                 content: item.content,
-                author: item.authorNickname,
+                authorNickname: item.authorNickname,
                 image: item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0].url : null,
                 likeCount: item.likeCount,
                 date: new Date(item.createdAt).toLocaleString(),
@@ -126,7 +130,7 @@ function DashBoard() {
         setCurrentFilter(filter);
         // 실제 필터링 로직 구현
         console.log(`필터 변경: ${filter}`);
-        setPage(0);
+        setPage(1);
     };
 
     // 페이지 변경 핸들러
@@ -136,12 +140,7 @@ function DashBoard() {
 
     return (
         <Layout>
-            <AdminHeader
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-                selectedFilter={currentFilter}
-                filters={["자유 게시판", "중고장터", "질문 게시판"]}
-            />
+            <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />
 
             {/* 로딩 상태 표시 */}
             {loading && (
@@ -150,7 +149,7 @@ function DashBoard() {
                 </Box>
             )}
 
-            {/* 예약 메시지 표시 */}
+            {/* 에러 메시지 표시 */}
             {error && (
                 <Alert severity="error" sx={{ my: 2 }}>
                     {error}
@@ -203,8 +202,8 @@ function DashBoard() {
                                                     <Box
                                                         component="img"
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 100,
+                                                            width: 100,
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
@@ -245,13 +244,13 @@ function DashBoard() {
                                                 {row.likeCount}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>
-                                                {new Date(row.createdAt).toLocaleString()}
+                                                {row.date}
                                             </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} align="center">
+                                        <TableCell colSpan={7} align="center">
                                             게시글이 없습니다.
                                         </TableCell>
                                     </TableRow>
