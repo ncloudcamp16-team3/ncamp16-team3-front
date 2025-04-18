@@ -52,7 +52,8 @@ import OAuth2Success from "./components/User/OAuth2Success.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import Announce from "./pages/Board/Announce.jsx";
-import AddPost from "./components/Board/AddPost.jsx";
+import PostDetails from "./pages/Board/PostDetails.jsx";
+import PostSave from "./pages/Board/PostSave.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
@@ -93,7 +94,10 @@ function App() {
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
                             <Route path="/petsta/post/:post_id" element={<PostDetail />} />
-                            <Route path="/addPost" element={<AddPost />} />
+                            <Route path="/post/:post_id" element={<PostDetail />} />
+                            <Route path="/board/:postId" element={<PostDetails />} />
+                            <Route path="/board/update/:postId" element={<PostSave />} />
+                            <Route path="/board/add" element={<PostSave />} />
                             <Route path="/reserve" element={<Reserve />} />
                             <Route path="/bookmark" element={<Bookmark />} />
                             <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />

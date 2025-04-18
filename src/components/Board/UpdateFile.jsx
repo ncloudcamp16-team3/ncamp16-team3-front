@@ -38,8 +38,8 @@ const UpdateFile = ({ postPhotos, handleAddPhoto, handleDeletePhoto }) => {
                 style={{ display: "none" }}
                 multiple
             />
-            {postPhotos.map((photo) => (
-                <Box key={photo.id} sx={{ position: "relative" }}>
+            {postPhotos.map((photo, index) => (
+                <Box key={index} sx={{ position: "relative" }}>
                     <Box
                         component="img"
                         src={photo.url}
@@ -52,7 +52,7 @@ const UpdateFile = ({ postPhotos, handleAddPhoto, handleDeletePhoto }) => {
                     <IconButton
                         size="small"
                         sx={{ position: "absolute", top: 0, right: 0 }}
-                        onClick={() => handleDeletePhoto(photo.id)}
+                        onClick={() => handleDeletePhoto(index)}
                     >
                         <CloseIcon fontSize="small" />
                     </IconButton>

@@ -3,13 +3,15 @@ import { Box, Button, InputBase, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Mappin from "../../assets/images/PetMeeting/map-pin.svg";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
-const KakaoMap = ({ address, setAddress, setDongName, setModalMessage, setModalTitle }) => {
+const KakaoMap = ({ address, setAddress, setDongName }) => {
     const { pet } = useContext(PetMeetingContext);
     const mapRef = useRef(null);
     const markerRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const searchKeyword = useRef("");
+    const { showModal } = useContext(Context);
 
     useEffect(() => {
         if (!window.kakao || !window.kakao.maps) return;
@@ -58,7 +60,7 @@ const KakaoMap = ({ address, setAddress, setDongName, setModalMessage, setModalT
                     const lng = firstResult.x;
 
                     const center = new window.kakao.maps.LatLng(lat, lng);
-                    alert(center);
+
                     initMap(center);
                     placeMarker(lat, lng);
                 } else {
@@ -89,8 +91,7 @@ const KakaoMap = ({ address, setAddress, setDongName, setModalMessage, setModalT
 
                 placeMarker(lat, lng);
             } else {
-                setModalTitle(keyword);
-                setModalMessage("검색 결과가 없습니다.");
+                showModal(keyword, "검색 결과가 없습니다.");
             }
         });
     };
