@@ -44,7 +44,7 @@ import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
 import ChatRoom from "./components/Chat/ChatRoom.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
@@ -90,10 +90,9 @@ function App() {
                         <Route element={<Layout1 />}>
                             <Route path="/" element={<Main />} />
                             <Route path="/announce/:announceId" element={<Announce />} />
-                            <Route path="/petdetails/:petId" element={<PetDetails />} />
+                            <Route path="/pet/:petId" element={<PetDetails />} />
                             <Route path="/petsta" element={<PetSta />} />
                             <Route path="/board" element={<Board />} />
-                            <Route path="/post/:post_id" element={<PostDetail />} />
                             <Route path="/board/:postId" element={<PostDetails />} />
                             <Route path="/board/update/:postId" element={<PostSave />} />
                             <Route path="/board/add" element={<PostSave />} />
@@ -120,7 +119,7 @@ function App() {
                             <Route path="/pet/edit/:petId" element={<EditPet />} />
                             <Route path="/petsitter-register" element={<PetSitterRegister />} />
                             <Route path="/petsitter-finder" element={<PetSitterFinder />} />
-                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
+                            <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
                             <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                             <Route path="/petsta/post/add/video" element={<AddVideo />} />
                             <Route path="/petsta/user/:userId" element={<UserLayout />}>
@@ -133,7 +132,7 @@ function App() {
                             <Route path="/payment" element={<Payment />} />
                         </Route>
                         <Route element={<Layout2 />}>
-                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
+                            <Route path="/petsta/post/:postId" element={<PostDetail />} />
                         </Route>
                     </Routes>
                 </Router>
