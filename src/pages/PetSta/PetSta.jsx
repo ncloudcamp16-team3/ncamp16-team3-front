@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from "react";
-import PhotoPost from "../../components/PetSta/PhotoPost.jsx"; // PhotoPost 컴포넌트 가져오기
-import postsData from "../../mock/PetSta/posts.json";
+import PhotoPost from "../../components/PetSta/PhotoPost.jsx";
 import VideoPost from "../../components/PetSta/VideoPost.jsx";
 import FriendList from "../../components/PetSta/FriendList.jsx";
 import { Box } from "@mui/material";
 import theme from "../../theme/theme.js";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
-// JSON 데이터 불러오기
+import { getPostLists } from "../../services/petstaService.js";
 
 const PetSta = () => {
     const [posts, setPosts] = useState([]);
     const [isMute, setIsMute] = useState(true);
     const [showBox, setShowBox] = useState(false);
-    const handleFabClick = () => setShowBox((prev) => !prev);
+    const [rightPosition, setRightPosition] = useState("20px");
     const navigate = useNavigate();
     useEffect(() => {
-        setPosts(postsData); // JSON 파일에서 데이터를 setPosts로 업데이트
-    }, []);
+        const getPosts = async () => {
+            try {
+                const data = await getPostLists(); // 서비스에서 데이터를 기다림
+                setPosts(data); // ★ 받은 데이터 저장
+                console.log(data);
+            } catch (error) {
+                console.error("게시글을 불러오는데 실패했습니다.", error);
+            }
+        };
 
-    const [rightPosition, setRightPosition] = useState("20px");
+        getPosts(); // useEffect 내에서 비동기 함수 호출
+    }, []);
 
     useEffect(() => {
         const updatePosition = () => {
@@ -29,7 +36,7 @@ const PetSta = () => {
             if (windowWidth <= layoutWidth) {
                 setRightPosition("20px");
             } else {
-                const sideGap = (windowWidth - layoutWidth) / 2 + 20; // 20은 내부 여백
+                const sideGap = (windowWidth - layoutWidth) / 2 + 20;
                 setRightPosition(`${sideGap}px`);
             }
         };
@@ -39,6 +46,9 @@ const PetSta = () => {
 
         return () => window.removeEventListener("resize", updatePosition);
     }, []);
+
+    const handleFabClick = () => setShowBox((prev) => !prev);
+
     const toggleMute = () => {
         setIsMute(!isMute);
     };

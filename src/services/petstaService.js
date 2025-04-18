@@ -2,12 +2,18 @@ import instance from "./axiosInstance";
 
 const API_URL = "/petsta"; // 상대 URL
 
-export const getLists = () => {
-    return instance.get(`${API_URL}/getLists`);
+export const getPostLists = () => {
+    return instance
+        .get(`${API_URL}/post/lists`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("게시글을 불러오는 데 실패했습니다.", error);
+            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
+        });
 };
 
-export const addphoto = (formData) => {
-    return instance.post(`${API_URL}/post/add/photo`, formData, {
+export const addPhoto = async (formData) => {
+    return await instance.post(`${API_URL}/post/add/photo`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
