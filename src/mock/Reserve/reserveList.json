@@ -6,8 +6,8 @@
     "type": "호텔",
     "status": true,
     "entry_time": {
-      "start": "2025-05-01T15:00:00",
-      "end": "2025-05-03T11:00:00"
+      "start": "2025-05-01(목) 15:00:00",
+      "end": "2025-05-03(토) 11:00:00"
     },
     "amount": 320000,
     "image": "../../mock/Reserve/facility01.svg"
