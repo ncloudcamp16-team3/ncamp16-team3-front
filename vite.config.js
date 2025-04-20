@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
                     : mode === "production"
                       ? {
                             "/api": {
-                                target: "http://tailfriends.kro.kr:8080",
+                                target: "https://tailfriends.kro.kr:8080",
                                 changeOrigin: true,
                                 secure: false,
                             },
