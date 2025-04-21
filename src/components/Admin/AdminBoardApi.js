@@ -1,4 +1,4 @@
-export const fetchBoards = async (page = 1, size = 10, boardTypeId = 1) => {
+export const fetchBoards = async (page = 0, size = 10, boardTypeId = 1) => {
     try {
         let url = `/api/admin/board/list?page=${page}&size=${size}&boardTypeId=${boardTypeId}`;
 

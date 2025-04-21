@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
-import LeftArrow from "../../assets/images/Global/left-arrow-white.svg";
-import UserIcon from "../../components/PetSta/UserIcon.jsx";
-import PetstaHeart from "../../assets/images/PetSta/petsta-heart-white.svg";
-import PetstaBookmark from "../../assets/images/PetSta/petsta-bookmark-white.svg";
-import PetstaComment from "../../assets/images/PetSta/petsta-comment-white.svg";
-import { Context } from "../../context/Context.jsx";
-import AudioOff from "../../assets/images/PetSta/audio-off.png";
-import AudioOn from "../../assets/images/PetSta/audio-on.png";
+import LeftArrow from "../../../assets/images/Global/left-arrow-white.svg";
+import UserIcon from "../UserIcon.jsx";
+import PetstaHeart from "../../../assets/images/PetSta/petsta-heart-white.svg";
+import PetstaBookmark from "../../../assets/images/PetSta/petsta-bookmark-white.svg";
+import PetstaComment from "../../../assets/images/PetSta/petsta-comment-white.svg";
+import { Context } from "../../../context/Context.jsx";
+import AudioOff from "../../../assets/images/PetSta/audio-off.png";
+import AudioOn from "../../../assets/images/PetSta/audio-on.png";
 import { useNavigate } from "react-router-dom";
 
 const VideoDetail = ({ post, currentTime = 0 }) => {

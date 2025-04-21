@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import ProfileHeader from "../PetSta/ProfileHeader.jsx";
+import ProfileHeader from "../PetSta/Post/ProfileHeader.jsx";
 import { Context } from "../../context/Context.jsx";
 import { Box, Typography } from "@mui/material";
 import SearchIcon from "../../assets/images/Chat/search-icon.svg";

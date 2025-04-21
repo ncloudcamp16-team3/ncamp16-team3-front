@@ -20,6 +20,34 @@ export const addPhoto = async (formData) => {
     });
 };
 
+export const addVideo = async (formData) => {
+    return await instance.post(`${API_URL}/post/add/video`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};
+
+export const toggleLike = (postId) => {
+    return instance
+        .post(`${API_URL}/post/${postId}/like`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("좋아요 토글에 실패했습니다.", error);
+            throw error;
+        });
+};
+
+export const toggleBookmark = (postId) => {
+    return instance
+        .post(`${API_URL}/post/${postId}/bookmark`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("북마크 토글에 실패했습니다.", error);
+            throw error;
+        });
+};
+
 export const boardUpdate = (Board) => {
     return instance.put(`${API_URL}/update`, Board);
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import UserIcon from "./UserIcon.jsx";
-import userData from "../../mock/PetSta/friends.json";
+import UserIcon from "../UserIcon.jsx";
+import userData from "../../../mock/PetSta/friends.json";
 
 const PostProfile = ({ userName, userId, isAbsolute = false }) => {
     console.log(userId);

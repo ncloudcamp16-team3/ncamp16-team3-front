@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import AudioOff from "../../assets/images/PetSta/audio-off.png";
-import AudioOn from "../../assets/images/PetSta/audio-on.png";
+import AudioOff from "../../../assets/images/PetSta/audio-off.png";
+import AudioOn from "../../../assets/images/PetSta/audio-on.png";
 import { Box } from "@mui/material";
-import { Context } from "../../context/Context.jsx";
+import { Context } from "../../../context/Context.jsx";
 import { useNavigate } from "react-router-dom";
 
 const VideoPlayer = ({ fileName, postId, isWide = false }) => {
@@ -68,7 +68,7 @@ const VideoPlayer = ({ fileName, postId, isWide = false }) => {
                     }
                 }}
             >
-                <source src={`/mock/PetSta/videos/${fileName}`} type="video/mp4" />
+                <source src={`${fileName}`} type="video/mp4" />
             </video>
 
             <Box

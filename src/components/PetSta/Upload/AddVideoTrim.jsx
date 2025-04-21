@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Box, Slider } from "@mui/material";
-import TitleBar from "../Global/TitleBar";
-import VideoOn from "../../assets/images/PetSta/video-on.svg";
-import VideoOff from "../../assets/images/PetSta/video-off.svg";
+import TitleBar from "../../Global/TitleBar.jsx";
+import VideoOn from "../../../assets/images/PetSta/video-on.svg";
+import VideoOff from "../../../assets/images/PetSta/video-off.svg";
 
 const AddVideoTrim = ({ videoPreview, onBack, onNext }) => {
     const [trimStart, setTrimStart] = useState(0); // 시작 시간 (왼쪽 thumb)
