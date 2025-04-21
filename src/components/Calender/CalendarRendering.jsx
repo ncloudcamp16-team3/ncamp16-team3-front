@@ -272,7 +272,7 @@ const CalendarRendering = () => {
             }
             return (
                 <>
-                    {format(parseISO(item.start_date), "yy-MM-dd hh:mm")} ~{" "}
+                    {format(parseISO(item.start_date), "yy-MM-dd hh:mm")}~{" "}
                     {format(parseISO(item.end_date), "yy-MM-dd hh:mm")}
                 </>
             );
