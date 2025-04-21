@@ -2,11 +2,14 @@
 .react-calendar {
     border: none;
     box-shadow: none;
+    width: 95%;
+    max-width: 500px;
 
 }
 
+
 .react-calendar__navigation__label > span {
-    font-size: 16px ;
+    font-size: 20px ;
     color: #4C5059;
     font-weight: bold;
 }
@@ -50,6 +53,10 @@
     color: #4C5059;
 }
 
+.react-calendar__month-view {
+    font-size: 1.5rem;
+}
+
 /* 요일 이름 색상 */
 .react-calendar__month-view__weekdays__weekday:nth-child(1) abbr {
     color: #EB5757; /* 일요일 */
@@ -59,8 +66,14 @@
 }
 
 .react-calendar__month-view__days__day {
-    font-size: 1.1rem;
+
     color: #4C5059;
+}
+
+.react-calendar__tile {
+
+    min-height: 3rem;      /* 높이 늘리기 */
+    box-sizing: border-box;  /* 패딩 포함 */
 }
 
 /* 날짜 텍스트 색상 */

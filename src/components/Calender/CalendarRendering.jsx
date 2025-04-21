@@ -209,8 +209,6 @@ const CalendarRendering = () => {
                 return (
                     <>
                         {renderMapAndAddress()}
-                        {renderDateField("시작날짜", item.start_date)}
-                        {renderDateField("종료날짜", item.end_date)}
                         {item.content && renderDateField("내용", item.content)}
                         {renderButtonGroup([
                             { label: "수정", color: "#FFA500", onClick: () => handleModifyClick(item) },
@@ -222,8 +220,6 @@ const CalendarRendering = () => {
                 return (
                     <>
                         {renderMapAndAddress()}
-                        {renderDateField("시작날짜", item.start_date)}
-                        {renderDateField("종료날짜", item.end_date)}
                         {item.event_url && (
                             <Typography sx={{ mt: 0.5 }}>
                                 <span style={{ color: "#A8A8A9" }}>링크 : </span>
@@ -244,8 +240,6 @@ const CalendarRendering = () => {
                 return (
                     <>
                         {renderMapAndAddress()}
-                        {renderDateField("시작날짜", item.entry_time)}
-                        {renderDateField("종료날짜", item.exit_time)}
                         {item.amount && renderDateField("결제 금액", `${item.amount.toLocaleString()}원`)}
                         {renderButtonGroup([
                             { label: "예약상세", color: "#2F80ED", onClick: handleBack },
@@ -268,8 +262,20 @@ const CalendarRendering = () => {
 
         const getTitle = () => (type === "reserve" ? item.facility_name : item.title);
         const getPeriod = () => {
-            if (type === "reserve") return `${item.entry_time} ~ ${item.exit_time}`;
-            return `${item.start_date} ~ ${item.end_date}`;
+            if (type === "reserve") {
+                return (
+                    <>
+                        {format(parseISO(item.entry_time), "yy-MM-dd hh:mm")}~{" "}
+                        {format(parseISO(item.exit_time), "yy-MM-dd hh:mm")}
+                    </>
+                );
+            }
+            return (
+                <>
+                    {format(parseISO(item.start_date), "yy-MM-dd hh:mm")} ~{" "}
+                    {format(parseISO(item.end_date), "yy-MM-dd hh:mm")}
+                </>
+            );
         };
 
         return (
@@ -329,7 +335,7 @@ const CalendarRendering = () => {
                 flexDirection="column"
                 alignItems="center"
                 textAlign="center"
-                sx={{ height: "350px", backgroundColor: "white", color: "white" }}
+                sx={{ height: "390px", backgroundColor: "white", color: "white" }}
             >
                 <Calendar
                     prev2Label={null}
@@ -375,7 +381,7 @@ const CalendarRendering = () => {
                                         display: "flex",
                                         justifyContent: "center",
                                         left: "50%",
-                                        transform: "translate(-50%,0%)",
+                                        transform: "translate(-50%,50%)",
                                         gap: 0.5,
                                     }}
                                 >
