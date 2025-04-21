@@ -90,8 +90,8 @@ function App() {
                             <Route path="/register" element={<Register />} />
                         </Route>
 
-                        <Route element={<Layout1 />}>
-                            <Route element={<ProtectedRoute />}>
+                        <Route element={<ProtectedRoute />}>
+                            <Route element={<Layout1 />}>
                                 <Route path="/" element={<Main />} />
                                 <Route path="/announce/:announceId" element={<Announce />} />
                                 <Route path="/pet/:petId" element={<PetDetails />} />
