@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import AdminHeader from "./AdminHeader.jsx";
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+} from "@mui/material";
 import Layout from "./Layout.jsx";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
@@ -22,8 +33,8 @@ const PetsitterList = () => {
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
         id: { width: 80, minWidth: 80, maxWidth: 80 },
-        sitterExp: { width: 100, minWidth: 100, maxWidth: 100 },
         image: { width: 150, minWidth: 150, maxWidth: 150 },
+        sitterExp: { width: 100, minWidth: 100, maxWidth: 100 },
         nickname: { width: 150, minWidth: 150, maxWidth: 150 },
         age: { width: 100, minWidth: 100, maxWidth: 100 },
         grown: { width: 150, minWidth: 150, maxWidth: 150 },
@@ -67,9 +78,9 @@ const PetsitterList = () => {
             // API 응답 가공
             const transformedData = response.content.map((item) => ({
                 id: item.id,
+                image: item.imagePath,
                 sitterExp: item.sitterExp,
                 grown: item.grown,
-                image: item.imagePath && item.imagePath.length > 0 ? item.imagePath[0].url : null,
                 nickname: item.nickname,
                 age: item.age,
                 petCount: item.petCount,
@@ -126,6 +137,20 @@ const PetsitterList = () => {
         <Layout>
             <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />
 
+            {/* 로딩 상태 표시 */}
+            {loading && (
+                <Box sx={{ display: "flex", alignItems: "center", my: 4 }}>
+                    <CircularProgress />
+                </Box>
+            )}
+
+            {/* 에러 메시지 표시 */}
+            {error && (
+                <Alert severity="error" sx={{ my: 2 }}>
+                    {error}
+                </Alert>
+            )}
+
             {/* 테이블 부분 */}
             <Box>
                 {!loading && !error && (
@@ -134,10 +159,10 @@ const PetsitterList = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={{ ...cellStyles.id, ...commonCellStyle }}>ID</TableCell>
+                                    <TableCell sx={{ ...cellStyles.image, ...commonCellStyle }}>사진</TableCell>
                                     <TableCell sx={{ ...cellStyles.sitterExp, ...commonCellStyle }}>
                                         펫시터 경험
                                     </TableCell>
-                                    <TableCell sx={{ ...cellStyles.image, ...commonCellStyle }}>사진</TableCell>
                                     <TableCell sx={{ ...cellStyles.nickname, ...commonCellStyle }}>
                                         사용자 아이디
                                     </TableCell>
@@ -173,11 +198,8 @@ const PetsitterList = () => {
                                             >
                                                 {row.id}
                                             </TableCell>
-                                            <TableCell sx={{ ...cellStyles.sitterExp, ...commonCellStyle }}>
-                                                {row.sitterExp ? "있음" : "없음"}
-                                            </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
-                                                {row.image && row.image.length > 0 ? (
+                                                {row.image ? (
                                                     <Box
                                                         component="img"
                                                         sx={{
@@ -206,6 +228,9 @@ const PetsitterList = () => {
                                                         No Image
                                                     </Box>
                                                 )}
+                                            </TableCell>
+                                            <TableCell sx={{ ...cellStyles.sitterExp, ...commonCellStyle }}>
+                                                {row.sitterExp ? "있음" : "없음"}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.nickname, ...commonCellStyle }}>
                                                 {row.nickname}

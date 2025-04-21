@@ -88,7 +88,7 @@ function DashBoard() {
                 title: item.title,
                 content: item.content,
                 authorNickname: item.authorNickname,
-                image: item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0].url : null,
+                image: item.firstImageUrl,
                 likeCount: item.likeCount,
                 date: new Date(item.createdAt).toLocaleString(),
             }));
@@ -199,7 +199,7 @@ function DashBoard() {
                                                 {row.id}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
-                                                {row.image && row.image.length > 0 ? (
+                                                {row.firstImageUrl ? (
                                                     <Box
                                                         component="img"
                                                         sx={{
@@ -208,7 +208,7 @@ function DashBoard() {
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
-                                                        src={row.image}
+                                                        src={row.firstImageUrl}
                                                         alt="썸네일"
                                                         onError={(e) => {
                                                             e.target.src = "/src/assets/images/default-thumbnail.png"; // 기본 이미지 경로로 대체
