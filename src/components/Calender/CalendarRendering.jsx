@@ -332,6 +332,8 @@ const CalendarRendering = () => {
                 sx={{ height: "350px", backgroundColor: "white", color: "white" }}
             >
                 <Calendar
+                    prev2Label={null}
+                    next2Label={null}
                     calendarType="gregory"
                     formatDay={(locale, date) => date.getDate()}
                     onChange={(date) => {
@@ -360,22 +362,54 @@ const CalendarRendering = () => {
                     tileContent={({ date }) => {
                         const { hasSchedule, hasEvent, hasReserve } = checkHasScheduleOrEvent(date);
                         return (
-                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.5 }}>
-                                {hasSchedule && (
-                                    <Box
-                                        sx={{ width: 6, height: 6, backgroundColor: "#EB5757", borderRadius: "50%" }}
-                                    />
-                                )}
-                                {hasEvent && (
-                                    <Box
-                                        sx={{ width: 6, height: 6, backgroundColor: "#2F80ED", borderRadius: "50%" }}
-                                    />
-                                )}
-                                {hasReserve && (
-                                    <Box
-                                        sx={{ width: 6, height: 6, backgroundColor: "#27AE60", borderRadius: "50%" }}
-                                    />
-                                )}
+                            <Box
+                                sx={{
+                                    position: "relative",
+                                    textAlign: "center",
+                                    width: "100%",
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        left: "50%",
+                                        transform: "translate(-50%,0%)",
+                                        gap: 0.5,
+                                    }}
+                                >
+                                    {hasSchedule && (
+                                        <Box
+                                            sx={{
+                                                width: 7,
+                                                height: 7,
+                                                backgroundColor: "#EB5757",
+                                                borderRadius: "50%",
+                                            }}
+                                        />
+                                    )}
+                                    {hasEvent && (
+                                        <Box
+                                            sx={{
+                                                width: 7,
+                                                height: 7,
+                                                backgroundColor: "#2F80ED",
+                                                borderRadius: "50%",
+                                            }}
+                                        />
+                                    )}
+                                    {hasReserve && (
+                                        <Box
+                                            sx={{
+                                                width: 7,
+                                                height: 7,
+                                                backgroundColor: "#27AE60",
+                                                borderRadius: "50%",
+                                            }}
+                                        />
+                                    )}
+                                </Box>
                             </Box>
                         );
                     }}
