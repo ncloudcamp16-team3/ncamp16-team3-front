@@ -24,11 +24,11 @@ const Step4 = () => {
         try {
             const snsTypeIdNum = snsTypeId ? Number(snsTypeId) : null;
 
-            const formData = {
-                nickname: nickname,
-                snsAccountId: snsAccountId,
+            const dto = {
+                nickname,
+                snsAccountId,
                 snsTypeId: snsTypeIdNum,
-                fileId: 1, // 기본 파일
+                fileId: 1, // 기본값
 
                 pets: petDataList.map((pet) => {
                     const petPhotos = pet.petPhotos || []; // 파일 리스트
@@ -47,23 +47,29 @@ const Step4 = () => {
                         photos: petPhotos.map((photo, index) => ({
                             type: "PHOTO",
                             path: photo.name,
-                            uuid: "", // 서버에서 UUID 생성
                             thumbnail: index === mainIndex,
                         })),
                     };
                 }),
             };
 
-            console.log("📦 전송할 formData:", formData);
+            const formData = new FormData();
+            formData.append("dto", new Blob([JSON.stringify(dto)], { type: "application/json" }));
+
+            // 이미지 파일들 추출 후 append
+            petDataList.forEach((pet) => {
+                (pet.petPhotos || []).forEach((photo) => {
+                    if (photo instanceof File) {
+                        formData.append("images", photo);
+                    }
+                });
+            });
 
             // API 호출
-            const response = await fetch(`/api/auth/register`, {
+            const response = await fetch("/api/auth/register", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include", // ✅ 필수!
-                body: JSON.stringify(formData),
+                credentials: "include",
+                body: formData,
             });
 
             if (!response.ok) {
