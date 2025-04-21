@@ -68,7 +68,7 @@ const VideoPlayer = ({ fileName, postId, isWide = false }) => {
                     }
                 }}
             >
-                <source src={`/mock/PetSta/videos/${fileName}`} type="video/mp4" />
+                <source src={`${fileName}`} type="video/mp4" />
             </video>
 
             <Box

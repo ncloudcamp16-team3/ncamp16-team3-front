@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import Video from "../../assets/images/PetSta/video-icon.svg";
 import { useTheme } from "@mui/material/styles"; // 실제 경로로 변경하세요
 
-const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
+const AddPhotoSelect = ({ videoPreview, setVideoPreview, setVideoFile, goNext }) => {
     const theme = useTheme();
 
     const handleVideoChange = (e) => {
@@ -16,6 +16,8 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
                 setVideoPreview(reader.result);
             };
             reader.readAsDataURL(file);
+
+            setVideoFile(file); // 원본 파일도 저장!!
         }
     };
 

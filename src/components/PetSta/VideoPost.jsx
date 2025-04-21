@@ -11,7 +11,7 @@ const VideoPost = ({ postId, userName, userId, userPhoto, fileName, likes, comme
     useEffect(() => {
         if (fileName) {
             const video = document.createElement("video");
-            video.src = "./mock/PetSta/videos/" + fileName; // 파일 경로 또는 URL을 사용
+            video.src = fileName; // 파일 경로 또는 URL을 사용
             video.onloadedmetadata = () => {
                 const videoWidth = video.videoWidth;
                 const videoHeight = video.videoHeight;

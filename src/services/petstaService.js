@@ -20,6 +20,14 @@ export const addPhoto = async (formData) => {
     });
 };
 
+export const addVideo = async (formData) => {
+    return await instance.post(`${API_URL}/post/add/video`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};
+
 export const boardUpdate = (Board) => {
     return instance.put(`${API_URL}/update`, Board);
 };

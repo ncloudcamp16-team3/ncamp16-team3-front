@@ -57,7 +57,7 @@ const PetSta = () => {
         <Box>
             <FriendList />
             {posts.map((post) =>
-                post.fileType === "video" ? (
+                post.fileType === "VIDEO" ? (
                     <VideoPost
                         key={post.postId}
                         postId={post.postId}
