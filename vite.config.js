@@ -8,11 +8,11 @@ export default defineConfig(({ mode }) => {
             react(),
             VitePWA({
                 registerType: "autoUpdate",
-                    workbox: {
-                        cleanupOutdatedCaches: true,
-                        skipWaiting: true,
-                        clientsClaim: true,
-                    },
+                workbox: {
+                    cleanupOutdatedCaches: true,
+                    skipWaiting: true,
+                    clientsClaim: true,
+                },
                 manifest: {
                     name: "My App",
                     short_name: "App",
@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
                     : mode === "production"
                       ? {
                             "/api": {
-                                target: "http://tailfriends.kro.kr:8080",
+                                target: "https://tailfriends.kro.kr:8080",
                                 changeOrigin: true,
                                 secure: false,
                             },
