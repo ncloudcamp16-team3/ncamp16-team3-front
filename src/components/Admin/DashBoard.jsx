@@ -55,9 +55,9 @@ function DashBoard() {
     };
 
     const boardTypeMapping = {
-        "자유 게시판": 1,
-        "중고 장터": 2,
-        "정보 게시판": 3,
+        자유게시판: 1,
+        중고장터: 2,
+        정보게시판: 3,
     };
 
     const loadBoardData = async () => {
