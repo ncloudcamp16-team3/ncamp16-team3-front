@@ -210,7 +210,6 @@ const PostDetail = () => {
                                                     내용 : {comment.content}
                                                 </Typography>
                                             </Box>
-                                            <DeleteButton size="small">삭제</DeleteButton>
                                         </Stack>
                                     </CommentItem>
                                 ))}

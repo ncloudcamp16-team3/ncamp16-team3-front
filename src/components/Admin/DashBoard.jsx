@@ -22,11 +22,12 @@ function DashBoard() {
     const adminContext = useAdmin();
     const currentFilter = adminContext.currentFilter;
     const setCurrentFilter = adminContext.setCurrentFilter;
+    const page = adminContext.currentPage;
+    const setPage = adminContext.setCurrentPage;
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(0);
 
     // 각 열에 대한 스타일 객체를 미리 정의
@@ -94,7 +95,7 @@ function DashBoard() {
 
             setRows(transformedData);
             setFilteredRows(transformedData);
-            setTotalPage(response.totalPage || 0);
+            setTotalPage(response.totalPages || 0);
         } catch (error) {
             console.error("Error loading board data: " + error);
             setError("게시판 데이터를 불러오는중 오류가 발생했습니다");
@@ -262,28 +263,29 @@ function DashBoard() {
 
                 {/* 페이지네이션 */}
                 <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                    <Button sx={{ mx: 1 }} disabled={page === 0} onClick={() => handlePageChange(page - 1)}>
+                    <Button sx={{ mx: 1 }} disabled={page <= 1} onClick={() => handlePageChange(page - 1)}>
                         &lt;
                     </Button>
 
-                    {[...Array(totalPage).keys()].map((pageNum) => (
-                        <Button
-                            key={pageNum}
-                            sx={{
-                                mx: 1,
-                                backgroundColor: page === pageNum ? "#E9A260" : "transparent",
-                                color: page === pageNum ? "white" : "inherit",
-                                "&:hover": {
-                                    backgroundColor: page === pageNum ? "#E9A260" : "#f0f0f0",
-                                },
-                            }}
-                            onClick={() => handlePageChange(pageNum)}
-                        >
-                            {pageNum + 1}
-                        </Button>
-                    ))}
+                    {totalPage > 0 &&
+                        [...Array(totalPage)].map((_, index) => (
+                            <Button
+                                key={index}
+                                sx={{
+                                    mx: 1,
+                                    backgroundColor: page === index + 1 ? "#E9A260" : "transparent",
+                                    color: page === index + 1 ? "white" : "inherit",
+                                    "&:hover": {
+                                        backgroundColor: page === index + 1 ? "#E9A260" : "#f0f0f0",
+                                    },
+                                }}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </Button>
+                        ))}
 
-                    <Button sx={{ mx: 1 }} disabled={page >= totalPage - 1} onClick={() => handlePageChange(page + 1)}>
+                    <Button sx={{ mx: 1 }} disabled={page >= totalPage} onClick={() => handlePageChange(page + 1)}>
                         &gt;
                     </Button>
                 </Box>
