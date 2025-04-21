@@ -104,7 +104,7 @@ const AddPet = () => {
 
         // 이미지 추가
         const validImages = images.filter((img) => img !== null);
-        validImages.forEach((image, index) => {
+        validImages.forEach((image) => {
             formData.append("images", image);
         });
 
@@ -296,7 +296,6 @@ const AddPet = () => {
                     name="birthDate"
                     value={petData.birthDate}
                     onChange={handleChange}
-                    InputLabelProps={{ shrink: true }}
                     sx={{ mb: 2 }}
                 />
 
