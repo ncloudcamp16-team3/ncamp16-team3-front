@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import AddVideoSelect from "../../components/PetSta/AddVideoSelect.jsx";
-import AddVideoTrim from "../../components/PetSta/AddVideoTrim.jsx";
-import AddVideoDetail from "../../components/PetSta/AddVideoDetail.jsx";
+import AddVideoSelect from "../../components/PetSta/Upload/AddVideoSelect.jsx";
+import AddVideoTrim from "../../components/PetSta/Upload/AddVideoTrim.jsx";
+import AddVideoDetail from "../../components/PetSta/Upload/AddVideoDetail.jsx";
 
 const AddVideo = () => {
     const [step, setStep] = useState(1);

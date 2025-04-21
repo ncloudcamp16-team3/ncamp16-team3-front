@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, IconButton } from "@mui/material";
 import PhotoPost from "./PhotoPost.jsx";
-import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
+import LeftArrow from "../../../assets/images/Global/left-arrow-black.svg";
 import { useNavigate } from "react-router-dom";
 
 const PhotoDetail = ({ post }) => {

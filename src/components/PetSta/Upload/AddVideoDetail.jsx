@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import { Box, TextareaAutosize } from "@mui/material";
-import TitleBar from "../Global/TitleBar.jsx";
+import TitleBar from "../../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { addVideo } from "../../services/petstaService.js";
+import { addVideo } from "../../../services/petstaService.js";
 const AddVideoDetail = ({ videoData, onBack }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(true);

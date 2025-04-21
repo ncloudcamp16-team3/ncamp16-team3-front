@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Box, Button, InputBase, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import comments from "../../mock/PetSta/comments.json";
-import PostCommentItem from "../../components/PetSta/PostCommentItem.jsx";
+import PostCommentItem from "../../components/PetSta/Post/PostCommentItem.jsx";
 import { useTheme } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 

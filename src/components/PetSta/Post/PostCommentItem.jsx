@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import FriendsData from "../../mock/PetSta/friends.json";
-import CommentsData from "../../mock/PetSta/comments.json";
-import PostReplyItem from "./PostReplyItem";
-import UserIcon from "./UserIcon.jsx"; // 답글 컴포넌트 추가
+import FriendsData from "../../../mock/PetSta/friends.json";
+import CommentsData from "../../../mock/PetSta/comments.json";
+import PostReplyItem from "./PostReplyItem.jsx";
+import UserIcon from "../UserIcon.jsx"; // 답글 컴포넌트 추가
 
 const PostCommentItem = ({ comment, onReply }) => {
     const [showReplies, setShowReplies] = useState(false);

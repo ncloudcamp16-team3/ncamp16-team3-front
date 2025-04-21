@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import PhotoPost from "../../components/PetSta/PhotoPost.jsx";
-import VideoPost from "../../components/PetSta/VideoPost.jsx";
+import PhotoPost from "../../components/PetSta/Post/PhotoPost.jsx";
+import VideoPost from "../../components/PetSta/Post/VideoPost.jsx";
 import FriendList from "../../components/PetSta/FriendList.jsx";
 import { Box } from "@mui/material";
 import theme from "../../theme/theme.js";
@@ -70,6 +70,8 @@ const PetSta = () => {
                         comments={post.comments}
                         content={post.content}
                         createdAt={post.createdAt}
+                        initialLiked={post.initialLiked}
+                        initialBookmarked={post.initialBookmarked}
                         isMute={isMute}
                         toggleMute={toggleMute}
                     />
@@ -86,6 +88,8 @@ const PetSta = () => {
                         comments={post.comments}
                         content={post.content}
                         createdAt={post.createdAt}
+                        initialLiked={post.initialLiked}
+                        initialBookmarked={post.initialBookmarked}
                     />
                 )
             )}

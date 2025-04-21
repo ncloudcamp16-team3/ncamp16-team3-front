@@ -4,7 +4,19 @@ import PostProfile from "./PostProfile.jsx";
 import PostBottom from "./PostBottom.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
 
-const VideoPost = ({ postId, userName, userId, userPhoto, fileName, likes, comments, content, createdAt }) => {
+const VideoPost = ({
+    postId,
+    userName,
+    userId,
+    userPhoto,
+    fileName,
+    likes,
+    comments,
+    content,
+    createdAt,
+    initialLiked,
+    initialBookmarked,
+}) => {
     const [isWide, setIsWide] = useState(false); // 화면이 넓은지
 
     // 🔹 useMemo를 사용하여 isWide 계산 (렌더링 최소화)
@@ -61,6 +73,8 @@ const VideoPost = ({ postId, userName, userId, userPhoto, fileName, likes, comme
                 )}
             </Box>
             <PostBottom
+                initialLiked={initialLiked}
+                initialBookmarked={initialBookmarked}
                 postId={postId}
                 userName={userName}
                 content={content}

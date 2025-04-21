@@ -1,8 +1,8 @@
 import React from "react";
-import TitleBar from "../../components/Global/TitleBar.jsx";
+import TitleBar from "../../Global/TitleBar.jsx";
 import { Box } from "@mui/material";
 // 이미지 없을 때 보일 기본 아이콘 (예시로 임포트 필요)
-import Photo from "../../assets/images/PetSta/photo-icon.svg";
+import Photo from "../../../assets/images/PetSta/photo-icon.svg";
 import { useTheme } from "@mui/material/styles"; // 실제 경로로 변경하세요
 
 const AddPhotoSelect = ({ imagePreview, setImagePreview, setImageFile, goNext }) => {

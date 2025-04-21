@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import AddPhotoSelect from "../../components/PetSta/AddPhotoSelect.jsx";
-import AddPhotoDetail from "../../components/PetSta/AddPhotoDetail.jsx";
+import AddPhotoSelect from "../../components/PetSta/Upload/AddPhotoSelect.jsx";
+import AddPhotoDetail from "../../components/PetSta/Upload/AddPhotoDetail.jsx";
 
 const AddPhoto = () => {
     const [step, setStep] = useState(1);
