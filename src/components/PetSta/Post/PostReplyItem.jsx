@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import FriendsData from "../../mock/PetSta/friends.json";
-import UserIcon from "./UserIcon.jsx";
+import FriendsData from "../../../mock/PetSta/friends.json";
+import UserIcon from "../UserIcon.jsx";
 
 const PostReplyItem = ({ reply, onReply }) => {
     const user = FriendsData.find((friend) => friend.userId === reply.userId);

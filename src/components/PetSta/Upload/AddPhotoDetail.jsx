@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, TextareaAutosize } from "@mui/material";
-import TitleBar from "../Global/TitleBar.jsx";
+import TitleBar from "../../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
-import { addPhoto } from "../../services/petstaService.js";
+import { addPhoto } from "../../../services/petstaService.js";
 import { useNavigate } from "react-router-dom";
 
 const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {

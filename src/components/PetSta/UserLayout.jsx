@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useParams } from "react-router-dom";
 import UserInfo from "../../mock/PetSta/user-info.json";
-import ProfileHeader from "../../components/PetSta/ProfileHeader.jsx";
+import ProfileHeader from "./Post/ProfileHeader.jsx";
 
 const UserLayout = () => {
     const { userId } = useParams();
