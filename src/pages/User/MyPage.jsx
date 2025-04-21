@@ -3,13 +3,12 @@ import { Box, Typography, Button, Card, CardContent, IconButton, Link, Tooltip, 
 import CloseIcon from "@mui/icons-material/Close";
 import petEx from "/src/assets/images/User/pet_ex.svg";
 import sitter from "/src/assets/images/User/petsit_req.svg";
-import petsData from "../../mock/User/pet.json";
-import sitterStatusData from "../../mock/User/petsitter.json";
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
 import { Context } from "../../context/Context.jsx";
 import { useNavigate } from "react-router-dom";
 import penIcon1 from "/src/assets/images/User/pen_1.svg";
 import penIcon2 from "/src/assets/images/User/pen_2.svg";
+import axios from "axios";
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -22,44 +21,49 @@ const MyPage = () => {
     const [withdrawalInput, setWithdrawalInput] = useState("");
     const fileInputRef = useRef(null);
 
+    // 마이페이지 데이터 가져오기
     useEffect(() => {
-        setPets(petsData);
-
-        // 펫시터 상태 확인
-        const fetchSitterStatus = async () => {
+        const fetchMyPageData = async () => {
             try {
-                // 기본 상태 설정
-                setSitterStatus(sitterStatusData[0]);
+                // API 호출
+                const response = await axios.get("/api/member/mypage", {
+                    withCredentials: true,
+                });
 
-                // 로컬 스토리지에서 펫시터 등록 완료 상태와 정보 확인
-                const registrationCompleted = localStorage.getItem("petSitterRegistrationCompleted");
-                if (registrationCompleted === "true") {
-                    // 등록 정보도 함께 가져옴
-                    const sitterInfo = JSON.parse(localStorage.getItem("petSitterInfo") || "{}");
+                // 데이터 설정
+                setUser((prevUser) => ({
+                    ...prevUser,
+                    nickname: response.data.nickname,
+                    photo: response.data.profileImageUrl,
+                }));
 
-                    // 상태 업데이트
-                    setSitterStatus((prev) => ({
-                        ...prev,
-                        registered: true,
-                        age: sitterInfo.age || "20대",
-                        petType: sitterInfo.petType || "강아지",
-                        petCount: sitterInfo.petCount || "1마리",
-                        houseType: sitterInfo.houseType || "아파트",
-                        comment: sitterInfo.comment || "제 가족이라는 마음으로 돌봐드려요 ♥",
-                        image: sitterInfo.image,
-                    }));
-
-                    // 상태 확인 후 로컬 스토리지 초기화 (선택사항)
-                    // localStorage.removeItem("petSitterRegistrationCompleted");
-                    // localStorage.removeItem("petSitterInfo");
-                }
-            } catch (error) {
-                console.error("펫시터 상태 로드 오류:", error);
+                setPets(response.data.pets);
+                setSitterStatus({
+                    registered: response.data.isSitter,
+                });
+            } catch (err) {
+                console.error("마이페이지 데이터 로드 실패:", err);
             }
         };
 
-        fetchSitterStatus();
-    }, []);
+        fetchMyPageData();
+
+        // 로컬 스토리지에서 펫시터 상태 확인
+        const registrationCompleted = localStorage.getItem("petSitterRegistrationCompleted");
+        if (registrationCompleted === "true") {
+            const sitterInfo = JSON.parse(localStorage.getItem("petSitterInfo") || "{}");
+            setSitterStatus((prev) => ({
+                ...prev,
+                registered: true,
+                age: sitterInfo.age || "20대",
+                petType: sitterInfo.petType || "강아지",
+                petCount: sitterInfo.petCount || "1마리",
+                houseType: sitterInfo.houseType || "아파트",
+                comment: sitterInfo.comment || "제 가족이라는 마음으로 돌봐드려요 ♥",
+                image: sitterInfo.image,
+            }));
+        }
+    }, [setUser]);
 
     const handleEditPet = (petId) => {
         navigate(`/pet/edit/${petId}`);
@@ -76,9 +80,18 @@ const MyPage = () => {
 
     const handleWithdrawalInputChange = (e) => setWithdrawalInput(e.target.value);
 
-    const handleWithdrawal = () => {
+    const handleWithdrawal = async () => {
         if (withdrawalInput === "탈퇴합니다") {
-            console.log("회원탈퇴 처리");
+            try {
+                await axios.delete("/api/member/withdraw", {
+                    withCredentials: true,
+                });
+                alert("회원 탈퇴가 완료되었습니다.");
+                navigate("/login");
+            } catch (err) {
+                console.error("회원 탈퇴 처리 실패:", err);
+                alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
+            }
             handleCloseWithdrawalModal();
         } else {
             alert("'탈퇴합니다'를 정확히 입력해주세요.");
@@ -87,15 +100,27 @@ const MyPage = () => {
 
     const handleOpenNicknameModal = () => setOpenNicknameModal(true);
     const handleCloseNicknameModal = () => setOpenNicknameModal(false);
-    const handleNicknameSave = (newNickname) => {
-        setUser((prev) => ({ ...prev, nickname: newNickname }));
+
+    const handleNicknameSave = async (newNickname) => {
+        try {
+            const response = await axios.patch(
+                "/api/member/nickname",
+                { nickname: newNickname },
+                { withCredentials: true }
+            );
+            setUser((prev) => ({ ...prev, nickname: response.data.nickname }));
+            alert("닉네임이 성공적으로 변경되었습니다.");
+        } catch (err) {
+            console.error("닉네임 변경 실패:", err);
+            alert(err.response?.data?.error || "닉네임 변경 중 오류가 발생했습니다.");
+        }
     };
 
     const handleAddPet = () => {
         navigate("/add-pet");
     };
 
-    const handleProfilePhotoUpload = (e) => {
+    const handleProfilePhotoUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -109,6 +134,33 @@ const MyPage = () => {
             return;
         }
 
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const uploadResponse = await axios.post("/api/file/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+            });
+
+            const updateResponse = await axios.patch(
+                "/api/member/profile-image",
+                { fileId: uploadResponse.data.fileId },
+                { withCredentials: true }
+            );
+
+            setUser((prev) => ({
+                ...prev,
+                photo: updateResponse.data.profileImageUrl,
+            }));
+        } catch (err) {
+            console.error("프로필 사진 업로드 실패:", err);
+            alert("프로필 사진 업로드 중 오류가 발생했습니다.");
+        }
+
+        // 임시 미리보기
         const reader = new FileReader();
         reader.onload = (event) => {
             setUser((prev) => ({
@@ -116,7 +168,6 @@ const MyPage = () => {
                 photo: event.target.result,
             }));
         };
-
         reader.readAsDataURL(file);
     };
 
@@ -125,12 +176,21 @@ const MyPage = () => {
     };
 
     const handleSitterAction = () => {
-        if (sitterStatus.registered) {
-            // 이미 등록된 경우, 재등록 페이지로 이동
-            navigate("/petsitter-register");
-        } else {
-            // 미등록된 경우, 등록 페이지로 이동
-            navigate("/petsitter-register");
+        navigate("/petsitter-register");
+    };
+
+    const handleDeletePet = async (petId) => {
+        if (window.confirm("정말로 이 반려동물 정보를 삭제하시겠습니까?")) {
+            try {
+                await axios.delete(`/api/pet/${petId}`, {
+                    withCredentials: true,
+                });
+                setPets(pets.filter((pet) => pet.id !== petId));
+                alert("반려동물 정보가 삭제되었습니다.");
+            } catch (err) {
+                console.error("반려동물 삭제 실패:", err);
+                alert("반려동물 정보 삭제 중 오류가 발생했습니다.");
+            }
         }
     };
 
@@ -174,7 +234,7 @@ const MyPage = () => {
                     {/* 프로필 사진 */}
                     <Box sx={{ position: "relative", mr: 2 }}>
                         <Avatar
-                            src="/src/assets/images/User/profile-pic.jpg"
+                            src={user?.photo || "/src/assets/images/User/profile-pic.jpg"}
                             alt="프로필"
                             sx={{
                                 width: 60,
@@ -219,7 +279,9 @@ const MyPage = () => {
 
                     {/* 사용자 이름과 편집 버튼 */}
                     <Box display="flex" alignItems="center">
-                        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>USER1823</Typography>
+                        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>
+                            {user?.nickname || "사용자"}
+                        </Typography>
                         <IconButton size="small" onClick={handleOpenNicknameModal} sx={{ ml: 0.5, p: 0 }}>
                             <img src={penIcon2} alt="Edit" width="16" height="16" />
                         </IconButton>
@@ -265,7 +327,7 @@ const MyPage = () => {
                             <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
                                 <Box
                                     component="img"
-                                    src={petEx}
+                                    src={pet.profileImageUrl || petEx}
                                     alt={pet.name}
                                     sx={{ width: 50, height: 50, borderRadius: "50%", mr: 2, flexShrink: 0 }}
                                 />
@@ -292,11 +354,15 @@ const MyPage = () => {
                                 <Box>
                                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{pet.name}</Typography>
                                     <Typography sx={{ fontSize: "12px", color: "#999" }}>
-                                        {pet.pet_type_name} · {pet.gender} · {pet.weight}kg
+                                        {pet.pet_type_name || pet.type} · {pet.gender} · {pet.weight}kg
                                     </Typography>
                                 </Box>
                             </Box>
-                            <IconButton size="small" sx={{ color: "#ccc", p: 0.3 }}>
+                            <IconButton
+                                size="small"
+                                sx={{ color: "#ccc", p: 0.3 }}
+                                onClick={() => handleDeletePet(pet.id)}
+                            >
                                 <CloseIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                         </CardContent>
@@ -312,7 +378,7 @@ const MyPage = () => {
                 <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "90%", mx: "auto" }}>
                     <CardContent sx={{ p: 2 }}>
                         {sitterStatus.registered ? (
-                            // 등록된 펫시터의 경우 - PetSitterRegister.jsx와 유사한 형식으로 변경
+                            // 등록된 펫시터의 경우
                             <>
                                 {/* 프로필 이미지 */}
                                 <Box
@@ -472,7 +538,7 @@ const MyPage = () => {
             <NicknameEditModal
                 open={openNicknameModal}
                 onClose={handleCloseNicknameModal}
-                currentNickname={user.nickname}
+                currentNickname={user?.nickname || ""}
                 onSave={handleNicknameSave}
             />
         </Box>
