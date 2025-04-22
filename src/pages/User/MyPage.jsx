@@ -19,50 +19,47 @@ const MyPage = () => {
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
     const [openNicknameModal, setOpenNicknameModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const fileInputRef = useRef(null);
 
     // 마이페이지 데이터 가져오기
     useEffect(() => {
         const fetchMyPageData = async () => {
+            setIsLoading(true);
+            setError(null);
             try {
-                // API 호출
+                // 사용자 정보 API 호출
                 const response = await axios.get("/api/member/mypage", {
                     withCredentials: true,
                 });
 
-                // 데이터 설정
-                setUser((prevUser) => ({
-                    ...prevUser,
-                    nickname: response.data.nickname,
-                    photo: response.data.profileImageUrl,
-                }));
+                // API에서 받아온 데이터로 상태 업데이트
+                if (response.data) {
+                    setUser((prevUser) => ({
+                        ...prevUser,
+                        nickname: response.data.nickname,
+                        photo: response.data.profileImageUrl,
+                        id: response.data.userId,
+                    }));
 
-                setPets(response.data.pets);
-                setSitterStatus({
-                    registered: response.data.isSitter,
-                });
+                    setPets(response.data.pets || []);
+                    setSitterStatus({
+                        registered: response.data.isSitter,
+                    });
+                }
             } catch (err) {
                 console.error("마이페이지 데이터 로드 실패:", err);
+                setError("마이페이지 정보를 불러오는데 실패했습니다.");
+                // 오류 시 빈 데이터 설정
+                setPets([]);
+                setSitterStatus({ registered: false });
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchMyPageData();
-
-        // 로컬 스토리지에서 펫시터 상태 확인
-        const registrationCompleted = localStorage.getItem("petSitterRegistrationCompleted");
-        if (registrationCompleted === "true") {
-            const sitterInfo = JSON.parse(localStorage.getItem("petSitterInfo") || "{}");
-            setSitterStatus((prev) => ({
-                ...prev,
-                registered: true,
-                age: sitterInfo.age || "20대",
-                petType: sitterInfo.petType || "강아지",
-                petCount: sitterInfo.petCount || "1마리",
-                houseType: sitterInfo.houseType || "아파트",
-                comment: sitterInfo.comment || "제 가족이라는 마음으로 돌봐드려요 ♥",
-                image: sitterInfo.image,
-            }));
-        }
     }, [setUser]);
 
     const handleEditPet = (petId) => {
@@ -83,14 +80,39 @@ const MyPage = () => {
     const handleWithdrawal = async () => {
         if (withdrawalInput === "탈퇴합니다") {
             try {
+                // 백엔드 API 호출 - 탈퇴 처리
                 await axios.delete("/api/member/withdraw", {
                     withCredentials: true,
                 });
+
+                // 상태 및 스토리지 완전 초기화
+                setUser(null); // 컨텍스트 사용자 정보 초기화
+                setPets([]); // 펫 정보 초기화
+                setSitterStatus({}); // 펫시터 정보 초기화
+
+                // 로컬 스토리지 전체 클리어
+                localStorage.clear();
+
+                // 쿠키 삭제 시도 (주요 인증 쿠키)
+                document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
                 alert("회원 탈퇴가 완료되었습니다.");
-                navigate("/login");
+
+                // 즉시 로그인 페이지로 이동
+                window.location.href = "/login"; // navigate 대신 강제 리로드
             } catch (err) {
                 console.error("회원 탈퇴 처리 실패:", err);
-                alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
+                console.error("오류 상세 정보:", err.response?.data);
+
+                if (err.response?.status === 401) {
+                    alert("회원탈퇴 되셨습니다.");
+                    navigate("/login");
+                } else {
+                    alert(
+                        "회원 탈퇴 처리 중 오류가 발생했습니다: " +
+                            (err.response?.data?.error || err.message || "알 수 없는 오류")
+                    );
+                }
             }
             handleCloseWithdrawalModal();
         } else {
@@ -103,13 +125,18 @@ const MyPage = () => {
 
     const handleNicknameSave = async (newNickname) => {
         try {
-            const response = await axios.patch(
+            const response = await axios.put(
                 "/api/member/nickname",
                 { nickname: newNickname },
                 { withCredentials: true }
             );
-            setUser((prev) => ({ ...prev, nickname: response.data.nickname }));
-            alert("닉네임이 성공적으로 변경되었습니다.");
+
+            if (response.data && response.data.nickname) {
+                setUser((prev) => ({ ...prev, nickname: response.data.nickname }));
+                alert("닉네임이 성공적으로 변경되었습니다.");
+            } else {
+                throw new Error("닉네임 업데이트 응답 형식이 올바르지 않습니다.");
+            }
         } catch (err) {
             console.error("닉네임 변경 실패:", err);
             alert(err.response?.data?.error || "닉네임 변경 중 오류가 발생했습니다.");
@@ -134,33 +161,7 @@ const MyPage = () => {
             return;
         }
 
-        try {
-            const formData = new FormData();
-            formData.append("file", file);
-
-            const uploadResponse = await axios.post("/api/file/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                withCredentials: true,
-            });
-
-            const updateResponse = await axios.patch(
-                "/api/member/profile-image",
-                { fileId: uploadResponse.data.fileId },
-                { withCredentials: true }
-            );
-
-            setUser((prev) => ({
-                ...prev,
-                photo: updateResponse.data.profileImageUrl,
-            }));
-        } catch (err) {
-            console.error("프로필 사진 업로드 실패:", err);
-            alert("프로필 사진 업로드 중 오류가 발생했습니다.");
-        }
-
-        // 임시 미리보기
+        // 파일 미리보기
         const reader = new FileReader();
         reader.onload = (event) => {
             setUser((prev) => ({
@@ -169,6 +170,39 @@ const MyPage = () => {
             }));
         };
         reader.readAsDataURL(file);
+
+        try {
+            // FormData를 사용하여 파일 업로드
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // 파일 업로드 API 호출
+            const uploadResponse = await axios.post("/api/file/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+            });
+
+            if (uploadResponse.data && uploadResponse.data.fileId) {
+                // 프로필 이미지 업데이트 API 호출
+                const updateResponse = await axios.put(
+                    "/api/member/profile-image",
+                    { fileId: uploadResponse.data.fileId },
+                    { withCredentials: true }
+                );
+
+                if (updateResponse.data && updateResponse.data.profileImageUrl) {
+                    setUser((prev) => ({
+                        ...prev,
+                        photo: updateResponse.data.profileImageUrl,
+                    }));
+                    alert("프로필 사진이 성공적으로 업데이트되었습니다.");
+                }
+            }
+        } catch (err) {
+            console.log("사용자 프로필 이미지 URL:", user?.photo);
+        }
     };
 
     const handleProfileClick = () => {
@@ -193,6 +227,42 @@ const MyPage = () => {
             }
         }
     };
+
+    if (isLoading) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
+                <Typography>로딩 중...</Typography>
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "80vh",
+                }}
+            >
+                <Typography color="error" sx={{ mb: 2 }}>
+                    {error}
+                </Typography>
+                <Button
+                    variant="contained"
+                    onClick={() => window.location.reload()}
+                    sx={{
+                        bgcolor: "#E9A260",
+                        "&:hover": { bgcolor: "#d0905a" },
+                    }}
+                >
+                    다시 시도
+                </Button>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ width: "100%", p: 2, pb: 8 }}>
@@ -309,65 +379,100 @@ const MyPage = () => {
 
             {/* 반려동물 목록 */}
             <Box sx={{ mb: 3 }}>
-                {pets.map((pet) => (
-                    <Card
-                        key={pet.id}
-                        sx={{
-                            mb: 2,
-                            borderRadius: "12px",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-                            position: "relative",
-                            transition: "transform 0.2s ease",
-                            transform: hover[pet.id] ? "scale(1.02)" : "scale(1)",
-                        }}
-                        onMouseEnter={() => handleHoverEnter(pet.id)}
-                        onMouseLeave={() => handleHoverLeave(pet.id)}
-                    >
-                        <CardContent sx={{ display: "flex", p: 2.5, "&:last-child": { paddingBottom: 2.5 } }}>
-                            <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
-                                <Box
-                                    component="img"
-                                    src={pet.profileImageUrl || petEx}
-                                    alt={pet.name}
-                                    sx={{ width: 50, height: 50, borderRadius: "50%", mr: 2, flexShrink: 0 }}
-                                />
-                                <Tooltip title="수정하기">
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => handleEditPet(pet.id)}
+                {pets.length > 0 ? (
+                    pets.map((pet) => (
+                        <Card
+                            key={pet.id}
+                            sx={{
+                                mb: 2,
+                                borderRadius: "12px",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                                position: "relative",
+                                transition: "transform 0.2s ease",
+                                transform: hover[pet.id] ? "scale(1.02)" : "scale(1)",
+                            }}
+                            onMouseEnter={() => handleHoverEnter(pet.id)}
+                            onMouseLeave={() => handleHoverLeave(pet.id)}
+                        >
+                            <CardContent sx={{ display: "flex", p: 2.5, "&:last-child": { paddingBottom: 2.5 } }}>
+                                <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
+                                    <Box
+                                        component="img"
+                                        src={pet.profileImageUrl || petEx}
+                                        alt={pet.name}
                                         sx={{
-                                            position: "absolute",
-                                            right: 2,
-                                            bottom: 2,
-                                            background: "#f0f0f0",
-                                            width: 20,
-                                            height: 20,
-                                            p: 0.3,
-                                            opacity: hover[pet.id] ? 1 : 0.7,
+                                            width: 50,
+                                            height: 50,
+                                            borderRadius: "50%",
+                                            mr: 2,
+                                            flexShrink: 0,
+                                            objectFit: "cover",
                                         }}
-                                    >
-                                        <img src={penIcon2} alt="Edit" width="12" height="12" />
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
-                            <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-                                <Box>
-                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>{pet.name}</Typography>
-                                    <Typography sx={{ fontSize: "12px", color: "#999" }}>
-                                        {pet.pet_type_name || pet.type} · {pet.gender} · {pet.weight}kg
-                                    </Typography>
+                                    />
+                                    <Tooltip title="수정하기">
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleEditPet(pet.id)}
+                                            sx={{
+                                                position: "absolute",
+                                                right: 2,
+                                                bottom: 2,
+                                                background: "#f0f0f0",
+                                                width: 20,
+                                                height: 20,
+                                                p: 0.3,
+                                                opacity: hover[pet.id] ? 1 : 0.7,
+                                            }}
+                                        >
+                                            <img src={penIcon2} alt="Edit" width="12" height="12" />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Box>
-                            </Box>
-                            <IconButton
-                                size="small"
-                                sx={{ color: "#ccc", p: 0.3 }}
-                                onClick={() => handleDeletePet(pet.id)}
-                            >
-                                <CloseIcon sx={{ fontSize: 16 }} />
-                            </IconButton>
-                        </CardContent>
-                    </Card>
-                ))}
+                                <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+                                    <Box>
+                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
+                                            {pet.name}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: "12px", color: "#999" }}>
+                                            {pet.type} · {pet.gender} · {pet.weight}kg
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <IconButton
+                                    size="small"
+                                    sx={{ color: "#ccc", p: 0.3 }}
+                                    onClick={() => handleDeletePet(pet.id)}
+                                >
+                                    <CloseIcon sx={{ fontSize: 16 }} />
+                                </IconButton>
+                            </CardContent>
+                        </Card>
+                    ))
+                ) : (
+                    <Box sx={{ textAlign: "center", py: 4 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            등록된 반려동물이 없습니다
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            onClick={handleAddPet}
+                            sx={{
+                                mt: 2,
+                                bgcolor: "#E9A260",
+                                color: "white",
+                                "&:hover": { bgcolor: "#d0905a" },
+                                fontSize: "12px",
+                                py: 0.5,
+                                px: 1.5,
+                                borderRadius: "4px",
+                                boxShadow: "none",
+                            }}
+                        >
+                            반려동물 등록하기
+                        </Button>
+                    </Box>
+                )}
             </Box>
 
             {/* 펫시터 섹션 */}
