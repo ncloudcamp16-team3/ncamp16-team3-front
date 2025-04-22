@@ -25,6 +25,8 @@ const PhotoDetail = ({ post }) => {
                 userName={post.userName}
                 userPhoto={post.userPhoto}
                 likes={post.likes}
+                initialLiked={post.initialLiked}
+                initialBookmarked={post.initialBookmarked}
             />
         </Box>
     );

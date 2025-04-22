@@ -1,35 +1,75 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import UserIcon from "../UserIcon.jsx";
-import userData from "../../../mock/PetSta/friends.json";
+import { Context } from "../../../context/Context.jsx";
+import { toggleFollow as toggleFollowAPI } from "../../../services/memberService.js";
+import { useFollow } from "../../../context/FollowContext.jsx"; // ★ 추가
 
-const PostProfile = ({ userName, userId, isAbsolute = false }) => {
-    console.log(userId);
-    const userInfo = userData.find((u) => u.userId === Number(userId));
+const PostProfile = ({ userName, userId, userPhoto, isView, isAbsolute = false }) => {
+    const { user } = useContext(Context);
+    const { followMap, toggleFollow } = useFollow(); // ★ 추가
+    console.log(followMap);
+    const isFollow = followMap[userId] || false; // ★ followMap에서 follow 여부 가져옴
 
-    console.log("userInfo", userInfo);
+    const userInfo = {
+        userName,
+        userId,
+        userPhoto,
+        isView,
+    };
+
+    const handleFollowClick = async () => {
+        try {
+            await toggleFollow(userId); // context 상태 변경
+            await toggleFollowAPI(userId); // 서버 요청
+        } catch (error) {
+            console.error("팔로우 실패", error);
+        }
+    };
+
     return (
         <Box
             sx={{
+                justifyContent: "space-between",
                 display: "flex",
                 alignItems: "center",
                 padding: "8px",
                 position: isAbsolute ? "absolute" : "static",
-                top: isAbsolute ? 10 : "auto",
-                left: isAbsolute ? 10 : "auto",
-                zIndex: isAbsolute ? 1 : "auto", // 비디오 위로 올리기 위한 설정
+                top: isAbsolute ? 5 : "auto",
+                left: isAbsolute ? 0 : "auto",
+                zIndex: isAbsolute ? 1 : "auto",
+                width: "100%",
             }}
         >
-            <UserIcon userInfo={userInfo} />
-            <Typography
-                sx={{
-                    color: isAbsolute ? "white" : "inherit", // 색상 다르게 설정
-                    marginLeft: 1,
-                    fontWeight: "bold",
-                }}
-            >
-                {userName}
-            </Typography>
+            <Box display="flex" alignItems="center">
+                <UserIcon userInfo={userInfo} />
+                <Typography
+                    sx={{
+                        color: isAbsolute ? "white" : "inherit",
+                        marginLeft: 1,
+                        fontWeight: "bold",
+                    }}
+                >
+                    {userName}
+                </Typography>
+            </Box>
+            {user.id !== userId && (
+                <Box
+                    border="1px solid"
+                    borderColor={isAbsolute ? "white" : "inherit"}
+                    borderRadius={1}
+                    paddingX={1}
+                    paddingY={0.2}
+                    textAlign="center"
+                    onClick={handleFollowClick}
+                    sx={{
+                        color: isAbsolute ? "white" : "inherit",
+                        cursor: "pointer",
+                    }}
+                >
+                    {isFollow ? "팔로잉" : "팔로우"}
+                </Box>
+            )}
         </Box>
     );
 };

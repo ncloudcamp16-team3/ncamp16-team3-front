@@ -17,7 +17,7 @@ export function Provider({ children }) {
     const [user, setUser] = useState({
         name: "USER1823",
         photo: "haribo.jpg",
-        id: 3212,
+        id: 1,
     });
     const [boardType, setBoardType] = useState({
         id: 1,
