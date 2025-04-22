@@ -167,7 +167,7 @@ const Layout = ({ children }) => {
         } else if (index === 3) {
             navigate("/admin/petsitter/list");
         } else if (index === 4) {
-            navigate("/admin/petsitter/apply");
+            navigate("/admin/petsitter/pending");
         } else if (index === 5) {
             navigate("/admin/facility/list");
         } else if (index === 6) {
