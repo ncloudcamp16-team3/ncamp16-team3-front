@@ -2,38 +2,46 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import LeftArrow from "../../../assets/images/Global/left-arrow-white.svg";
 import UserIcon from "../UserIcon.jsx";
-import PetstaHeart from "../../../assets/images/PetSta/petsta-heart-white.svg";
-import PetstaBookmark from "../../../assets/images/PetSta/petsta-bookmark-white.svg";
 import PetstaComment from "../../../assets/images/PetSta/petsta-comment-white.svg";
 import { Context } from "../../../context/Context.jsx";
 import AudioOff from "../../../assets/images/PetSta/audio-off.png";
 import AudioOn from "../../../assets/images/PetSta/audio-on.png";
 import { useNavigate } from "react-router-dom";
+import BookmarkButton from "./BookmarkButton.jsx";
+import LikeButton from "./LikeButton.jsx";
+import FollowButton from "./FollowButton.jsx";
 
 const VideoDetail = ({ post, currentTime = 0 }) => {
     const [isExpended, setIsExpended] = useState(false);
-    const [likeCount, setLikeCount] = useState("");
-    const [commentCount, setCommentCount] = useState("");
+    const [likeCount, setLikeCount] = useState(post.likes); // 숫자
+    const [likeCountDisplay, setLikeCountDisplay] = useState(""); // 문자열
+    const [commentCount, setCommentCount] = useState(post.comments); // 숫자
+    const [commentCountDisplay, setCommentCountDisplay] = useState(""); // 문자열
     const [showIcon, setShowIcon] = useState(false);
+
     const videoRef = useRef(null);
-    const { isMute, toggleMute } = useContext(Context);
+    const { isMute, toggleMute, user } = useContext(Context);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (post.likes >= 10000) {
-            setLikeCount((post.likes / 10000).toFixed(1) + "만");
-        } else {
-            setLikeCount(post.likes.toString());
-        }
-    }, [post.likes]);
+    const handleLikeChange = (newLiked) => {
+        setLikeCount((prev) => (newLiked ? prev + 1 : prev - 1));
+    };
 
     useEffect(() => {
-        if (post.comments >= 10000) {
-            setCommentCount((post.comments / 10000).toFixed(1) + "만");
+        if (likeCount >= 10000) {
+            setLikeCountDisplay((likeCount / 10000).toFixed(1) + "만");
         } else {
-            setCommentCount(post.comments.toString());
+            setLikeCountDisplay(likeCount.toString());
         }
-    }, [post.comments]);
+    }, [likeCount]);
+
+    useEffect(() => {
+        if (commentCount >= 10000) {
+            setCommentCountDisplay((commentCount / 10000).toFixed(1) + "만");
+        } else {
+            setCommentCountDisplay(commentCount.toString());
+        }
+    }, [commentCount]);
 
     useEffect(() => {
         if (videoRef.current) {
@@ -62,6 +70,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
 
     return (
         <Box height="92vh" backgroundColor="black" display="flex" alignItems="center" position="relative">
+            {/* 음소거 아이콘 */}
             {showIcon && (
                 <Box
                     position="absolute"
@@ -79,6 +88,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                     <img src={isMute ? AudioOff : AudioOn} width="25px" height="25px" />
                 </Box>
             )}
+            {/* 상단 뒤로가기 */}
             <Box
                 position="absolute"
                 top={0}
@@ -96,23 +106,12 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                 </IconButton>
                 동영상
             </Box>
+            {/* 하단 유저 정보 및 게시글 */}
             <Box position="absolute" bottom="0px" left="0" color="white" zIndex="100" padding="15px">
                 <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <UserIcon userInfo={post} />
                     <Typography fontWeight="bold">{post.userName}</Typography>
-                    <Box
-                        border="1px solid #FFFFFF"
-                        borderRadius="10px"
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        width="60px"
-                        height="30px"
-                    >
-                        <Typography fontSize="12px" fontWeight="bold">
-                            팔로우
-                        </Typography>
-                    </Box>
+                    {user.id !== post.userId && <FollowButton isWhite={true} userId={post.userId} />}
                 </Box>
                 <Typography
                     component="span"
@@ -123,26 +122,34 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                     {isExpended ? renderContent(post.content) : shortContent}
                 </Typography>
             </Box>
+            {/* 좋아요, 댓글, 북마크 */}
             <Box position="absolute" right="5px" bottom="50px" color="white" zIndex="999">
                 <Box display="flex" flexDirection="column" alignItems="center" width="50px">
-                    <Box>
-                        <img src={PetstaHeart} width="32px" height="32px" />
-                    </Box>
-                    {post.likes > 0 && <Typography>{likeCount}</Typography>}
-                    <Box
-                        mt={1}
-                        onClick={() => {
-                            navigate(`/petsta/post/comment/${post.postId}`);
-                        }}
-                    >
+                    <LikeButton
+                        postId={post.postId}
+                        initialLiked={post.initialLiked}
+                        onLikeChange={handleLikeChange}
+                        isWhite={true}
+                        width={32}
+                    />
+                    {likeCount > 0 && <Typography>{likeCountDisplay}</Typography>}
+
+                    <Box mt={1} onClick={() => navigate(`/petsta/post/comment/${post.postId}`)}>
                         <img src={PetstaComment} width="32px" height="32px" />
                     </Box>
-                    {post.comments > 0 && <Typography>{commentCount}</Typography>}
+                    {commentCount > 0 && <Typography>{commentCountDisplay}</Typography>}
+
                     <Box mt={1} mb={1}>
-                        <img src={PetstaBookmark} width="32px" height="32px" />
+                        <BookmarkButton
+                            initialBookmarked={post.initialBookmarked}
+                            postId={post.postId}
+                            isWhite={true}
+                            width={32}
+                        />
                     </Box>
                 </Box>
             </Box>
+            {/* 비디오 */}
             <video
                 onClick={handleClick}
                 ref={videoRef}
@@ -156,7 +163,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                 autoPlay
                 loop
             >
-                <source src={`/mock/PetSta/videos/${post.fileName}`} type="video/mp4" />
+                <source src={`${post.fileName}`} type="video/mp4" />
             </video>
         </Box>
     );

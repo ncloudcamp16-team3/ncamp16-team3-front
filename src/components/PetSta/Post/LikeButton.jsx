@@ -1,34 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, keyframes } from "@mui/material";
 import PetStaHeart from "../../../assets/images/PetSta/petsta-heart.svg";
+import PetStaHeartWhite from "../../../assets/images/PetSta/petsta-heart-white.svg";
 import PetStaHeartFilled from "../../../assets/images/PetSta/petsta-heart-filled.svg";
 import { toggleLike } from "../../../services/petstaService.js";
 
-const LikeButton = ({ initialLiked, likes, postId }) => {
-    const [likeCount, setLikeCount] = useState(likes);
+const LikeButton = ({ postId, initialLiked, onLikeChange, isWhite = false, width = 24 }) => {
     const [liked, setLiked] = useState(initialLiked);
     const [heartAnimation, setHeartAnimation] = useState(false);
-    const [likeCountDisplay, setLikeCountDisplay] = useState("");
 
     const handleLikeClick = async () => {
         try {
             await toggleLike(postId);
-            setLiked((prev) => !prev);
-            setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+            const newLiked = !liked; // 현재 liked 기반으로 반전
+            setLiked(newLiked);
+            onLikeChange?.(newLiked); // **바뀐 값**으로 부모에게 알림
             setHeartAnimation(true);
             setTimeout(() => setHeartAnimation(false), 300);
         } catch (error) {
             console.error("좋아요 실패", error);
         }
     };
-
-    useEffect(() => {
-        if (likeCount >= 10000) {
-            setLikeCountDisplay((likeCount / 10000).toFixed(1) + "만");
-        } else {
-            setLikeCountDisplay(likeCount.toString());
-        }
-    }, [likeCount]);
 
     const heartBeat = keyframes`
         0% { transform: scale(1); }
@@ -37,21 +29,17 @@ const LikeButton = ({ initialLiked, likes, postId }) => {
     `;
 
     return (
-        <Box sx={{ padding: 1, display: "flex", alignItems: "center" }}>
-            <Box
-                component="img"
-                src={liked ? PetStaHeartFilled : PetStaHeart}
-                alt="Like Icon"
-                onClick={handleLikeClick}
-                sx={{
-                    width: 24,
-                    height: 24,
-                    cursor: "pointer",
-                    animation: heartAnimation ? `${heartBeat} 0.3s ease` : "none",
-                }}
-            />
-            <Box sx={{ marginLeft: 1 }}>{likeCountDisplay}</Box>
-        </Box>
+        <Box
+            component="img"
+            src={liked ? PetStaHeartFilled : isWhite ? PetStaHeartWhite : PetStaHeart}
+            alt="Like Icon"
+            onClick={handleLikeClick}
+            sx={{
+                width: width,
+                cursor: "pointer",
+                animation: heartAnimation ? `${heartBeat} 0.3s ease` : "none",
+            }}
+        />
     );
 };
 

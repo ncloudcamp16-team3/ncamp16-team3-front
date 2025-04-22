@@ -12,6 +12,16 @@ export const getPostLists = () => {
         });
 };
 
+export const getPostById = (postId) => {
+    return instance
+        .get(`${API_URL}/post/${postId}`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("게시글을 불러오는 데 실패했습니다.", error);
+            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
+        });
+};
+
 export const addPhoto = async (formData) => {
     return await instance.post(`${API_URL}/post/add/photo`, formData, {
         headers: {
@@ -46,10 +56,6 @@ export const toggleBookmark = (postId) => {
             console.error("북마크 토글에 실패했습니다.", error);
             throw error;
         });
-};
-
-export const boardUpdate = (Board) => {
-    return instance.put(`${API_URL}/update`, Board);
 };
 
 export const boardDelete = (idx) => {
