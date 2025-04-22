@@ -66,11 +66,7 @@ const Step4 = () => {
             });
 
             // API 호출
-
-            const isLocal = window.location.hostname === "localhost";
-            const base = isLocal ? "http://localhost:8080" : "https://tailfriends.kro.kr";
-
-            const response = await fetch(`${base}/api/auth/register`, {
+            const response = await fetch("/api/auth/register", {
                 method: "POST",
                 credentials: "include",
                 body: formData,

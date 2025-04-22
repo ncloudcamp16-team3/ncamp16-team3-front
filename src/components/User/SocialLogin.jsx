@@ -7,17 +7,9 @@ import NaverLogo from "../../assets/images/User/naver-logo2.png";
 import GoogleLogo from "../../assets/images/User/google-logo.svg";
 
 const SocialLogin = () => {
-    // const handleOAuthLogin = (provider) => {
-    //     // ✅ 리다이렉트 방식으로 이동
-    //     window.location.href = `/api/oauth2/authorization/${provider}`;
-    // };
-
-    const isLocal = window.location.hostname === "localhost";
-    const base = isLocal ? "http://localhost:8080" : "https://tailfriends.kro.kr";
-
     const handleOAuthLogin = (provider) => {
         // ✅ 리다이렉트 방식으로 이동
-        window.location.href = `${base}/api/oauth2/authorization/${provider}`;
+        window.location.href = `/api/oauth2/authorization/${provider}`;
     };
 
     return (
