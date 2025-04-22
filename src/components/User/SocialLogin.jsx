@@ -38,7 +38,7 @@ const SocialLogin = () => {
 
             <Box width="90%" display="flex" flexDirection="column" alignItems="center" gap={2}>
                 <Button
-                    variant="contained"
+                    variant="outlined"
                     onClick={() => handleOAuthLogin("kakao")}
                     sx={{
                         backgroundColor: "#FEE500",
@@ -64,7 +64,7 @@ const SocialLogin = () => {
                 </Button>
 
                 <Button
-                    variant="contained"
+                    variant="outlined"
                     onClick={() => handleOAuthLogin("naver")}
                     sx={{
                         backgroundColor: "#00C300",
@@ -90,7 +90,7 @@ const SocialLogin = () => {
                 </Button>
 
                 <Button
-                    variant="contained"
+                    variant="outlined"
                     onClick={() => handleOAuthLogin("google")}
                     sx={{
                         backgroundColor: "#FFFFFF",

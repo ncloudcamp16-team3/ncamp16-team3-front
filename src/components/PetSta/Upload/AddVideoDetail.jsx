@@ -1,10 +1,15 @@
 import React, { useRef, useState } from "react";
 import { Box, TextareaAutosize } from "@mui/material";
-import TitleBar from "../Global/TitleBar.jsx";
+import TitleBar from "../../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { addVideo } from "../../../services/petstaService.js";
 const AddVideoDetail = ({ videoData, onBack }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(true);
+    const [content, setContent] = useState(""); // ← 내용 저장
+    const theme = useTheme();
+    const navigate = useNavigate(); // ← 이동용
 
     const handleVideoClick = () => {
         const video = videoRef.current;
@@ -22,7 +27,26 @@ const AddVideoDetail = ({ videoData, onBack }) => {
             setIsPlaying(true);
         }
     };
-    const theme = useTheme();
+
+    const handleShare = async () => {
+        console.log(videoData.file);
+        try {
+            const formData = new FormData();
+            formData.append("content", content);
+            formData.append("video", videoData.file); // videoData에 file 있어야 함
+            formData.append("trimStart", videoData.trimStart);
+            formData.append("trimEnd", videoData.trimEnd);
+
+            await addVideo(formData);
+
+            alert("동영상이 업로드되었습니다!");
+            navigate("/petsta");
+        } catch (error) {
+            console.error(error);
+            alert("업로드 실패!");
+        }
+    };
+
     return (
         <Box>
             <TitleBar name="동영상 업로드" onBack={onBack} />
@@ -75,6 +99,8 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                 <TextareaAutosize
                     minRows={8}
                     placeholder="내용을 적어주세요"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                     style={{
                         width: "100%",
                         padding: "12px",
@@ -98,6 +124,8 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                 color="white"
                 fontSize="18px"
                 fontWeight="bold"
+                onClick={handleShare}
+                sx={{ cursor: "pointer" }}
             >
                 공유
             </Box>

@@ -81,7 +81,7 @@ const PetSitterApply = () => {
                 onSearch={handleSearch}
                 onFilterChange={handleFilterChange}
                 selectedFilter={currentFilter}
-                filters={["자유 게시판", "질문 게시판", "정보 게시판", "중고장터"]}
+                filters={["자유 게시판", "중고 장터", "정보 게시판"]}
             />
             <Box sx={{ p: 3, maxWidth: "90%", mx: "auto", ml: 50, mr: 5 }}>
                 <Card sx={{ borderRadius: 2, border: "1px solid #cccccc", boxShadow: 0, mt: 5 }}>

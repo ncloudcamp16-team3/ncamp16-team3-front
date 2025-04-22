@@ -1,19 +1,20 @@
 import React from "react";
-import TitleBar from "../../components/Global/TitleBar.jsx";
+import TitleBar from "../../Global/TitleBar.jsx";
 import { Box } from "@mui/material";
 // 이미지 없을 때 보일 기본 아이콘 (예시로 임포트 필요)
-import Video from "../../assets/images/PetSta/video-icon.svg";
+import Photo from "../../../assets/images/PetSta/photo-icon.svg";
 import { useTheme } from "@mui/material/styles"; // 실제 경로로 변경하세요
 
-const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
+const AddPhotoSelect = ({ imagePreview, setImagePreview, setImageFile, goNext }) => {
     const theme = useTheme();
 
-    const handleVideoChange = (e) => {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setImageFile(file); // 파일 저장
             const reader = new FileReader();
             reader.onloadend = () => {
-                setVideoPreview(reader.result);
+                setImagePreview(reader.result); // 프리뷰 저장
             };
             reader.readAsDataURL(file);
         }
@@ -21,9 +22,10 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
 
     return (
         <Box position="relative">
-            <TitleBar name="동영상 업로드" />
+            <TitleBar name="사진 업로드" />
 
-            {videoPreview ? (
+            {imagePreview ? (
+                // 이미지가 업로드된 상태
                 <Box
                     width="88%"
                     height="70vh"
@@ -33,36 +35,39 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
                     alignItems="center"
                     position="relative"
                 >
-                    <Box overflow="hidden" minHeight="20%" maxHeight="60vh" minWidth="20%" position="relative">
+                    <Box
+                        overflow="hidden"
+                        minHeight="20%"
+                        minWidth="20%"
+                        borderRadius="25px"
+                        position="relative"
+                        sx={{}}
+                    >
                         <input
                             type="file"
                             id="fileUpload"
-                            accept="video/*"
-                            onChange={handleVideoChange}
-                            style={{ display: "none" }}
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: "none" }} // 완전히 숨김
                         />
 
                         <label htmlFor="fileUpload">
                             <Box
-                                width="100%"
-                                minHeight="66vh"
-                                maxHeight="66vh"
-                                display="flex"
-                                justifyContent="center"
-                                m="0 auto"
-                                bgcolor="white"
+                                sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    borderRadius: "20px",
+                                    overflow: "hidden",
+                                    cursor: "pointer", // 여기서 커서 처리 가능
+                                }}
                             >
-                                <video
-                                    src={videoPreview}
-                                    autoPlay
-                                    controls={false}
-                                    loop
-                                    muted
+                                <img
+                                    src={imagePreview}
+                                    alt="preview"
                                     style={{
                                         width: "100%",
-                                        height: "auto",
+                                        height: "100%",
                                         objectFit: "contain",
-                                        borderRadius: "20px",
                                     }}
                                 />
                             </Box>
@@ -70,6 +75,7 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
                     </Box>
                 </Box>
             ) : (
+                // 업로드 전 상태
                 <Box
                     width="88%"
                     height="70vh"
@@ -83,15 +89,15 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
                     position="relative"
                     overflow="hidden"
                 >
-                    <img src={Video} alt="video-icon" />
+                    <img src={Photo} alt="photo-icon" />
                     <Box marginTop="20px" fontWeight="bold">
-                        동영상을 업로드 하세요
+                        사진을 업로드 하세요
                     </Box>
 
                     <input
                         type="file"
-                        accept="video/*"
-                        onChange={handleVideoChange}
+                        accept="image/*"
+                        onChange={handleImageChange}
                         style={{
                             position: "absolute",
                             width: "100%",
@@ -118,10 +124,10 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, goNext }) => {
                 fontWeight="bold"
                 sx={{
                     color: "white",
-                    bgcolor: videoPreview ? theme.brand3 : "#D9D9D9",
-                    cursor: videoPreview ? "pointer" : "default",
+                    bgcolor: imagePreview ? theme.brand3 : "#D9D9D9",
+                    cursor: imagePreview ? "pointer" : "default",
                 }}
-                onClick={videoPreview ? goNext : undefined}
+                onClick={imagePreview ? goNext : undefined}
             >
                 다음
             </Box>

@@ -1,8 +1,8 @@
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import posts from "../../mock/PetSta/posts.json";
-import VideoDetail from "../../components/PetSta/VideoDetail.jsx";
-import PhotoDetail from "../../components/PetSta/PhotoDetail.jsx";
+import VideoDetail from "../../components/PetSta/Post/VideoDetail.jsx";
+import PhotoDetail from "../../components/PetSta/Post/PhotoDetail.jsx";
 
 const PostDetail = () => {
     const { postId } = useParams();

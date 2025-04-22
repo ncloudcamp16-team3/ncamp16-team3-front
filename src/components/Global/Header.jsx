@@ -48,6 +48,7 @@ const Header = () => {
                 credentials: "include",
             });
             setIsLoggedIn(false);
+            window.location.reload();
         } catch (err) {
             console.error("로그아웃 실패", err);
         } finally {

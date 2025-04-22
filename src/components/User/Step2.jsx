@@ -169,14 +169,14 @@ const Step2 = () => {
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
                     <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
                         <>
-                            몸무게를 입력해 주세요 <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
+                            몸무게를 입력해 주세요(kg) <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
                         </>
                     </InputLabel>
                     <Input
                         required
                         id="petWeight"
                         name="petWeight"
-                        placeholder="몸무게를 입력해 주세요"
+                        placeholder="몸무게를 입력해 주세요(kg)"
                         value={formData.petWeight}
                         onChange={handleChange}
                     />

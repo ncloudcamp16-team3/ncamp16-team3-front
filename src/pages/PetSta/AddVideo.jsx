@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import AddVideoSelect from "../../components/PetSta/AddVideoSelect.jsx";
-import AddVideoTrim from "../../components/PetSta/AddVideoTrim.jsx";
-import AddVideoDetail from "../../components/PetSta/AddVideoDetail.jsx";
+import AddVideoSelect from "../../components/PetSta/Upload/AddVideoSelect.jsx";
+import AddVideoTrim from "../../components/PetSta/Upload/AddVideoTrim.jsx";
+import AddVideoDetail from "../../components/PetSta/Upload/AddVideoDetail.jsx";
 
 const AddVideo = () => {
     const [step, setStep] = useState(1);
     const [videoPreview, setVideoPreview] = useState(null);
-    const [trimmedData, setTrimmedData] = useState(null); // trimStart, trimEnd 포함
+    const [videoFile, setVideoFile] = useState(null); // ← 파일 추가
+    const [trimmedData, setTrimmedData] = useState(null);
 
     return (
         <>
@@ -14,6 +15,7 @@ const AddVideo = () => {
                 <AddVideoSelect
                     videoPreview={videoPreview}
                     setVideoPreview={setVideoPreview}
+                    setVideoFile={setVideoFile} // ← 추가
                     goNext={() => setStep(2)}
                 />
             )}
@@ -23,7 +25,10 @@ const AddVideo = () => {
                     videoPreview={videoPreview}
                     onBack={() => setStep(1)}
                     onNext={(data) => {
-                        setTrimmedData(data);
+                        setTrimmedData({
+                            ...data,
+                            file: videoFile, // ← file도 같이 넘기기!!
+                        });
                         setStep(3);
                     }}
                 />

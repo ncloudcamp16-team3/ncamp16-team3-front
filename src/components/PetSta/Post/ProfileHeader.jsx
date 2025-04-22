@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
+import LeftArrow from "../../../assets/images/Global/left-arrow-black.svg";
 import { useNavigate } from "react-router-dom";
 
 const ProfileHeader = ({ userName }) => {

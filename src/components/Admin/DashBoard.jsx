@@ -15,26 +15,30 @@ import {
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { fetchBoards } from "./AdminBoardApi.js";
+import { useAdmin } from "./AdminContext.jsx";
 
 function DashBoard() {
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentFilter, setCurrentFilter] = useState("자유 게시판");
+    const adminContext = useAdmin();
+    const currentFilter = adminContext.currentFilter;
+    const setCurrentFilter = adminContext.setCurrentFilter;
+    const page = adminContext.currentPage;
+    const setPage = adminContext.setCurrentPage;
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
 
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
-        id: { width: 80, minWidth: 80, maxWidth: 80 },
-        title: { width: 200, minWidth: 200, maxWidth: 200 },
+        id: { width: 50, minWidth: 50, maxWidth: 50 },
+        title: { width: 150, minWidth: 150, maxWidth: 150 },
         image: { width: 100, minWidth: 100, maxWidth: 100 },
         content: { width: 350, minWidth: 350, maxWidth: 350 },
-        authorNickname: { width: 80, minWidth: 80, maxWidth: 80 },
-        likeCount: { width: 80, minWidth: 80, maxWidth: 80 },
-        date: { width: 200, minWidth: 200, maxWidth: 200 },
+        authorNickname: { width: 100, minWidth: 100, maxWidth: 100 },
+        likeCount: { width: 100, minWidth: 100, maxWidth: 100 },
+        date: { width: 100, minWidth: 100, maxWidth: 100 },
     };
 
     // 공통 스타일 (텍스트 오버플로우 처리)
@@ -51,9 +55,9 @@ function DashBoard() {
     };
 
     const boardTypeMapping = {
-        "자유 게시판": 1,
-        "중고 장터": 2,
-        "정보 게시판": 3,
+        자유게시판: 1,
+        중고장터: 2,
+        정보게시판: 3,
     };
 
     const loadBoardData = async () => {
@@ -61,27 +65,37 @@ function DashBoard() {
             setLoading(true);
             setError(null);
 
+            // console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
+
             const boardTypeId = boardTypeMapping[currentFilter];
-            const response = await fetchBoards(page, 10, boardTypeId);
+            const apiPage = Math.max(0, page - 1);
+            const response = await fetchBoards(apiPage, 10, boardTypeId);
+
+            // console.log("API Response: " + response);
+
+            //데이터가 있는지 확인
+            if (!response || !response.content) {
+                console.warn("API 응답에 데이터가 없습니다: " + response);
+                setRows([]);
+                setFilteredRows([]);
+                setTotalPage(0);
+                return;
+            }
 
             // API 응답 가공
-            const transformApiResponse = (apiData) => {
-                return apiData.map((item) => ({
-                    id: item.id,
-                    title: item.title,
-                    content: item.content,
-                    author: item.authorNickname,
-                    image: item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0].url : null,
-                    likeCount: item.likeCount,
-                    date: new Date(item.createdAt().toLocaleString()),
-                }));
-            };
+            const transformedData = response.content.map((item) => ({
+                id: item.id,
+                title: item.title,
+                content: item.content,
+                authorNickname: item.authorNickname,
+                image: item.firstImageUrl,
+                likeCount: item.likeCount,
+                date: new Date(item.createdAt).toLocaleString(),
+            }));
 
-            // API 호출 결과 반환 및 업데이트
-            const transformData = transformApiResponse(response.content || []);
-            setRows(transformData);
-            setFilteredRows(transformData);
-            setTotalPage(response.totalPage || 0);
+            setRows(transformedData);
+            setFilteredRows(transformedData);
+            setTotalPage(response.totalPages || 0);
         } catch (error) {
             console.error("Error loading board data: " + error);
             setError("게시판 데이터를 불러오는중 오류가 발생했습니다");
@@ -117,7 +131,7 @@ function DashBoard() {
         setCurrentFilter(filter);
         // 실제 필터링 로직 구현
         console.log(`필터 변경: ${filter}`);
-        setPage(0);
+        setPage(1);
     };
 
     // 페이지 변경 핸들러
@@ -127,12 +141,7 @@ function DashBoard() {
 
     return (
         <Layout>
-            <AdminHeader
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-                selectedFilter={currentFilter}
-                filters={["자유 게시판", "중고장터", "질문 게시판"]}
-            />
+            <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />
 
             {/* 로딩 상태 표시 */}
             {loading && (
@@ -141,7 +150,7 @@ function DashBoard() {
                 </Box>
             )}
 
-            {/* 예약 메시지 표시 */}
+            {/* 에러 메시지 표시 */}
             {error && (
                 <Alert severity="error" sx={{ my: 2 }}>
                     {error}
@@ -190,16 +199,16 @@ function DashBoard() {
                                                 {row.id}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
-                                                {row.image && row.image.length > 0 ? (
+                                                {row.firstImageUrl ? (
                                                     <Box
                                                         component="img"
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 100,
+                                                            width: 100,
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
-                                                        src={row.image}
+                                                        src={row.firstImageUrl}
                                                         alt="썸네일"
                                                         onError={(e) => {
                                                             e.target.src = "/src/assets/images/default-thumbnail.png"; // 기본 이미지 경로로 대체
@@ -236,13 +245,13 @@ function DashBoard() {
                                                 {row.likeCount}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>
-                                                {new Date(row.createdAt).toLocaleString()}
+                                                {row.date}
                                             </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} align="center">
+                                        <TableCell colSpan={7} align="center">
                                             게시글이 없습니다.
                                         </TableCell>
                                     </TableRow>
@@ -254,28 +263,29 @@ function DashBoard() {
 
                 {/* 페이지네이션 */}
                 <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                    <Button sx={{ mx: 1 }} disabled={page === 0} onClick={() => handlePageChange(page - 1)}>
+                    <Button sx={{ mx: 1 }} disabled={page <= 1} onClick={() => handlePageChange(page - 1)}>
                         &lt;
                     </Button>
 
-                    {[...Array(totalPage).keys()].map((pageNum) => (
-                        <Button
-                            key={pageNum}
-                            sx={{
-                                mx: 1,
-                                backgroundColor: page === pageNum ? "#E9A260" : "transparent",
-                                color: page === pageNum ? "white" : "inherit",
-                                "&:hover": {
-                                    backgroundColor: page === pageNum ? "#E9A260" : "#f0f0f0",
-                                },
-                            }}
-                            onClick={() => handlePageChange(pageNum)}
-                        >
-                            {pageNum + 1}
-                        </Button>
-                    ))}
+                    {totalPage > 0 &&
+                        [...Array(totalPage)].map((_, index) => (
+                            <Button
+                                key={index}
+                                sx={{
+                                    mx: 1,
+                                    backgroundColor: page === index + 1 ? "#E9A260" : "transparent",
+                                    color: page === index + 1 ? "white" : "inherit",
+                                    "&:hover": {
+                                        backgroundColor: page === index + 1 ? "#E9A260" : "#f0f0f0",
+                                    },
+                                }}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </Button>
+                        ))}
 
-                    <Button sx={{ mx: 1 }} disabled={page >= totalPage - 1} onClick={() => handlePageChange(page + 1)}>
+                    <Button sx={{ mx: 1 }} disabled={page >= totalPage} onClick={() => handlePageChange(page + 1)}>
                         &gt;
                     </Button>
                 </Box>

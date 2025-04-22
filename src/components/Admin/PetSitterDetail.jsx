@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"; // React Router 사용 가정
-import { Box, Typography, Card, Button, Grid, CardContent } from "@mui/material";
+import { Box, Card, Button, Grid, CardContent, CircularProgress, Alert, Typography } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
-import petSitterData from "../../mock/Admin/petsitter.json";
+import { useAdmin } from "./AdminContext.jsx";
+import { fetchPetSitterDetail } from "./AdminPetSitterApi.js";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value }) => (
@@ -15,15 +16,15 @@ const TableRow = ({ label, value }) => (
 const PetSitterDetail = () => {
     // 라우터에서 ID 파라미터 가져오기
     const { id } = useParams();
-    const petSitterId = parseInt(id);
-
-    // 상태 관리를 위한 useState 선언
+    const adminContext = useAdmin();
+    const currentFilter = adminContext.currentFilter;
+    const setCurrentFilter = adminContext.setCurrentFilter;
     const [petSitter, setPetSitter] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentFilter, setCurrentFilter] = useState("자유 게시판");
     const [filteredRows, setFilteredRows] = useState([]);
     const [rows, setRows] = useState([]);
+    const [error, setError] = useState(null);
 
     // 검색 핸들러
     const handleSearch = (term) => {
@@ -52,120 +53,157 @@ const PetSitterDetail = () => {
 
     // 컴포넌트 마운트 시 데이터 가져오기
     useEffect(() => {
-        // petSitterData가 배열인 경우
-        if (Array.isArray(petSitterData)) {
-            const selectedPetSitter = petSitterData.find((sitter) => sitter.id === petSitterId);
-            setPetSitter(selectedPetSitter);
-        } else {
-            // petSitterData가 단일 객체인 경우
-            if (petSitterData.id === petSitterId) {
-                setPetSitter(petSitterData);
-            } else {
-                setPetSitter(null);
+        const loadPetSitterDetail = async () => {
+            try {
+                setLoading(true);
+                const data = await fetchPetSitterDetail(id);
+                setPetSitter(data);
+            } catch (error) {
+                console.log("펫시터 로딩 중 오류: " + error);
+                setError("펫시터 불러오기 오류");
+            } finally {
+                setLoading(false);
             }
+        };
+        loadPetSitterDetail();
+    }, [id]);
+
+    const handleDelete = () => {
+        if (window.confirm("이 펫시터를 삭제하시겠습니까?")) {
+            console.log("펫시터 삭제");
         }
-        setLoading(false);
-    }, [petSitterId]);
-
-    if (loading) {
-        return <Typography>로딩 중...</Typography>;
-    }
-
-    if (!petSitter) {
-        return <Typography>펫시터 정보를 찾을 수 없습니다.</Typography>;
-    }
+    };
 
     return (
         <Box>
-            <AdminHeader
-                onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
-                selectedFilter={currentFilter}
-                filters={["자유 게시판", "질문 게시판", "정보 게시판", "중고장터"]}
-            />
-            <Box sx={{ p: 3, maxWidth: "90%", mx: "auto", ml: 50, mr: 5 }}>
-                <Card sx={{ borderRadius: 2, border: "1px solid #cccccc", boxShadow: 0, mt: 5 }}>
-                    <CardContent>
-                        <Grid container spacing={2}>
-                            {/* 왼쪽 - 프로필 이미지 영역 */}
-                            <Grid
-                                item
-                                xs={12}
-                                md={4}
-                                sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-                            >
-                                <Box
+            <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />
+
+            {/* 로딩 상태 표시 */}
+            {loading && (
+                <Box sx={{ display: "flex", alignItems: "center", my: 4 }}>
+                    <CircularProgress />
+                </Box>
+            )}
+
+            {/* 에러 메시지 표시 */}
+            {error && (
+                <Alert severity="error" sx={{ my: 2 }}>
+                    {error}
+                </Alert>
+            )}
+
+            {!loading && !error && petSitter && (
+                <Box sx={{ p: 3, maxWidth: "90%", mx: "auto", ml: 50, mr: 5 }}>
+                    <Card sx={{ borderRadius: 2, border: "1px solid #cccccc", boxShadow: 0, mt: 5 }}>
+                        <CardContent>
+                            <Grid container spacing={2}>
+                                {/* 왼쪽 - 프로필 이미지 영역 */}
+                                <Grid
+                                    item
+                                    xs={12}
+                                    md={4}
+                                    sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 200,
+                                            height: 200,
+                                            borderRadius: "20px",
+                                            overflow: "hidden",
+                                            backgroundColor: "#f0f0f0",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        {petSitter.imagePath ? (
+                                            <img
+                                                src={petSitter.imagePath}
+                                                alt="프로필 이미지"
+                                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                            />
+                                        ) : (
+                                            <Typography>이미지 없음</Typography>
+                                        )}
+                                    </Box>
+                                </Grid>
+                                {/* 오른쪽 - 펫시터 정보 영역 */}
+                                <Grid
                                     sx={{
-                                        width: 200,
-                                        height: 200,
-                                        borderRadius: "20px",
-                                        overflow: "hidden",
-                                        backgroundColor: "#c97b7b",
                                         display: "flex",
-                                        justifyContent: "center",
+                                        flexDirection: "column",
                                         alignItems: "center",
+                                        width: "100%",
                                     }}
                                 >
-                                    <img
-                                        src={petSitter.image}
-                                        alt="프로필 이미지"
-                                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                    />
-                                </Box>
+                                    <Box sx={{ height: "100%", width: "100%" }}>
+                                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                            <tbody style={{ width: "100%" }}>
+                                                <TableRow label="사용자 닉네임" value={petSitter.nickname} />
+                                                <TableRow
+                                                    label="펫시터 경험"
+                                                    value={petSitter.sitterExp ? "있음" : "없음"}
+                                                />
+                                                <TableRow label="연령대" value={petSitter.age} />
+                                                <TableRow
+                                                    label="반려동물"
+                                                    value={
+                                                        petSitter.grown
+                                                            ? `있음 (${petSitter.petCount || "0"}마리)`
+                                                            : "없음"
+                                                    }
+                                                />
+                                                <TableRow label="주거형태" value={petSitter.houseType} />
+                                                <TableRow label="코멘트" value={petSitter.comment || "코멘트 없음"} />
+                                                <TableRow
+                                                    label="등록일자"
+                                                    value={new Date(petSitter.createdAt).toLocaleString()}
+                                                />
+                                                <TableRow
+                                                    label="승인일자"
+                                                    value={
+                                                        petSitter.applyAt == null
+                                                            ? "승인된 적 없음"
+                                                            : new Date(petSitter.applyAt).toLocaleString()
+                                                    }
+                                                />
+                                            </tbody>
+                                        </table>
+                                    </Box>
+                                </Grid>
                             </Grid>
-
-                            {/* 오른쪽 - 펫시터 정보 영역 */}
-                            <Grid
-                                sx={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}
+                        </CardContent>
+                        {/* 버튼 영역 */}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2, gap: 2 }}>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: "#e6b17e",
+                                    "&:hover": { backgroundColor: "#d9a064" },
+                                    borderRadius: 2,
+                                    px: 4,
+                                }}
+                                onClick={() => window.history.back()}
                             >
-                                <Box sx={{ height: "100%", width: "100%" }}>
-                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                                        <tbody style={{ width: "100%" }}>
-                                            <TableRow label="사용자 닉네임" value={petSitter.sitterId} />
-                                            <TableRow label="연령대" value={petSitter.age} />
-                                            <TableRow
-                                                label="반려동물"
-                                                value={`${petSitter.grown}(${petSitter.petCount})`}
-                                            />
-                                            <TableRow label="주거형태" value={petSitter.houseType} />
-                                            <TableRow label="코멘트" value={petSitter.content} />
-                                            <TableRow label="등록일자" value={petSitter.date} />
-                                        </tbody>
-                                    </table>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </CardContent>
-
-                    {/* 버튼 영역 */}
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2, gap: 2 }}>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: "#e6b17e",
-                                "&:hover": { backgroundColor: "#d9a064" },
-                                borderRadius: 2,
-                                px: 4,
-                            }}
-                            onClick={() => window.history.back()}
-                        >
-                            뒤로
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: "#e2ccb5",
-                                "&:hover": { backgroundColor: "#d4bea7" },
-                                color: "#000",
-                                borderRadius: 2,
-                                px: 4,
-                            }}
-                        >
-                            삭제
-                        </Button>
-                    </Box>
-                </Card>
-            </Box>
+                                뒤로
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: "#e2ccb5",
+                                    "&:hover": { backgroundColor: "#d4bea7" },
+                                    color: "#000",
+                                    borderRadius: 2,
+                                    px: 4,
+                                }}
+                                onClick={handleDelete}
+                            >
+                                삭제
+                            </Button>
+                        </Box>
+                    </Card>
+                </Box>
+            )}
         </Box>
     );
 };

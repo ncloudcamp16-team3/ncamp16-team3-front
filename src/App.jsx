@@ -8,7 +8,9 @@ import Board from "./pages/Board/Board.jsx";
 import Reserve from "./pages/Reserve/Reserve.jsx";
 import ReserveDetail from "./pages/Reserve/ReserveDetail.jsx";
 import ReservationList from "./pages/Reserve/ReservationList.jsx";
+import Reservation from "./pages/Reserve/Reservation.jsx";
 import ReservationDetail from "./pages/Reserve/ReservationDetail.jsx";
+import Review from "./pages/Reserve/Review.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
@@ -29,7 +31,6 @@ import Layout2 from "./components/Global/Layout2.jsx";
 import PostDetail from "./pages/PetSta/PostDetail.jsx";
 import { Provider } from "./context/Context.jsx";
 import Cal from "./pages/Calender/Cal.jsx";
-import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PostComment from "./pages/PetSta/PostCommentsPage.jsx";
 import AdminPostDetail from "./pages/Admin/AdminPostDetail.jsx";
 import AdminNotice from "./pages/Admin/AdminNotice.jsx";
@@ -45,7 +46,7 @@ import FollowersTab from "./pages/PetSta/FollowersTab.jsx";
 import UserLayout from "./components/PetSta/UserLayout.jsx";
 import ChatList from "./components/Chat/ChatList.jsx";
 import ChatRoom from "./components/Chat/ChatRoom.jsx";
-import AdminFacilityList from "./pages/Admin/AdminFacilityAdd.jsx";
+import AdminFacilityList from "./pages/Admin/AdminFacilityList.jsx";
 import AdminFacilityDetail from "./pages/Admin/AdminFacilityDetail.jsx";
 import AdminFacilityAdd from "./pages/Admin/AdminFacilityAdd.jsx";
 import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
@@ -56,6 +57,7 @@ import Announce from "./pages/Board/Announce.jsx";
 import PostDetails from "./pages/Board/PostDetails.jsx";
 import PostSave from "./pages/Board/PostSave.jsx";
 import Notify from "./pages/Notification/Notification.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
 function App() {
     return (
@@ -87,53 +89,51 @@ function App() {
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
-                        <Route element={<Layout1 />}>
-                            <Route path="/" element={<Main />} />
-                            <Route path="/announce/:announceId" element={<Announce />} />
-                            <Route path="/petdetails/:petId" element={<PetDetails />} />
-                            <Route path="/petsta" element={<PetSta />} />
-                            <Route path="/board" element={<Board />} />
-                            <Route path="/post/:post_id" element={<PostDetail />} />
-                            <Route path="/board/:postId" element={<PostDetails />} />
-                            <Route path="/board/update/:postId" element={<PostSave />} />
-                            <Route path="/board/add" element={<PostSave />} />
-                            <Route path="/reserve" element={<Reserve />} />
-                            <Route path="/bookmark" element={<Bookmark />} />
-                            <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
-                            <Route path="/bookmarks/posts" element={<PostBookmarks />} />
-                            <Route path="/reserve/:id" element={<ReserveDetail />} />
-                            <Route path="/reserve/list" element={<ReservationList />} />
-                            <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
-                            <Route path="/petsitter" element={<PetSitter />} />
-                            <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
-                            <Route path="/calendar" element={<Cal />} />
-                            <Route
-                                path="/notification"
-                                element={
-                                    <ProtectedRoute>
-                                        <Notify />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route path="/mypage" element={<MyPage />} />
-                            <Route path="/add-pet" element={<AddPet />} />
-                            <Route path="/pet/edit/:petId" element={<EditPet />} />
-                            <Route path="/petsitter-register" element={<PetSitterRegister />} />
-                            <Route path="/petsitter-finder" element={<PetSitterFinder />} />
-                            <Route path="/petsta/post/comment/:post_id" element={<PostComment />} />
-                            <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
-                            <Route path="/petsta/post/add/video" element={<AddVideo />} />
-                            <Route path="/petsta/user/:userId" element={<UserLayout />}>
-                                <Route path="" element={<UserPage />} />
-                                <Route path="follower" element={<FollowersTab />} />
-                                <Route path="following" element={<FollowersTab />} />
+
+                        <Route element={<ProtectedRoute />}>
+                            <Route element={<Layout1 />}>
+                                <Route path="/" element={<Main />} />
+                                <Route path="/announce/:announceId" element={<Announce />} />
+                                <Route path="/pet/:petId" element={<PetDetails />} />
+                                <Route path="/petsta" element={<PetSta />} />
+                                <Route path="/board" element={<Board />} />
+                                <Route path="/board/:postId" element={<PostDetails />} />
+                                <Route path="/board/update/:postId" element={<PostSave />} />
+                                <Route path="/board/add" element={<PostSave />} />
+                                <Route path="/reserve" element={<Reserve />} />
+                                <Route path="/bookmark" element={<Bookmark />} />
+                                <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
+                                <Route path="/bookmarks/posts" element={<PostBookmarks />} />
+                                <Route path="/reserve/:id" element={<ReserveDetail />} />
+                                <Route path="/reserve/list" element={<ReservationList />} />
+                                <Route path="/reserve/success/:id" element={<Reservation />} />
+                                <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
+                                <Route path="/reserve/review/:id" element={<Review />} />
+                                <Route path="/petsitter" element={<PetSitter />} />
+                                <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
+                                <Route path="/calendar" element={<Cal />} />
+                                <Route path="/notification" element={<Notify />} />
+                                <Route path="/mypage" element={<MyPage />} />
+                                <Route path="/add-pet" element={<AddPet />} />
+                                <Route path="/pet/edit/:petId" element={<EditPet />} />
+                                <Route path="/petsitter-register" element={<PetSitterRegister />} />
+                                <Route path="/petsitter-finder" element={<PetSitterFinder />} />
+                                <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
+                                <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
+                                <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                                <Route path="/petsta/user/:userId" element={<UserLayout />}>
+                                    <Route path="" element={<UserPage />} />
+                                    <Route path="follower" element={<FollowersTab />} />
+                                    <Route path="following" element={<FollowersTab />} />
+                                </Route>
+                                <Route path="/chat" element={<ChatList />} />
+                                <Route path="/chat/room/:roomId" element={<ChatRoom />} />
+                                <Route path="/payment" element={<Payment />} />
                             </Route>
-                            <Route path="/chat" element={<ChatList />} />
-                            <Route path="/chat/room/:roomId" element={<ChatRoom />} />
-                            <Route path="/payment" element={<Payment />} />
-                        </Route>
-                        <Route element={<Layout2 />}>
-                            <Route path="/petsta/post/:post_id" element={<PostDetail />} />
+
+                            <Route element={<Layout2 />}>
+                                <Route path="/petsta/post/:postId" element={<PostDetail />} />
+                            </Route>
                         </Route>
                     </Routes>
                 </Router>
