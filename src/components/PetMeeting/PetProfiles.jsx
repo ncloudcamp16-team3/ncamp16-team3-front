@@ -1,35 +1,54 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useContext } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import PetCard from "./PetCard";
-import PetFriends from "../../mock/PetMeeting/petFriends.json";
+import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PAGE_SIZE = 3;
 
 const PetProfiles = () => {
+    const { pet } = useContext(PetMeetingContext);
     const [petList, setPetList] = useState([]);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const observer = useRef();
 
-    const fetchMockPets = (page) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const start = page * PAGE_SIZE;
-                const end = start + PAGE_SIZE;
-                const newPets = PetFriends.slice(start, end);
-                resolve(newPets);
-            }, 600);
-        });
-    };
-
     const loadPets = async (currentPage) => {
         setLoading(true);
-        const newPets = await fetchMockPets(currentPage);
-        setPetList((prev) => [...prev, ...newPets]);
-        if (newPets.length < PAGE_SIZE) {
-            setHasMore(false);
-        }
+        let newPets;
+
+        const url = "/api/petmeeting/friends";
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                page: currentPage,
+                size: 5,
+                activityStatus: "NONE",
+                dongName: "역삼동",
+                distance: "1",
+            }),
+        };
+
+        fetch(url, requestOptions)
+            .then((response) => {
+                return response.json().then((resObj) => {
+                    if (!response.ok) {
+                        throw new Error(JSON.stringify({ status: response.status, resObj }));
+                    }
+                    return resObj.data;
+                });
+            })
+            .then((data) => {
+                setPetList((prev) => [...prev, ...data.content]);
+                setHasMore(!data.last);
+                console.log(data.content);
+            })
+            .catch((error) => {
+                console.error("에러 발생:", error);
+            });
         setLoading(false);
     };
 
