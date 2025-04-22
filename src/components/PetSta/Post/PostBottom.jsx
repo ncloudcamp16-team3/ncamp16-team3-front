@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-import LikeButton from "./LikeButton.jsx";
 import CommentButton from "./CommentButton.jsx";
 import BookmarkButton from "./BookmarkButton.jsx";
 import PostContent from "./PostContent.jsx";
 import PostTime from "./PostTime.jsx";
+import Likes from "./Likes.jsx";
 
 const PostBottom = ({ initialLiked, initialBookmarked, userName, postId, likes, comments, content, createdAt }) => {
     const [commentCount, setCommentCount] = useState(comments);
@@ -44,7 +44,7 @@ const PostBottom = ({ initialLiked, initialBookmarked, userName, postId, likes, 
         <div>
             <Box display="flex" justifyContent="space-between">
                 <Box display="flex">
-                    <LikeButton initialLiked={initialLiked} likes={likes} postId={postId} />
+                    <Likes initialLiked={initialLiked} likes={likes} postId={postId} />
                     <CommentButton postId={postId} commentCount={commentCount} />
                 </Box>
                 <BookmarkButton initialBookmarked={initialBookmarked} postId={postId} />

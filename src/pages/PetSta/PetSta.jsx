@@ -7,6 +7,7 @@ import theme from "../../theme/theme.js";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import { getPostLists } from "../../services/petstaService.js";
+import { useFollow } from "../../context/FollowContext.jsx";
 
 const PetSta = () => {
     const [posts, setPosts] = useState([]);
@@ -14,18 +15,23 @@ const PetSta = () => {
     const [showBox, setShowBox] = useState(false);
     const [rightPosition, setRightPosition] = useState("20px");
     const navigate = useNavigate();
+    const { setInitialFollow } = useFollow();
+
     useEffect(() => {
         const getPosts = async () => {
             try {
-                const data = await getPostLists(); // 서비스에서 데이터를 기다림
-                setPosts(data); // ★ 받은 데이터 저장
+                const data = await getPostLists();
+                setPosts(data);
                 console.log(data);
+                data.forEach((post) => {
+                    setInitialFollow(post.userId, post.initialFollowed);
+                });
             } catch (error) {
                 console.error("게시글을 불러오는데 실패했습니다.", error);
             }
         };
 
-        getPosts(); // useEffect 내에서 비동기 함수 호출
+        getPosts();
     }, []);
 
     useEffect(() => {

@@ -3,12 +3,6 @@ import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const UserIcon = ({ userInfo }) => {
-    if (userInfo) {
-        if (userInfo.userId === undefined) {
-            userInfo.userId = userInfo.id;
-        }
-    }
-
     const navigate = useNavigate();
 
     return (
@@ -45,7 +39,7 @@ const UserIcon = ({ userInfo }) => {
                 height="38px"
                 borderRadius="50%"
                 sx={{
-                    backgroundColor: "white",
+                    backgroundColor: "transparent",
                 }}
             />
 
@@ -59,7 +53,7 @@ const UserIcon = ({ userInfo }) => {
                 borderRadius="50%"
                 overflow="hidden"
                 sx={{
-                    backgroundColor: "#fff",
+                    backgroundColor: "transparent",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -67,7 +61,7 @@ const UserIcon = ({ userInfo }) => {
             >
                 <Box
                     component="img"
-                    src={`/mock/Global/images/${userInfo.photo}`}
+                    src={`${userInfo.userPhoto}`}
                     alt="profile"
                     sx={{
                         width: "100%",
