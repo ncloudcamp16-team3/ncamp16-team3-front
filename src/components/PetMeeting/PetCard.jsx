@@ -36,7 +36,7 @@ const PetCard = ({ friend }) => {
         >
             <Box
                 component="img"
-                src={thumbnailPhoto?.url}
+                src={thumbnailPhoto?.path}
                 sx={{
                     borderRadius: "50%",
                     width: "50%",
@@ -82,7 +82,7 @@ const PetCard = ({ friend }) => {
                         maxWidth: "100%",
                     }}
                 >
-                    성별: {friend.gender === "MALE" ? "남아" : "여아"}
+                    성별: {friend.gender === "남아" ? "남아" : "여아"}
                 </Typography>
                 <Typography
                     sx={{

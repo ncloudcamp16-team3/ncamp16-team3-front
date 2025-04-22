@@ -7,7 +7,8 @@
       "address": "서울시 강남구 역삼동",
       "dongName": "역삼동",
       "latitude": 37.5001,
-      "longitude": 127.035
+      "longitude": 127.035,
+      "distance": 4
     },
     "petTypeId": 1,
     "name": "백구",
@@ -32,7 +33,8 @@
       "detailAddress": "302호",
       "dongName": "잠실동",
       "latitude": 37.5141,
-      "longitude": 127.105
+      "longitude": 127.105,
+      "distance": 3
     },
     "petTypeId": 1,
     "name": "황구",
@@ -57,7 +59,8 @@
       "detailAddress": "303호",
       "dongName": "합정동",
       "latitude": 37.5499,
-      "longitude": 126.913
+      "longitude": 126.913,
+      "distance": 1
     },
     "petTypeId": 2,
     "name": "흑구",

@@ -2,20 +2,21 @@ import React, { useEffect, useState, useRef, useCallback, useContext } from "rea
 import { Box, CircularProgress } from "@mui/material";
 import PetCard from "./PetCard";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import EmptyFriendCard from "./EmptyFriendCard.jsx";
 
 const PAGE_SIZE = 3;
 
 const PetProfiles = () => {
-    const { pet } = useContext(PetMeetingContext);
+    const { pet, friendType } = useContext(PetMeetingContext);
     const [petList, setPetList] = useState([]);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const observer = useRef();
+    const isInitialMount = useRef(true);
 
     const loadPets = async (currentPage) => {
         setLoading(true);
-        let newPets;
 
         const url = "/api/petmeeting/friends";
         const requestOptions = {
@@ -25,10 +26,12 @@ const PetProfiles = () => {
             },
             body: JSON.stringify({
                 page: currentPage,
-                size: 5,
-                activityStatus: "NONE",
-                dongName: "역삼동",
-                distance: "1",
+                size: PAGE_SIZE,
+                activityStatus: friendType === "산책친구들" ? "WALK" : "PLAY",
+                dongName: pet.owner.dongName,
+                distance: pet.owner.distance,
+                latitude: pet.owner.latitude,
+                longitude: pet.owner.longitude,
             }),
         };
 
@@ -36,7 +39,7 @@ const PetProfiles = () => {
             .then((response) => {
                 return response.json().then((resObj) => {
                     if (!response.ok) {
-                        throw new Error(JSON.stringify({ status: response.status, resObj }));
+                        throw new Error(JSON.stringify({ status: response.status, data: resObj }));
                     }
                     return resObj.data;
                 });
@@ -44,7 +47,7 @@ const PetProfiles = () => {
             .then((data) => {
                 setPetList((prev) => [...prev, ...data.content]);
                 setHasMore(!data.last);
-                console.log(data.content);
+                console.log("요청 결과" + data);
             })
             .catch((error) => {
                 console.error("에러 발생:", error);
@@ -53,13 +56,34 @@ const PetProfiles = () => {
     };
 
     useEffect(() => {
-        loadPets(0);
+        if (page === 0) return;
+
+        loadPets(page);
+    }, [page]);
+
+    useEffect(() => {
+        const init = async () => {
+            await loadPets(0); // 비동기 호출
+            isInitialMount.current = false; // 호출 완료 후 초기화
+        };
+        init();
     }, []);
 
     useEffect(() => {
-        if (page === 0) return;
-        loadPets(page);
-    }, [page]);
+        if (isInitialMount.current) return;
+
+        setPetList([]);
+        setPage(0);
+        loadPets(0);
+    }, [friendType]);
+
+    useEffect(() => {
+        if (isInitialMount.current) return;
+
+        setPetList([]);
+        setPage(0);
+        loadPets(0);
+    }, [pet]);
 
     const lastItemRef = useCallback(
         (node) => {
@@ -98,6 +122,7 @@ const PetProfiles = () => {
                     </Box>
                 );
             })}
+            {petList.length === 0 && <EmptyFriendCard />}
             {loading && (
                 <Box display="flex" justifyContent="center" mt={2}>
                     <CircularProgress />
