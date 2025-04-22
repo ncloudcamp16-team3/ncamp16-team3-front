@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-    Box,
-    Typography,
-    TextField,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-    Checkbox,
-    Button,
-    IconButton,
-    Stack,
-} from "@mui/material";
+import { Box, Typography, TextField, Button, IconButton, Stack, Divider, Chip } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import petEx from "/src/assets/images/User/pet_ex.svg";
+import axios from "axios";
 
 const EditPet = () => {
     const navigate = useNavigate();
@@ -25,12 +17,9 @@ const EditPet = () => {
         name: "",
         type: "",
         birthDate: "",
-        breed: "",
         gender: "",
         isNeutered: false,
         weight: "",
-        bodyType: "",
-        favorites: "",
         introduction: "",
     });
 
@@ -40,42 +29,59 @@ const EditPet = () => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    // 데이터 로드 시뮬레이션
+    // 반려동물 종류 옵션
+    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
+
+    // 데이터 로드
     useEffect(() => {
         const loadPetData = async () => {
+            setIsLoading(true);
             try {
-                const mockPetData = {
-                    id: "1",
-                    name: "하양이",
-                    type: "개",
-                    birthDate: "2022-02-18",
-                    breed: "사모예드",
-                    gender: "남아",
-                    isNeutered: true,
-                    weight: "25",
-                    bodyType: "통통",
-                    favorites: "공놀이, 산책",
-                    introduction: "사랑스러운 우리 집 막내 하양이입니다.",
-                };
+                // API 호출로 반려동물 정보 가져오기
+                const response = await axios.get(`/api/pet/${petId}`, {
+                    withCredentials: true,
+                });
 
-                const mockImageUrl = "/mock/Global/images/haribo.jpg"; // 실제 프로젝트의 경로로 대체해야 함
+                if (response.data) {
+                    const petInfo = response.data;
 
-                // 데이터 설정
-                setPetData(mockPetData);
+                    // 상태 업데이트
+                    setPetData({
+                        name: petInfo.name,
+                        type: petInfo.type,
+                        birthDate: petInfo.birthDate,
+                        gender: petInfo.gender,
+                        isNeutered: petInfo.isNeutered,
+                        weight: petInfo.weight.toString(),
+                        introduction: petInfo.introduction,
+                    });
 
-                const newPreviews = [...imagePreviews];
-                newPreviews[0] = mockImageUrl;
-                setImagePreviews(newPreviews);
+                    // 즐겨찾기 상태 업데이트
+                    setIsFavorite(petInfo.isFavorite || false);
 
-                setIsFavorite(true);
+                    // 이미지 미리보기 업데이트
+                    if (petInfo.photos && petInfo.photos.length > 0) {
+                        const newPreviews = [...imagePreviews];
+                        petInfo.photos.forEach((photo, index) => {
+                            if (index < newPreviews.length) {
+                                newPreviews[index] = photo.url;
+                            }
+                        });
+                        setImagePreviews(newPreviews);
+                    }
+                }
+
                 setIsLoading(false);
             } catch (error) {
-                console.error("Error loading pet data:", error);
+                console.error("반려동물 정보 로드 실패:", error);
+                alert("반려동물 정보를 불러오는데 실패했습니다.");
                 setIsLoading(false);
             }
         };
 
-        loadPetData();
+        if (petId) {
+            loadPetData();
+        }
     }, [petId]);
 
     const handleChange = (e) => {
@@ -83,20 +89,6 @@ const EditPet = () => {
         setPetData({
             ...petData,
             [name]: value,
-        });
-    };
-
-    const handleRadioChange = (e) => {
-        setPetData({
-            ...petData,
-            gender: e.target.value,
-        });
-    };
-
-    const handleNeuteredChange = (e) => {
-        setPetData({
-            ...petData,
-            isNeutered: e.target.checked,
         });
     };
 
@@ -125,18 +117,69 @@ const EditPet = () => {
         setCurrentImageIndex(index);
     };
 
-    const handleSubmit = (e) => {
+    const handlePrevImage = () => {
+        // 이전 이미지로 이동 (순환)
+        setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? imagePreviews.length - 1 : prevIndex - 1));
+    };
+
+    const handleNextImage = () => {
+        // 다음 이미지로 이동 (순환)
+        setCurrentImageIndex((prevIndex) => (prevIndex === imagePreviews.length - 1 ? 0 : prevIndex + 1));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 실제 구현에서는 API 호출로 데이터 업데이트
-        console.log("수정된 데이터:", petData);
-        console.log(
-            "업로드된 이미지:",
-            images.filter((img) => img !== null)
-        );
-        console.log("즐겨찾기 여부:", isFavorite);
+        // 필수 입력값 검증
+        if (
+            !petData.name ||
+            !petData.birthDate ||
+            !petData.type ||
+            !petData.gender ||
+            petData.weight === "" ||
+            !petData.introduction
+        ) {
+            alert("모든 필수 항목을 입력해주세요.");
+            return;
+        }
 
-        navigate("/mypage");
+        // FormData 객체 생성
+        const formData = new FormData();
+
+        // 반려동물 데이터 JSON 변환 및 추가
+        const petDataJson = JSON.stringify({
+            name: petData.name,
+            type: petData.type,
+            birthDate: petData.birthDate,
+            gender: petData.gender,
+            isNeutered: petData.isNeutered,
+            weight: parseFloat(petData.weight),
+            introduction: petData.introduction,
+        });
+        formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
+
+        // 변경된 이미지만 추가 (null이 아닌 파일만 필터링)
+        const validImages = images.filter((img) => img !== null);
+        validImages.forEach((image, index) => {
+            formData.append("images", image);
+        });
+
+        try {
+            // API 호출
+            const response = await axios.put(`/api/pet/${petId}/update`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+            });
+
+            // 성공 시 처리
+            alert("반려동물 정보가 수정되었습니다.");
+            navigate("/mypage");
+        } catch (error) {
+            console.error("반려동물 정보 수정 오류:", error);
+            alert(error.response?.data?.message || "반려동물 정보 수정 중 오류가 발생했습니다.");
+        }
     };
 
     const handleGoBack = () => {
@@ -153,21 +196,7 @@ const EditPet = () => {
 
     return (
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    p: 2,
-                    borderBottom: "1px solid #eee",
-                }}
-            >
-                <IconButton onClick={handleGoBack} sx={{ mr: 1 }}>
-                    <ArrowBackIosNewIcon fontSize="small" />
-                </IconButton>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    반려동물 정보수정
-                </Typography>
-            </Box>
+            <TitleBar name="반려동물 정보수정" onBack={handleGoBack} />
 
             <Box
                 sx={{
@@ -209,6 +238,40 @@ const EditPet = () => {
                     />
                 )}
 
+                {/* 좌측 화살표 - 하얀색만 표시 */}
+                <IconButton
+                    onClick={handlePrevImage}
+                    sx={{
+                        position: "absolute",
+                        left: 8,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "white",
+                        bgcolor: "transparent",
+                        "&:hover": { bgcolor: "transparent" },
+                        zIndex: 2,
+                    }}
+                >
+                    <ArrowBackIosNewIcon fontSize="medium" />
+                </IconButton>
+
+                {/* 우측 화살표 - 하얀색만 표시 */}
+                <IconButton
+                    onClick={handleNextImage}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "white",
+                        bgcolor: "transparent",
+                        "&:hover": { bgcolor: "transparent" },
+                        zIndex: 2,
+                    }}
+                >
+                    <ArrowForwardIosIcon fontSize="medium" />
+                </IconButton>
+
                 <IconButton
                     component="label"
                     sx={{
@@ -218,6 +281,7 @@ const EditPet = () => {
                         bgcolor: "#363636",
                         color: "white",
                         "&:hover": { bgcolor: "#000000" },
+                        zIndex: 2,
                     }}
                 >
                     <AddIcon />
@@ -231,12 +295,12 @@ const EditPet = () => {
                         top: 16,
                         right: 16,
                         color: isFavorite ? "#FFD700" : "white",
+                        zIndex: 2,
                     }}
                 >
                     <StarIcon />
                 </IconButton>
 
-                {/* Image navigation dots */}
                 <Stack
                     direction="row"
                     spacing={1}
@@ -246,6 +310,7 @@ const EditPet = () => {
                         right: 16,
                         display: "flex",
                         alignItems: "center",
+                        zIndex: 2,
                     }}
                 >
                     {imagePreviews.map((preview, index) => (
@@ -271,7 +336,7 @@ const EditPet = () => {
                 </Typography>
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                    이름
+                    이름 <span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                     fullWidth
@@ -284,7 +349,7 @@ const EditPet = () => {
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                    생일
+                    생일 <span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                     fullWidth
@@ -297,39 +362,127 @@ const EditPet = () => {
                     sx={{ mb: 2 }}
                 />
 
+                <Divider sx={{ my: 3, borderColor: "#f0f0f0", borderWidth: 2 }} />
+
                 <Typography variant="h6" sx={{ my: 2, fontWeight: "bold" }}>
                     상세정보
                 </Typography>
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                    품종
+                    반려동물을 등록해주세요 <span style={{ color: "red" }}>*</span>
                 </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    name="breed"
-                    value={petData.breed}
-                    onChange={handleChange}
-                    placeholder="예) 사모예드"
-                    sx={{ mb: 2 }}
-                />
-
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                    성별
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                    <RadioGroup row name="gender" value={petData.gender} onChange={handleRadioChange} sx={{ mr: 2 }}>
-                        <FormControlLabel value="남아" control={<Radio />} label="남아" />
-                        <FormControlLabel value="여아" control={<Radio />} label="여아" />
-                    </RadioGroup>
-                    <FormControlLabel
-                        control={<Checkbox checked={petData.isNeutered} onChange={handleNeuteredChange} />}
-                        label="중성화 여부"
-                    />
+                <Box sx={{ display: "flex", flexWrap: "nowrap", overflowX: "auto", mb: 3, gap: 1 }}>
+                    {petTypes.map((type) => (
+                        <Chip
+                            key={type}
+                            label={type}
+                            onClick={() => setPetData({ ...petData, type })}
+                            color={petData.type === type ? "primary" : "default"}
+                            variant={petData.type === type ? "filled" : "outlined"}
+                            sx={{
+                                borderColor: "#d3d3d3",
+                                bgcolor: petData.type === type ? "#E9A260" : "transparent",
+                                color: petData.type === type ? "white" : "black",
+                                "&:hover": {
+                                    bgcolor: petData.type === type ? "#d0905a" : "rgba(0,0,0,0.04)",
+                                },
+                                minWidth: "70px",
+                                flexShrink: 0,
+                            }}
+                        />
+                    ))}
                 </Box>
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                    몸무게
+                    아이의 성별을 선택해주세요 <span style={{ color: "red" }}>*</span>
+                </Typography>
+                <Box sx={{ display: "flex", width: "100%", mb: 2, gap: 1 }}>
+                    <Button
+                        variant={petData.gender === "남아" ? "contained" : "outlined"}
+                        onClick={() => setPetData({ ...petData, gender: "남아" })}
+                        sx={{
+                            flex: 1,
+                            borderColor: "#d3d3d3",
+                            color: petData.gender === "남아" ? "white" : "black",
+                            bgcolor: petData.gender === "남아" ? "#E9A260" : "transparent",
+                            "&:hover": {
+                                bgcolor: petData.gender === "남아" ? "#d0905a" : "rgba(0,0,0,0.04)",
+                                borderColor: "#ccc",
+                            },
+                            textTransform: "none",
+                            py: 1,
+                            borderRadius: 2,
+                        }}
+                    >
+                        남아
+                    </Button>
+                    <Button
+                        variant={petData.gender === "여아" ? "contained" : "outlined"}
+                        onClick={() => setPetData({ ...petData, gender: "여아" })}
+                        sx={{
+                            flex: 1,
+                            borderColor: "#d3d3d3",
+                            color: petData.gender === "여아" ? "white" : "black",
+                            bgcolor: petData.gender === "여아" ? "#E9A260" : "transparent",
+                            "&:hover": {
+                                bgcolor: petData.gender === "여아" ? "#d0905a" : "rgba(0,0,0,0.04)",
+                                borderColor: "#ccc",
+                            },
+                            textTransform: "none",
+                            py: 1,
+                            borderRadius: 2,
+                        }}
+                    >
+                        여아
+                    </Button>
+                </Box>
+
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                    중성화 여부 <span style={{ color: "red" }}>*</span>
+                </Typography>
+                <Box sx={{ display: "flex", width: "100%", mb: 2, gap: 1 }}>
+                    <Button
+                        variant={petData.isNeutered ? "contained" : "outlined"}
+                        onClick={() => setPetData({ ...petData, isNeutered: true })}
+                        sx={{
+                            flex: 1,
+                            borderColor: "#d3d3d3",
+                            color: petData.isNeutered ? "white" : "black",
+                            bgcolor: petData.isNeutered ? "#E9A260" : "transparent",
+                            "&:hover": {
+                                bgcolor: petData.isNeutered ? "#d0905a" : "rgba(0,0,0,0.04)",
+                                borderColor: "#ccc",
+                            },
+                            textTransform: "none",
+                            py: 1,
+                            borderRadius: 2,
+                        }}
+                    >
+                        O
+                    </Button>
+                    <Button
+                        variant={!petData.isNeutered ? "contained" : "outlined"}
+                        onClick={() => setPetData({ ...petData, isNeutered: false })}
+                        sx={{
+                            flex: 1,
+                            borderColor: "#d3d3d3",
+                            color: !petData.isNeutered ? "white" : "black",
+                            bgcolor: !petData.isNeutered ? "#E9A260" : "transparent",
+                            "&:hover": {
+                                bgcolor: !petData.isNeutered ? "#d0905a" : "rgba(0,0,0,0.04)",
+                                borderColor: "#ccc",
+                            },
+                            textTransform: "none",
+                            py: 1,
+                            borderRadius: 2,
+                        }}
+                    >
+                        X
+                    </Button>
+                </Box>
+
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                    몸무게 <span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                     fullWidth
@@ -342,33 +495,7 @@ const EditPet = () => {
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                    체형
-                </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    name="bodyType"
-                    value={petData.bodyType}
-                    onChange={handleChange}
-                    placeholder="통통"
-                    sx={{ mb: 2 }}
-                />
-
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                    좋아하는것
-                </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    name="favorites"
-                    value={petData.favorites}
-                    onChange={handleChange}
-                    placeholder="ex) 공놀이, 산책"
-                    sx={{ mb: 2 }}
-                />
-
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                    소개
+                    소개 <span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                     fullWidth

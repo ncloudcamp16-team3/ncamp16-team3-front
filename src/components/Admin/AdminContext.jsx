@@ -5,7 +5,7 @@ const AdminContext = createContext();
 
 // 메뉴별 필터 매핑 정의
 const menuFiltersMap = {
-    "게시글 목록": ["자유 게시판", "중고 장터", "정보 게시판"],
+    "게시글 목록": ["자유게시판", "중고장터", "정보게시판"],
     "펫시터 목록": ["ID", "사용자 아이디", "코멘트"],
     "펫시터 신청목록": ["ID", "사용자 아이디", "코멘트"],
     "업체 목록": ["호텔", "미용실", "카페"],
@@ -18,6 +18,7 @@ export const AdminProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [adminEmail, setAdminEmail] = useState("");
     const [currentFilter, setCurrentFilter] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const availableFilters = useMemo(() => {
         return menuFiltersMap[selectedMenu] || [];
@@ -144,6 +145,8 @@ export const AdminProvider = ({ children }) => {
         currentFilter,
         setCurrentFilter,
         availableFilters,
+        currentPage,
+        setCurrentPage,
     };
 
     console.log("AdminContext 현재 상태: ", { isAuthenticated, loading, adminEmail });
