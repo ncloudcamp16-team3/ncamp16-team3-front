@@ -12,3 +12,16 @@
 <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (let registration of registrations) {
+        registration.unregister().then(function(success) {
+          if (success) {
+            console.log('✅ Service Worker 제거');
+          }
+        });
+      }
+    });
+  }
+</script>
