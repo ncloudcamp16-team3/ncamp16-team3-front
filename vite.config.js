@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => {
                     cleanupOutdatedCaches: true,
                     skipWaiting: true,
                     clientsClaim: true,
+                    navigateFallback: "/index.html",
+                    navigateFallbackDenylist: [/^\/oauth\//, /^\/auth\//, /^\/api\/auth\//],
                 },
                 manifest: {
                     name: "My App",
