@@ -38,6 +38,14 @@ export const addVideo = async (formData) => {
     });
 };
 
+export const addComment = async (postId, formData) => {
+    return await instance.post(`${API_URL}/post/${postId}/add/comment`, formData, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};
+
 export const toggleLike = (postId) => {
     return instance
         .post(`${API_URL}/post/${postId}/like`)
@@ -58,14 +66,12 @@ export const toggleBookmark = (postId) => {
         });
 };
 
-export const boardDelete = (idx) => {
-    return instance.delete(`${API_URL}/delete/${idx}`);
-};
-
-export const boardContent = (idx) => {
-    return instance.get(`${API_URL}/content/${idx}`);
-};
-
-export const boardCnt = (idx) => {
-    return instance.put(`${API_URL}/cnt/${idx}`);
+export const getParentComments = async (postId) => {
+    return await instance
+        .get(`${API_URL}/post/${postId}/comments`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("댓글을 불러오는 데 실패했습니다.", error);
+            throw error;
+        });
 };
