@@ -1,6 +1,6 @@
-export const fetchBoards = async (page = 0, size = 10, boardTypeId = 1) => {
+export const fetchPetSitter = async (page = 0, size = 10) => {
     try {
-        let url = `/api/admin/board/list?page=${page}&size=${size}&boardTypeId=${boardTypeId}`;
+        let url = `/api/admin/petsitter/list?page=${page}&size=${size}`;
 
         const token = localStorage.getItem("adminToken");
         // console.log("Using token: " + token ? "Valid token exists" : "No token found");
@@ -13,39 +13,40 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = 1) => {
             },
         });
 
-        // console.log("API response status:", response.status);
+        // console.log("API response status: " + response.status);
         const data = await response.json();
         // console.log("API response data:", data);
 
         if (!response.ok) {
-            throw new Error(data.message || "게시판 목록을 가져오는데 실패했습니다");
+            throw new Error(data.message || "펫시터 목록을 가져오는데 실패했습니다");
         }
 
         return data;
     } catch (error) {
-        console.log("게시판 API 호출 중 오류 발생: " + error);
+        console.log("펫시터 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };
 
-export const fetchBoardDetail = async (boardId) => {
+export const fetchPetSitterDetail = async (id) => {
     try {
         const token = localStorage.getItem("adminToken");
-        const response = await fetch(`/api/admin/board/${boardId}`, {
+        const response = await fetch(`/api/admin/petsitter/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
         });
 
+        const data = await response.json();
         if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.message || "게시글 정보를 가져오는데 실패했습니다");
+            throw new Error(data.message || "펫시터 정보를 가져오는데 실패했습니다");
         }
+        // console.log(data);
 
-        return await response.json();
+        return data;
     } catch (error) {
-        console.error("게시글 상세정보 API 호출 중 오류 발생: " + error);
+        console.log("펫시터 상세보기 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };

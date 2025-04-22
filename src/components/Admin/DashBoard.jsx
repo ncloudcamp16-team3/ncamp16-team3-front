@@ -55,9 +55,9 @@ function DashBoard() {
     };
 
     const boardTypeMapping = {
-        "자유 게시판": 1,
-        "중고 장터": 2,
-        "정보 게시판": 3,
+        자유게시판: 1,
+        중고장터: 2,
+        정보게시판: 3,
     };
 
     const loadBoardData = async () => {
@@ -65,13 +65,13 @@ function DashBoard() {
             setLoading(true);
             setError(null);
 
-            console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
+            // console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
 
             const boardTypeId = boardTypeMapping[currentFilter];
             const apiPage = Math.max(0, page - 1);
             const response = await fetchBoards(apiPage, 10, boardTypeId);
 
-            console.log("API Response: " + response);
+            // console.log("API Response: " + response);
 
             //데이터가 있는지 확인
             if (!response || !response.content) {
@@ -88,7 +88,7 @@ function DashBoard() {
                 title: item.title,
                 content: item.content,
                 authorNickname: item.authorNickname,
-                image: item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0].url : null,
+                image: item.firstImageUrl,
                 likeCount: item.likeCount,
                 date: new Date(item.createdAt).toLocaleString(),
             }));
@@ -199,7 +199,7 @@ function DashBoard() {
                                                 {row.id}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
-                                                {row.image && row.image.length > 0 ? (
+                                                {row.firstImageUrl ? (
                                                     <Box
                                                         component="img"
                                                         sx={{
@@ -208,7 +208,7 @@ function DashBoard() {
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
-                                                        src={row.image}
+                                                        src={row.firstImageUrl}
                                                         alt="썸네일"
                                                         onError={(e) => {
                                                             e.target.src = "/src/assets/images/default-thumbnail.png"; // 기본 이미지 경로로 대체
