@@ -161,11 +161,7 @@ const PetSitterDetail = () => {
                                                 />
                                                 <TableRow
                                                     label="승인일자"
-                                                    value={
-                                                        petSitter.applyAt == null
-                                                            ? "승인된 적 없음"
-                                                            : new Date(petSitter.applyAt).toLocaleString()
-                                                    }
+                                                    value={new Date(petSitter.applyAt).toLocaleString()}
                                                 />
                                             </tbody>
                                         </table>
