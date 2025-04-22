@@ -7,7 +7,10 @@ const OAuth2Success = () => {
     useEffect(() => {
         const checkLogin = async () => {
             try {
-                const res = await fetch(`/api/auth/check`, {
+                const isLocal = window.location.hostname === "localhost";
+                const base = isLocal ? "http://localhost:8080" : "https://tailfriends.kro.kr";
+
+                const res = await fetch(`${base}/api/auth/check`, {
                     credentials: "include",
                 });
 
