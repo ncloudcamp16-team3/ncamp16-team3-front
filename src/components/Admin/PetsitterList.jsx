@@ -64,7 +64,7 @@ const PetsitterList = () => {
             const apiPage = Math.max(0, page - 1);
             const response = await fetchPetSitter(apiPage, 10);
 
-            console.log("API Response: " + response);
+            // console.log("API Response: " + response);
 
             //데이터가 있는지 확인
             if (!response || !response.content) {

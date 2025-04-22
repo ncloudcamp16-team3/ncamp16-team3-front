@@ -3,7 +3,6 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
 
 const ProtectedAdminRoute = () => {
-    console.log("ProtectedAdminRoute 렌더링");
     const { isAuthenticated, loading } = useAdmin();
 
     // 로딩 중이면 로딩 표시

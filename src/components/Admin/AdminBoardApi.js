@@ -3,8 +3,8 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = 1) => {
         let url = `/api/admin/board/list?page=${page}&size=${size}&boardTypeId=${boardTypeId}`;
 
         const token = localStorage.getItem("adminToken");
-        console.log("Using token: " + token ? "Valid token exists" : "No token found");
-        console.log("API request URL: " + url);
+        // console.log("Using token: " + token ? "Valid token exists" : "No token found");
+        // console.log("API request URL: " + url);
 
         const response = await fetch(url, {
             headers: {
@@ -13,9 +13,9 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = 1) => {
             },
         });
 
-        console.log("API response status:", response.status);
+        // console.log("API response status:", response.status);
         const data = await response.json();
-        console.log("API response data:", data);
+        // console.log("API response data:", data);
 
         if (!response.ok) {
             throw new Error(data.message || "게시판 목록을 가져오는데 실패했습니다");
