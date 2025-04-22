@@ -19,6 +19,41 @@ const Header = () => {
     const open = Boolean(anchorEl);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [userData2, setUserData2] = useState(null);
+
+    useEffect(() => {
+        // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.
+        fetch("/api/auth/profile", {
+            method: "GET",
+            credentials: "include", // 쿠키를 포함시키기 위해 필요한 옵션
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setUserData(data);
+                console.log("✅ 사용자 프로필 정보:", data); // 콘솔 출력
+            })
+            .catch((error) => console.error("❌ 프로필 데이터 가져오기 오류:", error));
+    }, []);
+
+    useEffect(() => {
+        // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.
+        fetch("/api/auth/userinfo", {
+            method: "GET",
+            credentials: "include", // 쿠키를 포함시키기 위해 필요한 옵션
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답이 올바르지 않습니다.");
+                }
+                return response.json(); // 먼저 텍스트로 반환받고, 확인
+            })
+            .then((jsonData) => {
+                setUserData2(jsonData);
+                console.log("✅ 사용자 정보:", jsonData);
+            })
+            .catch((error) => console.error("❌ 사용자 정보 가져오기 오류:", error));
+    }, []);
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -82,7 +117,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={"/mock/Global/images/haribo.jpg"}
+                    src={userData2?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
