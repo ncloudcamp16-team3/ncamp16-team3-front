@@ -42,7 +42,7 @@ const Board = () => {
             <AnnounceContainer />
 
             {postList.map((item) => {
-                return <PostCard postItem={item} />;
+                return <PostCard key={item.id} postItem={item} />;
             })}
 
             <AddBtn />

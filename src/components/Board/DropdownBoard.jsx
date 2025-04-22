@@ -28,6 +28,7 @@ const DropdownBoard = ({ dropList, setDroplist }) => {
                     {BoardTypeList.map((boardType, index) => {
                         return (
                             <DropdownBoardItem
+                                key={index}
                                 icon={BoardIcons[index % BoardIcons.length]}
                                 selectedBoardType={boardType}
                                 setDroplist={setDroplist}
