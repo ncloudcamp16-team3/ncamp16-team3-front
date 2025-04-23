@@ -63,8 +63,8 @@ const PetProfiles = () => {
 
     useEffect(() => {
         const init = async () => {
-            await loadPets(0); // 비동기 호출
-            isInitialMount.current = false; // 호출 완료 후 초기화
+            await loadPets(0);
+            isInitialMount.current = false;
         };
         init();
     }, []);
