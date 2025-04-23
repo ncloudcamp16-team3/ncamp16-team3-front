@@ -1,16 +1,15 @@
 import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import UserIcon from "../UserIcon.jsx";
-import { Context } from "../../../context/Context.jsx";
 import { toggleFollow as toggleFollowAPI } from "../../../services/memberService.js";
-import { useFollow } from "../../../context/FollowContext.jsx"; // ★ 추가
+import { useFollow } from "../../../context/FollowContext.jsx";
+import { Context } from "../../../context/Context.jsx";
+// ★ 추가
 
 const PostProfile = ({ userName, userId, userPhoto, isView, isAbsolute = false }) => {
     const { user } = useContext(Context);
     const { followMap, toggleFollow } = useFollow(); // ★ 추가
-    console.log(followMap);
     const isFollow = followMap[userId] || false; // ★ followMap에서 follow 여부 가져옴
-
     const userInfo = {
         userName,
         userId,

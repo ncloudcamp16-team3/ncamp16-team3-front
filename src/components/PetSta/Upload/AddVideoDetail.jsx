@@ -29,7 +29,6 @@ const AddVideoDetail = ({ videoData, onBack }) => {
     };
 
     const handleShare = async () => {
-        console.log(videoData.file);
         try {
             const formData = new FormData();
             formData.append("content", content);

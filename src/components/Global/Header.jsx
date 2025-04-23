@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/Global/icon1.svg";
 import notification from "../../assets/images/Global/notification2.svg";
@@ -10,68 +10,26 @@ import Calendar from "../../assets/images/Global/modal-calendar.svg";
 import Info from "../../assets/images/Global/modal-info.svg";
 import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
+import { logout } from "../../services/authService.js";
+import { Context } from "../../context/Context.jsx";
 const Header = () => {
     const navigate = useNavigate();
     const theme = useTheme();
-
+    const { user, isLogin, setLogin } = useContext(Context);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const [userData, setUserData] = useState(null);
-
-    useEffect(() => {
-        // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.
-        fetch("/api/auth/userinfo", {
-            method: "GET",
-            credentials: "include", // 쿠키를 포함시키기 위해 필요한 옵션
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("네트워크 응답이 올바르지 않습니다.");
-                }
-                return response.json(); // 먼저 텍스트로 반환받고, 확인
-            })
-            .then((jsonData) => {
-                setUserData(jsonData);
-                console.log("✅ 사용자 정보:", jsonData);
-            })
-            .catch((error) => console.error("❌ 사용자 정보 가져오기 오류:", error));
-    }, []);
-
-    useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                const response = await fetch("/api/auth/check", {
-                    credentials: "include",
-                });
-
-                if (!response.ok) throw new Error("Failed to fetch");
-
-                const data = await response.json();
-
-                setIsLoggedIn(data.isNewUser === false);
-            } catch (error) {
-                console.error("로그인 상태 확인 실패:", error);
-                setIsLoggedIn(false);
-            }
-        };
-
-        checkLoginStatus();
-    }, []);
+    console.log(user);
 
     const handleLogout = async () => {
         try {
-            await fetch("/api/auth/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-            setIsLoggedIn(false);
+            await logout();
+            setLogin(false);
             window.location.reload();
         } catch (err) {
             console.error("로그아웃 실패", err);
         } finally {
-            toggleMenu(); // 메뉴 닫기
+            toggleMenu();
         }
     };
 
@@ -101,7 +59,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={userData?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
+                    src={user?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
@@ -184,7 +142,7 @@ const Header = () => {
                     <span>결제내역</span>
                 </MenuItem>
 
-                {isLoggedIn && (
+                {isLogin && (
                     <MenuItem
                         onClick={handleLogout}
                         sx={{

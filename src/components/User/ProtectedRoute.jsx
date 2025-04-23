@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { UserProvider } from "./UserContext.jsx";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
@@ -42,9 +41,9 @@ const ProtectedRoute = () => {
     }
 
     return (
-        <UserProvider>
+        <>
             <Outlet />
-        </UserProvider>
+        </>
     );
 };
 
