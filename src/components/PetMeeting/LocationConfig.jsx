@@ -8,7 +8,8 @@ import TitleBar from "../Global/TitleBar.jsx";
 import { Context } from "../../context/Context.jsx";
 
 const LocationConfig = () => {
-    const { setView, pet, setPet } = useContext(PetMeetingContext);
+    const { user, setUser } = useContext(Context);
+    const { setView } = useContext(PetMeetingContext);
     const [address, setAddress] = useState(null);
     const [dongName, setDongName] = useState(null);
     const [distance, setDistance] = useState(2);
@@ -17,23 +18,21 @@ const LocationConfig = () => {
     const [longitude, setLongitude] = useState(0);
 
     useEffect(() => {
-        if (pet?.owner) {
-            setAddress(pet.owner?.address || null);
-            setDongName(pet.owner?.dongName || null);
-            setDistance(pet.owner?.distance || 2);
+        if (user) {
+            setAddress(user.address || null);
+            setDongName(user.dongName || null);
+            setDistance(user.distance || 2);
         }
     }, []);
 
     const saveLocation = () => {
-        setPet((prev) => ({
+        setUser((prev) => ({
             ...prev,
-            owner: {
-                address: address,
-                dongName: dongName,
-                distance: distance,
-                latitude: latitude,
-                longitude: longitude,
-            },
+            address: address,
+            dongName: dongName,
+            distance: distance,
+            latitude: latitude,
+            longitude: longitude,
         }));
 
         if (address && dongName && distance) {

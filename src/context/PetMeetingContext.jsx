@@ -8,9 +8,6 @@ export const PetMeetingProvider = ({ children }) => {
         owner: {
             id: null,
             nickname: "",
-            snsAccountId: "",
-            snsTypeId: null,
-            fileId: 1,
             address: "",
             dongName: "",
             latitude: null,
