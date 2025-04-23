@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { checkLogin } from "../../services/authService.js";
+import { Context } from "../../context/Context.jsx";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
+
+    const { isLogin, setLogin } = useContext(Context);
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -17,7 +19,7 @@ const ProtectedRoute = () => {
             console.log("🔐 ProtectedRoute 응답 데이터:", data);
             const isLogged = data?.isNewUser === false;
 
-            setIsLoggedIn(isLogged);
+            setLogin(isLogged);
             setLoading(false);
         })();
     }, []);
@@ -26,7 +28,7 @@ const ProtectedRoute = () => {
         return <div>로그인 상태 확인 중...</div>;
     }
 
-    if (!isLoggedIn) {
+    if (!isLogin) {
         return <Navigate to="/login" replace />;
     }
 
