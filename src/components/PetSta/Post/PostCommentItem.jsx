@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import FriendsData from "../../../mock/PetSta/friends.json";
 import CommentsData from "../../../mock/PetSta/comments.json";
 import PostReplyItem from "./PostReplyItem.jsx";
 import UserIcon from "../UserIcon.jsx"; // 답글 컴포넌트 추가
 
 const PostCommentItem = ({ comment, onReply }) => {
     const [showReplies, setShowReplies] = useState(false);
-    const user = FriendsData.find((friend) => friend.userId === comment.userId);
+    const user = {
+        userName: comment.userName,
+        userId: comment.userId,
+        isView: comment.isView,
+        userPhoto: comment.userPhoto,
+    };
 
     // 현재 댓글의 답글 필터링
     const replies = CommentsData.filter((reply) => reply.parentId === comment.id);
@@ -28,7 +32,7 @@ const PostCommentItem = ({ comment, onReply }) => {
                         fontSize="14px"
                         color="#A8A8A9"
                         sx={{ cursor: "pointer", marginTop: 0.5 }}
-                        onClick={() => onReply(user.userName)}
+                        onClick={() => onReply(comment)}
                     >
                         답글 달기
                     </Typography>
