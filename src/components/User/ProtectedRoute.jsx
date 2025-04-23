@@ -1,35 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
+import { checkLogin } from "../../services/authService.js";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
 
     useEffect(() => {
-        const checkLogin = async () => {
-            try {
-                const res = await fetch(`/api/auth/check`, {
-                    credentials: "include",
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log("🔐 ProtectedRoute 응답 데이터:", data);
+        if (hasRun.current) return;
+        hasRun.current = true;
 
-                    // isNewUser === false이면 로그인된 상태로 간주
-                    const isLogged = data?.isNewUser === false;
-                    setIsLoggedIn(isLogged);
-                } else {
-                    setIsLoggedIn(false);
-                }
-            } catch (err) {
-                console.error("🚨 로그인 체크 실패:", err);
-                setIsLoggedIn(false);
-            } finally {
-                setLoading(false);
-            }
-        };
+        (async () => {
+            const data = await checkLogin();
 
-        checkLogin();
+            console.log("🔐 ProtectedRoute 응답 데이터:", data);
+            const isLogged = data?.isNewUser === false;
+
+            setIsLoggedIn(isLogged);
+            setLoading(false);
+        })();
     }, []);
 
     if (loading) {
