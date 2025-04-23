@@ -77,8 +77,8 @@ function App() {
                                 <Route path="board/post" element={<AdminNotice />} />
                                 <Route path="petsitter/list" element={<AdminPetsitterList />} />
                                 <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
-                                <Route path="petsitter/pending" element={<AdminPetSitterApplyList />} />
-                                <Route path="petsitter/pending/:id" element={<AdminPetSitterApplyDetail />} />
+                                <Route path="petsitter/apply" element={<AdminPetSitterApplyList />} />
+                                <Route path="petsitter/apply/:id" element={<AdminPetSitterApplyDetail />} />
                                 <Route path="facility/list" element={<AdminFacilityList />} />
                                 <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
                                 <Route path="facility/add" element={<AdminFacilityAdd />} />

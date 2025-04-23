@@ -1,24 +1,35 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, InputBase, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import comments from "../../mock/PetSta/comments.json";
 import PostCommentItem from "../../components/PetSta/Post/PostCommentItem.jsx";
 import { useTheme } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
+import { addComment, getParentComments } from "../../services/petstaService.js";
+import { Context } from "../../context/Context.jsx";
 
 const PostCommentPage = () => {
-    const [replyTo, setReplyTo] = useState(null); // ← 선택된 유저 상태
-    const [commentContent, setCommentContent] = useState(""); // ← 댓글 내용 상태
+    const [replyTo, setReplyTo] = useState({}); // ← 선택된 유저 상태
+    const [commentContent, setCommentContent] = useState("");
+    const [comments, setComments] = useState([]);
     const [isReply, setIsReply] = useState(false);
     const inputRef = useRef(null); // 👈 Input 태그를 위한 ref
     const { postId } = useParams();
-    const fileName = "haribo.jpg";
+    const { user } = useContext(Context);
     const theme = useTheme();
 
-    const handleReply = (userName) => {
+    const fetchComments = async () => {
+        try {
+            const data = await getParentComments(postId);
+            setComments(data);
+        } catch (error) {
+            console.error("댓글을 불러오는 데 실패했습니다.", error);
+        }
+    };
+
+    const handleReply = (comment) => {
         setIsReply(true);
-        setReplyTo(userName);
-        setCommentContent(`@${userName} `);
+        setReplyTo(comment); // comment 객체 통째로 저장
+        setCommentContent(`@${comment.userName} `);
 
         setTimeout(() => {
             inputRef.current?.focus(); // 👈 포커스 이동
@@ -31,20 +42,46 @@ const PostCommentPage = () => {
         setCommentContent("");
     };
 
-    // postId에 해당하는 댓글 중 parentId가 null인 것만 필터링
-    const filteredComments = comments.filter(
-        (comment) => comment.postId === Number(postId) && comment.parentId === null
-    );
+    useEffect(() => {
+        fetchComments();
+    }, [postId]);
+
+    const handleAddComment = async () => {
+        if (!commentContent.trim()) {
+            alert("댓글을 작성해 주세요!");
+            return;
+        }
+
+        try {
+            const requestBody = {
+                content: commentContent,
+                parentId: isReply ? replyTo.id : null,
+            };
+
+            await addComment(postId, requestBody);
+            alert("댓글이 작성되었습니다!");
+            alert(isReply);
+            alert(replyTo.id);
+
+            // 작성 후 초기화
+            setCommentContent("");
+            setIsReply(false);
+            setReplyTo(null);
+
+            fetchComments();
+        } catch (error) {
+            console.error(error);
+            alert("댓글 작성에 실패했습니다!");
+        }
+    };
 
     return (
         <Box position="relative" height="80vh" margin={1} padding={2} border="1px solid #C8C8C8" borderRadius="10px">
             <Box textAlign="center" fontWeight="bold" fontSize="18px" paddingBottom={2}>
                 댓글
             </Box>
-            {filteredComments.length > 0 ? (
-                filteredComments.map((comment) => (
-                    <PostCommentItem key={comment.id} comment={comment} onReply={handleReply} />
-                ))
+            {comments.length > 0 ? (
+                comments.map((comment) => <PostCommentItem key={comment.id} comment={comment} onReply={handleReply} />)
             ) : (
                 <Box textAlign="center" fontSize="16px" color="gray">
                     댓글이 없습니다.
@@ -74,7 +111,7 @@ const PostCommentPage = () => {
                                 padding={1}
                                 zIndex={1}
                             >
-                                <Typography color={theme.secondary}>{replyTo}님에게 남기는 답글</Typography>
+                                <Typography color={theme.secondary}>{replyTo.userName}님에게 남기는 답글</Typography>
                                 <Button sx={{ padding: 0, width: "0px" }} onClick={handleCancelReply}>
                                     ❌
                                 </Button>
@@ -95,7 +132,7 @@ const PostCommentPage = () => {
                     >
                         <Box
                             component="img"
-                            src={`/mock/Global/images/${fileName}`}
+                            src={`${user.photo}`}
                             alt="profile"
                             sx={{
                                 maxWidth: "100%",
@@ -140,6 +177,7 @@ const PostCommentPage = () => {
                                 height: "40px",
                                 whiteSpace: "nowrap",
                             }}
+                            onClick={handleAddComment}
                         >
                             작성
                         </Button>

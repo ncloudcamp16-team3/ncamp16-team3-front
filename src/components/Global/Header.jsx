@@ -10,31 +10,15 @@ import Calendar from "../../assets/images/Global/modal-calendar.svg";
 import Info from "../../assets/images/Global/modal-info.svg";
 import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
-
 const Header = () => {
     const navigate = useNavigate();
     const theme = useTheme();
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null);
-    const [userData2, setUserData2] = useState(null);
 
-    useEffect(() => {
-        // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.
-        fetch("/api/auth/profile", {
-            method: "GET",
-            credentials: "include", // 쿠키를 포함시키기 위해 필요한 옵션
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setUserData(data);
-                console.log("✅ 사용자 프로필 정보:", data); // 콘솔 출력
-            })
-            .catch((error) => console.error("❌ 프로필 데이터 가져오기 오류:", error));
-    }, []);
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.
@@ -49,7 +33,7 @@ const Header = () => {
                 return response.json(); // 먼저 텍스트로 반환받고, 확인
             })
             .then((jsonData) => {
-                setUserData2(jsonData);
+                setUserData(jsonData);
                 console.log("✅ 사용자 정보:", jsonData);
             })
             .catch((error) => console.error("❌ 사용자 정보 가져오기 오류:", error));
@@ -117,7 +101,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={userData2?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
+                    src={userData?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
