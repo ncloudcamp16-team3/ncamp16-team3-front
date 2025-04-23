@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, Modal, TextField } from "@mui/material";
 
-
 const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawal }) => {
     useEffect(() => {
         if (!open) return;
