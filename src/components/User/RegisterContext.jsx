@@ -79,7 +79,6 @@ export const RegisterProvider = ({ children }) => {
                         goToStep1();
                     } else {
                         console.log("기존 사용자 정보:", data);
-                        console.log("잉잉", data);
                     }
                 }
             } catch (err) {

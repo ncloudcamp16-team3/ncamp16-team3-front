@@ -9,7 +9,6 @@ const checkLoginStatus = async (navigate) => {
 
         const data = res.data;
         console.log("🔍 로그인 체크 결과:", data);
-        console.log("잉잉", data);
 
         if (data.isNewUser) {
             navigate("/register", { replace: true });
