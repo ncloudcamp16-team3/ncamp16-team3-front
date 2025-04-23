@@ -3,6 +3,7 @@ import { Box, Typography, Button, Checkbox, FormControlLabel, FormGroup, TextFie
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import penIcon from "/src/assets/images/User/pen_2.svg";
+import axios from "axios";
 
 const PetSitterRegister = () => {
     const [step, setStep] = useState(1); // 현재 단계
@@ -200,26 +201,95 @@ const PetSitterRegister = () => {
         }, {});
         stateSetter(newState);
     };
-    const handleComplete = () => {
-        // 등록 완료 상태와 함께 등록 정보도 저장
-        const sitterInfo = {
-            registered: true,
-            age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
-            petType: Object.keys(petTypes).find((key) => petTypes[key]) || "강아지",
-            petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
-            houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
-            comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
-            image: imagePreview,
-        };
+    const handleComplete = async () => {
+        try {
+            // 펫시터 정보 준비
+            const formData = new FormData();
+            const petSitterData = {
+                age: Object.keys(selectedAges).find((key) => selectedAges[key]),
+                houseType: Object.keys(houseType).find((key) => houseType[key]),
+                comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
+                grown: hasPet["네, 키우고 있습니다"] ? true : false,
+                petCount:
+                    Object.keys(petCount).find((key) => petCount[key]) === "1마리"
+                        ? "ONE"
+                        : Object.keys(petCount).find((key) => petCount[key]) === "2마리"
+                          ? "TWO"
+                          : "THREE_PLUS",
+                sitterExp: sitterExperience["네, 해본적 있습니다"] ? true : false,
+                petTypeId: petTypes["강아지"]
+                    ? 1
+                    : petTypes["고양이"]
+                      ? 2
+                      : petTypes["앵무새"]
+                        ? 3
+                        : petTypes["햄스터"]
+                          ? 4
+                          : petTypes["기타"]
+                            ? 5
+                            : null,
+            };
 
-        // 로컬 스토리지에 정보 저장
-        localStorage.setItem("petSitterRegistrationCompleted", "true");
-        localStorage.setItem("petSitterInfo", JSON.stringify(sitterInfo));
+            // JSON 데이터를 FormData에 추가
+            formData.append("data", new Blob([JSON.stringify(petSitterData)], { type: "application/json" }));
 
-        // 마이페이지로 이동
-        navigate("/mypage");
+            // 이미지가 있다면 추가
+            if (imagePreview) {
+                // 이미지가 base64 형식이라면 Blob으로 변환
+                if (imagePreview.startsWith("data:image")) {
+                    const response = await fetch(imagePreview);
+                    const blob = await response.blob();
+                    formData.append("image", blob, "profile.jpg");
+                }
+            }
+
+            // API 요청 보내기
+            const response = await axios.post("/api/petsitter/apply", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+            });
+
+            // 펫시터 등록 성공 시
+            if (response.status === 200 || response.status === 201) {
+                // 로컬 스토리지에 정보 저장 (UI에서 사용)
+                const sitterInfo = {
+                    registered: false, // API 응답에서 상태를 확인
+                    isPending: true, // PENDING 상태로 설정
+                    status: "PENDING", // 관리자 승인 대기 상태
+                    age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
+                    petType: Object.keys(petTypes).find((key) => petTypes[key]) || "강아지",
+                    petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
+                    houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
+                    comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
+                    image: imagePreview,
+                    experience: sitterExperience["네, 해본적 있습니다"], // 경험 여부도 함께 저장
+                    registeredAt: new Date().toISOString(), // 등록 시간 기록
+                };
+
+                localStorage.setItem("petSitterRegistrationCompleted", "true");
+                localStorage.setItem("petSitterInfo", JSON.stringify(sitterInfo));
+
+                // 이벤트 발생
+                const sitterRegistrationEvent = new CustomEvent("petSitterRegistered", {
+                    detail: { registered: false, isPending: true, status: "PENDING", info: sitterInfo },
+                });
+                window.dispatchEvent(sitterRegistrationEvent);
+
+                // 성공 메시지 표시
+                alert("펫시터 신청이 완료되었습니다. 관리자 승인 후 활동이 가능합니다.");
+
+                // 마이페이지로 이동
+                navigate("/mypage");
+            } else {
+                alert("펫시터 신청 처리 중 문제가 발생했습니다.");
+            }
+        } catch (error) {
+            console.error("펫시터 신청 오류:", error);
+            alert(error.response?.data?.message || "펫시터 신청 중 오류가 발생했습니다.");
+        }
     };
-
     // 연령대 선택 핸들러 (체크박스)
     const handleAgeChange = (age) => {
         setSelectedAges({
