@@ -75,3 +75,13 @@ export const getParentComments = async (postId) => {
             throw error;
         });
 };
+
+export const getReplyComments = async (commentId) => {
+    return await instance
+        .get(`${API_URL}/post/${commentId}/replies`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("댓글을 불러오는 데 실패했습니다.", error);
+            throw error;
+        });
+};

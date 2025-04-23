@@ -12,6 +12,9 @@ const PostCommentPage = () => {
     const [commentContent, setCommentContent] = useState("");
     const [comments, setComments] = useState([]);
     const [isReply, setIsReply] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [openRepliesMap, setOpenRepliesMap] = useState({});
+    const [rightPosition, setRightPosition] = useState("");
     const inputRef = useRef(null); // 👈 Input 태그를 위한 ref
     const { postId } = useParams();
     const { user } = useContext(Context);
@@ -26,6 +29,25 @@ const PostCommentPage = () => {
         }
     };
 
+    useEffect(() => {
+        const updatePosition = () => {
+            const windowWidth = window.innerWidth;
+            const layoutWidth = 500;
+
+            if (windowWidth <= layoutWidth) {
+                setRightPosition("20px");
+            } else {
+                const sideGap = (windowWidth - layoutWidth) / 2 - 8;
+                setRightPosition(`${sideGap}px`);
+            }
+        };
+
+        updatePosition();
+        window.addEventListener("resize", updatePosition);
+
+        return () => window.removeEventListener("resize", updatePosition);
+    }, []);
+
     const handleReply = (comment) => {
         setIsReply(true);
         setReplyTo(comment); // comment 객체 통째로 저장
@@ -33,7 +55,7 @@ const PostCommentPage = () => {
 
         setTimeout(() => {
             inputRef.current?.focus(); // 👈 포커스 이동
-        }, 100); // 0ms도 가능하지만, 약간의 딜레이 주면 더 안정적
+        }, 100);
     };
 
     const handleCancelReply = () => {
@@ -55,13 +77,12 @@ const PostCommentPage = () => {
         try {
             const requestBody = {
                 content: commentContent,
-                parentId: isReply ? replyTo.id : null,
+                parentId: replyTo ? (replyTo.parentId ?? replyTo.id) : null,
             };
 
             await addComment(postId, requestBody);
             alert("댓글이 작성되었습니다!");
-            alert(isReply);
-            alert(replyTo.id);
+            alert(requestBody.parentId);
 
             // 작성 후 초기화
             setCommentContent("");
@@ -69,6 +90,7 @@ const PostCommentPage = () => {
             setReplyTo(null);
 
             fetchComments();
+            setRefreshTrigger((prev) => prev + 1);
         } catch (error) {
             console.error(error);
             alert("댓글 작성에 실패했습니다!");
@@ -76,25 +98,64 @@ const PostCommentPage = () => {
     };
 
     return (
-        <Box position="relative" height="80vh" margin={1} padding={2} border="1px solid #C8C8C8" borderRadius="10px">
-            <Box textAlign="center" fontWeight="bold" fontSize="18px" paddingBottom={2}>
-                댓글
-            </Box>
-            {comments.length > 0 ? (
-                comments.map((comment) => <PostCommentItem key={comment.id} comment={comment} onReply={handleReply} />)
-            ) : (
-                <Box textAlign="center" fontSize="16px" color="gray">
-                    댓글이 없습니다.
-                </Box>
-            )}
+        <>
             <Box
+                position="relative"
+                margin={1}
+                padding={2}
+                borderRadius="10px"
+                paddingTop="30px"
+                marginBottom="68px"
+                zIndex={1}
+            >
+                <Box
+                    display="flex"
+                    position="fixed"
+                    top="50px"
+                    right={rightPosition}
+                    wdith="100%"
+                    width="100%"
+                    maxWidth="500px"
+                    justifyContent="space-between"
+                    bgcolor="white"
+                    zIndex={2}
+                >
+                    <div></div>
+                    <Box textAlign="center" fontWeight="bold" fontSize="18px">
+                        댓글
+                    </Box>
+                    <Box>❌</Box>
+                </Box>
+                {comments.length > 0 ? (
+                    comments.map((comment) => (
+                        <PostCommentItem
+                            key={`${comment.id}-${refreshTrigger}`}
+                            comment={comment}
+                            onReply={handleReply}
+                            showReplies={openRepliesMap[comment.id]}
+                            setShowReplies={(isOpen) =>
+                                setOpenRepliesMap((prev) => ({ ...prev, [comment.id]: isOpen }))
+                            }
+                        />
+                    ))
+                ) : (
+                    <Box textAlign="center" fontSize="16px" color="gray">
+                        댓글이 없습니다.
+                    </Box>
+                )}
+            </Box>
+            <Box
+                borderRadius="10px"
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
-                position="absolute"
+                position="fixed"
                 bottom={0}
-                left={0}
+                right={rightPosition}
                 width="100%"
+                maxWidth="500px"
+                zIndex={3}
+                bgColor="white"
             >
                 <AnimatePresence>
                     {isReply && (
@@ -132,7 +193,7 @@ const PostCommentPage = () => {
                     >
                         <Box
                             component="img"
-                            src={`${user.photo}`}
+                            src={user.photo}
                             alt="profile"
                             sx={{
                                 maxWidth: "100%",
@@ -154,6 +215,12 @@ const PostCommentPage = () => {
                                 placeholder="댓글을 작성해주세요"
                                 value={commentContent}
                                 onChange={(e) => setCommentContent(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault(); // 줄바꿈 방지
+                                        handleAddComment();
+                                    }
+                                }}
                                 sx={{
                                     caretColor: theme.brand3,
                                     marginLeft: "10px",
@@ -183,8 +250,9 @@ const PostCommentPage = () => {
                         </Button>
                     </Box>
                 </Box>
+                <Box height="80px" bgcolor="white" zIndex={99}></Box>
             </Box>
-        </Box>
+        </>
     );
 };
 
