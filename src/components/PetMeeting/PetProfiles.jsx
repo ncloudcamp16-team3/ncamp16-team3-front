@@ -57,6 +57,7 @@ const PetProfiles = () => {
     useEffect(() => {
         if (isInitialMount.current) return;
 
+        setLoading(true);
         setPetList([]);
         setPage(0);
         loadPets(0);
@@ -68,7 +69,7 @@ const PetProfiles = () => {
         setPetList([]);
         setPage(0);
         loadPets(0);
-    }, [user]);
+    }, [user.dongName]);
 
     const lastItemRef = useCallback(
         (node) => {
@@ -107,12 +108,13 @@ const PetProfiles = () => {
                     </Box>
                 );
             })}
-            {petList.length === 0 && <EmptyFriendCard />}
+
             {loading && (
                 <Box display="flex" justifyContent="center" mt={2}>
                     <CircularProgress />
                 </Box>
             )}
+            {!loading && petList.length === 0 && <EmptyFriendCard />}
         </Box>
     );
 };

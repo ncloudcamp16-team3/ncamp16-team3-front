@@ -7,8 +7,10 @@ import WalkBtn from "../../assets/images/PetMeeting/walk-btn.svg";
 import RestBtn from "../../assets/images/PetMeeting/rest-btn.svg";
 import ConfigBtn from "./ConfigBtn.jsx";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const FindFriendConfigBtns = () => {
+    const { user } = useContext(Context);
     const { pet } = useContext(PetMeetingContext);
     let activityImg;
     let activityLabel;
@@ -36,11 +38,7 @@ const FindFriendConfigBtns = () => {
             }}
         >
             <ConfigBtn img={PetBtn} label={!pet?.name ? "애완동물" : pet?.name} type={"pet"} />
-            <ConfigBtn
-                img={LocationBtn}
-                label={!pet?.owner?.dongName ? "위치설정" : pet?.owner?.dongName}
-                type={"location"}
-            />
+            <ConfigBtn img={LocationBtn} label={!user?.dongName ? "위치설정" : user?.dongName} type={"location"} />
             <ConfigBtn img={activityImg} label={activityLabel} type={"activity"} />
         </Box>
     );
