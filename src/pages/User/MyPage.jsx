@@ -29,10 +29,12 @@ const MyPage = () => {
             setIsLoading(true);
             setError(null);
             try {
-                // 사용자 정보 API 호출
-                const response = await axios.get("/api/member/mypage", {
+                // 사용자 정보 API 호출 - 백엔드 API 경로 수정
+                const response = await axios.get("/api/user/mypage", {
                     withCredentials: true,
                 });
+
+                console.log("마이페이지 응답 데이터:", response.data);
 
                 // API에서 받아온 데이터로 상태 업데이트
                 if (response.data) {
@@ -51,16 +53,30 @@ const MyPage = () => {
             } catch (err) {
                 console.error("마이페이지 데이터 로드 실패:", err);
                 setError("마이페이지 정보를 불러오는데 실패했습니다.");
+
+                // 오류 세부 정보 로깅
+                if (err.response) {
+                    console.log("응답 상태:", err.response.status);
+                    console.log("응답 데이터:", err.response.data);
+                    console.log("응답 헤더:", err.response.headers);
+                }
+
                 // 오류 시 빈 데이터 설정
                 setPets([]);
                 setSitterStatus({ registered: false });
+
+                // 401 오류인 경우 인증 문제로 간주하고 로그인 페이지로 리다이렉트
+                if (err.response && err.response.status === 401) {
+                    alert("로그인이 필요합니다.");
+                    navigate("/login");
+                }
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchMyPageData();
-    }, [setUser]);
+    }, [setUser, navigate]);
 
     const handleEditPet = (petId) => {
         navigate(`/pet/edit/${petId}`);
@@ -81,7 +97,7 @@ const MyPage = () => {
         if (withdrawalInput === "탈퇴합니다") {
             try {
                 // 백엔드 API 호출 - 탈퇴 처리
-                await axios.delete("/api/member/withdraw", {
+                await axios.delete("/api/user/withdraw", {
                     withCredentials: true,
                 });
 
@@ -126,7 +142,7 @@ const MyPage = () => {
     const handleNicknameSave = async (newNickname) => {
         try {
             const response = await axios.put(
-                "/api/member/nickname",
+                "/api/user/nickname",
                 { nickname: newNickname },
                 { withCredentials: true }
             );
@@ -185,9 +201,9 @@ const MyPage = () => {
             });
 
             if (uploadResponse.data && uploadResponse.data.fileId) {
-                // 프로필 이미지 업데이트 API 호출
+                // 프로필 이미지 업데이트 API 호출 - 경로 수정
                 const updateResponse = await axios.put(
-                    "/api/member/profile-image",
+                    "/api/user/profile-image",
                     { fileId: uploadResponse.data.fileId },
                     { withCredentials: true }
                 );
@@ -201,7 +217,8 @@ const MyPage = () => {
                 }
             }
         } catch (err) {
-            console.log("사용자 프로필 이미지 URL:", user?.photo);
+            console.error("프로필 이미지 업데이트 실패:", err);
+            alert("프로필 이미지 업데이트 중 오류가 발생했습니다.");
         }
     };
 
@@ -264,6 +281,21 @@ const MyPage = () => {
         );
     }
 
+    // 프로필 이미지 경로 처리
+    const getProfileImageUrl = () => {
+        if (!user || !user.photo) {
+            return "/src/assets/images/User/profile-pic.jpg"; // 기본 이미지
+        }
+
+        // 이미 전체 URL인 경우 그대로 사용
+        if (user.photo.startsWith("http") || user.photo.startsWith("data:")) {
+            return user.photo;
+        }
+
+        // 상대 경로인 경우 처리
+        return user.photo;
+    };
+
     return (
         <Box sx={{ width: "100%", p: 2, pb: 8 }}>
             {/* 상단 헤더 */}
@@ -304,7 +336,7 @@ const MyPage = () => {
                     {/* 프로필 사진 */}
                     <Box sx={{ position: "relative", mr: 2 }}>
                         <Avatar
-                            src={user?.photo || "/src/assets/images/User/profile-pic.jpg"}
+                            src={getProfileImageUrl()}
                             alt="프로필"
                             sx={{
                                 width: 60,

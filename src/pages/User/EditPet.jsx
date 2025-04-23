@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, TextField, Button, IconButton, Stack, Divider, Chip } from "@mui/material";
+import { Box, Typography, TextField, Button, IconButton, Stack, Divider, Chip, Alert } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -28,6 +28,7 @@ const EditPet = () => {
     const [imagePreviews, setImagePreviews] = useState([null, null, null, null, null, null]);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // 반려동물 종류 옵션
     const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
@@ -36,14 +37,17 @@ const EditPet = () => {
     useEffect(() => {
         const loadPetData = async () => {
             setIsLoading(true);
+            setError(null);
             try {
                 // API 호출로 반려동물 정보 가져오기
                 const response = await axios.get(`/api/pet/${petId}`, {
                     withCredentials: true,
                 });
 
-                if (response.data) {
-                    const petInfo = response.data;
+                console.log("반려동물 정보 응답:", response.data);
+
+                if (response.data && response.data.data) {
+                    const petInfo = response.data.data;
 
                     // 상태 업데이트
                     setPetData({
@@ -74,7 +78,23 @@ const EditPet = () => {
                 setIsLoading(false);
             } catch (error) {
                 console.error("반려동물 정보 로드 실패:", error);
-                alert("반려동물 정보를 불러오는데 실패했습니다.");
+
+                // 오류 세부 정보 로깅
+                if (error.response) {
+                    console.log("응답 상태:", error.response.status);
+                    console.log("응답 데이터:", error.response.data);
+                }
+
+                // 401 오류인 경우 로그인 페이지로 리다이렉트
+                if (error.response && error.response.status === 401) {
+                    setError("인증이 필요합니다. 로그인 페이지로 이동합니다.");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 2000);
+                } else {
+                    setError("반려동물 정보를 불러오는데 실패했습니다.");
+                }
+
                 setIsLoading(false);
             }
         };
@@ -82,7 +102,7 @@ const EditPet = () => {
         if (petId) {
             loadPetData();
         }
-    }, [petId]);
+    }, [petId, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -153,19 +173,19 @@ const EditPet = () => {
             birthDate: petData.birthDate,
             gender: petData.gender,
             isNeutered: petData.isNeutered,
-            weight: parseFloat(petData.weight),
+            weight: parseFloat(petData.weight || "0"),
             introduction: petData.introduction,
         });
         formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
 
         // 변경된 이미지만 추가 (null이 아닌 파일만 필터링)
-        const validImages = images.filter((img) => img !== null);
-        validImages.forEach((image, index) => {
+        const validImages = images.filter((img) => img !== null && img instanceof File);
+        validImages.forEach((image) => {
             formData.append("images", image);
         });
 
         try {
-            // API 호출
+            // API 호출 - 경로 수정
             const response = await axios.put(`/api/pet/${petId}/update`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -173,15 +193,28 @@ const EditPet = () => {
                 withCredentials: true,
             });
 
+            console.log("반려동물 정보 업데이트 응답:", response.data);
+
             // 성공 시 처리
             alert("반려동물 정보가 수정되었습니다.");
             navigate("/mypage");
         } catch (error) {
             console.error("반려동물 정보 수정 오류:", error);
-            alert(error.response?.data?.message || "반려동물 정보 수정 중 오류가 발생했습니다.");
+
+            // 오류 세부 정보 로깅
+            if (error.response) {
+                console.log("응답 상태:", error.response.status);
+                console.log("응답 데이터:", error.response.data);
+            }
+
+            if (error.response && error.response.status === 401) {
+                alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+                navigate("/login");
+            } else {
+                alert(error.response?.data?.message || "반려동물 정보 수정 중 오류가 발생했습니다.");
+            }
         }
     };
-
     const handleGoBack = () => {
         navigate(-1);
     };
@@ -191,6 +224,26 @@ const EditPet = () => {
             <Typography align="center" sx={{ my: 4 }}>
                 데이터를 불러오는 중...
             </Typography>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ p: 3 }}>
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                </Alert>
+                <Button
+                    variant="contained"
+                    onClick={() => navigate("/mypage")}
+                    sx={{
+                        bgcolor: "#E9A260",
+                        "&:hover": { bgcolor: "#d0905a" },
+                    }}
+                >
+                    마이페이지로 돌아가기
+                </Button>
+            </Box>
         );
     }
 
