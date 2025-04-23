@@ -101,7 +101,7 @@ const PetSitterApplyList = () => {
         loadPendingPetSitterData();
     }, [page]);
 
-    // 검색 핸들러
+    // 필터에 따라 다른 필드를 검색하는 핸들러
     const handleSearch = (term) => {
         setSearchTerm(term);
 
@@ -110,12 +110,34 @@ const PetSitterApplyList = () => {
             return;
         }
 
-        const filtered = rows.filter(
-            (row) =>
-                row.title.toLowerCase().includes(term.toLowerCase()) ||
-                row.content.toLowerCase().includes(term.toLowerCase())
-        );
+        let filtered;
 
+        // 현재 선택된 필터에 따라 다른 필드를 검색
+        switch (currentFilter) {
+            case "ID":
+                // ID는 숫자이므로 정확히 일치하는지 확인
+                filtered = rows.filter((row) => row.id.toString() === term);
+                break;
+
+            case "사용자 아이디":
+                // 사용자 아이디(nickname)에 검색어가 포함되어 있는지 확인
+                filtered = rows.filter((row) => row.nickname.toLowerCase().includes(term.toLowerCase()));
+                break;
+
+            case "코멘트":
+                // 코멘트에 검색어가 포함되어 있는지 확인
+                filtered = rows.filter((row) => row.comment && row.comment.toLowerCase().includes(term.toLowerCase()));
+                break;
+
+            default:
+                // 기본적으로 모든 텍스트 필드에서 검색
+                filtered = rows.filter(
+                    (row) =>
+                        row.id.toString() === term ||
+                        (row.nickname && row.nickname.toLowerCase().includes(term.toLowerCase())) ||
+                        (row.comment && row.comment.toLowerCase().includes(term.toLowerCase()))
+                );
+        }
         setFilteredRows(filtered);
     };
 
