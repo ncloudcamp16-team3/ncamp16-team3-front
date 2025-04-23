@@ -1,6 +1,6 @@
 import instance from "./axiosInstance.js";
 
-const API_URL = "/member"; // 상대 URL
+const API_URL = "/user"; // 상대 URL
 
 export const toggleFollow = (userId) => {
     return instance
