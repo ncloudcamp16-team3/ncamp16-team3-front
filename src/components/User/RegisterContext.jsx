@@ -74,15 +74,12 @@ export const RegisterProvider = ({ children }) => {
                     const data = await res.json();
 
                     if (data.isNewUser) {
-                        // 신규 사용자니까 회원가입 진행
                         setSnsAccountId(data.snsAccountId);
                         setSnsTypeId(data.snsTypeId);
                         goToStep1();
                     } else {
-                        // 기존 사용자라면 필요한 정보를 설정하거나
-                        // 이미 회원가입이 완료되었으므로 리다이렉션 등의 처리를 할 수 있음
                         console.log("기존 사용자 정보:", data);
-                        // 예: 이미 가입한 사용자에 대한 후속 처리 (리다이렉션, 데이터 세팅 등)
+                        console.log("잉잉", data);
                     }
                 }
             } catch (err) {
