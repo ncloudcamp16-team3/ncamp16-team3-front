@@ -1,37 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../services/axiosInstance.js";
+const API_URL = "/auth"; // 상대 URL
+
+const checkLoginStatus = async (navigate) => {
+    try {
+        const res = await axiosInstance.get(`${API_URL}/check`, {});
+
+        const data = res.data;
+        console.log("🔍 로그인 체크 결과:", data);
+
+        if (data.isNewUser) {
+            navigate("/register", { replace: true });
+        } else {
+            navigate("/", { replace: true });
+        }
+    } catch (err) {
+        console.error("🚨 로그인 체크 실패:", err);
+        navigate("/login", { replace: true });
+    }
+};
 
 const OAuth2Success = () => {
     const navigate = useNavigate();
+    const hasRun = useRef(false); // ✅ useEffect 2번 실행 방지
 
     useEffect(() => {
-        const checkLogin = async () => {
-            try {
-                const res = await fetch(`/api/auth/check`, {
-                    credentials: "include",
-                });
+        if (hasRun.current) return;
+        hasRun.current = true;
 
-                if (!res.ok) {
-                    throw new Error("인증 확인 실패");
-                }
-
-                const data = await res.json();
-                console.log("🔍 로그인 체크 결과:", data);
-
-                if (data.isNewUser) {
-                    // SNS 로그인 성공 + 아직 회원가입 전
-                    navigate("/register", { replace: true });
-                } else {
-                    // 이미 회원가입된 사용자
-                    navigate("/", { replace: true });
-                }
-            } catch (err) {
-                console.error("🚨 로그인 체크 실패:", err);
-                navigate("/login", { replace: true });
-            }
-        };
-
-        checkLogin();
+        checkLoginStatus(navigate); // 메소드 호출
     }, [navigate]);
 
     return (
