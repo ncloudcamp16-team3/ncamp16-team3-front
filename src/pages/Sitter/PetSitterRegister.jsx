@@ -206,8 +206,8 @@ const PetSitterRegister = () => {
             // 펫시터 정보 준비
             const formData = new FormData();
             const petSitterData = {
-                age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
-                houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
+                age: Object.keys(selectedAges).find((key) => selectedAges[key]),
+                houseType: Object.keys(houseType).find((key) => houseType[key]),
                 comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
                 grown: hasPet["네, 키우고 있습니다"] ? true : false,
                 petCount:
@@ -246,8 +246,7 @@ const PetSitterRegister = () => {
             // API 요청 보내기
             const response = await axios.post("/api/petsitter/apply", formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data"
-
+                    "Content-Type": "multipart/form-data",
                 },
                 withCredentials: true,
             });
