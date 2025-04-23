@@ -14,18 +14,19 @@ const dayMap = {
 
 /**
  * 문자열로 주어진 요일+시간 범위 안에 현재 시간이 포함되는지 확인
- * @param {string} openHours 요일+시간 범위 문자열. 예: "화–일 09:00 - 18:00"
+ * @param {string} openTimeRange 요일+시간 범위 문자열. 예: "화–일 09:00 - 18:00"
  * @returns {boolean} isInRange
  */
-const useInTimeRange = (openHours) => {
+const useInTimeRange = (openTimeRange) => {
     const [isInRange, setIsInRange] = useState(false);
 
     useEffect(() => {
-        if (!openHours) return;
+        if (!openTimeRange) return;
 
         try {
-            // "화–일 09:00 - 18:00" 형태 파싱
-            const [dayPart, startTimeStr, , endTimeStr] = openHours.split(" ");
+            const dayPart = openTimeRange[0];
+            const startTimeStr = openTimeRange[1];
+            const endTimeStr = openTimeRange[2];
 
             let startDay, endDay;
 
@@ -71,7 +72,7 @@ const useInTimeRange = (openHours) => {
             console.error("시간 범위 파싱 오류:", error);
             setIsInRange(false);
         }
-    }, [openHours]);
+    }, [openTimeRange]);
 
     return isInRange;
 };

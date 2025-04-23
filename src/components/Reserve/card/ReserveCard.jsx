@@ -27,15 +27,15 @@ const ReserveCard = ({ item }) => {
                                     className={index < filledStars ? "star-icon filled" : "star-icon"}
                                 />
                             ))}
-                            <span className="rating-count">({item.reviewNumber})</span>
+                            <span className="rating-count">({item.reviewCount})</span>
                             리뷰 {item.reviewCount}건
                         </Typography>
                         <Typography className="card-address">
-                            {item.distance}km ・ {item.address}
+                            {item.distance}km ・ {item.openTimeRange.join(" - ")}
                         </Typography>
                         <Chip
                             size="small"
-                            label={useInTimeRange(item.openHours) ? "영업중" : "영업종료"}
+                            label={useInTimeRange(item.openTimeRange) ? "영업중" : "영업종료"}
                             className="open-chip"
                         />
                         <Typography className="card-time">{item.openHours}</Typography>

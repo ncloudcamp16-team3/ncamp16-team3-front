@@ -1,24 +1,51 @@
+import React from "react";
 import { PaymentHistoryItem } from "./PaymentHistoryItem.jsx";
-import styles from "../../css/payment/PaymentHistory.module.css";
+import { Box, Typography, CircularProgress, Container } from "@mui/material";
 
 export const PaymentHistory = ({ payments, loading }) => {
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return (
+            <Box
+                sx={{
+                    padding: 4,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    gap: 2,
+                }}
+            >
+                <CircularProgress color="primary" />
+                <Typography color="text.secondary">결제 내역을 불러오는 중...</Typography>
+            </Box>
+        );
     }
 
-    if (payments == null) {
-        return <div className={styles.empty}>결제 내역이 없습니다</div>;
+    if (!payments || payments.length === 0) {
+        return (
+            <Box
+                sx={{
+                    padding: 4,
+                    textAlign: "center",
+                    color: "text.secondary",
+                }}
+            >
+                <Typography variant="body1">결제 내역이 없습니다</Typography>
+            </Box>
+        );
     }
 
     return (
-        <div className={styles.paymentHistoryListContainer}>
+        <Container
+            disableGutters
+            sx={{
+                paddingTop: "145px",
+                bgcolor: "background.paper",
+            }}
+        >
             {payments.map((payment, index) => (
-                <PaymentHistoryItem
-                    key={payment.id}
-                    payment={payment}
-                    isLast={index === payment.length - 1}
-                />
+                <PaymentHistoryItem key={payment.id} payment={payment} isLast={index === payments.length - 1} />
             ))}
-        </div>
+        </Container>
     );
 };
