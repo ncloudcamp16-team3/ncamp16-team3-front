@@ -5,7 +5,7 @@ import Mappin from "../../assets/images/PetMeeting/map-pin.svg";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import { Context } from "../../context/Context.jsx";
 
-const KakaoMap = ({ address, setAddress, setDongName }) => {
+const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude }) => {
     const { pet } = useContext(PetMeetingContext);
     const mapRef = useRef(null);
     const markerRef = useRef(null);
@@ -121,6 +121,8 @@ const KakaoMap = ({ address, setAddress, setDongName }) => {
 
                 setAddress(address);
                 setDongName(dong);
+                setLatitude(lat);
+                setLongitude(lng);
             }
         });
     };

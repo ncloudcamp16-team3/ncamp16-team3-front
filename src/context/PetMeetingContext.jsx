@@ -3,7 +3,31 @@ import { createContext, useMemo, useState } from "react";
 export const PetMeetingContext = createContext(null);
 
 export const PetMeetingProvider = ({ children }) => {
-    const [pet, setPet] = useState(null);
+    const [pet, setPet] = useState({
+        id: null,
+        owner: {
+            id: null,
+            nickname: "",
+            snsAccountId: "",
+            snsTypeId: null,
+            fileId: 1,
+            address: "",
+            dongName: "",
+            latitude: null,
+            longitude: null,
+            distance: null,
+        },
+        petTypeId: null,
+        name: "",
+        gender: "",
+        birth: "",
+        weight: 0,
+        info: "",
+        neutered: false,
+        activityStatus: "NONE",
+        photos: [],
+        thumbnail: 0,
+    });
     const [openPetConfigModal, setOpenPetConfigModal] = useState(false);
     const [openActivityModal, setOpenActivityModal] = useState(false);
     const [drop, setDrop] = useState(false);

@@ -13,6 +13,8 @@ const LocationConfig = () => {
     const [dongName, setDongName] = useState(null);
     const [distance, setDistance] = useState(2);
     const { showModal } = useContext(Context);
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
 
     useEffect(() => {
         if (pet?.owner) {
@@ -29,6 +31,8 @@ const LocationConfig = () => {
                 address: address,
                 dongName: dongName,
                 distance: distance,
+                latitude: latitude,
+                longitude: longitude,
             },
         }));
 
@@ -43,7 +47,13 @@ const LocationConfig = () => {
         <Box>
             <TitleBar name={"내 위치정보 설정"} onBack={() => setView("petMeeting")} />
 
-            <KakaoMap address={address} setAddress={setAddress} dongName={dongName} setDongName={setDongName} />
+            <KakaoMap
+                address={address}
+                setAddress={setAddress}
+                setDongName={setDongName}
+                setLatitude={setLatitude}
+                setLongitude={setLongitude}
+            />
             <Distance dongName={dongName} distance={distance} setDistance={setDistance} />
             <LocationConfigBtns saveLocation={saveLocation} />
         </Box>
