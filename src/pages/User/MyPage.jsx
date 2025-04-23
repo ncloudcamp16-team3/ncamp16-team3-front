@@ -4,6 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import petEx from "/src/assets/images/User/pet_ex.svg";
 import sitter from "/src/assets/images/User/petsit_req.svg";
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
+import PetSitterQuitModal from "./PetSitterQuitModal";
 import { Context } from "../../context/Context.jsx";
 import { useNavigate } from "react-router-dom";
 import penIcon1 from "/src/assets/images/User/pen_1.svg";
@@ -18,6 +19,7 @@ const MyPage = () => {
     const [hover, setHover] = useState({});
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
     const [openNicknameModal, setOpenNicknameModal] = useState(false);
+    const [openQuitPetsitterModal, setOpenQuitPetsitterModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,7 +31,7 @@ const MyPage = () => {
             setIsLoading(true);
             setError(null);
             try {
-                // 사용자 정보 API 호출 - 백엔드 API 경로 수정
+                // 사용자 정보 API 호출
                 const response = await axios.get("/api/user/mypage", {
                     withCredentials: true,
                 });
@@ -43,27 +45,73 @@ const MyPage = () => {
                         nickname: response.data.nickname,
                         photo: response.data.profileImageUrl,
                         id: response.data.userId,
+                        path: response.data.profileImageUrl,
                     }));
 
                     setPets(response.data.pets || []);
-                    setSitterStatus({
-                        registered: response.data.isSitter,
-                    });
+
+                    // 펫시터 상태 확인
+                    if (response.data.petSitterStatus) {
+                        setSitterStatus({
+                            registered: response.data.petSitterStatus === "APPROVE",
+                            isPending: response.data.petSitterStatus === "PENDING",
+                            status: response.data.petSitterStatus,
+                            age: response.data.petSitterInfo?.age,
+                            petType: response.data.petSitterInfo?.petType,
+                            petCount: response.data.petSitterInfo?.petCount,
+                            houseType: response.data.petSitterInfo?.houseType,
+                            experience: response.data.petSitterInfo?.sitterExp,
+                            comment: response.data.petSitterInfo?.comment,
+                            image: response.data.petSitterInfo?.imagePath,
+                        });
+                    } else {
+                        setSitterStatus({
+                            registered: false,
+                            isPending: false,
+                            status: "NONE",
+                        });
+                    }
                 }
             } catch (err) {
                 console.error("마이페이지 데이터 로드 실패:", err);
                 setError("마이페이지 정보를 불러오는데 실패했습니다.");
 
-                // 오류 세부 정보 로깅
-                if (err.response) {
-                    console.log("응답 상태:", err.response.status);
-                    console.log("응답 데이터:", err.response.data);
-                    console.log("응답 헤더:", err.response.headers);
-                }
+                // 오류 시에도 로컬 스토리지의 펫시터 정보 확인
+                try {
+                    // 백엔드 펫시터 상태 조회 API 호출
+                    const petSitterResponse = await axios.get("/api/petsitter/status", {
+                        withCredentials: true,
+                    });
 
-                // 오류 시 빈 데이터 설정
-                setPets([]);
-                setSitterStatus({ registered: false });
+                    if (petSitterResponse.data && petSitterResponse.data.data) {
+                        const petSitterInfo = petSitterResponse.data.data;
+                        setSitterStatus({
+                            registered: petSitterInfo.status === "APPROVE",
+                            isPending: petSitterInfo.status === "PENDING",
+                            status: petSitterInfo.status,
+                            age: petSitterInfo.age,
+                            petType: petSitterInfo.petType,
+                            petCount: petSitterInfo.petCount,
+                            houseType: petSitterInfo.houseType,
+                            experience: petSitterInfo.sitterExp,
+                            comment: petSitterInfo.comment,
+                            image: petSitterInfo.imagePath,
+                        });
+                    } else {
+                        setSitterStatus({
+                            registered: false,
+                            isPending: false,
+                            status: "NONE",
+                        });
+                    }
+                } catch (petSitterErr) {
+                    console.error("펫시터 정보 조회 실패:", petSitterErr);
+                    setSitterStatus({
+                        registered: false,
+                        isPending: false,
+                        status: "NONE",
+                    });
+                }
 
                 // 401 오류인 경우 인증 문제로 간주하고 로그인 페이지로 리다이렉트
                 if (err.response && err.response.status === 401) {
@@ -76,6 +124,20 @@ const MyPage = () => {
         };
 
         fetchMyPageData();
+
+        // 펫시터 등록 이벤트 리스너 추가
+        const handlePetSitterRegistered = (event) => {
+            setSitterStatus({
+                registered: true,
+                ...event.detail.info,
+            });
+        };
+
+        window.addEventListener("petSitterRegistered", handlePetSitterRegistered);
+
+        return () => {
+            window.removeEventListener("petSitterRegistered", handlePetSitterRegistered);
+        };
     }, [setUser, navigate]);
 
     const handleEditPet = (petId) => {
@@ -183,6 +245,7 @@ const MyPage = () => {
             setUser((prev) => ({
                 ...prev,
                 photo: event.target.result,
+                path: event.target.result,
             }));
         };
         reader.readAsDataURL(file);
@@ -212,6 +275,7 @@ const MyPage = () => {
                     setUser((prev) => ({
                         ...prev,
                         photo: updateResponse.data.profileImageUrl,
+                        path: updateResponse.data.profileImageUrl,
                     }));
                     alert("프로필 사진이 성공적으로 업데이트되었습니다.");
                 }
@@ -222,12 +286,61 @@ const MyPage = () => {
         }
     };
 
-    const handleProfileClick = () => {
-        fileInputRef.current.click();
+    const handleSitterAction = () => {
+        // 이미 등록된 경우, 지금까지 저장된 정보와 함께 수정 모드로 이동
+        if (sitterStatus && sitterStatus.registered) {
+            // URL 파라미터로 수정 모드임을 알림
+            navigate("/petsitter-register?mode=edit");
+        } else {
+            // 신규 등록
+            navigate("/petsitter-register");
+        }
     };
 
-    const handleSitterAction = () => {
-        navigate("/petsitter-register");
+    const handleOpenQuitPetsitterModal = () => {
+        setOpenQuitPetsitterModal(true);
+    };
+
+    const handleCloseQuitPetsitterModal = () => {
+        setOpenQuitPetsitterModal(false);
+    };
+
+    const handleQuitPetsitter = async () => {
+        try {
+            // 펫시터 그만두기 API 호출
+            const response = await axios.post(
+                "/api/petsitter/quit",
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+
+            // 로컬 스토리지에서 펫시터 정보 삭제
+            localStorage.removeItem("petSitterRegistrationCompleted");
+            localStorage.removeItem("petSitterInfo");
+
+            // 상태 업데이트
+            setSitterStatus({
+                registered: false,
+            });
+
+            // 모달 닫기
+            setOpenQuitPetsitterModal(false);
+
+            // 성공 메시지
+            alert("펫시터 활동을 중단하였습니다.");
+        } catch (error) {
+            console.error("펫시터 그만두기 실패:", error);
+
+            // 오류 메시지
+            alert(error.response?.data?.message || "펫시터 그만두기 처리 중 오류가 발생했습니다.");
+            setOpenQuitPetsitterModal(false);
+        }
+    };
+
+    const handleProfileClick = () => {
+        fileInputRef.current.click();
     };
 
     const handleDeletePet = async (petId) => {
@@ -283,17 +396,17 @@ const MyPage = () => {
 
     // 프로필 이미지 경로 처리
     const getProfileImageUrl = () => {
-        if (!user || !user.photo) {
+        if (!user || !user.path) {
             return "/src/assets/images/User/profile-pic.jpg"; // 기본 이미지
         }
 
         // 이미 전체 URL인 경우 그대로 사용
-        if (user.photo.startsWith("http") || user.photo.startsWith("data:")) {
-            return user.photo;
+        if (user.path.startsWith("http") || user.path.startsWith("data:")) {
+            return user.path;
         }
 
         // 상대 경로인 경우 처리
-        return user.photo;
+        return user.path;
     };
 
     return (
@@ -507,7 +620,6 @@ const MyPage = () => {
                 )}
             </Box>
 
-            {/* 펫시터 섹션 */}
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
                     펫시터
@@ -515,7 +627,7 @@ const MyPage = () => {
                 <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "90%", mx: "auto" }}>
                     <CardContent sx={{ p: 2 }}>
                         {sitterStatus.registered ? (
-                            // 등록된 펫시터의 경우
+                            // 승인된 펫시터의 경우
                             <>
                                 {/* 프로필 이미지 */}
                                 <Box
@@ -530,7 +642,7 @@ const MyPage = () => {
                                 >
                                     <Box
                                         component="img"
-                                        src={sitterStatus.image || "/mock/Global/images/haribo.jpg"}
+                                        src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
                                         alt="프로필"
                                         sx={{
                                             width: "100%",
@@ -581,7 +693,11 @@ const MyPage = () => {
                                         }}
                                     >
                                         <Typography fontWeight="bold">펫시터 경험</Typography>
-                                        <Typography>{sitterStatus.experience ? "있음" : "없음"}</Typography>
+                                        <Typography>
+                                            {sitterStatus.experience === true || sitterStatus.sitterExp
+                                                ? "있음"
+                                                : "없음"}
+                                        </Typography>
                                     </Box>
 
                                     <Box
@@ -608,6 +724,127 @@ const MyPage = () => {
                                         </Typography>
                                     </Box>
                                 </Box>
+
+                                <Box sx={{ display: "flex", gap: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleSitterAction}
+                                        sx={{
+                                            flex: 2,
+                                            bgcolor: "#E9A260",
+                                            "&:hover": { bgcolor: "#d0905a" },
+                                            borderRadius: "4px",
+                                            py: 0.7,
+                                            fontSize: "0.9rem",
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        펫시터 정보 수정
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleOpenQuitPetsitterModal}
+                                        sx={{
+                                            flex: 1,
+                                            bgcolor: "#f44336",
+                                            color: "white",
+                                            "&:hover": { bgcolor: "#d32f2f" },
+                                            borderRadius: "4px",
+                                            py: 0.7,
+                                            fontSize: "0.85rem",
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        그만두기
+                                    </Button>
+                                </Box>
+                            </>
+                        ) : sitterStatus.isPending ? (
+                            // 승인 대기 중인 펫시터의 경우
+                            <>
+                                <Box
+                                    component="img"
+                                    src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
+                                    alt="펫시터 프로필"
+                                    sx={{
+                                        width: 120,
+                                        height: 120,
+                                        borderRadius: "50%",
+                                        objectFit: "cover",
+                                        mb: 3,
+                                        mx: "auto",
+                                        display: "block",
+                                    }}
+                                />
+                                <Box
+                                    sx={{
+                                        bgcolor: "rgba(255, 193, 7, 0.2)",
+                                        p: 2,
+                                        borderRadius: 2,
+                                        mb: 2,
+                                        border: "1px solid #FFC107",
+                                    }}
+                                >
+                                    <Typography
+                                        variant="body1"
+                                        align="center"
+                                        sx={{ color: "#856404", fontWeight: "bold" }}
+                                    >
+                                        승인 대기 중
+                                    </Typography>
+                                    <Typography variant="body2" align="center" sx={{ mt: 1, color: "#856404" }}>
+                                        관리자가 신청 내용을 검토 중입니다.
+                                        <br />
+                                        승인이 완료되면 펫시터 활동이 가능합니다.
+                                    </Typography>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        mb: 3,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">연령대</Typography>
+                                        <Typography>{sitterStatus.age || "40대"}</Typography>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">반려동물</Typography>
+                                        <Typography>
+                                            {sitterStatus.petType || "강아지"} {sitterStatus.petCount || "1마리"}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            mb: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight="bold">펫시터 경험</Typography>
+                                        <Typography>
+                                            {sitterStatus.experience === true || sitterStatus.sitterExp
+                                                ? "있음"
+                                                : "없음"}
+                                        </Typography>
+                                    </Box>
+                                </Box>
                             </>
                         ) : (
                             // 미등록 펫시터의 경우
@@ -630,24 +867,24 @@ const MyPage = () => {
                                     <br />
                                     펫시터가 찾아갑니다!
                                 </Typography>
+
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    onClick={handleSitterAction}
+                                    sx={{
+                                        bgcolor: "#E9A260",
+                                        "&:hover": { bgcolor: "#d0905a" },
+                                        borderRadius: "4px",
+                                        py: 0.7,
+                                        fontSize: "0.9rem",
+                                        boxShadow: "none",
+                                    }}
+                                >
+                                    펫시터 신청
+                                </Button>
                             </>
                         )}
-
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            onClick={handleSitterAction}
-                            sx={{
-                                bgcolor: "#E9A260",
-                                "&:hover": { bgcolor: "#d0905a" },
-                                borderRadius: "4px",
-                                py: 0.7,
-                                fontSize: "0.9rem",
-                                boxShadow: "none",
-                            }}
-                        >
-                            {sitterStatus.registered ? "펫시터 정보 수정" : "펫시터 신청"}
-                        </Button>
                     </CardContent>
                 </Card>
             </Box>
@@ -678,8 +915,12 @@ const MyPage = () => {
                 currentNickname={user?.nickname || ""}
                 onSave={handleNicknameSave}
             />
+            <PetSitterQuitModal
+                open={openQuitPetsitterModal}
+                onClose={handleCloseQuitPetsitterModal}
+                onConfirm={handleQuitPetsitter}
+            />
         </Box>
     );
 };
-
 export default MyPage;
