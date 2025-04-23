@@ -9,7 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("/api/auth/profile", {
+        fetch("/api/auth/check", {
             method: "GET",
             credentials: "include",
         })

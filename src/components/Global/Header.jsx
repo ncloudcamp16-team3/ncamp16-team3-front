@@ -10,7 +10,6 @@ import Calendar from "../../assets/images/Global/modal-calendar.svg";
 import Info from "../../assets/images/Global/modal-info.svg";
 import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
-import { useUser } from "../User/UserContext.jsx";
 const Header = () => {
     const navigate = useNavigate();
     const theme = useTheme();
@@ -19,8 +18,7 @@ const Header = () => {
     const open = Boolean(anchorEl);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const [userData2, setUserData2] = useState(null);
-    const { user } = useUser();
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.
@@ -35,9 +33,8 @@ const Header = () => {
                 return response.json(); // 먼저 텍스트로 반환받고, 확인
             })
             .then((jsonData) => {
-                setUserData2(jsonData);
+                setUserData(jsonData);
                 console.log("✅ 사용자 정보:", jsonData);
-                console.log("잉잉:", user);
             })
             .catch((error) => console.error("❌ 사용자 정보 가져오기 오류:", error));
     }, []);
@@ -104,7 +101,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={userData2?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
+                    src={userData?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
                     alt="profile"
                     sx={{
                         maxWidth: "100%",
