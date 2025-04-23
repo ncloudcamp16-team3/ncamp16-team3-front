@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/Global/icon1.svg";
 import notification from "../../assets/images/Global/notification2.svg";
@@ -10,7 +10,7 @@ import Calendar from "../../assets/images/Global/modal-calendar.svg";
 import Info from "../../assets/images/Global/modal-info.svg";
 import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
-import { useUser } from "../User/UserContext.jsx";
+import { Context } from "../../context/Context.jsx";
 const Header = () => {
     const navigate = useNavigate();
     const theme = useTheme();
@@ -20,7 +20,7 @@ const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const [userData2, setUserData2] = useState(null);
-    const { user } = useUser();
+    const { user } = useContext(Context);
 
     useEffect(() => {
         // GET 요청을 보낼 때 자동으로 쿠키가 포함됩니다.

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, InputBase, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PostCommentItem from "../../components/PetSta/Post/PostCommentItem.jsx";
 import { useTheme } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +19,7 @@ const PostCommentPage = () => {
     const { postId } = useParams();
     const { user } = useContext(Context);
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const fetchComments = async () => {
         try {
@@ -82,7 +83,6 @@ const PostCommentPage = () => {
 
             await addComment(postId, requestBody);
             alert("댓글이 작성되었습니다!");
-            alert(requestBody.parentId);
 
             // 작성 후 초기화
             setCommentContent("");
@@ -119,12 +119,16 @@ const PostCommentPage = () => {
                     justifyContent="space-between"
                     bgcolor="white"
                     zIndex={2}
+                    paddingX={1}
+                    paddingY={1}
                 >
                     <div></div>
                     <Box textAlign="center" fontWeight="bold" fontSize="18px">
                         댓글
                     </Box>
-                    <Box>❌</Box>
+                    <Box onClick={() => navigate(-1)} sx={{ cursor: "pointer" }}>
+                        ❌
+                    </Box>
                 </Box>
                 {comments.length > 0 ? (
                     comments.map((comment) => (
@@ -155,7 +159,7 @@ const PostCommentPage = () => {
                 width="100%"
                 maxWidth="500px"
                 zIndex={3}
-                bgColor="white"
+                bgcolor="white"
             >
                 <AnimatePresence>
                     {isReply && (

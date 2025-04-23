@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../../context/Context.jsx";
 
 const OAuth2Success = () => {
+    const { user, setUser } = useContext(Context);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,6 +25,11 @@ const OAuth2Success = () => {
                     navigate("/register", { replace: true });
                 } else {
                     // 이미 회원가입된 사용자
+                    let newUser = {};
+                    newUser.id = data.userId;
+                    newUser.photo = data.userPhoto;
+                    newUser.name = data.userName;
+                    setUser(newUser);
                     navigate("/", { replace: true });
                 }
             } catch (err) {
