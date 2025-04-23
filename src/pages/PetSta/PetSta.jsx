@@ -8,7 +8,6 @@ import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import { getPostLists } from "../../services/petstaService.js";
 import { useFollow } from "../../context/FollowContext.jsx";
-import { useUser } from "../../components/User/UserContext.jsx";
 
 const PetSta = () => {
     const [posts, setPosts] = useState([]);
@@ -17,14 +16,12 @@ const PetSta = () => {
     const [rightPosition, setRightPosition] = useState("20px");
     const navigate = useNavigate();
     const { setInitialFollow } = useFollow();
-    const { user } = useUser();
 
     useEffect(() => {
         const getPosts = async () => {
             try {
                 const data = await getPostLists();
                 setPosts(data);
-                console.log(data);
                 data.forEach((post) => {
                     setInitialFollow(post.userId, post.initialFollowed);
                 });
@@ -65,43 +62,41 @@ const PetSta = () => {
         <Box>
             <FriendList />
             {posts.map((post) =>
-                user.userId !== post.userId ? (
-                    post.fileType === "VIDEO" ? (
-                        <VideoPost
-                            key={post.postId}
-                            postId={post.postId}
-                            userId={post.userId}
-                            userName={post.userName}
-                            userPhoto={post.userPhoto}
-                            fileName={post.fileName}
-                            fileType={post.fileType}
-                            likes={post.likes}
-                            comments={post.comments}
-                            content={post.content}
-                            createdAt={post.createdAt}
-                            initialLiked={post.initialLiked}
-                            initialBookmarked={post.initialBookmarked}
-                            isMute={isMute}
-                            toggleMute={toggleMute}
-                        />
-                    ) : (
-                        <PhotoPost
-                            key={post.postId}
-                            postId={post.postId}
-                            userId={post.userId}
-                            userName={post.userName}
-                            userPhoto={post.userPhoto}
-                            fileName={post.fileName}
-                            fileType={post.fileType}
-                            likes={post.likes}
-                            comments={post.comments}
-                            content={post.content}
-                            createdAt={post.createdAt}
-                            initialLiked={post.initialLiked}
-                            initialBookmarked={post.initialBookmarked}
-                        />
-                    )
-                ) : null
+                post.fileType === "VIDEO" ? (
+                    <VideoPost
+                        key={post.postId}
+                        postId={post.postId}
+                        userId={post.userId}
+                        userName={post.userName}
+                        userPhoto={post.userPhoto}
+                        fileName={post.fileName}
+                        fileType={post.fileType}
+                        likes={post.likes}
+                        comments={post.comments}
+                        content={post.content}
+                        createdAt={post.createdAt}
+                        initialLiked={post.initialLiked}
+                        initialBookmarked={post.initialBookmarked}
+                        isMute={isMute}
+                        toggleMute={toggleMute}
+                    />
+                ) : (
+                    <PhotoPost
+                        key={post.postId}
+                        postId={post.postId}
+                        userId={post.userId}
+                        userName={post.userName}
+                        userPhoto={post.userPhoto}
+                        fileName={post.fileName}
+                        fileType={post.fileType}
+                        likes={post.likes}
+                        comments={post.comments}
+                        content={post.content}
+                        createdAt={post.createdAt}
+                        initialLiked={post.initialLiked}
+                        initialBookmarked={post.initialBookmarked}
+                    />
+                )
             )}
             {showBox && (
                 <Box

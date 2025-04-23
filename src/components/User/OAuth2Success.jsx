@@ -1,28 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../../context/Context.jsx";
+import axiosInstance from "../../services/axiosInstance.js";
+import { getUserInfo } from "../../services/authService.js";
+
+const API_URL = "/auth"; // API 경로는 백엔드에 맞추어 조정
 
 const OAuth2Success = () => {
+    const { setUser, setLogin } = useContext(Context);
     const navigate = useNavigate();
+    const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
 
     useEffect(() => {
-        const checkLogin = async () => {
+        if (hasRun.current) return;
+        hasRun.current = true;
+
+        const checkLoginStatus = async () => {
             try {
-                const res = await fetch(`/api/auth/check`, {
-                    credentials: "include",
+                const res = await axiosInstance.get(`${API_URL}/check`, {
+                    withCredentials: true, // ✅ 쿠키 기반 인증 사용하는 경우 필요
                 });
 
-                if (!res.ok) {
-                    throw new Error("인증 확인 실패");
-                }
-
-                const data = await res.json();
+                const data = res.data;
                 console.log("🔍 로그인 체크 결과:", data);
 
                 if (data.isNewUser) {
-                    // SNS 로그인 성공 + 아직 회원가입 전
                     navigate("/register", { replace: true });
                 } else {
-                    // 이미 회원가입된 사용자
+                    try {
+                        const data = await getUserInfo();
+                        setUser({
+                            id: data.id,
+                            nickname: data.nickname,
+                            path: data.path,
+                            address: data.address,
+                            dongName: data.dongName,
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                            distance: data.distance,
+                        });
+                        navigate("/", { replace: true });
+                    } catch (e) {
+                        console.error("유저 정보 가져오기 실패", e);
+                    }
+                    setLogin(true);
                     navigate("/", { replace: true });
                 }
             } catch (err) {
@@ -31,8 +52,8 @@ const OAuth2Success = () => {
             }
         };
 
-        checkLogin();
-    }, [navigate]);
+        checkLoginStatus();
+    }, [navigate, setUser]);
 
     return (
         <div style={{ textAlign: "center", marginTop: "100px" }}>
