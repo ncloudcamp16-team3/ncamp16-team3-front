@@ -15,10 +15,18 @@ export function Provider({ children }) {
     });
 
     const [user, setUser] = useState({
-        name: "USER1823",
-        photo: "haribo.jpg",
-        id: 1,
+        id: 9999,
+        nickname: "",
+        path: null,
+        address: "",
+        dongName: "",
+        latitude: null,
+        longitude: null,
+        distance: null,
     });
+
+    const [isLogin, setLogin] = useState(false);
+
     const [boardType, setBoardType] = useState({
         id: 1,
         name: "자유게시판",
@@ -57,6 +65,8 @@ export function Provider({ children }) {
                 boardType,
                 setBoardType,
                 showModal,
+                isLogin,
+                setLogin,
             }}
         >
             {children}
