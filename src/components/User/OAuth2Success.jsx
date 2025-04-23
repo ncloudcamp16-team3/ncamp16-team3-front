@@ -1,10 +1,7 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../context/Context.jsx";
-import axiosInstance from "../../services/axiosInstance.js";
-import { getUserInfo } from "../../services/authService.js";
-
-const API_URL = "/auth"; // API 경로는 백엔드에 맞추어 조정
+import { checkLogin, getUserInfo } from "../../services/authService.js";
 
 const OAuth2Success = () => {
     const { setUser, setLogin } = useContext(Context);
@@ -15,44 +12,40 @@ const OAuth2Success = () => {
         if (hasRun.current) return;
         hasRun.current = true;
 
-        const checkLoginStatus = async () => {
-            try {
-                const res = await axiosInstance.get(`${API_URL}/check`, {
-                    withCredentials: true, // ✅ 쿠키 기반 인증 사용하는 경우 필요
-                });
+        (async () => {
+            const data = await checkLogin();
 
-                const data = res.data;
-                console.log("🔍 로그인 체크 결과:", data);
+            if (!data) {
+                console.error("🚨 로그인 체크 실패");
+                navigate("/login", { replace: true });
+                return;
+            }
 
-                if (data.isNewUser) {
-                    navigate("/register", { replace: true });
-                } else {
-                    try {
-                        const data = await getUserInfo();
-                        setUser({
-                            id: data.id,
-                            nickname: data.nickname,
-                            path: data.path,
-                            address: data.address,
-                            dongName: data.dongName,
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            distance: data.distance,
-                        });
-                        navigate("/", { replace: true });
-                    } catch (e) {
-                        console.error("유저 정보 가져오기 실패", e);
-                    }
+            console.log("🔍 로그인 체크 결과:", data);
+
+            if (data.isNewUser) {
+                navigate("/register", { replace: true });
+            } else {
+                try {
+                    const userData = await getUserInfo();
+                    setUser({
+                        id: userData.id,
+                        nickname: userData.nickname,
+                        path: userData.path,
+                        address: userData.address,
+                        dongName: userData.dongName,
+                        latitude: userData.latitude,
+                        longitude: userData.longitude,
+                        distance: userData.distance,
+                    });
                     setLogin(true);
                     navigate("/", { replace: true });
+                } catch (e) {
+                    console.error("유저 정보 가져오기 실패", e);
+                    navigate("/login", { replace: true });
                 }
-            } catch (err) {
-                console.error("🚨 로그인 체크 실패:", err);
-                navigate("/login", { replace: true });
             }
-        };
-
-        checkLoginStatus();
+        })();
     }, [navigate, setUser]);
 
     return (
