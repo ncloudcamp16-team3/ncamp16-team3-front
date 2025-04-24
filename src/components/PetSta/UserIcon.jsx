@@ -24,7 +24,7 @@ const UserIcon = ({ userInfo }) => {
                 borderRadius="50%"
                 sx={{
                     background:
-                        userInfo.isView === "false"
+                        userInfo.isVisited === true
                             ? "transparent"
                             : "linear-gradient(90deg, #C913B9 0%, #F9373F 50%, #FECD00 100%)",
                 }}

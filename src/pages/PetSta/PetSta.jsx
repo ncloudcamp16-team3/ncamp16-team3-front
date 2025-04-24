@@ -81,6 +81,7 @@ const PetSta = () => {
                         initialBookmarked={post.initialBookmarked}
                         isMute={isMute}
                         toggleMute={toggleMute}
+                        isVisited={post.isVisited}
                     />
                 ) : (
                     <PhotoPost
@@ -97,6 +98,7 @@ const PetSta = () => {
                         createdAt={post.createdAt}
                         initialLiked={post.initialLiked}
                         initialBookmarked={post.initialBookmarked}
+                        isVisited={post.isVisited}
                     />
                 )
             )}

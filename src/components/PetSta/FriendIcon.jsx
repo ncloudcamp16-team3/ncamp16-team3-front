@@ -7,7 +7,7 @@ const FriendIcon = React.memo(({ friend }) => {
     const userInfo = {
         userId: friend.id,
         userPhoto: friend.photo,
-        isView: false,
+        isVisited: friend.isVisited,
     };
     const theme = useTheme();
     return (
