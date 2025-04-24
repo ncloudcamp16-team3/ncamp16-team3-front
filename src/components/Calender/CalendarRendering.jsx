@@ -7,7 +7,7 @@ import { Box, Card, CardContent, Typography, Button } from "@mui/material";
 import dayjs from "dayjs";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
-import { getScheduleAll, postSchedule } from "../../services/calendarService.js";
+import { deleteSchedule, getScheduleAll, postSchedule, putSchedule } from "../../services/calendarService.js";
 import { Context } from "../../context/Context.jsx";
 const { kakao } = window;
 
@@ -23,7 +23,7 @@ const CalendarRendering = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const { user, isLogin, setLogin } = useContext(Context);
+    const { user } = useContext(Context);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -113,16 +113,57 @@ const CalendarRendering = () => {
             endDate: dayjs(item.endDate),
             latitude: item.latitude || "", // 좌표가 없을 경우 빈 문자열로 처리
             longitude: item.longitude || "",
-            dateList: item.dateList || [],
         });
         setModifyForm(true);
         setShowForm(false);
     };
 
-    const saveModifiedSchedule = () => {
-        console.log("수정할 데이터", formData);
-        setModifyForm(false);
-        setSelectedItem(null);
+    const saveModifiedSchedule = async () => {
+        try {
+            const startDate = dayjs(formData.startDate);
+            const endDate = dayjs(formData.endDate);
+
+            console.log("Start Date:", formData.startDate);
+            console.log("End Date:", formData.endDate);
+
+            console.log("수정할 데이터", formData);
+
+            const scheduleData = {
+                id: formData.id,
+                userId: formData.userId,
+                title: formData.title,
+                content: formData.content,
+                address: formData.address,
+                latitude: formData.latitude || null,
+                longitude: formData.longitude || null,
+                startDate: startDate.format("YYYY-MM-DD HH:mm:ss"),
+                endDate: endDate.format("YYYY-MM-DD HH:mm:ss"),
+            };
+
+            const modifySchedule = await putSchedule(scheduleData);
+            setSchedules((prev) => [...prev, modifySchedule]);
+            setModifyForm(false);
+            setSelectedItem(null);
+        } catch (error) {
+            alert("일정 수정에 실패했습니다.");
+            console.error("일정 수정 에러:", error);
+        }
+    };
+    const removeSchedule = async () => {
+        try {
+            // 삭제 요청
+            await deleteSchedule({ id: formData.id });
+
+            // 삭제된 항목을 제외한 새로운 리스트로 갱신
+            setSchedules((prev) => prev.filter((schedule) => schedule.id !== formData.id));
+
+            // 수정 폼 및 선택 항목 초기화
+            setModifyForm(false);
+            setSelectedItem(null);
+        } catch (error) {
+            alert("일정 삭제에 실패했습니다.");
+            console.error("일정 삭제 에러:", error);
+        }
     };
 
     const addSchedule = async () => {
@@ -136,9 +177,9 @@ const CalendarRendering = () => {
             console.log("Start Date:", formData.startDate);
             console.log("End Date:", formData.endDate);
 
-            if (!startDate.isValid() || !endDate.isValid()) {
-                return alert("시작일자 또는 종료일자가 유효하지 않습니다.");
-            }
+            // if (!startDate.isValid() || !endDate.isValid()) {
+            //     return alert("시작일자 또는 종료일자가 유효하지 않습니다.");
+            // }
 
             const scheduleData = {
                 userId: user.id,
@@ -532,6 +573,7 @@ const CalendarRendering = () => {
                         onInputChange={handleInputChange}
                         onDateChange={handleDateChange}
                         onSubmit={saveModifiedSchedule}
+                        onDelete={removeSchedule}
                         onCancel={() => {
                             setModifyForm(false);
                             setSelectedItem(null);

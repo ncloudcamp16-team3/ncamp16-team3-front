@@ -43,3 +43,34 @@ export const postSchedule = async ({ userId, title, content, startDate, endDate,
         throw error;
     }
 };
+
+export const putSchedule = async ({ id, userId, title, content, startDate, endDate, address, latitude, longitude }) => {
+    try {
+        const response = await instance.put(`${API_URL}/schedule`, {
+            id,
+            userId,
+            title,
+            content,
+            startDate,
+            endDate,
+            address,
+            latitude,
+            longitude,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("캘린더 스케쥴 수정 실패", error);
+        throw error;
+    }
+};
+
+export const deleteSchedule = async ({ id }) => {
+    try {
+        const response = await instance.delete(`${API_URL}/schedule/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("캘린더 스케쥴 수정 실패", error);
+        throw error;
+    }
+};
