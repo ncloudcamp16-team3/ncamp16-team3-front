@@ -28,6 +28,9 @@ const MyProfile = ({ userInfo }) => {
                             flexDirection="column"
                             alignItems="center"
                             onClick={() => navigate(`/petsta/user/${userInfo.id}/follower`)}
+                            sx={{
+                                cursor: "pointer",
+                            }}
                         >
                             <Typography variant="h7" fontWeight="bold">
                                 {userInfo.followerCount}
@@ -39,6 +42,9 @@ const MyProfile = ({ userInfo }) => {
                             flexDirection="column"
                             alignItems="center"
                             onClick={() => navigate(`/petsta/user/${userInfo.id}/following`)}
+                            sx={{
+                                cursor: "pointer",
+                            }}
                         >
                             <Typography variant="h7" fontWeight="bold">
                                 {userInfo.followCount}
@@ -47,12 +53,16 @@ const MyProfile = ({ userInfo }) => {
                         </Box>
                     </Box>
                     <Typography
+                        onClick={() => navigate("/bookmark")}
                         variant="body2"
                         bgcolor={theme.brand3}
                         color="white"
                         p={0.8}
                         borderRadius={2}
                         textAlign="center"
+                        sx={{
+                            cursor: "pointer",
+                        }}
                     >
                         내 북마크 목록
                     </Typography>
