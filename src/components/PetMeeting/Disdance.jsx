@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 
 const Distance = ({ dongName, distance, setDistance }) => {
-    const steps = [1, 2, 3, 4];
+    const steps = ["LEVEL1", "LEVEL2", "LEVEL3", "LEVEL4"];
 
     return (
         <Box

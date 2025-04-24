@@ -3,11 +3,11 @@ import { Box } from "@mui/material";
 import PetRegister from "./PetRegister.jsx";
 import FindFriendConfigBtns from "./FindFriendConfigBtns.jsx";
 import PetProfiles from "./PetProfiles.jsx";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import SetLocation from "./SetLocation.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const FindFriend = () => {
-    const { pet } = useContext(PetMeetingContext);
+    const { user } = useContext(Context);
 
     return (
         <Box
@@ -19,7 +19,7 @@ const FindFriend = () => {
         >
             <FindFriendConfigBtns />
             <PetRegister />
-            {pet?.owner?.address ? <PetProfiles /> : <SetLocation />}
+            {user.address ? <PetProfiles /> : <SetLocation />}
         </Box>
     );
 };

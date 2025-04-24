@@ -85,3 +85,23 @@ export const getReplyComments = async (commentId) => {
             throw error;
         });
 };
+
+export const getUserPage = async (userId) => {
+    return await instance
+        .get(`${API_URL}/users/${userId}/page`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error("마이페이지 호출 실패", error);
+            throw error;
+        });
+};
+
+export const getUserName = async (userId) => {
+    return await instance
+        .get(`${API_URL}/users/${userId}/name`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error("닉네임 호출 실패", error);
+            throw error;
+        });
+};
