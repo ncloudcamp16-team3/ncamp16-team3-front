@@ -1,15 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
-import UserInfo from "../../mock/PetSta/user-info.json";
 import ProfileHeader from "./Post/ProfileHeader.jsx";
+import { getUserName } from "../../services/petstaService.js";
 
 const UserLayout = () => {
     const { userId } = useParams();
-    const targetUser = UserInfo.find((u) => String(u.id) === String(userId));
+    const [userName, setUserName] = useState(null);
+
+    useEffect(() => {
+        const fetchUserName = async () => {
+            try {
+                const data = await getUserName(userId);
+                setUserName(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchUserName();
+        console.log(userName);
+    }, [userId]);
 
     return (
         <div>
-            <ProfileHeader userName={targetUser?.name || "알 수 없음"} />
+            <ProfileHeader userName={userName} />
             <Outlet />
         </div>
     );

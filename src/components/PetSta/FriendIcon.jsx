@@ -4,12 +4,17 @@ import { useTheme } from "@mui/material/styles";
 import UserIcon from "./UserIcon.jsx";
 
 const FriendIcon = React.memo(({ friend }) => {
+    const userInfo = {
+        userId: friend.id,
+        userPhoto: friend.photo,
+        isView: false,
+    };
     const theme = useTheme();
     return (
         <Box display="flex" flexDirection="column" alignItems="center">
-            <UserIcon userInfo={friend} />
+            <UserIcon userInfo={userInfo} />
             <Typography marginTop="4px" fontSize="11px" color={theme.secondary}>
-                {friend.userName}
+                {friend.name}
             </Typography>
         </Box>
     );

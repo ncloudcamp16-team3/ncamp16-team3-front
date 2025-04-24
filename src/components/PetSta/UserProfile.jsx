@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import PostThumbnail from "./Post/PostThumbnail.jsx";
 
 const UserProfile = ({ userInfo }) => {
     const [isFollow, setIsFollow] = useState(false);
@@ -14,7 +15,7 @@ const UserProfile = ({ userInfo }) => {
                 <Box width="25%">
                     <Box position="relative">
                         <Avatar
-                            src={`/mock/Global/images/${userInfo.photo}`}
+                            src={userInfo.userPhoto}
                             alt="Profile"
                             sx={{ position: "relative", width: 100, height: 100 }}
                         />
@@ -87,20 +88,9 @@ const UserProfile = ({ userInfo }) => {
             {/* 유저 이름 */}
             <Box width="90%" borderBottom="1px solid #ccc" m="0 auto" />
             {/* 포스팅 썸네일 목록 */}
-            <Box display="flex" flexWrap="wrap" gap={1}>
-                {Array.from({ length: 8 }).map((_, idx) => (
-                    <Box
-                        key={idx}
-                        width="48%"
-                        height="100px"
-                        bgcolor="#ccc"
-                        borderRadius={2}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <Typography>포스팅 {idx + 1}</Typography>
-                    </Box>
+            <Box display="flex" flexWrap="wrap" gap={1} justifyContent="space-between">
+                {userInfo.posts.map((post) => (
+                    <PostThumbnail key={post.id} id={post.id} fileName={post.fileName} />
                 ))}
             </Box>
         </Box>

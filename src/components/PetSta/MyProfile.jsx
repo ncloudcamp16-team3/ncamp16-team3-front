@@ -2,20 +2,18 @@ import React from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import PostThumbnail from "./Post/PostThumbnail.jsx";
 
 const MyProfile = ({ userInfo }) => {
     const theme = useTheme();
     const navigate = useNavigate();
+    console.log(userInfo.posts);
     return (
         <Box display="flex" flexDirection="column" p={2} gap={1}>
             {/* 상단 프로필 정보 */}
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box position="relative">
-                    <Avatar
-                        src={`/mock/Global/images/${userInfo.photo}`}
-                        alt="Profile"
-                        sx={{ width: 100, height: 100 }}
-                    />
+                    <Avatar src={userInfo.userPhoto} alt="Profile" sx={{ width: 100, height: 100 }} />
                 </Box>
                 <Box width="60%" display="flex" flexDirection="column" gap={1}>
                     <Box display="flex" justifyContent="space-between" gap={4}>
@@ -68,19 +66,8 @@ const MyProfile = ({ userInfo }) => {
             <Box width="90%" borderBottom="1px solid #ccc" m="0 auto" />
             {/* 포스팅 썸네일 목록 */}
             <Box display="flex" flexWrap="wrap" gap={1}>
-                {Array.from({ length: 8 }).map((_, idx) => (
-                    <Box
-                        key={idx}
-                        width="48%"
-                        height="100px"
-                        bgcolor="#ccc"
-                        borderRadius={2}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <Typography>포스팅 {idx + 1}</Typography>
-                    </Box>
+                {userInfo.posts.map((post) => (
+                    <PostThumbnail key={post.id} id={post.id} fileName={post.fileName} />
                 ))}
             </Box>
         </Box>
