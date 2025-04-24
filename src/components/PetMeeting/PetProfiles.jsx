@@ -3,7 +3,7 @@ import { Box, CircularProgress } from "@mui/material";
 import PetCard from "./PetCard";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import EmptyFriendCard from "./EmptyFriendCard.jsx";
-import { getFriends } from "../../services/petmeetingService.js";
+import { getFriends } from "../../services/petService.js";
 import { Context } from "../../context/Context.jsx";
 
 const PAGE_SIZE = 3;

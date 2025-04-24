@@ -10,7 +10,7 @@ const PetImgSlide = ({ photos }) => {
 
     if (Array.isArray(photos)) {
         sortedPhotos = [...photos].sort((a, b) => {
-            return (b.isThumbnail === true) - (a.isThumbnail === true);
+            return (b.thumbnail === true) - (a.thumbnail === true);
         });
     }
 
@@ -41,7 +41,7 @@ const PetImgSlide = ({ photos }) => {
                 {sortedPhotos.map((src, idx) => (
                     <SwiperSlide key={idx}>
                         <img
-                            src={src?.url}
+                            src={src?.path}
                             alt={`slide-${idx}`}
                             style={{
                                 width: "100%",
