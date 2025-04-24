@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { format, parseISO } from "date-fns";
 import "react-calendar/dist/Calendar.css";
@@ -7,6 +7,8 @@ import { Box, Card, CardContent, Typography, Button } from "@mui/material";
 import dayjs from "dayjs";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
+import { getScheduleAll } from "../../services/calendarService.js";
+import { Context } from "../../context/Context.jsx";
 const { kakao } = window;
 
 const CalendarRendering = () => {
@@ -19,13 +21,16 @@ const CalendarRendering = () => {
     const [showForm, setShowForm] = useState(false);
     const [modifyForm, setModifyForm] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const { user, isLogin, setLogin } = useContext(Context);
 
     const [formData, setFormData] = useState({
         title: "",
         content: "",
         address: "",
-        start_date: dayjs(selectedDate),
-        end_date: dayjs(selectedDate),
+        startDate: dayjs(selectedDate),
+        endDate: dayjs(selectedDate),
         latitude: "",
         longitude: "",
     });
@@ -41,32 +46,70 @@ const CalendarRendering = () => {
         if (showForm) {
             setAddress(""); // 주소 문자열 초기화 (사용 중이라면 유지)
             setFormData({
+                id: "",
+                userId: "",
                 title: "",
-                start_date: null,
-                end_date: null,
+                startDate: null,
+                endDate: null,
                 address: "",
                 content: "",
                 latitude: "",
                 longitude: "",
+                dateList: [],
             });
         }
     }, [showForm]);
 
+    // useEffect(() => {
+    //     // fetch("src/mock/Calendar/schedules.json")
+    //     //     .then((res) => res.json())
+    //     //     .then(setSchedules)
+    //     //     .catch((err) => console.error("Error loading schedules:", err));
+    //
+    //     (async () => {
+    //     const schedulesData = await getScheduleAll();  // 스케줄 데이터 가져오기
+    //     setSchedules(schedulesData);)
+    //
+    //     fetch("src/mock/Calendar/event.json")
+    //         .then((res) => res.json())
+    //         .then(setEvents)
+    //         .catch((err) => console.error("Error loading events:", err));
+    //
+    //     fetch("src/mock/Calendar/reserves.json")
+    //         .then((res) => res.json())
+    //         .then(setReserves)
+    //         .catch((err) => console.error("Error loading reserves:", err));
+    // }, []);
+
     useEffect(() => {
-        fetch("src/mock/Calendar/schedules.json")
-            .then((res) => res.json())
-            .then(setSchedules)
-            .catch((err) => console.error("Error loading schedules:", err));
+        const fetchData = async () => {
+            try {
+                console.log("Fetching schedules..."); // 디버깅: 스케줄 데이터 로딩 시작
+                // fetch를 이용한 스케줄 데이터 가져오기
+                const schedulesData = await getScheduleAll(user.id);
+                console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+                setSchedules(schedulesData);
 
-        fetch("src/mock/Calendar/event.json")
-            .then((res) => res.json())
-            .then(setEvents)
-            .catch((err) => console.error("Error loading events:", err));
+                console.log("Fetching events..."); // 디버깅: 이벤트 데이터 로딩 시작
+                // fetch로 이벤트 데이터 가져오기
+                const eventData = await fetch("src/mock/Calendar/event.json").then((res) => res.json());
+                console.log("Events data fetched:", eventData); // 디버깅: 이벤트 데이터 확인
+                setEvents(eventData);
 
-        fetch("src/mock/Calendar/reserves.json")
-            .then((res) => res.json())
-            .then(setReserves)
-            .catch((err) => console.error("Error loading reserves:", err));
+                console.log("Fetching reserves..."); // 디버깅: 예약 데이터 로딩 시작
+                // fetch로 예약 데이터 가져오기
+                const reserveData = await fetch("src/mock/Calendar/reserves.json").then((res) => res.json());
+                console.log("Reserves data fetched:", reserveData); // 디버깅: 예약 데이터 확인
+                setReserves(reserveData);
+            } catch (err) {
+                console.error("데이터 로딩 실패:", err); // 에러 로깅
+            } finally {
+                setLoading(false); // 데이터 로딩 완료 후 상태 변경
+                console.log("Loading finished.");
+            }
+        };
+
+        fetchData(); // 비동기 함수 호출
     }, []);
 
     const handleInputChange = (e) => {
@@ -82,13 +125,16 @@ const CalendarRendering = () => {
     const handleModifyClick = (item) => {
         setSelectedItem(item);
         setFormData({
+            id: item.id,
+            userId: item.userId,
             title: item.title,
             address: item.address,
             content: item.content,
-            start_date: dayjs(item.start_date),
-            end_date: dayjs(item.end_date),
+            startDate: dayjs(item.startDate),
+            endDate: dayjs(item.endDate),
             latitude: item.latitude || "", // 좌표가 없을 경우 빈 문자열로 처리
             longitude: item.longitude || "",
+            dateList: item.dateList || [],
         });
         setModifyForm(true);
         setShowForm(false);
@@ -105,28 +151,32 @@ const CalendarRendering = () => {
 
         const newSchedule = {
             id: Date.now(),
+            userId: formData.userId,
             title: formData.title,
             content: formData.content,
             address: formData.address,
             latitude: formData.latitude || null,
             longitude: formData.longitude || null,
-            start_date: format(formData.start_date.toDate(), "yyyy-MM-dd HH:mm:ss"),
-            end_date: format(formData.end_date.toDate(), "yyyy-MM-dd HH:mm:ss"),
+            startDate: format(formData.startDate.toDate(), "yyyy-MM-dd HH:mm:ss"),
+            endDate: format(formData.endDate.toDate(), "yyyy-MM-dd HH:mm:ss"),
+            dateList: formData.dateList || [], // ✅ dateList 추가
         };
 
         setSchedules((prev) => [...prev, newSchedule]);
         setShowForm(false);
         setFormData({
+            id: "",
+            userId: "",
             title: "",
             content: "",
             address: "",
             latitude: "",
             longitude: "",
-            start_date: dayjs(selectedDate),
-            end_date: dayjs(selectedDate),
+            startDate: dayjs(selectedDate),
+            endDate: dayjs(selectedDate),
+            dateList: [], // ✅ 초기화 시에도 포함
         });
     };
-
     const MapPreview = ({ latitude, longitude, mapId = "map-preview" }) => {
         useEffect(() => {
             if (!window.kakao || !latitude || !longitude) return;
@@ -152,15 +202,18 @@ const CalendarRendering = () => {
     const handleBack = () => setOpenItem({ id: null, type: null });
 
     const isSameDate = (date1, date2) => format(date1, "yyyy-MM-dd") === format(date2, "yyyy-MM-dd");
+    const isSameDateString = (date1, date2) => format(date1, "yyyy-MM-dd") === format(date2, "yyyy-MM-dd");
 
-    const selectedSchedules = schedules.filter((s) => isSameDate(parseISO(s.start_date), selectedDate));
-    const selectedEvents = events.filter((e) => isSameDate(parseISO(e.start_date), selectedDate));
+    // const selectedSchedules = schedules.filter((s) => isSameDate(parseISO(s.startDate), selectedDate));
+    const selectedSchedules = schedules.filter((s) => s.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
+    const selectedEvents = events.filter((e) => isSameDate(parseISO(e.startDate), selectedDate));
     const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entry_time), selectedDate));
 
     const checkHasScheduleOrEvent = (date) => {
+        const dateStr = format(date, "yyyy-MM-dd");
         return {
-            hasSchedule: schedules.some((s) => isSameDate(parseISO(s.start_date), date)),
-            hasEvent: events.some((e) => isSameDate(parseISO(e.start_date), date)),
+            hasSchedule: schedules.some((s) => s.dateList?.includes(dateStr)),
+            hasEvent: events.some((e) => isSameDate(parseISO(e.startDate), date)),
             hasReserve: reserves.some((r) => isSameDate(parseISO(r.entry_time), date)),
         };
     };
@@ -272,8 +325,8 @@ const CalendarRendering = () => {
             }
             return (
                 <>
-                    {format(parseISO(item.start_date), "yy-MM-dd hh:mm")}~{" "}
-                    {format(parseISO(item.end_date), "yy-MM-dd hh:mm")}
+                    {format(parseISO(item.startDate), "yy-MM-dd hh:mm")}~{" "}
+                    {format(parseISO(item.endDate), "yy-MM-dd hh:mm")}
                 </>
             );
         };
