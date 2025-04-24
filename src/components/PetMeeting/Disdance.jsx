@@ -2,7 +2,9 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 
 const Distance = ({ dongName, distance, setDistance }) => {
-    const steps = [1, 2, 3, 4];
+    const steps = ["1", "2", "3", "4"];
+
+    console.log("지금 거리는? " + distance);
 
     return (
         <Box

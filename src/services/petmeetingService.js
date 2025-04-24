@@ -2,10 +2,11 @@ import instance from "./axiosInstance.js";
 
 const API_URL = "/petmeeting"; // 상대 URL
 
-export const getFriends = ({ currentPage, size, activityStatus, dongName, distance, latitude, longitude }) => {
+export const getFriends = ({ page, size, activityStatus, dongName, distance, latitude, longitude }) => {
+    console.log("요청 페이지 : " + page);
     return instance
         .post(`${API_URL}/friends`, {
-            page: currentPage,
+            page,
             size,
             activityStatus,
             dongName,
@@ -14,11 +15,9 @@ export const getFriends = ({ currentPage, size, activityStatus, dongName, distan
             longitude,
         })
         .then((response) => {
-            console.log("요청 결과 메시지", response.data.message);
-            return response.data.data;
+            return response.data;
         })
         .catch((error) => {
-            console.log("에러 발생 메시지", error.response.data.message);
-            throw error.response.data.data;
+            throw error.response.data;
         });
 };

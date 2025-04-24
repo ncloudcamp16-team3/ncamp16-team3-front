@@ -6,13 +6,14 @@ import LocationConfigBtns from "./LocationConfigBtns.jsx";
 import Distance from "./Disdance.jsx";
 import TitleBar from "../Global/TitleBar.jsx";
 import { Context } from "../../context/Context.jsx";
+import { saveUserData } from "../../services/memberService.js";
 
 const LocationConfig = () => {
     const { user, setUser } = useContext(Context);
     const { setView } = useContext(PetMeetingContext);
     const [address, setAddress] = useState(null);
     const [dongName, setDongName] = useState(null);
-    const [distance, setDistance] = useState(2);
+    const [distance, setDistance] = useState("2");
     const { showModal } = useContext(Context);
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
@@ -21,22 +22,32 @@ const LocationConfig = () => {
         if (user) {
             setAddress(user.address || null);
             setDongName(user.dongName || null);
-            setDistance(user.distance || 2);
+            setDistance(user.distance || "2");
         }
     }, []);
 
-    const saveLocation = () => {
-        setUser((prev) => ({
-            ...prev,
-            address: address,
-            dongName: dongName,
-            distance: distance,
-            latitude: latitude,
-            longitude: longitude,
-        }));
-
+    const saveLocation = async () => {
         if (address && dongName && distance) {
-            showModal(null, "위치 저장 완료");
+            const updatedUser = {
+                ...user,
+                address,
+                dongName,
+                distance,
+                latitude,
+                longitude,
+            };
+
+            setUser(updatedUser);
+
+            saveUserData(updatedUser)
+                .then((res) => {
+                    console.log("응답 성공:", res.message);
+                    showModal(null, "위치 저장 완료");
+                })
+                .catch((err) => {
+                    console.error("에러 발생:", err.message);
+                    showModal(null, err.message);
+                });
         } else {
             showModal(null, "주소를 선택해주세요");
         }

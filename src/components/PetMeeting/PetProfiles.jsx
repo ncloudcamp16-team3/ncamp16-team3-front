@@ -30,12 +30,14 @@ const PetProfiles = () => {
             latitude: user.latitude,
             longitude: user.longitude,
         })
-            .then((data) => {
+            .then((res) => {
+                const data = res.data;
+                console.log("응답 성공: " + res.message);
                 setPetList((prev) => [...prev, ...data.content]);
                 setHasMore(!data.last);
             })
             .catch((err) => {
-                console.error("에러 발생:", err);
+                console.log("에러 발생: " + err.message);
             });
         setLoading(false);
     };
