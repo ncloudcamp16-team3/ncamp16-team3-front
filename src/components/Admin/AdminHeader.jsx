@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, InputBase, Button, Menu, MenuItem, Box } from "@mui/material";
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    IconButton,
+    InputBase,
+    Button,
+    Menu,
+    MenuItem,
+    Box,
+    Select,
+    FormControl,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -66,43 +78,87 @@ const FilterButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const StyledSelect = styled(Select)(({ theme }) => ({
+    marginRight: theme.spacing(2),
+    backgroundColor: "#FFFFFF",
+    color: "#333333",
+    width: "150px",
+    height: "41px",
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#E0E0E0",
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#E0E0E0",
+    },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#F0A355",
+    },
+}));
+
 const AdminHeader = ({ onSearch, onFilterChange }) => {
-    const { selectedMenu, currentFilter, setCurrentFilter, availableFilters } = useAdmin();
-    const [anchorEl, setAnchorEl] = useState(null);
+    const {
+        selectedMenu,
+        searchField,
+        setSearchField,
+        searchTerm: contextSearchTerm,
+        setSearchTerm: setContextSearchTerm,
+        executeSearch,
+        availableSearchFields,
+        currentCategory,
+        setCurrentCategory,
+        availableCategoryFilters,
+    } = useAdmin();
+
+    const [categoryAnchorEl, setCategoryAnchorEl] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const open = Boolean(anchorEl);
+    const categoryMenuOpen = Boolean(categoryAnchorEl);
 
-    const handleFilterClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    // 카테고리 필터 버튼 클릭 핸들러
+    const handleCategoryFilterClick = (event) => {
+        setCategoryAnchorEl(event.currentTarget);
     };
 
-    const handleFilterClose = () => {
-        setAnchorEl(null);
+    const handleCategoryFilterClose = () => {
+        setCategoryAnchorEl(null);
     };
 
-    const handleFilterSelect = (filter) => {
-        setCurrentFilter(filter);
+    // 카테고리 필터 선택 핸들러
+    const handleCategorySelect = (category) => {
+        setCurrentCategory(category);
         if (onFilterChange) {
-            onFilterChange(filter);
+            onFilterChange(category);
         }
-        handleFilterClose();
+        handleCategoryFilterClose();
     };
 
-    const handleSearchChange = (event) => {
+    // 검색 필드 변경 핸들러
+    const handleSearchFieldChange = (event) => {
+        setSearchField(event.target.value);
+    };
+
+    // 검색어 변경 핸들러
+    const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
+    // 검색 실행 핸들러
     const handleSearchSubmit = (event) => {
-        if (event.key === "Enter" && onSearch) {
-            onSearch(searchTerm);
+        if (event.key === "Enter") {
+            event.preventDefault();
+            executeSearch(searchTerm, searchField);
+            if (onSearch) {
+                onSearch(searchTerm, searchField);
+            }
         }
     };
 
+    // 검색 초기화 핸들러
     const handleReset = () => {
         setSearchTerm("");
+        executeSearch("", searchField);
         if (onSearch) {
-            onSearch("");
+            onSearch("", searchField);
         }
     };
 
@@ -154,61 +210,75 @@ const AdminHeader = ({ onSearch, onFilterChange }) => {
                             width: "100%",
                         }}
                     >
-                        {/* 필터 버튼 - 필터가 있을 때만 표시 */}
-                        {availableFilters.length > 0 && (
+                        {/* 카테고리 필터 버튼 */}
+                        {availableCategoryFilters.length > 1 && (
                             <>
                                 <FilterButton
                                     variant="contained"
                                     startIcon={<FilterListIcon />}
                                     endIcon={<KeyboardArrowDownIcon />}
-                                    onClick={handleFilterClick}
+                                    onClick={handleCategoryFilterClick}
                                     disableElevation
-                                    sx={{ height: "41px", width: "200px" }}
+                                    sx={{ height: "41px", width: "180px" }}
                                 >
-                                    {currentFilter}
+                                    {currentCategory}
                                 </FilterButton>
 
                                 <Menu
-                                    anchorEl={anchorEl}
-                                    open={open}
-                                    onClose={handleFilterClose}
+                                    anchorEl={categoryAnchorEl}
+                                    open={categoryMenuOpen}
+                                    onClose={handleCategoryFilterClose}
                                     elevation={2}
                                     sx={{
-                                        width: 405,
+                                        width: 180,
                                         "& .MuiPaper-root": {
-                                            width: 405,
-                                            maxWidth: "49%",
+                                            width: 180,
                                         },
                                     }}
                                 >
-                                    {availableFilters.map((filter) => (
+                                    {availableCategoryFilters.map((category) => (
                                         <MenuItem
-                                            key={filter}
-                                            onClick={() => handleFilterSelect(filter)}
-                                            selected={filter === currentFilter}
+                                            key={category}
+                                            onClick={() => handleCategorySelect(category)}
+                                            selected={category === currentCategory}
                                             sx={{ width: "100%" }}
                                         >
-                                            {filter}
+                                            {category}
                                         </MenuItem>
                                     ))}
                                 </Menu>
                             </>
                         )}
 
+                        {/* 검색 필드 선택 드롭다운 */}
+                        {availableSearchFields.length > 0 && (
+                            <FormControl variant="outlined" size="small">
+                                <StyledSelect value={searchField} onChange={handleSearchFieldChange} displayEmpty>
+                                    {availableSearchFields.map((field) => (
+                                        <MenuItem key={field} value={field}>
+                                            {field}
+                                        </MenuItem>
+                                    ))}
+                                </StyledSelect>
+                            </FormControl>
+                        )}
+
+                        {/* 검색창 */}
                         <Search>
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <StyledInputBase
-                                placeholder="검색"
+                                placeholder={`${searchField || "전체"} 검색...`}
                                 inputProps={{ "aria-label": "search" }}
                                 value={searchTerm}
-                                onChange={handleSearchChange}
+                                onChange={handleSearchTermChange}
                                 onKeyPress={handleSearchSubmit}
-                                sx={{ width: "1000px" }}
+                                sx={{ width: "100%", minWidth: "300px" }}
                             />
                         </Search>
 
+                        {/* 검색 초기화 버튼 */}
                         <IconButton size="large" sx={{ color: "#F0A355" }} onClick={handleReset}>
                             <RefreshIcon />
                         </IconButton>

@@ -7,7 +7,7 @@ import UserIcon from "../UserIcon.jsx";
 const PostReplyItem = ({ reply, onReply }) => {
     const user = {
         userName: reply.userName,
-        isView: reply.isView,
+        isVisited: reply.isVisited,
         userPhoto: reply.userPhoto,
     };
     const navigate = useNavigate();

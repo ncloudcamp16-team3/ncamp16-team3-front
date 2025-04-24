@@ -6,7 +6,7 @@ import { useFollow } from "../../../context/FollowContext.jsx";
 import { Context } from "../../../context/Context.jsx";
 // ★ 추가
 
-const PostProfile = ({ userName, userId, userPhoto, isView, isAbsolute = false }) => {
+const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = false }) => {
     const { user } = useContext(Context);
     const { followMap, toggleFollow } = useFollow(); // ★ 추가
     const isFollow = followMap[userId] || false; // ★ followMap에서 follow 여부 가져옴
@@ -14,8 +14,9 @@ const PostProfile = ({ userName, userId, userPhoto, isView, isAbsolute = false }
         userName,
         userId,
         userPhoto,
-        isView,
+        isVisited,
     };
+    console.log("!#!@#@!#@!" + isVisited);
 
     const handleFollowClick = async () => {
         try {

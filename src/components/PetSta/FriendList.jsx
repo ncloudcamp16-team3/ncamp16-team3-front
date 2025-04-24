@@ -125,7 +125,7 @@ const FriendList = ({ followings }) => {
                     </Box>
                 </Box>
                 <Typography marginTop="4px" fontSize="11px" color={theme.secondary}>
-                    {user.name}
+                    {user.nickname}
                 </Typography>
             </Box>
             {followings.map((friend) => (
@@ -135,6 +135,7 @@ const FriendList = ({ followings }) => {
                         id: friend.id,
                         name: friend.name,
                         photo: friend.fileName, // 프로필 이미지 URL
+                        isVisited: friend.isVisited,
                     }}
                 />
             ))}

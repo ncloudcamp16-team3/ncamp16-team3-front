@@ -16,6 +16,7 @@ const VideoPost = ({
     createdAt,
     initialLiked,
     initialBookmarked,
+    isVisited,
 }) => {
     const [isWide, setIsWide] = useState(false); // 화면이 넓은지
 
@@ -54,11 +55,17 @@ const VideoPost = ({
                     <div style={{ position: "relative", width: "100%" }}>
                         <VideoPlayer fileName={fileName} isWide={true} postId={postId} />
                         {/* 프로필 이미지와 사용자 이름 */}
-                        <PostProfile userId={userId} userName={userName} userPhoto={userPhoto} isAbsolute={true} />
+                        <PostProfile
+                            userId={userId}
+                            userName={userName}
+                            userPhoto={userPhoto}
+                            isAbsolute={true}
+                            isVisited={isVisited}
+                        />
                     </div>
                 ) : (
                     <div style={{ position: "relative", width: "100%" }}>
-                        <PostProfile userName={userName} userId={userId} userPhoto={userPhoto} />
+                        <PostProfile userName={userName} userId={userId} userPhoto={userPhoto} isVisited={isVisited} />
                         <Box
                             sx={{
                                 background: "black",
