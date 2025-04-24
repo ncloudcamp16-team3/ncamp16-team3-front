@@ -1,18 +1,38 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
+import { getUserInfo } from "../services/authService.js";
 
 export const Context = createContext();
 
 export function Provider({ children }) {
     const [isMute, setIsMute] = useState(true);
     const [address, setAddress] = useState("");
+    const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
     const [InfoModalState, setInfoModalState] = useState({
         open: false,
         title: "",
         message: "",
         onClose: () => {},
     });
+
+    useEffect(() => {
+        if (hasRun.current) return;
+        hasRun.current = true;
+
+        const fetchUserInfo = async () => {
+            try {
+                const userData = await getUserInfo(); // JWT 기반 유저 정보 가져오기
+                if (userData) {
+                    setUser(userData); // 유저 정보만 저장
+                }
+            } catch (err) {
+                console.error("유저 정보 로딩 실패:", err);
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
 
     const [user, setUser] = useState({
         id: 9999,
