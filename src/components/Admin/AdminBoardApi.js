@@ -1,6 +1,24 @@
-export const fetchBoards = async (page = 0, size = 10, boardTypeId = 1) => {
+export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searchTerm = "", searchField = "") => {
     try {
-        let url = `/api/admin/board/list?page=${page}&size=${size}&boardTypeId=${boardTypeId}`;
+        // 기본 URL 구성
+        let url = `/api/admin/board/list?page=${page}&size=${size}`;
+
+        // boardTypeId가 있는 경우 URL에 추가
+        if (boardTypeId) {
+            url += `&boardTypeId=${boardTypeId}`;
+        }
+
+        // 검색어가 있는 경우 URL에 추가
+        if (searchTerm) {
+            url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+
+            // 검색 필드가 있는 경우 URL에 추가
+            if (searchField && searchField !== "전체") {
+                // 검색 필드에 따라 다른 파라미터 이름 사용
+                const fieldParam = getSearchFieldParam(searchField);
+                url += `&searchField=${fieldParam}`;
+            }
+        }
 
         const token = localStorage.getItem("adminToken");
         // console.log("Using token: " + token ? "Valid token exists" : "No token found");
@@ -49,3 +67,14 @@ export const fetchBoardDetail = async (boardId) => {
         throw error;
     }
 };
+
+// 검색 필드 이름을 API 파라미터로 변환하는 함수
+function getSearchFieldParam(fieldName) {
+    const fieldMap = {
+        제목: "title",
+        내용: "content",
+        작성자: "author",
+    };
+
+    return fieldMap[fieldName] || "all";
+}

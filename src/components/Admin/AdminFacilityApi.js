@@ -1,6 +1,10 @@
-export const fetchPetSitter = async (page = 0, size = 10, searchTerm = "", searchField = "") => {
+export const fetchFacility = async (page = 0, size = 10, facilityTypeId = null, searchTerm = "", searchField = "") => {
     try {
-        let url = `/api/admin/petsitter/list?page=${page}&size=${size}`;
+        let url = `/api/admin/facility/list?page=${page}&size=${size}`;
+
+        if (facilityTypeId != null) {
+            url += `&facilityTypeId=${facilityTypeId}`;
+        }
 
         // 검색어가 있는 경우 URL에 추가
         if (searchTerm) {
@@ -40,7 +44,7 @@ export const fetchPetSitter = async (page = 0, size = 10, searchTerm = "", searc
     }
 };
 
-export const fetchPetSitterDetail = async (id) => {
+export const fetchFacilityDetail = async (id) => {
     try {
         const token = localStorage.getItem("adminToken");
         const response = await fetch(`/api/admin/petsitter/${id}`, {
@@ -63,66 +67,13 @@ export const fetchPetSitterDetail = async (id) => {
     }
 };
 
-export const fetchPendingPetSitter = async (page = 0, size = 10) => {
-    try {
-        let url = `/api/admin/petsitter/pending?page=${page}&size=${size}`;
-
-        const token = localStorage.getItem("adminToken");
-        // console.log("Using token: " + token ? "Valid token exists" : "No token found");
-        // console.log("API request URL: " + url);
-
-        const response = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        // console.log("API response status: " + response.status);
-        const data = await response.json();
-        // console.log("API response data:", data);
-
-        if (!response.ok) {
-            throw new Error(data.message || "펫시터 신청 목록을 가져오는데 실패했습니다");
-        }
-
-        return data;
-    } catch (error) {
-        console.log("펫시터 신청 API 호출 중 오류 발생: " + error);
-        throw error;
-    }
-};
-
-export const fetchPendingPetSitterDetail = async (id) => {
-    try {
-        const token = localStorage.getItem("adminToken");
-        const response = await fetch(`/api/admin/petsitter/pending/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || "펫시터 정보를 가져오는데 실패했습니다");
-        }
-        // console.log(data);
-
-        return data;
-    } catch (error) {
-        console.log("펫시터 상세보기 API 호출 중 오류 발생: " + error);
-        throw error;
-    }
-};
-
 // 검색 필드 이름을 API 파라미터로 변환하는 함수
 function getSearchFieldParam(fieldName) {
     const fieldMap = {
-        닉네임: "nickname",
-        연령대: "age",
-        주거형태: "houseType",
-        코멘트: "comment",
+        업체명: "name",
+        주소: "address",
+        전화번호: "tel",
+        상세내용: "detail",
     };
 
     return fieldMap[fieldName] || "all";
