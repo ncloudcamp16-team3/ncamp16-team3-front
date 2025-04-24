@@ -14,6 +14,7 @@ const PetSta = () => {
     const [isMute, setIsMute] = useState(true);
     const [showBox, setShowBox] = useState(false);
     const [rightPosition, setRightPosition] = useState("20px");
+    const [followings, setFollowings] = useState([]);
     const navigate = useNavigate();
     const { setInitialFollow } = useFollow();
 
@@ -21,8 +22,9 @@ const PetSta = () => {
         const getPosts = async () => {
             try {
                 const data = await getPostLists();
-                setPosts(data);
-                data.forEach((post) => {
+                setPosts(data.posts);
+                setFollowings(data.followings);
+                data.posts.forEach((post) => {
                     setInitialFollow(post.userId, post.initialFollowed);
                 });
             } catch (error) {
@@ -60,7 +62,7 @@ const PetSta = () => {
 
     return (
         <Box>
-            <FriendList />
+            <FriendList followings={followings} />
             {posts.map((post) =>
                 post.fileType === "VIDEO" ? (
                     <VideoPost

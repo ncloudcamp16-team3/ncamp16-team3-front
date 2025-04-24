@@ -197,7 +197,7 @@ const PostCommentPage = () => {
                     >
                         <Box
                             component="img"
-                            src={user.photo}
+                            src={user.path}
                             alt="profile"
                             sx={{
                                 maxWidth: "100%",

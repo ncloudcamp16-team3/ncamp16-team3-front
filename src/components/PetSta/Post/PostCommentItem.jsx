@@ -7,7 +7,7 @@ import { getReplyComments } from "../../../services/petstaService.js";
 const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, refreshTrigger }) => {
     const [replies, setReplies] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    console.log(comment);
     const user = {
         userName: comment.userName,
         userId: comment.userId,
