@@ -18,12 +18,8 @@ import { fetchBoards } from "./AdminBoardApi.js";
 import { useAdmin } from "./AdminContext.jsx";
 
 function DashBoard() {
-    const [searchTerm, setSearchTerm] = useState("");
     const adminContext = useAdmin();
-    const currentFilter = adminContext.currentFilter;
-    const setCurrentFilter = adminContext.setCurrentFilter;
-    const page = adminContext.currentPage;
-    const setPage = adminContext.setCurrentPage;
+    const { currentCategory, searchField, searchTerm, currentPage, setCurrentPage } = adminContext;
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -55,6 +51,7 @@ function DashBoard() {
     };
 
     const boardTypeMapping = {
+        전체: null,
         자유게시판: 1,
         중고장터: 2,
         정보게시판: 3,
@@ -67,11 +64,11 @@ function DashBoard() {
 
             // console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
 
-            const boardTypeId = boardTypeMapping[currentFilter];
-            const apiPage = Math.max(0, page - 1);
-            const response = await fetchBoards(apiPage, 10, boardTypeId);
+            const boardTypeId = boardTypeMapping[currentCategory];
+            const apiPage = Math.max(0, currentPage - 1);
+            const response = await fetchBoards(apiPage, 10, boardTypeId, searchTerm, searchField);
 
-            // console.log("API Response: " + response);
+            console.log("API Response: " + response);
 
             //데이터가 있는지 확인
             if (!response || !response.content) {
@@ -104,39 +101,26 @@ function DashBoard() {
         }
     };
 
+    // 카테고리, 페이지, 검색어 또는 검색 필드가 변경될 때마다 데이터 로드
     useEffect(() => {
         loadBoardData();
-    }, [page, currentFilter]);
+    }, [currentPage, currentCategory, searchTerm, searchField]);
 
     // 검색 핸들러
-    const handleSearch = (term) => {
-        setSearchTerm(term);
-
-        if (!term) {
-            setFilteredRows(rows);
-            return;
-        }
-
-        const filtered = rows.filter(
-            (row) =>
-                row.title.toLowerCase().includes(term.toLowerCase()) ||
-                row.content.toLowerCase().includes(term.toLowerCase())
-        );
-
-        setFilteredRows(filtered);
+    const handleSearch = (term, field) => {
+        // 컨텍스트의 executeSearch
+        // console.log(`'${field}'에서 '${term}' 검색 요청됨`);
     };
 
     // 필터 핸들러
-    const handleFilterChange = (filter) => {
-        setCurrentFilter(filter);
-        // 실제 필터링 로직 구현
-        console.log(`필터 변경: ${filter}`);
-        setPage(1);
+    const handleFilterChange = (category) => {
+        // 컨텍스트의 setCurrentCategory
+        // console.log(`카테고리 필터 변경: ${category}`);
     };
 
     // 페이지 변경 핸들러
     const handlePageChange = (newPage) => {
-        setPage(newPage);
+        setCurrentPage(newPage);
     };
 
     return (
@@ -156,6 +140,13 @@ function DashBoard() {
                     {error}
                 </Alert>
             )}
+
+            {/* 검색 상태 표시 */}
+            {/*{searchTerm && (*/}
+            {/*    <Alert severity="info" sx={{ my: 2 }}>*/}
+            {/*        "{searchField}"(으)로 "{searchTerm}" 검색 결과*/}
+            {/*    </Alert>*/}
+            {/*)}*/}
 
             {/* 테이블 부분 */}
             <Box>
@@ -199,7 +190,7 @@ function DashBoard() {
                                                 {row.id}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
-                                                {row.firstImageUrl ? (
+                                                {row.image ? (
                                                     <Box
                                                         component="img"
                                                         sx={{
@@ -208,11 +199,8 @@ function DashBoard() {
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
-                                                        src={row.firstImageUrl}
+                                                        src={row.image}
                                                         alt="썸네일"
-                                                        onError={(e) => {
-                                                            e.target.src = "/src/assets/images/default-thumbnail.png"; // 기본 이미지 경로로 대체
-                                                        }}
                                                     />
                                                 ) : (
                                                     <Box
@@ -263,7 +251,11 @@ function DashBoard() {
 
                 {/* 페이지네이션 */}
                 <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                    <Button sx={{ mx: 1 }} disabled={page <= 1} onClick={() => handlePageChange(page - 1)}>
+                    <Button
+                        sx={{ mx: 1 }}
+                        disabled={currentPage <= 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
                         &lt;
                     </Button>
 
@@ -273,10 +265,10 @@ function DashBoard() {
                                 key={index}
                                 sx={{
                                     mx: 1,
-                                    backgroundColor: page === index + 1 ? "#E9A260" : "transparent",
-                                    color: page === index + 1 ? "white" : "inherit",
+                                    backgroundColor: currentPage === index + 1 ? "#E9A260" : "transparent",
+                                    color: currentPage === index + 1 ? "white" : "inherit",
                                     "&:hover": {
-                                        backgroundColor: page === index + 1 ? "#E9A260" : "#f0f0f0",
+                                        backgroundColor: currentPage === index + 1 ? "#E9A260" : "#f0f0f0",
                                     },
                                 }}
                                 onClick={() => handlePageChange(index + 1)}
@@ -285,7 +277,11 @@ function DashBoard() {
                             </Button>
                         ))}
 
-                    <Button sx={{ mx: 1 }} disabled={page >= totalPage} onClick={() => handlePageChange(page + 1)}>
+                    <Button
+                        sx={{ mx: 1 }}
+                        disabled={currentPage >= totalPage}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
                         &gt;
                     </Button>
                 </Box>

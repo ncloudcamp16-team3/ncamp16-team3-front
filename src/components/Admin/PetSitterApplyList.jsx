@@ -145,7 +145,7 @@ const PetSitterApplyList = () => {
     const handleFilterChange = (filter) => {
         setCurrentFilter(filter);
         // 실제 필터링 로직 구현
-        console.log(`필터 변경: ${filter}`);
+        // console.log(`필터 변경: ${filter}`);
     };
 
     const handlePageChange = (newPage) => {
@@ -279,7 +279,7 @@ const PetSitterApplyList = () => {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={9} align="center">
-                                            펫시터가 없습니다.
+                                            신청한 펫시터가 없습니다.
                                         </TableCell>
                                     </TableRow>
                                 )}
