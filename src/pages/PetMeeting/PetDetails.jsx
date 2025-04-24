@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import PetData from "../../mock/PetMeeting/petData.json";
+import React, { useEffect, useState } from "react";
 import Male from "../../assets/images/PetMeeting/male.svg";
 import Female from "../../assets/images/PetMeeting/female.svg";
 import Theme from "../../theme/theme.js";
@@ -8,14 +7,14 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import { Box, Button, Typography } from "@mui/material";
-import PetImgSlide from "../../components/PetMeeting/PetImgSlide.jsx";
-import petTypes from "../../constants/petTypes.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
+import { getPet } from "../../services/petService.js";
+import PetImgSlide from "../../components/PetMeeting/PetImgSlide.jsx";
 
 const PetDetails = () => {
-    const petData = useRef(PetData);
-    const petDetails = petData.current;
+    const { petId } = useParams();
+    const [pet, setPet] = useState({});
     const navigate = useNavigate();
 
     const getAge = (birthDateString) => {
@@ -33,6 +32,22 @@ const PetDetails = () => {
         return age;
     };
 
+    useEffect(() => {
+        getPet({ id: petId })
+            .then((res) => {
+                const data = res.data;
+                console.log("응답 성공: " + res.message);
+                setPet(data);
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
+    }, []);
+
+    useEffect(() => {
+        console.log(pet);
+    }, [pet]);
+
     return (
         <Box>
             <TitleBar name={"친구 프로필"} />
@@ -43,7 +58,7 @@ const PetDetails = () => {
                     pb: "0",
                 }}
             >
-                <PetImgSlide petDetails={petDetails} />
+                <PetImgSlide photos={pet.photos} />
                 <Typography
                     sx={{
                         mt: "0",
@@ -52,11 +67,11 @@ const PetDetails = () => {
                         verticalAlign: "middle",
                     }}
                 >
-                    {petDetails.name}
+                    {pet?.name}
                 </Typography>
                 <Box
                     component="img"
-                    src={petDetails.gender == "MALE" ? Male : Female}
+                    src={pet?.gender == "MALE" ? Male : Female}
                     sx={{
                         verticalAlign: "middle",
                         color: "blue",
@@ -81,7 +96,7 @@ const PetDetails = () => {
                             margin: "0 2%",
                         }}
                     >
-                        {petTypes[petDetails.petType]}
+                        {pet?.type}
                     </Typography>
                     <Typography
                         sx={{
@@ -95,7 +110,7 @@ const PetDetails = () => {
                             margin: "0 2%",
                         }}
                     >
-                        {getAge(petDetails.birth)}세
+                        {getAge(pet?.birthDate)}세
                     </Typography>
                     <Typography
                         sx={{
@@ -109,7 +124,7 @@ const PetDetails = () => {
                             margin: "0 2%",
                         }}
                     >
-                        {petDetails.weight}KG
+                        {pet?.weight}KG
                     </Typography>
                 </Box>
                 <Typography
@@ -125,11 +140,11 @@ const PetDetails = () => {
                         color: "rgba(0, 0, 0, 0.5)",
                     }}
                 >
-                    생년월일 : {petDetails.birth}
+                    생년월일 : {pet?.birthDate}
                     <br />
-                    중성화 : {petDetails.neutured ? "O" : "X"}
+                    중성화 : {pet?.neutured ? "O" : "X"}
                     <br />
-                    소개 : {petDetails.info}
+                    소개 : {pet?.introduction}
                 </Typography>
                 <Box
                     sx={{
