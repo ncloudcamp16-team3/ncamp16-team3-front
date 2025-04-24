@@ -13,7 +13,7 @@ const LocationConfig = () => {
     const { setView } = useContext(PetMeetingContext);
     const [address, setAddress] = useState(null);
     const [dongName, setDongName] = useState(null);
-    const [distance, setDistance] = useState("2");
+    const [distance, setDistance] = useState("LEVEL2");
     const { showModal } = useContext(Context);
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
@@ -22,7 +22,7 @@ const LocationConfig = () => {
         if (user) {
             setAddress(user.address || null);
             setDongName(user.dongName || null);
-            setDistance(user.distance || "2");
+            setDistance(user.distance || "LEVEL2");
         }
     }, []);
 
