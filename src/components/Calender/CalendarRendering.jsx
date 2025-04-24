@@ -7,7 +7,7 @@ import { Box, Card, CardContent, Typography, Button } from "@mui/material";
 import dayjs from "dayjs";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
-import { getScheduleAll } from "../../services/calendarService.js";
+import { getScheduleAll, postSchedule } from "../../services/calendarService.js";
 import { Context } from "../../context/Context.jsx";
 const { kakao } = window;
 
@@ -59,27 +59,6 @@ const CalendarRendering = () => {
             });
         }
     }, [showForm]);
-
-    // useEffect(() => {
-    //     // fetch("src/mock/Calendar/schedules.json")
-    //     //     .then((res) => res.json())
-    //     //     .then(setSchedules)
-    //     //     .catch((err) => console.error("Error loading schedules:", err));
-    //
-    //     (async () => {
-    //     const schedulesData = await getScheduleAll();  // 스케줄 데이터 가져오기
-    //     setSchedules(schedulesData);)
-    //
-    //     fetch("src/mock/Calendar/event.json")
-    //         .then((res) => res.json())
-    //         .then(setEvents)
-    //         .catch((err) => console.error("Error loading events:", err));
-    //
-    //     fetch("src/mock/Calendar/reserves.json")
-    //         .then((res) => res.json())
-    //         .then(setReserves)
-    //         .catch((err) => console.error("Error loading reserves:", err));
-    // }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -146,37 +125,54 @@ const CalendarRendering = () => {
         setSelectedItem(null);
     };
 
-    const addSchedule = () => {
+    const addSchedule = async () => {
         if (!formData.title.trim()) return alert("제목을 입력해주세요.");
 
-        const newSchedule = {
-            id: Date.now(),
-            userId: formData.userId,
-            title: formData.title,
-            content: formData.content,
-            address: formData.address,
-            latitude: formData.latitude || null,
-            longitude: formData.longitude || null,
-            startDate: format(formData.startDate.toDate(), "yyyy-MM-dd HH:mm:ss"),
-            endDate: format(formData.endDate.toDate(), "yyyy-MM-dd HH:mm:ss"),
-            dateList: formData.dateList || [], // ✅ dateList 추가
-        };
+        try {
+            // startDate와 endDate가 올바른 날짜 형식인지 확인
+            const startDate = dayjs(formData.startDate);
+            const endDate = dayjs(formData.endDate);
 
-        setSchedules((prev) => [...prev, newSchedule]);
-        setShowForm(false);
-        setFormData({
-            id: "",
-            userId: "",
-            title: "",
-            content: "",
-            address: "",
-            latitude: "",
-            longitude: "",
-            startDate: dayjs(selectedDate),
-            endDate: dayjs(selectedDate),
-            dateList: [], // ✅ 초기화 시에도 포함
-        });
+            console.log("Start Date:", formData.startDate);
+            console.log("End Date:", formData.endDate);
+
+            if (!startDate.isValid() || !endDate.isValid()) {
+                return alert("시작일자 또는 종료일자가 유효하지 않습니다.");
+            }
+
+            const scheduleData = {
+                userId: user.id,
+                title: formData.title,
+                content: formData.content,
+                address: formData.address,
+                latitude: formData.latitude || null,
+                longitude: formData.longitude || null,
+                startDate: startDate.format("YYYY-MM-DD HH:mm:ss"),
+                endDate: endDate.format("YYYY-MM-DD HH:mm:ss"),
+            };
+
+            const createdSchedule = await postSchedule(scheduleData);
+
+            setSchedules((prev) => [...prev, createdSchedule]);
+            setShowForm(false);
+            setFormData({
+                userId: "",
+                title: "",
+                content: "",
+                address: "",
+                latitude: "",
+                longitude: "",
+                startDate: dayjs(selectedDate),
+                endDate: dayjs(selectedDate),
+                dateList: [],
+            });
+            alert("일정이 성공적으로 등록되었습니다!");
+        } catch (error) {
+            alert("일정 등록에 실패했습니다.");
+            console.error("일정 등록 에러:", error);
+        }
     };
+
     const MapPreview = ({ latitude, longitude, mapId = "map-preview" }) => {
         useEffect(() => {
             if (!window.kakao || !latitude || !longitude) return;
@@ -196,6 +192,8 @@ const CalendarRendering = () => {
     };
 
     const handleToggle = (id, type) => {
+        console.log("startDate", formData.startDate);
+        console.log("endDate", formData.endDate);
         setOpenItem((prev) => (prev.id === id && prev.type === type ? { id: null, type: null } : { id, type }));
     };
 

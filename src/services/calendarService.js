@@ -23,3 +23,23 @@ export const getScheduleByDate = async () => {
             throw error;
         });
 };
+
+export const postSchedule = async ({ userId, title, content, startDate, endDate, address, latitude, longitude }) => {
+    try {
+        const response = await instance.post(`${API_URL}/schedule`, {
+            userId,
+            title,
+            content,
+            startDate,
+            endDate,
+            address,
+            latitude,
+            longitude,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("캘린더 스케쥴 등록 실패", error);
+        throw error;
+    }
+};
