@@ -11,7 +11,7 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, refres
     const user = {
         userName: comment.userName,
         userId: comment.userId,
-        isView: comment.isView,
+        isVisited: comment.isVisited,
         userPhoto: comment.userPhoto,
     };
 

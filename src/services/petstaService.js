@@ -105,3 +105,23 @@ export const getUserName = async (userId) => {
             throw error;
         });
 };
+
+export const getFollowdUsers = async (userId) => {
+    return await instance
+        .get(`${API_URL}/users/${userId}/followers`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error("팔로워 호출 실패", error);
+            throw error;
+        });
+};
+
+export const getFollowingUsers = async (userId) => {
+    return await instance
+        .get(`${API_URL}/users/${userId}/followings`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error("팔로잉 호출 실패", error);
+            throw error;
+        });
+};

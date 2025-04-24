@@ -2,12 +2,23 @@ import React, { useState } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { toggleFollow } from "../../services/memberService.js";
 import PostThumbnail from "./Post/PostThumbnail.jsx";
 
 const UserProfile = ({ userInfo }) => {
-    const [isFollow, setIsFollow] = useState(false);
+    const [isFollow, setIsFollow] = useState(userInfo.isFollow); // 백에서 받은 값으로 초기화
     const theme = useTheme();
     const navigate = useNavigate();
+
+    const handleFollowClick = async () => {
+        try {
+            await toggleFollow(userInfo.id);
+            setIsFollow((prev) => !prev);
+        } catch (error) {
+            console.error("팔로우 요청 실패", error);
+        }
+    };
+
     return (
         <Box display="flex" flexDirection="column" p={2} gap={1}>
             {/* 상단 프로필 정보 */}
@@ -62,13 +73,14 @@ const UserProfile = ({ userInfo }) => {
                         p={0.8}
                         borderRadius={2}
                         textAlign="center"
-                        onClick={() => setIsFollow((prev) => !prev)}
+                        onClick={handleFollowClick}
                         sx={{ cursor: "pointer" }}
                     >
                         {isFollow ? "팔로우 취소" : "팔로우 하기"}
                     </Typography>
                 </Box>
             </Box>
+
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography variant="subtitle1" fontWeight="bold" width="25%">
                     @{userInfo.name}
@@ -85,8 +97,9 @@ const UserProfile = ({ userInfo }) => {
                     메시지 보내기
                 </Typography>
             </Box>
-            {/* 유저 이름 */}
+
             <Box width="90%" borderBottom="1px solid #ccc" m="0 auto" />
+
             {/* 포스팅 썸네일 목록 */}
             <Box display="flex" flexWrap="wrap" gap={1} justifyContent="space-between">
                 {userInfo.posts.map((post) => (
