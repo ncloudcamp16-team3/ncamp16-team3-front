@@ -15,7 +15,7 @@ export const getPet = ({ id }) => {
 
 export const getMyPets = ({ userId }) => {
     return instance
-        .get(`${API_URL}/my/pets/${userId}`)
+        .post(`${API_URL}/my/${userId}`)
         .then((response) => {
             return response.data;
         })
@@ -35,6 +35,17 @@ export const getFriends = ({ page, size, activityStatus, dongName, distance, lat
             latitude,
             longitude,
         })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};
+
+export const savePet = (pet, userId) => {
+    return instance
+        .put(`${API_URL}/save/${userId}`, pet)
         .then((response) => {
             return response.data;
         })
