@@ -10,7 +10,6 @@ import sitter from "/src/assets/images/User/petsit_req.svg";
  * @param {Function} props.onQuitClick 그만두기 버튼 클릭 핸들러
  */
 const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
-  console.log("aaaa"+JSON.stringify(sitterStatus));
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>

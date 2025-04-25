@@ -76,7 +76,6 @@ const MyPage = () => {
                             comment: response.data.petSitterInfo?.comment,
                             image: response.data.petSitterInfo?.imagePath,
                         });
-                        console.log("불러옴+"+JSON.stringify(response.data))
                     } else {
                         setSitterStatus({
                             registered: false,

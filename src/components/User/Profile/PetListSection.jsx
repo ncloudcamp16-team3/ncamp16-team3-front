@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, Card, CardContent, IconButton, Button, Tooltip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import petEx from "/src/assets/images/User/pet_ex.svg";
