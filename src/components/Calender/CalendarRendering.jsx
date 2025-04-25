@@ -13,7 +13,7 @@ const { kakao } = window;
 
 const CalendarRendering = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [currentViewMonth, setCurrentViewMonth] = useState(new Date()); // 현재 보이
+    const [currentViewMonth, setCurrentViewMonth] = useState(new Date());
     const [schedules, setSchedules] = useState([]);
     const [events, setEvents] = useState([]);
     const [reserves, setReserves] = useState([]);
@@ -167,20 +167,7 @@ const CalendarRendering = () => {
     };
 
     const addSchedule = async () => {
-        if (!formData.title.trim()) return alert("제목을 입력해주세요.");
-
         try {
-            // startDate와 endDate가 올바른 날짜 형식인지 확인
-            const startDate = dayjs(formData.startDate);
-            const endDate = dayjs(formData.endDate);
-
-            console.log("Start Date:", formData.startDate);
-            console.log("End Date:", formData.endDate);
-
-            // if (!startDate.isValid() || !endDate.isValid()) {
-            //     return alert("시작일자 또는 종료일자가 유효하지 않습니다.");
-            // }
-
             const scheduleData = {
                 userId: user.id,
                 title: formData.title,
@@ -188,8 +175,8 @@ const CalendarRendering = () => {
                 address: formData.address,
                 latitude: formData.latitude || null,
                 longitude: formData.longitude || null,
-                startDate: startDate.format("YYYY-MM-DD HH:mm:ss"),
-                endDate: endDate.format("YYYY-MM-DD HH:mm:ss"),
+                startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
+                endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
             };
 
             const createdSchedule = await postSchedule(scheduleData);
@@ -205,7 +192,6 @@ const CalendarRendering = () => {
                 longitude: "",
                 startDate: dayjs(selectedDate),
                 endDate: dayjs(selectedDate),
-                dateList: [],
             });
             alert("일정이 성공적으로 등록되었습니다!");
         } catch (error) {
@@ -241,9 +227,7 @@ const CalendarRendering = () => {
     const handleBack = () => setOpenItem({ id: null, type: null });
 
     const isSameDate = (date1, date2) => format(date1, "yyyy-MM-dd") === format(date2, "yyyy-MM-dd");
-    const isSameDateString = (date1, date2) => format(date1, "yyyy-MM-dd") === format(date2, "yyyy-MM-dd");
 
-    // const selectedSchedules = schedules.filter((s) => isSameDate(parseISO(s.startDate), selectedDate));
     const selectedSchedules = schedules.filter((s) => s.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
     const selectedEvents = events.filter((e) => isSameDate(parseISO(e.startDate), selectedDate));
     const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entry_time), selectedDate));

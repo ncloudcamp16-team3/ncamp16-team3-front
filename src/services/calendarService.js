@@ -14,16 +14,6 @@ export const getScheduleAll = async (userId) => {
         });
 };
 
-export const getScheduleByDate = async () => {
-    return await instance
-        .get(`${API_URL}/schedule/date`)
-        .then((response) => response.data)
-        .catch((error) => {
-            console.error("캘린더 스케쥴 선택날짜 로딩 실패", error);
-            throw error;
-        });
-};
-
 export const postSchedule = async ({ userId, title, content, startDate, endDate, address, latitude, longitude }) => {
     try {
         const response = await instance.post(`${API_URL}/schedule`, {
