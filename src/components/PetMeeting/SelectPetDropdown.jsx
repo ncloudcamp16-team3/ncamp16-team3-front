@@ -11,10 +11,11 @@ const SelectPetDropdown = ({ selectedPet, setSelectedPet }) => {
     const [pets, setPets] = useState([]);
 
     useEffect(() => {
-        getMyPets(user.id)
+        getMyPets({ userId: user.id })
             .then((res) => {
                 const data = res.data;
                 console.log("응답 성공: " + res.message);
+                console.log(data);
                 setPets(data);
             })
             .catch((err) => {
