@@ -64,3 +64,13 @@ export const deleteSchedule = async ({ id }) => {
         throw error;
     }
 };
+
+export const getEventAll = async () => {
+    return await instance
+        .get(`${API_URL}/event`, {})
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("캘린더 이벤트 전체정보 로딩 실패", error);
+            throw error;
+        });
+};

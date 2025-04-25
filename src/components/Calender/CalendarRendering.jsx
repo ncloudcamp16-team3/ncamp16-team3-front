@@ -7,7 +7,13 @@ import { Box, Card, CardContent, Typography, Button } from "@mui/material";
 import dayjs from "dayjs";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
-import { deleteSchedule, getScheduleAll, postSchedule, putSchedule } from "../../services/calendarService.js";
+import {
+    deleteSchedule,
+    getScheduleAll,
+    postSchedule,
+    putSchedule,
+    getEventAll,
+} from "../../services/calendarService.js";
 import { Context } from "../../context/Context.jsx";
 const { kakao } = window;
 
@@ -71,7 +77,7 @@ const CalendarRendering = () => {
 
                 console.log("Fetching events..."); // 디버깅: 이벤트 데이터 로딩 시작
                 // fetch로 이벤트 데이터 가져오기
-                const eventData = await fetch("src/mock/Calendar/event.json").then((res) => res.json());
+                const eventData = await getEventAll();
                 console.log("Events data fetched:", eventData); // 디버깅: 이벤트 데이터 확인
                 setEvents(eventData);
 
@@ -296,16 +302,16 @@ const CalendarRendering = () => {
                 return (
                     <>
                         {renderMapAndAddress()}
-                        {item.event_url && (
+                        {item.eventUrl && (
                             <Typography sx={{ mt: 0.5 }}>
                                 <span style={{ color: "#A8A8A9" }}>링크 : </span>
                                 <a
-                                    href={item.event_url}
+                                    href={item.eventUrl}
                                     style={{ color: "lightblue", textDecoration: "underline" }}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    {item.event_url}
+                                    {item.eventUrl}
                                 </a>
                             </Typography>
                         )}
