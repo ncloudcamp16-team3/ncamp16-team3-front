@@ -3,9 +3,12 @@ import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import { Box, Button, Fade, Modal, Typography } from "@mui/material";
 import Dog from "../../assets/images/PetMeeting/dog.svg";
 import SelectPetDropdown from "./SelectPetDropdown.jsx";
+import { savePet } from "../../services/petService.js";
+import { Context } from "../../context/Context.jsx";
 
 const PetConfigModal = () => {
     const { pet, setPet, openPetConfigModal, drop, setDrop, setClose } = useContext(PetMeetingContext);
+    const { user } = useContext(Context);
     const [selectedPet, setSelectedPet] = useState(null);
 
     useEffect(() => {
@@ -19,6 +22,14 @@ const PetConfigModal = () => {
     const petRegister = () => {
         setPet(selectedPet);
         setClose();
+
+        savePet(selectedPet, user.id)
+            .then((res) => {
+                console.log(res.message);
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
     };
 
     return (
@@ -288,59 +299,6 @@ const ActivityModal = () => {
                             취소
                         </Button>
                     </Box>
-                </Box>
-            </Fade>
-        </Modal>
-    );
-};
-
-const InfoModal = ({ title, message, onClose }) => {
-    return (
-        <Modal
-            open
-            onClose={onClose}
-            disableScrollLock
-            sx={{
-                zIndex: 10000,
-            }}
-        >
-            <Fade in={true}>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: 260,
-                        bgcolor: "background.paper",
-                        borderRadius: 4,
-                        boxShadow: 24,
-                        p: 4,
-                        textAlign: "center",
-                        backgroundColor: "#FDF1E5",
-                    }}
-                >
-                    {title && (
-                        <Typography variant="h6" component="h2" gutterBottom>
-                            {title}
-                        </Typography>
-                    )}
-                    <Typography variant="h6" component="h2" gutterBottom>
-                        {message}
-                    </Typography>
-                    <Button
-                        onClick={onClose}
-                        variant="contained"
-                        sx={{
-                            mt: 2,
-                            bgcolor: "#F4A261",
-                            borderRadius: 5,
-                            px: 4,
-                            "&:hover": { bgcolor: "#e68a3d" },
-                        }}
-                    >
-                        확인
-                    </Button>
                 </Box>
             </Fade>
         </Modal>

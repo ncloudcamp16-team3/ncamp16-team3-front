@@ -21,7 +21,7 @@ const PetProfiles = () => {
     const loadPets = async (currentPage) => {
         setLoading(true);
 
-        getFriends({
+        await getFriends({
             page: currentPage,
             size: PAGE_SIZE,
             activityStatus: friendType === "산책친구들" ? "WALK" : "PLAY",
@@ -59,10 +59,9 @@ const PetProfiles = () => {
     useEffect(() => {
         if (isInitialMount.current) return;
 
-        setLoading(true);
+        loadPets(0);
         setPetList([]);
         setPage(0);
-        loadPets(0);
     }, [friendType]);
 
     useEffect(() => {
