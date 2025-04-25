@@ -4,7 +4,7 @@ import { Photo } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 
-const UpdateFile = ({ postPhotos, handleAddPhoto, handleDeletePhoto }) => {
+const UpdateFile = ({ imageUrls, handleAddPhoto, handleDeletePhoto }) => {
     const theme = useTheme();
     return (
         <Box sx={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
@@ -27,7 +27,7 @@ const UpdateFile = ({ postPhotos, handleAddPhoto, handleDeletePhoto }) => {
                             fontSize: "30px",
                         }}
                     />
-                    <Typography sx={{ fontSize: "10px" }}>{postPhotos.length}/5</Typography>
+                    <Typography sx={{ fontSize: "10px" }}>{imageUrls.length}/5</Typography>
                 </Box>
             </label>
             <input
@@ -38,7 +38,7 @@ const UpdateFile = ({ postPhotos, handleAddPhoto, handleDeletePhoto }) => {
                 style={{ display: "none" }}
                 multiple
             />
-            {postPhotos.map((photo, index) => (
+            {imageUrls.map((photo, index) => (
                 <Box key={index} sx={{ position: "relative" }}>
                     <Box
                         component="img"

@@ -3,7 +3,7 @@ import { Box, Typography, Card, Button, CardMedia, Paper, Stack, Grid, CircularP
 import { styled } from "@mui/material/styles";
 import AdminHeader from "./AdminHeader.jsx";
 import { fetchBoardDetail } from "./AdminBoardApi.js";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
 
 // 커스텀 스타일 컴포넌트 생성
@@ -31,46 +31,28 @@ const CommentItem = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.grey[50],
 }));
 
-const DeleteButton = styled(Button)(({ theme }) => ({
-    color: theme.palette.text.secondary,
-    fontSize: "0.75rem",
-}));
-
 const PostDetail = () => {
-    const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate(); // 페이지 이동을 위한 hook 추가
     const adminContext = useAdmin();
-    const currentFilter = adminContext.currentFilter;
-    const setCurrentFilter = adminContext.setCurrentFilter;
-    const [filteredRows, setFilteredRows] = useState([]);
-    const [rows, setRows] = useState([]);
+    const { setSearchField, executeSearch, setCurrentCategory } = adminContext;
     const [board, setBoard] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { id } = useParams();
 
     // 검색 핸들러
-    const handleSearch = (term) => {
-        setSearchTerm(term);
+    const handleSearch = (term, field) => {
+        if (field) setSearchField(field);
+        setSearchField(term);
 
-        if (!term) {
-            setFilteredRows(rows);
-            return;
-        }
+        executeSearch(term, field);
 
-        const filtered = rows.filter(
-            (row) =>
-                row.title.toLowerCase().includes(term.toLowerCase()) ||
-                row.content.toLowerCase().includes(term.toLowerCase())
-        );
-
-        setFilteredRows(filtered);
+        navigate("/admin/board/list");
     };
 
     // 필터 핸들러
     const handleFilterChange = (filter) => {
-        setCurrentFilter(filter);
-        // 실제 필터링 로직 구현
-        console.log(`필터 변경: ${filter}`);
+        setCurrentCategory(filter);
     };
 
     // 컴포넌트 마운트 시 데이터 불러오기
@@ -91,13 +73,33 @@ const PostDetail = () => {
     }, [id]);
 
     // 게시글 삭제 핸들러
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (window.confirm("이 게시글을 삭제하시겠습니까?")) {
-            // 삭제 API 호출 코드가 들어갈 자리
-            console.log("게시글 삭제됨");
+            try {
+                const token = localStorage.getItem("adminToken");
+                const response = await fetch(`/api/admin/board/${id}/delete`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "게시글 삭제에 실패했습니다");
+                }
+
+                // 삭제 성공 시 처리
+                alert("게시글이 삭제되었습니다");
+                // 게시글 목록 페이지로 이동
+                navigate("/admin/board/list");
+            } catch (error) {
+                console.error("게시글 삭제 중 오류 발생:", error);
+                alert(`게시글 삭제 실패: ${error.message}`);
+            }
         }
     };
-
     return (
         <Box>
             <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />

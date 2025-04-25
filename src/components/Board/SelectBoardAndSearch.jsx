@@ -6,7 +6,7 @@ import DropdownBoard from "./DropdownBoard.jsx";
 import SearchBar from "./SearchBar.jsx";
 import { Context } from "../../context/Context.jsx";
 
-const SelectBoardAndSearch = ({ requestBoardList }) => {
+const SelectBoardAndSearch = ({ keywordSearch }) => {
     const { boardType } = useContext(Context);
     const [openSearch, setOpenSearch] = useState(false);
     const [dropList, setDroplist] = useState(false);
@@ -38,7 +38,7 @@ const SelectBoardAndSearch = ({ requestBoardList }) => {
                     />
                 </Box>
                 <DropdownBoard dropList={dropList} setDroplist={setDroplist} />
-                <SearchBar openSearch={openSearch} setOpenSearch={setOpenSearch} requestBoardList={requestBoardList} />
+                <SearchBar openSearch={openSearch} setOpenSearch={setOpenSearch} keywordSearch={keywordSearch} />
             </Box>
         </Box>
     );

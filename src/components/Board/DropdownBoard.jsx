@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Collapse } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import DropdownBoardItem from "./DropdownBoardItem.jsx";
-import BoardTypeList from "../../mock/Board/boardTypeList.json";
 import BoardIcons from "../../constants/boardIcons.js";
+import { Context } from "../../context/Context.jsx";
 
 const DropdownBoard = ({ dropList, setDroplist }) => {
+    const { boardTypeList } = useContext(Context);
     const theme = useTheme();
 
     return (
@@ -25,7 +26,7 @@ const DropdownBoard = ({ dropList, setDroplist }) => {
                         p: "5px 10px",
                     }}
                 >
-                    {BoardTypeList.map((boardType, index) => {
+                    {boardTypeList.map((boardType, index) => {
                         return (
                             <DropdownBoardItem
                                 key={index}
