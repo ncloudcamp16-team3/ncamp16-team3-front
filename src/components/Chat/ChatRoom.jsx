@@ -22,6 +22,7 @@ const ChatRoom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // ✅ 초기 메시지 불러오기 + 구독
     useEffect(() => {
         if (!nc || !channelId) return;
 
@@ -54,10 +55,12 @@ const ChatRoom = () => {
         init();
     }, [nc, channelId]);
 
+    // ✅ 스크롤 항상 아래로
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
+    // ✅ 반응형 위치 조절
     useEffect(() => {
         const updateRight = () => {
             const width = window.innerWidth;
@@ -75,6 +78,7 @@ const ChatRoom = () => {
         return () => window.removeEventListener("resize", updateRight);
     }, []);
 
+    // ✅ 메시지 전송
     const handleSend = async () => {
         if (!input.trim()) return;
 
@@ -88,6 +92,32 @@ const ChatRoom = () => {
             console.error("메시지 전송 실패:", e);
         }
     };
+
+    // ✅ 실시간 메시지 수신 리스너
+    useEffect(() => {
+        if (!nc || !channelId) return;
+
+        const handleReceiveMessage = (channel, msg) => {
+            if (msg.channel_id !== channelId) return;
+
+            const newMessage = {
+                id: msg.message_id,
+                senderId: msg.sender?.id,
+                text: msg.content,
+                type_id: msg.customType === "TRADE" ? 3 : msg.customType === "MATCH" ? 2 : 1,
+                metadata: msg.metadata,
+                photo: msg.sender?.profile,
+            };
+
+            setMessages((prev) => [...prev, newMessage]); // 기존 유지하고 새 메시지 추가
+        };
+
+        nc.bind("onMessageReceived", handleReceiveMessage);
+
+        return () => {
+            nc.unbind("onMessageReceived", handleReceiveMessage);
+        };
+    }, [nc, channelId]);
 
     return (
         <>
@@ -114,7 +144,7 @@ const ChatRoom = () => {
                 </Typography>
             </Box>
 
-            {/* 💬 메시지 영역 (스크롤 되는 부분) */}
+            {/* 💬 메시지 영역 */}
             <Box
                 mt="50px"
                 mb="70px"
@@ -137,7 +167,7 @@ const ChatRoom = () => {
                 <div ref={messagesEndRef} />
             </Box>
 
-            {/* ⌨️ 하단 입력창 고정 */}
+            {/* ⌨️ 하단 입력창 */}
             <Box
                 display="flex"
                 alignItems="center"

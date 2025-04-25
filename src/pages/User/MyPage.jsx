@@ -36,8 +36,6 @@ const MyPage = () => {
                     withCredentials: true,
                 });
 
-                console.log("마이페이지 응답 데이터:", response.data);
-
                 // API에서 받아온 데이터로 상태 업데이트
                 if (response.data) {
                     setUser((prevUser) => ({
