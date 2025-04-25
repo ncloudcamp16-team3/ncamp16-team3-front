@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "/src/css/calendar/cal.css";
@@ -43,6 +43,26 @@ const CalendarRendering = () => {
         removeSchedule,
         addSchedule,
     } = useContext(CalendarContext);
+    const [rightPosition, setRightPosition] = useState();
+
+    useEffect(() => {
+        const updatePosition = () => {
+            const windowWidth = window.innerWidth;
+            const layoutWidth = 500;
+
+            if (windowWidth <= layoutWidth) {
+                setRightPosition("10px");
+            } else {
+                const sideGap = (windowWidth - layoutWidth) / 2 + 10; // 20은 내부 여백
+                setRightPosition(`${sideGap}px`);
+            }
+        };
+
+        updatePosition();
+        window.addEventListener("resize", updatePosition);
+
+        return () => window.removeEventListener("resize", updatePosition);
+    }, []);
 
     const useAddressUpdate = (address, setFormData) => {
         useEffect(() => {
@@ -105,7 +125,7 @@ const CalendarRendering = () => {
     }, []);
 
     return (
-        <div style={{ backgroundColor: "#F2DFCE", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <Box style={{ backgroundColor: "#F2DFCE", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
                 <TitleBar name="캘린더" />
             </div>
@@ -272,21 +292,34 @@ const CalendarRendering = () => {
                         isModify
                     />
                 )}
-
-                {/* 일정추가 버튼 */}
-                {!showForm && !modifyForm && !selectedItem && !openItem?.id && (
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2, my: 1 }}>
-                        <Button
-                            sx={{ backgroundColor: "#E9A260", borderRadius: "50px" }}
-                            onClick={() => setShowForm(true)}
-                            variant="contained"
-                        >
-                            일정추가
-                        </Button>
-                    </Box>
-                )}
             </Box>
-        </div>
+            {/* 일정추가 버튼 */}
+            {!showForm && !modifyForm && !selectedItem && !openItem?.id && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position: "fixed",
+                        bottom: "80px",
+                        right: rightPosition,
+                        zIndex: 10,
+                        borderRadius: "100%",
+                    }}
+                >
+                    <Button
+                        sx={{
+                            backgroundColor: "#E9A260",
+                            borderRadius: "50px",
+                        }}
+                        onClick={() => setShowForm(true)}
+                        variant="contained"
+                    >
+                        일정추가
+                    </Button>
+                </Box>
+            )}
+        </Box>
     );
 };
 

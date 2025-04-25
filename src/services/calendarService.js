@@ -60,7 +60,7 @@ export const deleteSchedule = async ({ id }) => {
         const response = await instance.delete(`${API_URL}/schedule/${id}`);
         return response.data;
     } catch (error) {
-        console.error("캘린더 스케쥴 수정 실패", error);
+        console.error("캘린더 스케쥴 삭제 실패", error);
         throw error;
     }
 };

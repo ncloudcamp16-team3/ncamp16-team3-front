@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import dayjs from "dayjs";
 import { format, parseISO } from "date-fns";
-import { deleteSchedule, postSchedule, putSchedule } from "../../services/calendarService.js";
+import { deleteSchedule, getScheduleAll, postSchedule, putSchedule } from "../../services/calendarService.js";
 import { Context } from "../../context/Context.jsx";
 
 // CalendarContext 정의
@@ -112,14 +112,6 @@ export const CalendarProvider = ({ children }) => {
 
     const saveModifiedSchedule = async () => {
         try {
-            const startDate = dayjs(formData.startDate);
-            const endDate = dayjs(formData.endDate);
-
-            console.log("Start Date:", formData.startDate);
-            console.log("End Date:", formData.endDate);
-
-            console.log("수정할 데이터", formData);
-
             const scheduleData = {
                 id: formData.id,
                 userId: formData.userId,
@@ -128,12 +120,21 @@ export const CalendarProvider = ({ children }) => {
                 address: formData.address,
                 latitude: formData.latitude || null,
                 longitude: formData.longitude || null,
-                startDate: startDate.format("YYYY-MM-DD HH:mm:ss"),
-                endDate: endDate.format("YYYY-MM-DD HH:mm:ss"),
+                startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
+                endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
             };
 
-            const modifySchedule = await putSchedule(scheduleData);
-            setSchedules((prev) => [...prev, modifySchedule]);
+            // 수정된 일정을 API로 업데이트
+            await putSchedule(scheduleData);
+
+            // 서버에서 최신 스케줄 데이터 가져오기
+            const schedulesData = await getScheduleAll(user.id);
+            console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+
+            // 스케줄 데이터를 상태에 반영
+            setSchedules(schedulesData);
+
+            // 수정 폼 초기화
             setModifyForm(false);
             setSelectedItem(null);
         } catch (error) {
@@ -146,8 +147,12 @@ export const CalendarProvider = ({ children }) => {
             // 삭제 요청
             await deleteSchedule({ id: formData.id });
 
+            // 서버에서 최신 스케줄 데이터 가져오기
+            const schedulesData = await getScheduleAll(user.id);
+            console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+
             // 삭제된 항목을 제외한 새로운 리스트로 갱신
-            setSchedules((prev) => prev.filter((schedule) => schedule.id !== formData.id));
+            setSchedules(schedulesData);
 
             // 수정 폼 및 선택 항목 초기화
             setModifyForm(false);
@@ -171,9 +176,17 @@ export const CalendarProvider = ({ children }) => {
                 endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
             };
 
-            const createdSchedule = await postSchedule(scheduleData);
+            // 새로운 일정 추가
+            await postSchedule(scheduleData);
 
-            setSchedules((prev) => [...prev, createdSchedule]);
+            // 서버에서 최신 스케줄 데이터 가져오기
+            const schedulesData = await getScheduleAll(user.id);
+            console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+
+            // 새로 추가된 스케줄을 상태에 반영
+            setSchedules(schedulesData);
+
+            // 폼 초기화
             setShowForm(false);
             setFormData({
                 userId: "",
