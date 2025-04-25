@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { toggleFollow } from "../../services/memberService.js";
 import PostThumbnail from "./Post/PostThumbnail.jsx";
+import { Context } from "../../context/Context.jsx";
+import { createChatRoom } from "../../services/chatService.js";
 
 const UserProfile = ({ userInfo }) => {
     const [isFollow, setIsFollow] = useState(userInfo.isFollow); // 백에서 받은 값으로 초기화
     const theme = useTheme();
     const navigate = useNavigate();
+    const { nc, user } = useContext(Context);
 
     const handleFollowClick = async () => {
         try {
@@ -16,6 +19,56 @@ const UserProfile = ({ userInfo }) => {
             setIsFollow((prev) => !prev);
         } catch (error) {
             console.error("팔로우 요청 실패", error);
+        }
+    };
+
+    const handleMessageClick = async () => {
+        if (!nc) return;
+
+        try {
+            // 1️⃣ 서버에 방 생성 or 조회 요청 → 유니크 ID 반환
+            const uniqueId = await createChatRoom(userInfo.id);
+
+            // 2️⃣ customField를 기준으로 채널 조회
+            const filter = { name: uniqueId };
+            const channelList = await nc.getChannels(filter, {}, { per_page: 1 });
+            console.log("엥" + JSON.stringify(channelList));
+
+            const { edges } = channelList;
+
+            let realChannelId = null;
+
+            if (edges.length > 0) {
+                console.log("이거떠야하는거아닌가?");
+                realChannelId = edges[0].node.id;
+            } else {
+                const newChannel = await nc.createChannel({
+                    type: "PRIVATE",
+                    name: uniqueId,
+                });
+
+                realChannelId = newChannel.id;
+
+                await nc.addUsers(realChannelId, [`ncid${userInfo.id}`]);
+            }
+
+            // 6️⃣ 현재 사용자 구독 여부 확인
+            const subFilter = {
+                channel_id: realChannelId,
+                user_id: `ncid${user.id}`,
+            };
+            const subs = await nc.getSubscriptions(subFilter, {}, { per_page: 1 });
+            const isSubscribed = subs.length > 0;
+
+            if (!isSubscribed) {
+                await nc.subscribe(realChannelId);
+                console.log("✅ 사용자 구독 완료");
+            }
+
+            // 7️⃣ 채팅방 이동
+            navigate(`/chat/room/${realChannelId}`);
+        } catch (e) {
+            console.error("❌ 채널 처리 실패:", e);
         }
     };
 
@@ -93,6 +146,10 @@ const UserProfile = ({ userInfo }) => {
                     p={0.8}
                     borderRadius={2}
                     textAlign="center"
+                    sx={{
+                        cursor: "pointer",
+                    }}
+                    onClick={() => handleMessageClick()}
                 >
                     메시지 보내기
                 </Typography>

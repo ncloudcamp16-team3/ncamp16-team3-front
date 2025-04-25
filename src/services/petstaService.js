@@ -2,9 +2,9 @@ import instance from "./axiosInstance";
 
 const API_URL = "/petsta"; // 상대 URL
 
-export const getPostLists = () => {
+export const getPostLists = (page) => {
     return instance
-        .get(`${API_URL}/post/lists`)
+        .get(`${API_URL}/post/lists?page=${page}&size=5`)
         .then((response) => response.data)
         .catch((error) => {
             console.error("게시글을 불러오는 데 실패했습니다.", error);
@@ -106,9 +106,9 @@ export const getUserName = async (userId) => {
         });
 };
 
-export const getFollowdUsers = async (userId) => {
+export const getFollowdUsers = async (userId, page = 0, size = 20) => {
     return await instance
-        .get(`${API_URL}/users/${userId}/followers`)
+        .get(`${API_URL}/users/${userId}/followers?page=${page}&size=${size}`)
         .then((res) => res.data)
         .catch((error) => {
             console.error("팔로워 호출 실패", error);
@@ -116,9 +116,9 @@ export const getFollowdUsers = async (userId) => {
         });
 };
 
-export const getFollowingUsers = async (userId) => {
+export const getFollowingUsers = async (userId, page = 0, size = 20) => {
     return await instance
-        .get(`${API_URL}/users/${userId}/followings`)
+        .get(`${API_URL}/users/${userId}/followings?page=${page}&size=${size}`)
         .then((res) => res.data)
         .catch((error) => {
             console.error("팔로잉 호출 실패", error);
