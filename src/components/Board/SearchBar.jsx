@@ -1,10 +1,8 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Button, InputBase, Collapse } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Context } from "../../context/Context.jsx";
 
-export default function SearchBar({ openSearch, setOpenSearch, requestBoardList }) {
-    const { boardType } = useContext(Context);
+export default function SearchBar({ openSearch, setOpenSearch, keywordSearch }) {
     const theme = useTheme();
     const inputRef = useRef(null);
     const [inputValue, setInputValue] = useState("");
@@ -26,7 +24,7 @@ export default function SearchBar({ openSearch, setOpenSearch, requestBoardList 
 
     const searchRequest = (keyword) => {
         setOpenSearch(false);
-        requestBoardList(boardType, keyword);
+        keywordSearch(keyword);
     };
 
     return (

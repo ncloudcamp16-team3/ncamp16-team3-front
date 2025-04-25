@@ -4,7 +4,7 @@ import Speaker from "../../assets/images/Board/speaker.svg";
 import { useTheme } from "@mui/material/styles";
 import AnnounceSlider from "./AnnounceSlider.jsx";
 
-const AnnounceContainer = () => {
+const AnnounceContainer = ({ announceData }) => {
     const theme = useTheme();
     return (
         <Box
@@ -28,7 +28,7 @@ const AnnounceContainer = () => {
             >
                 공지
             </Typography>
-            <AnnounceSlider />
+            <AnnounceSlider announceData={announceData} />
         </Box>
     );
 };

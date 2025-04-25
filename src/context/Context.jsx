@@ -51,6 +51,13 @@ export function Provider({ children }) {
 
     const [isLogin, setLogin] = useState(false);
 
+    const [boardTypeList, setBoardTypeList] = useState([
+        {
+            id: 1,
+            name: "자유게시판",
+        },
+    ]);
+
     const [boardType, setBoardType] = useState({
         id: 1,
         name: "자유게시판",
@@ -93,6 +100,8 @@ export function Provider({ children }) {
                 showModal,
                 isLogin,
                 setLogin,
+                boardTypeList,
+                setBoardTypeList,
             }}
         >
             {children}
