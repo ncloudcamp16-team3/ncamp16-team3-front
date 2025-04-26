@@ -7,6 +7,7 @@ import { Context } from "../../context/Context.jsx";
 const NotificationClient = () => {
     const { user } = useContext(Context);
 
+    console.log("잉잉");
     const socketUrl =
         import.meta.env.MODE === "development"
             ? "http://localhost:8080/api/ws"
