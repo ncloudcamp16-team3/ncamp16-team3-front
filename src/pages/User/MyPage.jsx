@@ -5,7 +5,8 @@ import axios from "axios";
 import { Context } from "../../context/Context.jsx";
 // 모달 컴포넌트
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
-import PetSitterQuitModal from "./PetSitterQuitModal";
+import PetSitterQuitModal from "../../components/User/PetSitterQuitModal";
+import ProfileImageModal from "../../components/User/Profile/ProfileImageEditModal";
 // 섹션 컴포넌트
 import UserProfileSection from "../../components/User/Profile/UserProfileSection";
 import PetListSection from "../../components/User/Profile/PetListSection";
@@ -27,6 +28,7 @@ const MyPage = () => {
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
     const [openNicknameModal, setOpenNicknameModal] = useState(false);
     const [openQuitPetsitterModal, setOpenQuitPetsitterModal] = useState(false);
+    const [openProfileImageModal, setOpenProfileImageModal] = useState(false); // 추가: 프로필 이미지 모달 상태
     const [withdrawalInput, setWithdrawalInput] = useState("");
 
     // 로딩 및 오류 상태
@@ -215,73 +217,26 @@ const MyPage = () => {
     };
 
     // 프로필 사진 관련 핸들러
-    const handleProfileClick = () => {
-        fileInputRef.current.click();
+    const handleOpenProfileImageModal = () => {
+        setOpenProfileImageModal(true);
     };
 
-    // 프로필 이미지 업로드 처리 핸들러
-    const handleProfileImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    const handleCloseProfileImageModal = () => {
+        setOpenProfileImageModal(false);
+    };
 
-        // 파일 크기 및 타입 검증
-        if (file.size > 5 * 1024 * 1024) {
-            alert("이미지 크기는 5MB 이하여야 합니다.");
-            return;
-        }
+    const handleProfileImageUpdate = (imageUrl) => {
+        // Context를 통해 전역 상태 업데이트
+        setUser((prev) => ({
+            ...prev,
+            photo: imageUrl,
+            path: imageUrl,
+        }));
+    };
 
-        if (!file.type.startsWith("image/")) {
-            alert("이미지 파일만 업로드 가능합니다.");
-            return;
-        }
-
-        // 파일 미리보기 생성
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            const previewUrl = event.target.result;
-
-            try {
-                // 프로필 이미지 업로드 API 호출
-                const formData = new FormData();
-                formData.append("image", file);
-
-                const response = await axios.post("/api/user/profile-image", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                    withCredentials: true,
-                });
-
-                // 성공 시 상태 업데이트
-                if (response.data && response.data.profileImageUrl) {
-                    setUser((prev) => ({
-                        ...prev,
-                        photo: response.data.profileImageUrl,
-                        path: response.data.profileImageUrl,
-                    }));
-                    alert("프로필 이미지가 성공적으로 변경되었습니다.");
-                } else {
-                    // 임시로 미리보기 적용
-                    setUser((prev) => ({
-                        ...prev,
-                        photo: previewUrl,
-                        path: previewUrl,
-                    }));
-                    console.warn("프로필 이미지 URL이 응답에 없습니다. 미리보기를 표시합니다.");
-                }
-            } catch (err) {
-                console.error("프로필 이미지 업로드 실패:", err);
-                alert("프로필 이미지 업로드 중 오류가 발생했습니다.");
-
-                // 오류 발생 시에도 UI 미리보기는 적용
-                setUser((prev) => ({
-                    ...prev,
-                    photo: previewUrl,
-                    path: previewUrl,
-                }));
-            }
-        };
-        reader.readAsDataURL(file);
+    // 기존 함수 수정 - 클릭 시 모달 열기
+    const handleProfileClick = () => {
+        handleOpenProfileImageModal();
     };
 
     // 펫시터 관련 핸들러
@@ -413,13 +368,12 @@ const MyPage = () => {
                         onConfirm={handleQuitPetsitter}
                     />
 
-                    {/* 숨겨진 파일 입력 필드 */}
-                    <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleProfileImageChange}
+                    {/* 추가: 프로필 이미지 모달 */}
+                    <ProfileImageModal
+                        open={openProfileImageModal}
+                        onClose={handleCloseProfileImageModal}
+                        currentImage={user?.path || "/src/assets/images/User/profile-pic.jpg"}
+                        onImageUpdate={handleProfileImageUpdate}
                     />
                 </>
             )}
