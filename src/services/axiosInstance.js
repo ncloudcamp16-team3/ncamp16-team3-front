@@ -22,9 +22,14 @@ const getCsrfToken = async () => {
     }
 };
 
+const baseURL =
+    import.meta.env.MODE === "development"
+        ? "http://localhost:8080/api" // 로컬 개발 환경
+        : "/api"; // 배포 환경
+
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api",
-    withCredentials: true, // ✅ 이거 꼭 추가 (쿠키 전송 허용)
+    baseURL: baseURL,
+    withCredentials: true, // 쿠키 전송 허용
 });
 
 // 요청 보내기 전에 accessToken 쿠키에서 가져오기
