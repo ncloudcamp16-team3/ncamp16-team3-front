@@ -25,7 +25,7 @@ const getCsrfToken = async () => {
 const baseURL =
     import.meta.env.MODE === "development"
         ? "http://localhost:8080/api" // 로컬 개발 환경
-        : "/api"; // 배포 환경
+        : "http://tailfriends.kro.kr/api"; // 배포 환경
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
