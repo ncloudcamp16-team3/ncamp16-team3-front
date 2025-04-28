@@ -6,6 +6,7 @@ import { getUserInfo } from "../services/authService.js";
 export const Context = createContext();
 
 export function Provider({ children }) {
+    const [nc, setNc] = useState(null);
     const [isMute, setIsMute] = useState(true);
     const [address, setAddress] = useState("");
     const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
@@ -47,6 +48,7 @@ export function Provider({ children }) {
         latitude: null,
         longitude: null,
         distance: null,
+        chatId: "",
     });
 
     const [isLogin, setLogin] = useState(false);
@@ -100,6 +102,8 @@ export function Provider({ children }) {
                 showModal,
                 isLogin,
                 setLogin,
+                nc,
+                setNc,
                 boardTypeList,
                 setBoardTypeList,
             }}

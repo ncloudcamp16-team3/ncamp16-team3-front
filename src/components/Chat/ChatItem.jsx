@@ -18,11 +18,7 @@ const ChatItem = ({ photo, name, lastMessage, roomId }) => {
             onClick={handleClick}
             sx={{ cursor: "pointer", "&:hover": { backgroundColor: "#f5f5f5" } }}
         >
-            <img
-                src={`/mock/Global/images/${photo}`}
-                alt={name}
-                style={{ width: 50, height: 50, borderRadius: "50%", marginRight: 12 }}
-            />
+            <img src={photo} alt={name} style={{ width: 50, height: 50, borderRadius: "50%", marginRight: 12 }} />
             <Box display="flex" flexDirection="column">
                 <Typography fontWeight="bold">{name}</Typography>
                 <Typography color="textSecondary">{lastMessage}</Typography>
