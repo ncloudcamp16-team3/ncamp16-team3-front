@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router-dom"; // React Router 사�
 import { Box, Typography, Card, Button, CardContent, Rating, CircularProgress } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchFacilityDetail } from "./AdminFacilityApi.js";
+import { fetchFacilityDetail } from "./adminFacilityApi.js";
 import ImageSlider from "./ImageSlider.jsx";
+import adminAxios from "./adminAxios.js";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value, isRating = false }) => (
@@ -36,7 +37,6 @@ const FacilityDetail = () => {
     const [facility, setFacility] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentImage, setCurrentImage] = useState(facility?.imagePath?.length > 0 ? facility.imagePath[0] : null);
 
     // 검색 핸들러
     const handleSearch = (term, field) => {
@@ -73,18 +73,10 @@ const FacilityDetail = () => {
     const handleDelete = async () => {
         if (window.confirm("이 업체를 삭제하시겠습니까?")) {
             try {
-                const token = localStorage.getItem("adminToken");
-                const response = await fetch(`/api/admin/facility/${id}/delete`, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await adminAxios.delete(`/api/admin/facility/${id}/delete`);
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "업체 삭제에 실패했습니다");
+                if (response.status != 200) {
+                    throw new Error(response.data.message || "업체 삭제에 실패했습니다");
                 }
 
                 alert("업체가 삭제되었습니다");

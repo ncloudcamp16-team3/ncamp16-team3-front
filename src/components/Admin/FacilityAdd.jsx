@@ -20,6 +20,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import adminAxios from "./adminAxios.js";
 
 // 스타일된 컴포넌트
 const ImageUploadButton = styled("label")(({ theme }) => ({
@@ -571,31 +572,10 @@ const FacilityAdd = () => {
         });
 
         try {
-            const token = localStorage.getItem("adminToken");
-            if (!token) {
-                navigate("/admin");
-                return;
-            }
+            const response = await adminAxios.post("/api/admin/facility/add", formData);
 
-            const response = await fetch("/api/admin/facility/add", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            const contentType = response.headers.get("content-type");
-            let data;
-
-            if (contentType && contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                data = { message: "응답이 비어있습니다" };
-            }
-
-            if (!response.ok) {
-                throw new Error(data.message || "업체 등록에 실패했습니다");
+            if (response.status != 200) {
+                throw new Error(response.data.message || "업체 등록에 실패했습니다");
             }
 
             setSnackbarMessage("업체가 성공적으로 등록되었습니다");

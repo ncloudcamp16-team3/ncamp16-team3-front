@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchPetSitterDetail } from "./AdminPetSitterApi.js";
+import { fetchPetSitterDetail } from "./adminPetSitterApi.js";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value }) => (
