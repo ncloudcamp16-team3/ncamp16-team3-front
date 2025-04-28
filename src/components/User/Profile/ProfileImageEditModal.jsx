@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Box, Modal, Typography, Button, Avatar, CircularProgress } from "@mui/material";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import axios from "axios";
+import instance from "/src/services/axiosInstance.js";
 
 const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -46,11 +46,11 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
             const formData = new FormData();
             formData.append("image", selectedFile);
 
-            const response = await axios.post("/api/user/profile-image", formData, {
+            // instance 사용하여 API 호출
+            const response = await instance.post("/user/profile-image", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                withCredentials: true,
             });
 
             if (response.data && response.data.profileImageUrl) {
@@ -63,6 +63,12 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
             }
         } catch (err) {
             console.error("프로필 이미지 업로드 실패:", err);
+
+            if (err.response && err.response.status === 401) {
+                setError("인증이 만료되었습니다. 다시 로그인해주세요.");
+                return;
+            }
+
             setError("이미지 업로드 중 오류가 발생했습니다.");
 
             // 개발 중에는 미리보기로 대체 (실제 운영시에는 제거)
@@ -123,6 +129,7 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
                             width: "100%",
                             height: "100%",
                             border: "1px solid #eee",
+                            objectFit: "cover",
                         }}
                     />
                     <Button

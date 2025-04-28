@@ -49,6 +49,7 @@ const UserProfileSection = ({ user, onNicknameEdit, onProfileClick, onAddPet, fi
                             width: 60,
                             height: 60,
                             bgcolor: "#FF5C5C",
+                            objectFit: "cover",
                         }}
                     />
                     <Box
