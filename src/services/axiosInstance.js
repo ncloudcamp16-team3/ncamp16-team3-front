@@ -17,7 +17,7 @@ const getCsrfToken = async () => {
         const data = await response.json();
         return data.csrfToken; // CSRF 토큰 반환
     } catch (error) {
-        console.error("CSRF 토큰을 가져오는 데 실패했습니다:", error);
+        console.error("CSRF 토큰을 가져오는 데 실패했습니다.", error);
         return null; // 실패 시 null 반환
     }
 };
