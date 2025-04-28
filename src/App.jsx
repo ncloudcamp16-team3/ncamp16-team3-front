@@ -59,8 +59,13 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 import NotificationClient from "./pages/Notification/NotificationClient.jsx";
+import { initCsrfToken } from "./services/axiosInstance.js";
+import { useEffect } from "react";
 
 function App() {
+    useEffect(() => {
+        initCsrfToken(); // 앱 시작할 때 1번만 호출
+    }, []);
     return (
         <ThemeProvider theme={theme}>
             <Provider>

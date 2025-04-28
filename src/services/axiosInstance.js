@@ -1,4 +1,5 @@
-import axios from "axios";
+// 전역으로 한번만 CSRF 토큰 저장
+let csrfToken = null;
 
 // 쿠키에서 accessToken 꺼내는 함수
 const getCookie = (name) => {
@@ -8,48 +9,37 @@ const getCookie = (name) => {
     return matches ? decodeURIComponent(matches[1]) : null;
 };
 
-// CSRF 토큰을 가져오는 함수
-const getCsrfToken = async () => {
+// CSRF 토큰을 가져오는 함수 (앱 시작할 때만 한번 호출)
+export const initCsrfToken = async () => {
     try {
         const response = await fetch("/api/auth/csrf", {
-            credentials: "include", // 쿠키 전송 허용
+            credentials: "include",
         });
         const data = await response.json();
-        return data.csrfToken; // CSRF 토큰 반환
+        csrfToken = data.csrfToken; // 메모리에 저장
     } catch (error) {
-        console.error("CSRF 토큰을 가져오는 데 실패했습니다:", error);
-        return null; // 실패 시 null 반환
+        console.error("CSRF 토큰 가져오기 실패:", error);
     }
 };
 
-const baseURL =
-    import.meta.env.MODE === "development"
-        ? "http://localhost:8080/api" // 로컬 개발 환경
-        : "/api"; // 배포 환경
+const baseURL = import.meta.env.MODE === "development" ? "http://localhost:8080/api" : "/api";
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
-    withCredentials: true, // 쿠키 전송 허용
+    withCredentials: true,
 });
 
-// 요청 보내기 전에 accessToken 쿠키에서 가져오기
 axiosInstance.interceptors.request.use(
-    async (config) => {
-        // CSRF 토큰 받아오기
-        const csrfToken = await getCsrfToken();
+    (config) => {
         if (csrfToken) {
-            // CSRF 토큰을 헤더에 추가
             config.headers["X-XSRF-TOKEN"] = csrfToken;
         }
-
-        // accessToken 쿠키에서 가져오기
         const token = getCookie("accessToken");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         } else {
             delete config.headers.Authorization;
         }
-
         return config;
     },
     (error) => {
