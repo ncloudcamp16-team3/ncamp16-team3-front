@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, IconButton } from "@mui/material";
+import { Box, Typography, TextField, IconButton, CircularProgress } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
 import ChatMessageLeft from "./ChatMessageLeft";
@@ -16,51 +16,86 @@ const ChatRoom = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [rightPosition, setRightPosition] = useState("20px");
-    const messagesEndRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const messagesEndRef = useRef(null); // 이제 사실상 필요없지만 남겨둠
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    // ✅ 초기 메시지 불러오기 + 구독
     useEffect(() => {
         if (!nc || !channelId) return;
 
+        const handleReceiveMessage = (channel, msg) => {
+            if (msg.channel_id !== channelId) return;
+
+            let parsed = null;
+            try {
+                parsed = JSON.parse(msg.content);
+            } catch {
+                parsed = { customType: "TEXT", content: msg.content };
+            }
+
+            let typeId = 1;
+            if (parsed.customType === "MATCH") typeId = 2;
+            else if (parsed.customType === "TRADE") typeId = 3;
+
+            const newMessage = {
+                id: msg.message_id,
+                senderId: msg.sender?.id,
+                text: parsed.content,
+                type_id: typeId,
+                metadata: parsed,
+                photo: msg.sender?.profile,
+            };
+
+            setMessages((prev) => [...prev, newMessage]);
+        };
+
         const init = async () => {
             try {
+                await new Promise((resolve) => setTimeout(resolve, 500));
                 const filter = { channel_id: channelId };
                 const sort = { created_at: 1 };
                 const option = { per_page: 100 };
 
                 const result = await nc.getMessages(filter, sort, option);
-                const transformed = (result.edges || []).map((edge) => {
+                const loadedMessages = (result.edges || []).map((edge) => {
                     const msg = edge.node;
+                    let parsed = null;
+                    try {
+                        parsed = JSON.parse(msg.content);
+                    } catch {
+                        parsed = { customType: "TEXT", content: msg.content };
+                    }
+
+                    let typeId = 1;
+                    if (parsed.customType === "MATCH") typeId = 2;
+                    else if (parsed.customType === "TRADE") typeId = 3;
+
                     return {
                         id: msg.message_id,
                         senderId: msg.sender?.id,
-                        text: msg.content,
-                        type_id: msg.customType === "TRADE" ? 3 : msg.customType === "MATCH" ? 2 : 1,
-                        metadata: msg.metadata,
+                        text: parsed.content,
+                        type_id: typeId,
+                        metadata: parsed,
                         photo: msg.sender?.profile,
                     };
                 });
 
-                setMessages(transformed);
+                setMessages(loadedMessages);
                 await nc.subscribe(channelId);
             } catch (e) {
-                console.error("메시지 불러오기 실패", e);
+                console.error("메시지 초기 불러오기 실패", e);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         init();
+        nc.bind("onMessageReceived", handleReceiveMessage);
+
+        return () => {
+            nc.unbind("onMessageReceived", handleReceiveMessage);
+        };
     }, [nc, channelId]);
 
-    // ✅ 스크롤 항상 아래로
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    // ✅ 반응형 위치 조절
     useEffect(() => {
         const updateRight = () => {
             const width = window.innerWidth;
@@ -78,46 +113,24 @@ const ChatRoom = () => {
         return () => window.removeEventListener("resize", updateRight);
     }, []);
 
-    // ✅ 메시지 전송
     const handleSend = async () => {
         if (!input.trim()) return;
 
         try {
+            const payload = {
+                customType: "TEXT",
+                content: input,
+            };
+
             await nc.sendMessage(channelId, {
                 type: "text",
-                message: input,
+                message: JSON.stringify(payload),
             });
             setInput("");
         } catch (e) {
             console.error("메시지 전송 실패:", e);
         }
     };
-
-    // ✅ 실시간 메시지 수신 리스너
-    useEffect(() => {
-        if (!nc || !channelId) return;
-
-        const handleReceiveMessage = (channel, msg) => {
-            if (msg.channel_id !== channelId) return;
-
-            const newMessage = {
-                id: msg.message_id,
-                senderId: msg.sender?.id,
-                text: msg.content,
-                type_id: msg.customType === "TRADE" ? 3 : msg.customType === "MATCH" ? 2 : 1,
-                metadata: msg.metadata,
-                photo: msg.sender?.profile,
-            };
-
-            setMessages((prev) => [...prev, newMessage]); // 기존 유지하고 새 메시지 추가
-        };
-
-        nc.bind("onMessageReceived", handleReceiveMessage);
-
-        return () => {
-            nc.unbind("onMessageReceived", handleReceiveMessage);
-        };
-    }, [nc, channelId]);
 
     return (
         <>
@@ -152,47 +165,60 @@ const ChatRoom = () => {
                 overflow="auto"
                 height="calc(100vh - 250px)"
                 display="flex"
-                flexDirection="column"
+                flexDirection="column-reverse" // ✅ 여기 변경
                 gap={1}
             >
-                {messages.map((msg) => {
-                    if (msg.type_id === 2) return <MatchStart key={msg.id} {...msg.metadata} />;
-                    if (msg.type_id === 3) return <TradeStart key={msg.id} {...msg.metadata} />;
-                    return msg.senderId === `ncid${user.id}` ? (
-                        <ChatMessageRight key={msg.id} text={msg.text} />
-                    ) : (
-                        <ChatMessageLeft key={msg.id} photo={msg.photo} text={msg.text} />
-                    );
-                })}
-                <div ref={messagesEndRef} />
+                {isLoading ? (
+                    <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                        <CircularProgress size={30} />
+                    </Box>
+                ) : (
+                    <>
+                        {messages
+                            .slice()
+                            .reverse()
+                            .map((msg) => {
+                                if (msg.type_id === 2) return <MatchStart key={msg.id} {...msg.metadata.content} />;
+                                if (msg.type_id === 3) return <TradeStart key={msg.id} {...msg.metadata.content} />;
+                                return msg.senderId === `ncid${user.id}` ? (
+                                    <ChatMessageRight key={msg.id} text={msg.text} />
+                                ) : (
+                                    <ChatMessageLeft key={msg.id} photo={msg.photo} text={msg.text} />
+                                );
+                            })}
+                        <div ref={messagesEndRef} />
+                    </>
+                )}
             </Box>
 
             {/* ⌨️ 하단 입력창 */}
-            <Box
-                display="flex"
-                alignItems="center"
-                position="fixed"
-                bottom={80}
-                right={rightPosition}
-                width="100%"
-                maxWidth="500px"
-                bgcolor="white"
-                p={1}
-                borderTop="1px solid #ccc"
-                zIndex={100}
-            >
-                <TextField
-                    fullWidth
-                    placeholder="메시지를 입력하세요..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                    size="small"
-                />
-                <IconButton onClick={handleSend}>
-                    <SendIcon />
-                </IconButton>
-            </Box>
+            {!isLoading && (
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    position="fixed"
+                    bottom={80}
+                    right={rightPosition}
+                    width="100%"
+                    maxWidth="500px"
+                    bgcolor="white"
+                    p={1}
+                    borderTop="1px solid #ccc"
+                    zIndex={100}
+                >
+                    <TextField
+                        fullWidth
+                        placeholder="메시지를 입력하세요..."
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                        size="small"
+                    />
+                    <IconButton onClick={handleSend}>
+                        <SendIcon />
+                    </IconButton>
+                </Box>
+            )}
         </>
     );
 };

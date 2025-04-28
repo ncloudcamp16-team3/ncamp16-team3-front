@@ -2,11 +2,11 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import chatLogo from "../../assets/images/Global/comment.svg";
 import { Box, Typography } from "@mui/material";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const MainPageHeader = () => {
     const navigate = useNavigate();
-    const { pet } = useContext(PetMeetingContext);
+    const { pet } = useContext(Context);
 
     return (
         <Box

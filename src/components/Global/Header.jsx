@@ -19,8 +19,6 @@ const Header = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
-    console.log(user);
-
     const handleLogout = async () => {
         try {
             await logout();

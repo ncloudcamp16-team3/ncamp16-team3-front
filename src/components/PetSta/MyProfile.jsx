@@ -7,7 +7,6 @@ import PostThumbnail from "./Post/PostThumbnail.jsx";
 const MyProfile = ({ userInfo }) => {
     const theme = useTheme();
     const navigate = useNavigate();
-    console.log(userInfo.posts);
     return (
         <Box display="flex" flexDirection="column" p={2} gap={1}>
             {/* 상단 프로필 정보 */}

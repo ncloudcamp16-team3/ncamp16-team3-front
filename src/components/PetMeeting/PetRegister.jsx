@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const PetRegister = () => {
-    const { pet, setOpenPetConfigModal, friendType } = useContext(PetMeetingContext);
+    const { setOpenPetConfigModal, friendType } = useContext(PetMeetingContext);
+    const { pet } = useContext(Context);
     return (
         <Box
             sx={{

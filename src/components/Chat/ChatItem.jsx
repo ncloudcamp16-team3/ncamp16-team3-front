@@ -8,7 +8,6 @@ const ChatItem = ({ photo, name, lastMessage, roomId }) => {
     const handleClick = () => {
         navigate(`/chat/room/${roomId}`);
     };
-
     return (
         <Box
             display="flex"

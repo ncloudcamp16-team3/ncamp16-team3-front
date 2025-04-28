@@ -7,8 +7,8 @@ import { savePet } from "../../services/petService.js";
 import { Context } from "../../context/Context.jsx";
 
 const PetConfigModal = () => {
-    const { pet, setPet, openPetConfigModal, drop, setDrop, setClose } = useContext(PetMeetingContext);
-    const { user } = useContext(Context);
+    const { openPetConfigModal, drop, setDrop, setClose } = useContext(PetMeetingContext);
+    const { pet, setPet, user } = useContext(Context);
     const [selectedPet, setSelectedPet] = useState(null);
 
     useEffect(() => {
@@ -210,7 +210,8 @@ const PetConfigModal = () => {
 };
 
 const ActivityModal = () => {
-    const { setPet, openActivityModal, setOpenActivityModal } = useContext(PetMeetingContext);
+    const { openActivityModal, setOpenActivityModal } = useContext(PetMeetingContext);
+    const { setPet } = useContext(Context);
 
     const handleRegisterClick = () => {
         setPet((prev) => ({
