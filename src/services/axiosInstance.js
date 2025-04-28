@@ -17,7 +17,7 @@ const getCsrfToken = async () => {
         const data = await response.json();
         return data.csrfToken; // CSRF 토큰 반환
     } catch (error) {
-        console.error("CSRF 토큰을 가져오는 데 실패했습니다:", error);
+        console.error("CSRF 토큰을 가져오는 데 실패했습니다.", error);
         return null; // 실패 시 null 반환
     }
 };
@@ -25,7 +25,7 @@ const getCsrfToken = async () => {
 const baseURL =
     import.meta.env.MODE === "development"
         ? "http://localhost:8080/api" // 로컬 개발 환경
-        : "http://tailfriends.kro.kr/api"; // 배포 환경
+        : "/api"; // 배포 환경
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
