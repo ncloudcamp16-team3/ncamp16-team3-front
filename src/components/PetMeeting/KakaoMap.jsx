@@ -48,23 +48,11 @@ const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude 
             });
         };
 
-        if (user?.address) {
-            const ps = new window.kakao.maps.services.Places();
+        if (user?.latitude && user.longitude) {
+            const center = new window.kakao.maps.LatLng(user?.latitude, user.longitude);
 
-            ps.keywordSearch(user?.address, function (data, status) {
-                if (status === window.kakao.maps.services.Status.OK) {
-                    const firstResult = data[0];
-                    const lat = firstResult.y;
-                    const lng = firstResult.x;
-
-                    const center = new window.kakao.maps.LatLng(lat, lng);
-
-                    initMap(center);
-                    placeMarker(lat, lng);
-                } else {
-                    currentCenter();
-                }
-            });
+            initMap(center);
+            placeMarker(user?.latitude, user.longitude);
         } else {
             currentCenter();
         }
