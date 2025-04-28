@@ -1,51 +1,67 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { UserProvider } from "./UserContext.jsx";
+import { checkLogin, getUserInfo } from "../../services/authService.js";
+import { Context } from "../../context/Context.jsx";
+
+import * as ncloudchat from "ncloudchat";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const hasRun = useRef(false);
+
+    const { isLogin, setLogin, setUser, nc, setNc } = useContext(Context);
 
     useEffect(() => {
-        const checkLogin = async () => {
-            try {
-                const res = await fetch(`/api/auth/check`, {
-                    credentials: "include",
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log("🔐 ProtectedRoute 응답 데이터:", data);
+        if (hasRun.current) return;
+        hasRun.current = true;
 
-                    // isNewUser === false이면 로그인된 상태로 간주
-                    const isLogged = data?.isNewUser === false;
-                    setIsLoggedIn(isLogged);
-                } else {
-                    setIsLoggedIn(false);
+        (async () => {
+            try {
+                const data = await checkLogin();
+                const isLogged = data?.isNewUser === false;
+                setLogin(isLogged);
+
+                if (isLogged) {
+                    const userData = await getUserInfo();
+                    setUser({
+                        id: userData.id,
+                        nickname: userData.nickname,
+                        path: userData.path,
+                        address: userData.address,
+                        dongName: userData.dongName,
+                        latitude: userData.latitude,
+                        longitude: userData.longitude,
+                        distance: userData.distance,
+                        chatId: "ncid" + userData.id,
+                    });
+
+                    if (!nc) {
+                        const chat = new ncloudchat.Chat();
+                        await chat.initialize("8e8e626c-08d8-40e4-826f-185b1d1b8c4a");
+                        await chat.connect({
+                            id: "ncid" + userData.id,
+                            name: userData.nickname,
+                            profile: userData.path,
+                            language: "ko",
+                        });
+                        setNc(chat);
+                    }
                 }
+
+                setLoading(false);
             } catch (err) {
-                console.error("🚨 로그인 체크 실패:", err);
-                setIsLoggedIn(false);
-            } finally {
+                console.error("로그인 정보 확인 실패", err);
+                setLogin(false);
                 setLoading(false);
             }
-        };
-
-        checkLogin();
+        })();
     }, []);
 
-    if (loading) {
-        return <div>로그인 상태 확인 중...</div>;
-    }
+    if (loading) return <div>로그인 상태 확인 중...</div>;
 
-    if (!isLoggedIn) {
-        return <Navigate to="/login" replace />;
-    }
+    if (!isLogin) return <Navigate to="/login" replace />;
 
-    return (
-        <UserProvider>
-            <Outlet />
-        </UserProvider>
-    );
+    return <Outlet />;
 };
 
 export default ProtectedRoute;

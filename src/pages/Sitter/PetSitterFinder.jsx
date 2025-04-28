@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
-import mockPetsitters from "../../mock/Sitter/petsitters.json"; // 임시 데이터 import
-
-// 새로 분리한 컴포넌트 import
+import mockPetsitters from "../../mock/Sitter/petsitters.json";
 import PetSitterSurvey from "../../components/Sitter/PetSitterSurvey";
 import PetSitterResults from "../../components/Sitter/PetSitterResults";
 

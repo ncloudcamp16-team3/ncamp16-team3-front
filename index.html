@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Vite + React</title>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c4d1b39d57411a156fe427c63bcf62c0&libraries=services"></script>
+
+  <script>
+    window.global = window;
+  </script>
+  <script src="sockjs-client.js"></script>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function(registrations) {

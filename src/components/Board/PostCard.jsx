@@ -31,7 +31,7 @@ const PostCard = ({ postItem }) => {
         >
             <Avatar
                 variant="rounded"
-                src={postItem.photos[0]?.url}
+                src={postItem.imageUrls && postItem.imageUrls[0]}
                 alt="썸네일"
                 sx={{
                     width: 102,
@@ -40,6 +40,7 @@ const PostCard = ({ postItem }) => {
                     flexShrink: 0,
                 }}
             />
+
             <CardContent sx={{ flex: 1, p: 0, "&:last-child": { pb: 0 } }}>
                 <Typography variant="body1" sx={{ fontWeight: "bold", fontSize: "15px", mb: 0.5 }}>
                     {postItem.title}

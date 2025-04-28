@@ -1,12 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, Divider, Fade } from "@mui/material";
 import SelectPetItem from "./SelectPetItem.jsx";
-import MyPets from "../../mock/PetMeeting/myPets.json";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { getMyPets } from "../../services/petService.js";
+import { Context } from "../../context/Context.jsx";
 
 const SelectPetDropdown = ({ selectedPet, setSelectedPet }) => {
     const { drop } = useContext(PetMeetingContext);
-    const pets = MyPets;
+    const { user } = useContext(Context);
+    const [pets, setPets] = useState([]);
+
+    useEffect(() => {
+        getMyPets({ userId: user.id })
+            .then((res) => {
+                const data = res.data;
+                console.log("응답 성공: " + res.message);
+                console.log(data);
+                setPets(data);
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
+    }, []);
 
     return (
         <Fade in={drop} timeout={300}>

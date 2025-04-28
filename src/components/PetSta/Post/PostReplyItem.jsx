@@ -5,7 +5,11 @@ import FriendsData from "../../../mock/PetSta/friends.json";
 import UserIcon from "../UserIcon.jsx";
 
 const PostReplyItem = ({ reply, onReply }) => {
-    const user = FriendsData.find((friend) => friend.userId === reply.userId);
+    const user = {
+        userName: reply.userName,
+        isVisited: reply.isVisited,
+        userPhoto: reply.userPhoto,
+    };
     const navigate = useNavigate();
 
     const renderContentWithMentions = (content) => {
@@ -52,7 +56,7 @@ const PostReplyItem = ({ reply, onReply }) => {
                     fontSize="14px"
                     color="#A8A8A9"
                     sx={{ cursor: "pointer", marginTop: 0.5 }}
-                    onClick={() => onReply(user.userName)}
+                    onClick={() => onReply(reply)}
                 >
                     답글 달기
                 </Typography>

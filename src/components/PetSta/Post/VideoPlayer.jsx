@@ -62,6 +62,7 @@ const VideoPlayer = ({ fileName, postId, isWide = false }) => {
                     transform: isWide ? "" : "scale(0.999)",
                 }}
                 muted={isMute}
+                loop
                 onTimeUpdate={() => {
                     if (videoRef.current) {
                         currentTime.current = videoRef.current.currentTime;

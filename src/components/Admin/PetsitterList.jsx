@@ -18,12 +18,8 @@ import { useAdmin } from "./AdminContext.jsx";
 import { fetchPetSitter } from "./AdminPetSitterApi.js";
 
 const PetsitterList = () => {
-    const [searchTerm, setSearchTerm] = useState("");
     const adminContext = useAdmin();
-    const currentFilter = adminContext.currentFilter;
-    const setCureentFilter = adminContext.setCurrentFilter;
-    const page = adminContext.currentPage;
-    const setPage = adminContext.setCurrentPage;
+    const { currentCategory, searchField, searchTerm, currentPage, setCurrentPage } = adminContext;
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState(rows);
     const [loading, setLoading] = useState(true);
@@ -56,13 +52,20 @@ const PetsitterList = () => {
         navigate(`/admin/petsitter/${id}`);
     };
 
+    const petSitterMapping = {
+        닉네임: "nickname",
+        연령대: "age",
+        주거형태: "houseType",
+        코멘트: "comment",
+    };
+
     const loadPetSitterData = async () => {
         try {
             setLoading(true);
             setError(null);
 
-            const apiPage = Math.max(0, page - 1);
-            const response = await fetchPetSitter(apiPage, 10);
+            const apiPage = Math.max(0, currentPage - 1);
+            const response = await fetchPetSitter(apiPage, 10, searchTerm, searchField);
 
             // console.log("API Response: " + response);
 
@@ -102,35 +105,22 @@ const PetsitterList = () => {
 
     useEffect(() => {
         loadPetSitterData();
-    }, [page]);
+    }, [currentPage, currentCategory, searchTerm, searchField]);
 
-    // 검색 핸들러
-    const handleSearch = (term) => {
-        setSearchTerm(term);
-
-        if (!term) {
-            setFilteredRows(rows);
-            return;
-        }
-
-        const filtered = rows.filter(
-            (row) =>
-                row.title.toLowerCase().includes(term.toLowerCase()) ||
-                row.content.toLowerCase().includes(term.toLowerCase())
-        );
-
-        setFilteredRows(filtered);
+    // 필터에 따라 다른 필드를 검색하는 핸들러
+    const handleSearch = (term, field) => {
+        // 컨텍스트의 executeSearch
+        // console.log(`'${field}'에서 '${term}' 검색 요청됨`);
     };
 
     // 필터 핸들러
-    const handleFilterChange = (filter) => {
-        // setCurrentFilter(filter);
-        // 실제 필터링 로직 구현
-        console.log(`필터 변경: ${filter}`);
+    const handleFilterChange = (category) => {
+        // 컨텍스트의 setCurrentCategory
+        // console.log(`카테고리 필터 변경: ${category}`);
     };
 
     const handlePageChange = (newPage) => {
-        setPage(newPage);
+        setCurrentPage(newPage);
     };
 
     return (
@@ -271,7 +261,11 @@ const PetsitterList = () => {
 
                 {/* 페이지네이션 */}
                 <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                    <Button sx={{ mx: 1 }} disabled={page <= 1} onClick={() => handlePageChange(page - 1)}>
+                    <Button
+                        sx={{ mx: 1 }}
+                        disabled={currentPage <= 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
                         &lt;
                     </Button>
 
@@ -281,10 +275,10 @@ const PetsitterList = () => {
                                 key={index}
                                 sx={{
                                     mx: 1,
-                                    backgroundColor: page === index + 1 ? "#E9A260" : "transparent",
-                                    color: page === index + 1 ? "white" : "inherit",
+                                    backgroundColor: currentPage === index + 1 ? "#E9A260" : "transparent",
+                                    color: currentPage === index + 1 ? "white" : "inherit",
                                     "&:hover": {
-                                        backgroundColor: page === index + 1 ? "#E9A260" : "#f0f0f0",
+                                        backgroundColor: currentPage === index + 1 ? "#E9A260" : "#f0f0f0",
                                     },
                                 }}
                                 onClick={() => handlePageChange(index + 1)}
@@ -293,7 +287,11 @@ const PetsitterList = () => {
                             </Button>
                         ))}
 
-                    <Button sx={{ mx: 1 }} disabled={page >= totalPage} onClick={() => handlePageChange(page + 1)}>
+                    <Button
+                        sx={{ mx: 1 }}
+                        disabled={currentPage >= totalPage}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
                         &gt;
                     </Button>
                 </Box>

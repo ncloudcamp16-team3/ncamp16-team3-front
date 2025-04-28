@@ -58,16 +58,17 @@ import Notify from "./pages/Notification/Notification.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
+import NotificationClient from "./pages/Notification/NotificationClient.jsx";
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Provider>
+                <NotificationClient />
                 <Router>
                     <Routes>
                         {/* 로그인 페이지는 별도 경로로 유지 */}
                         <Route path="/admin" element={<Admin />} />
-
                         {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
                         <Route path="/admin/*" element={<AdminLayout />}>
                             {/* 인증 보호 라우트 */}
@@ -77,8 +78,8 @@ function App() {
                                 <Route path="board/post" element={<AdminNotice />} />
                                 <Route path="petsitter/list" element={<AdminPetsitterList />} />
                                 <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
-                                <Route path="petsitter/apply" element={<AdminPetSitterApplyList />} />
-                                <Route path="petsitter/apply/:id" element={<AdminPetSitterApplyDetail />} />
+                                <Route path="petsitter/pending" element={<AdminPetSitterApplyList />} />
+                                <Route path="petsitter/pending/:id" element={<AdminPetSitterApplyDetail />} />
                                 <Route path="facility/list" element={<AdminFacilityList />} />
                                 <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
                                 <Route path="facility/add" element={<AdminFacilityAdd />} />
@@ -89,7 +90,6 @@ function App() {
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                         </Route>
-
                         <Route element={<ProtectedRoute />}>
                             <Route element={<Layout1 />}>
                                 <Route path="/" element={<Main />} />
@@ -127,10 +127,9 @@ function App() {
                                     <Route path="following" element={<FollowersTab />} />
                                 </Route>
                                 <Route path="/chat" element={<ChatList />} />
-                                <Route path="/chat/room/:roomId" element={<ChatRoom />} />
+                                <Route path="/chat/room/:channelId" element={<ChatRoom />} />
                                 <Route path="/payment" element={<Payment />} />
                             </Route>
-
                             <Route element={<Layout2 />}>
                                 <Route path="/petsta/post/:postId" element={<PostDetailWrapper />} />
                             </Route>

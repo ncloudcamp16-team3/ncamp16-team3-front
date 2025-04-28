@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // React Router 사용 가정
-import { Box, Card, Button, Grid, CardContent, CircularProgress, Alert, Typography } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom"; // React Router 사용 가정
+import {
+    Box,
+    Card,
+    Button,
+    Grid,
+    CardContent,
+    CircularProgress,
+    Alert,
+    Typography,
+    DialogContent,
+    DialogContentText,
+    Modal,
+    DialogActions,
+} from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
 import { fetchPendingPetSitterDetail } from "./AdminPetSitterApi.js";
@@ -16,39 +29,33 @@ const TableRow = ({ label, value }) => (
 const PetSitterApply = () => {
     // 라우터에서 ID 파라미터 가져오기
     const { id } = useParams();
+    const navigate = useNavigate();
     const adminContext = useAdmin();
-    const currentFilter = adminContext.currentFilter;
-    const setCurrentFilter = adminContext.setCurrentFilter;
+    const { setSearchField, executeSearch, setCurrentCategory } = adminContext;
     const [petSitter, setPetSitter] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredRows, setFilteredRows] = useState([]);
-    const [rows, setRows] = useState([]);
     const [error, setError] = useState(null);
+    const [approveLoading, setApproveLoading] = useState(false);
+
+    // 모달 상태
+    const [openApproveDialog, setOpenApproveDialog] = useState(false);
+    const [openRejectDialog, setOpenRejectDialog] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const [isSuccess, setIsSuccess] = useState(false);
 
     // 검색 핸들러
-    const handleSearch = (term) => {
-        setSearchTerm(term);
+    const handleSearch = (term, field) => {
+        if (field) setSearchField(field);
+        setSearchField(term);
 
-        if (!term) {
-            setFilteredRows(rows);
-            return;
-        }
+        executeSearch(term, field);
 
-        const filtered = rows.filter(
-            (row) =>
-                row.title.toLowerCase().includes(term.toLowerCase()) ||
-                row.content.toLowerCase().includes(term.toLowerCase())
-        );
-
-        setFilteredRows(filtered);
+        navigate("/admin/petsitter/pending");
     };
 
     // 필터 핸들러
     const handleFilterChange = (filter) => {
-        setCurrentFilter(filter);
-        // 실제 필터링 로직 구현
-        console.log(`필터 변경: ${filter}`);
+        setCurrentCategory(filter);
     };
 
     // 컴포넌트 마운트 시 데이터 가져오기
@@ -68,15 +75,97 @@ const PetSitterApply = () => {
         loadPendingPetSitterDetail();
     }, [id]);
 
-    const handlePending = () => {
-        if (window.confirm("이 펫시터를 반려하시겠습니까?")) {
-            console.log("펫시터 반려");
+    // 승인 모달 열기
+    const handleOpenApproveDialog = () => {
+        setModalMessage("이 펫시터를 승인하시겠습니까?");
+        setOpenApproveDialog(true);
+    };
+
+    // 반려 모달 열기
+    const handleOpenRejectDialog = () => {
+        setModalMessage("이 펫시터를 반려하시겠습니까?");
+        setOpenRejectDialog(true);
+    };
+
+    // 모달 닫기
+    const handleCloseDialog = () => {
+        setOpenApproveDialog(false);
+        setOpenRejectDialog(false);
+
+        // 성공 후 모달을 닫을 때 리스트 페이지로 이동
+        if (isSuccess) {
+            navigate("/admin/petsitter/pending");
         }
     };
 
-    const handleApply = () => {
-        if (window.confirm("이 펫시터를 승인하시겠습니까?")) {
-            console.log("펫시터 승인");
+    const handlePending = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("adminToken");
+            const response = await fetch(`/api/admin/petsitter/pending/${id}/pending`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || "펫시터 반려에 실패했습니다");
+            }
+
+            setModalMessage("펫시터가 성공적으로 반려되었습니다");
+            setIsSuccess(true);
+        } catch (error) {
+            console.error("펫시터 반려 API 호출 중 오류 발생: ", error);
+            setModalMessage(`펫시터 반려 실패: ${error.message}`);
+            setIsSuccess(false);
+        }
+    };
+
+    const handleApprove = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("adminToken");
+            const response = await fetch(`/api/admin/petsitter/pending/${id}/approve`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || "펫시터 승인에 실패했습니다");
+            }
+
+            setModalMessage("펫시터가 성공적으로 승인되었습니다");
+            setIsSuccess(true);
+        } catch (error) {
+            console.error("펫시터 승인 API 호출 중 오류 발생: ", error);
+            setModalMessage(`펫시터 승인 실패: ${error.message}`);
+            setIsSuccess(false);
+        }
+    };
+
+    // 확인 버튼 클릭 시 승인 처리
+    const clickApprove = async () => {
+        try {
+            setApproveLoading(true);
+            await handleApprove();
+        } finally {
+            setApproveLoading(false);
+        }
+    };
+
+    const clickPending = async () => {
+        try {
+            setApproveLoading(true);
+            await handlePending();
+        } finally {
+            setApproveLoading(false);
         }
     };
 
@@ -194,7 +283,7 @@ const PetSitterApply = () => {
                                     borderRadius: 2,
                                     px: 4,
                                 }}
-                                onClick={handlePending}
+                                onClick={handleOpenRejectDialog}
                             >
                                 반려
                             </Button>
@@ -207,7 +296,7 @@ const PetSitterApply = () => {
                                     borderRadius: 2,
                                     px: 4,
                                 }}
-                                onClick={handleApply}
+                                onClick={handleOpenApproveDialog}
                             >
                                 승인
                             </Button>
@@ -215,6 +304,201 @@ const PetSitterApply = () => {
                     </Card>
                 </Box>
             )}
+            {/* 승인 확인 모달 */}
+            <Modal
+                open={openApproveDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="approve-dialog-title"
+                aria-describedby="approve-dialog-description"
+            >
+                <Box
+                    sx={{
+                        backgroundColor: "#F2DFCE",
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        borderRadius: "30px",
+                        padding: "10px",
+                    }}
+                >
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <img
+                            src="/src/assets/images/Admin/dog.svg"
+                            alt="Dog"
+                            style={{
+                                width: "100px",
+                                height: "auto",
+                            }}
+                        />
+                    </Box>
+                    <DialogContent>
+                        <DialogContentText
+                            id="approve-dialog-description"
+                            sx={{ fontSize: "1.5em", textAlign: "center" }}
+                        >
+                            {modalMessage.split("\n").map((line, index) => (
+                                <span key={index}>
+                                    {line}
+                                    <br />
+                                </span>
+                            ))}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ justifyContent: "center" }}>
+                        {!isSuccess ? (
+                            <>
+                                <Button
+                                    onClick={handleCloseDialog}
+                                    disabled={approveLoading}
+                                    sx={{
+                                        width: "7em",
+                                        backgroundColor: "#cccccc",
+                                        color: "black",
+                                        borderRadius: "30px",
+                                        "&:hover": { backgroundColor: "#bbbbbb" },
+                                    }}
+                                >
+                                    취소
+                                </Button>
+                                <Button
+                                    onClick={clickApprove}
+                                    disabled={approveLoading}
+                                    autoFocus
+                                    sx={{
+                                        width: "7em",
+                                        backgroundColor: "#E9A260",
+                                        color: "black",
+                                        borderRadius: "30px",
+                                        "&:hover": { backgroundColor: "#d9a064" },
+                                    }}
+                                >
+                                    {approveLoading ? (
+                                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                                            <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                                            처리 중...
+                                        </Box>
+                                    ) : (
+                                        "확인"
+                                    )}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button
+                                onClick={handleCloseDialog}
+                                autoFocus
+                                sx={{
+                                    width: "7em",
+                                    backgroundColor: "#E9A260",
+                                    color: "black",
+                                    borderRadius: "30px",
+                                    "&:hover": { backgroundColor: "#d9a064" },
+                                }}
+                            >
+                                확인
+                            </Button>
+                        )}
+                    </DialogActions>
+                </Box>
+            </Modal>
+
+            {/* 반려 확인 모달 */}
+            <Modal
+                open={openRejectDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="reject-dialog-title"
+                aria-describedby="reject-dialog-description"
+            >
+                <Box
+                    sx={{
+                        backgroundColor: "#F2DFCE",
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        borderRadius: "30px",
+                        padding: "10px",
+                    }}
+                >
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <img
+                            src="/src/assets/images/Admin/dog.svg"
+                            alt="Dog"
+                            style={{
+                                width: "100px",
+                                height: "auto",
+                            }}
+                        />
+                    </Box>
+                    <DialogContent>
+                        <DialogContentText
+                            id="reject-dialog-description"
+                            sx={{ fontSize: "1.5em", textAlign: "center" }}
+                        >
+                            {modalMessage.split("\n").map((line, index) => (
+                                <span key={index}>
+                                    {line}
+                                    <br />
+                                </span>
+                            ))}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ justifyContent: "center" }}>
+                        {!isSuccess ? (
+                            <>
+                                <Button
+                                    onClick={handleCloseDialog}
+                                    disabled={approveLoading}
+                                    sx={{
+                                        width: "7em",
+                                        backgroundColor: "#cccccc",
+                                        color: "black",
+                                        borderRadius: "30px",
+                                        "&:hover": { backgroundColor: "#bbbbbb" },
+                                    }}
+                                >
+                                    취소
+                                </Button>
+                                <Button
+                                    onClick={clickPending}
+                                    disabled={approveLoading}
+                                    autoFocus
+                                    sx={{
+                                        width: "7em",
+                                        backgroundColor: "#E9A260",
+                                        color: "black",
+                                        borderRadius: "30px",
+                                        "&:hover": { backgroundColor: "#d9a064" },
+                                    }}
+                                >
+                                    {approveLoading ? (
+                                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                                            <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                                            처리 중...
+                                        </Box>
+                                    ) : (
+                                        "확인"
+                                    )}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button
+                                onClick={handleCloseDialog}
+                                autoFocus
+                                sx={{
+                                    width: "7em",
+                                    backgroundColor: "#E9A260",
+                                    color: "black",
+                                    borderRadius: "30px",
+                                    "&:hover": { backgroundColor: "#d9a064" },
+                                }}
+                            >
+                                확인
+                            </Button>
+                        )}
+                    </DialogActions>
+                </Box>
+            </Modal>
         </Box>
     );
 };

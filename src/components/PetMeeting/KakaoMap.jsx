@@ -2,16 +2,14 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Box, Button, InputBase, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Mappin from "../../assets/images/PetMeeting/map-pin.svg";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import { Context } from "../../context/Context.jsx";
 
 const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude }) => {
-    const { pet } = useContext(PetMeetingContext);
+    const { showModal, user } = useContext(Context);
     const mapRef = useRef(null);
     const markerRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const searchKeyword = useRef("");
-    const { showModal } = useContext(Context);
 
     useEffect(() => {
         if (!window.kakao || !window.kakao.maps) return;
@@ -50,10 +48,10 @@ const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude 
             });
         };
 
-        if (pet?.owner?.address) {
+        if (user?.address) {
             const ps = new window.kakao.maps.services.Places();
 
-            ps.keywordSearch(pet?.owner?.address, function (data, status) {
+            ps.keywordSearch(user?.address, function (data, status) {
                 if (status === window.kakao.maps.services.Status.OK) {
                     const firstResult = data[0];
                     const lat = firstResult.y;

@@ -17,7 +17,6 @@ const PostDetail = () => {
             try {
                 const data = await getPostById(postId); // 서비스에서 데이터를 기다림
                 setPost(data); // ★ 받은 데이터 저장
-                console.log(data);
                 setInitialFollow(data.userId, data.initialFollowed);
             } catch (error) {
                 console.error("게시글을 불러오는데 실패했습니다.", error);

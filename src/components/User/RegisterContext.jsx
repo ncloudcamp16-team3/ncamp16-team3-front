@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import { checkLogin } from "../../services/authService.js";
 
 const RegisterContext = createContext();
 
@@ -22,6 +23,7 @@ export const RegisterProvider = ({ children }) => {
     const [snsTypeId, setSnsTypeId] = useState(null);
     const [previews, setPreviews] = useState([]);
     const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
+    const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
 
     const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
     const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -64,33 +66,25 @@ export const RegisterProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        const initUserInfo = async () => {
-            try {
-                const res = await fetch(`/api/auth/check`, {
-                    credentials: "include",
-                });
+        if (hasRun.current) return;
+        hasRun.current = true;
 
-                if (res.ok) {
-                    const data = await res.json();
+        (async () => {
+            const data = await checkLogin();
 
-                    if (data.isNewUser) {
-                        // 신규 사용자니까 회원가입 진행
-                        setSnsAccountId(data.snsAccountId);
-                        setSnsTypeId(data.snsTypeId);
-                        goToStep1();
-                    } else {
-                        // 기존 사용자라면 필요한 정보를 설정하거나
-                        // 이미 회원가입이 완료되었으므로 리다이렉션 등의 처리를 할 수 있음
-                        console.log("기존 사용자 정보:", data);
-                        // 예: 이미 가입한 사용자에 대한 후속 처리 (리다이렉션, 데이터 세팅 등)
-                    }
-                }
-            } catch (err) {
-                console.error("🚨 사용자 정보 조회 실패:", err);
+            if (!data) {
+                console.error("🚨 로그인 체크 실패");
+                return;
             }
-        };
 
-        initUserInfo();
+            if (data.isNewUser) {
+                setSnsAccountId(data.snsAccountId);
+                setSnsTypeId(data.snsTypeId);
+                goToStep1();
+            } else {
+                console.log("기존 사용자 정보:", data);
+            }
+        })();
     }, []);
 
     // ✅ 이미지 미리보기 처리

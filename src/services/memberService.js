@@ -11,3 +11,14 @@ export const toggleFollow = (userId) => {
             throw error;
         });
 };
+
+export const saveUserData = (user) => {
+    return instance
+        .put(`${API_URL}/save`, user)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};

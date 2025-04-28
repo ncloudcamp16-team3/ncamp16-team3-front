@@ -50,22 +50,6 @@ const Step3 = () => {
         handleStep4Next(newPetData);
     };
 
-    // const handleFileChange = (e) => {
-    //     const files = Array.from(e.target.files);
-    //     if (files.length === 0) return;
-    //
-    //     const updatedPhotos = [...(formData.petPhotos || []), ...files];
-    //
-    //     handleChange({
-    //         target: {
-    //             name: "petPhotos",
-    //             value: updatedPhotos,
-    //         },
-    //     });
-    //
-    //     e.target.value = null;
-    // };
-
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;

@@ -5,18 +5,7 @@ export const PetMeetingContext = createContext(null);
 export const PetMeetingProvider = ({ children }) => {
     const [pet, setPet] = useState({
         id: null,
-        owner: {
-            id: null,
-            nickname: "",
-            snsAccountId: "",
-            snsTypeId: null,
-            fileId: 1,
-            address: "",
-            dongName: "",
-            latitude: null,
-            longitude: null,
-            distance: null,
-        },
+        ownerId: 0,
         petTypeId: null,
         name: "",
         gender: "",
@@ -26,7 +15,6 @@ export const PetMeetingProvider = ({ children }) => {
         neutered: false,
         activityStatus: "NONE",
         photos: [],
-        thumbnail: 0,
     });
     const [openPetConfigModal, setOpenPetConfigModal] = useState(false);
     const [openActivityModal, setOpenActivityModal] = useState(false);

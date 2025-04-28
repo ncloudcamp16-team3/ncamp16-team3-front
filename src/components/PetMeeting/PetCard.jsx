@@ -5,7 +5,7 @@ import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PetCard = ({ friend }) => {
     const { pet } = useContext(PetMeetingContext);
-    const thumbnailPhoto = friend?.photos.find((photo) => photo.id === friend.thumbnail);
+    const thumbnailPhoto = friend?.photos.find((photo) => photo.thumbnail === true);
     const navigate = useNavigate();
 
     const goDetails = () => {
@@ -98,6 +98,7 @@ const PetCard = ({ friend }) => {
                 </Typography>
                 <Typography
                     sx={{
+                        mb: 1,
                         color: "#555",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -106,6 +107,20 @@ const PetCard = ({ friend }) => {
                     }}
                 >
                     주소: {friend.owner.dongName}
+                </Typography>
+                <Typography
+                    sx={{
+                        color: "#555",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "100%",
+                    }}
+                >
+                    거리:{" "}
+                    {friend.distance >= 1000
+                        ? `${(friend.distance / 1000).toFixed(1)}km`
+                        : `${Math.floor(friend.distance)}m`}
                 </Typography>
             </Box>
         </Box>

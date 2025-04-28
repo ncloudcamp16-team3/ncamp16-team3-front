@@ -1,12 +1,15 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
+import { getUserInfo } from "../services/authService.js";
 
 export const Context = createContext();
 
 export function Provider({ children }) {
+    const [nc, setNc] = useState(null);
     const [isMute, setIsMute] = useState(true);
     const [address, setAddress] = useState("");
+    const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
     const [InfoModalState, setInfoModalState] = useState({
         open: false,
         title: "",
@@ -14,11 +17,49 @@ export function Provider({ children }) {
         onClose: () => {},
     });
 
+    const [isUserLoading, setUserLoading] = useState(true);
+
+    useEffect(() => {
+        if (hasRun.current) return;
+        hasRun.current = true;
+
+        const fetchUserInfo = async () => {
+            try {
+                const userData = await getUserInfo();
+                if (userData) {
+                    setUser(userData);
+                }
+            } catch (err) {
+                console.error("유저 정보 로딩 실패:", err);
+            } finally {
+                setUserLoading(false);
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
+
     const [user, setUser] = useState({
-        name: "USER1823",
-        photo: "haribo.jpg",
-        id: 1,
+        id: "",
+        nickname: "",
+        path: null,
+        address: "",
+        dongName: "",
+        latitude: null,
+        longitude: null,
+        distance: null,
+        chatId: "",
     });
+
+    const [isLogin, setLogin] = useState(false);
+
+    const [boardTypeList, setBoardTypeList] = useState([
+        {
+            id: 1,
+            name: "자유게시판",
+        },
+    ]);
+
     const [boardType, setBoardType] = useState({
         id: 1,
         name: "자유게시판",
@@ -45,6 +86,8 @@ export function Provider({ children }) {
         });
     }, []);
 
+    if (isUserLoading) return null;
+
     return (
         <Context.Provider
             value={{
@@ -57,6 +100,12 @@ export function Provider({ children }) {
                 boardType,
                 setBoardType,
                 showModal,
+                isLogin,
+                setLogin,
+                nc,
+                setNc,
+                boardTypeList,
+                setBoardTypeList,
             }}
         >
             {children}

@@ -3,7 +3,8 @@ import { Box, Typography, Button, Avatar, Divider, Paper, Grid } from "@mui/mate
 import { useNavigate } from "react-router-dom";
 import { useRegister } from "./RegisterContext.jsx";
 import dayjs from "dayjs";
-import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+import "dayjs/locale/ko";
+import { registration } from "../../services/authService.js"; // ✅ 한글 로케일 불러오기
 dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step4 = () => {
@@ -18,6 +19,8 @@ const Step4 = () => {
     const { nickname, petDataList, goToStep1, snsAccountId, snsTypeId } = useRegister();
 
     const handleSubmit = async () => {
+        if (isSubmitting) return;
+
         setIsSubmitting(true);
         setSubmitError(null);
 
@@ -66,21 +69,13 @@ const Step4 = () => {
             });
 
             // API 호출
-            const response = await fetch("/api/auth/register", {
-                method: "POST",
-                credentials: "include",
-                body: formData,
-            });
+            const result = await registration(formData);
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "회원가입 처리 중 오류가 발생했습니다.");
+            if (!result) {
+                throw new Error("회원가입 처리 중 오류가 발생했습니다.");
             }
 
-            const result = await response.json();
             console.log("회원가입 성공:", result);
-
-            // 성공 시 홈으로 이동
             navigate("/");
         } catch (error) {
             console.error("회원가입 오류:", error);
@@ -135,7 +130,7 @@ const Step4 = () => {
                                     <Box>
                                         <Typography variant="h6">{pet.petName}</Typography>
                                         <Typography variant="body2">
-                                            {pet.petGender === "M" ? "수컷" : "암컷"} •{" "}
+                                            {pet.petGender === "남아" ? "수컷" : "암컷"} •{" "}
                                             {pet.petNeutered === "Y" ? "중성화 완료" : "중성화 미완료"}
                                         </Typography>
                                         {pet.petBirth && (
