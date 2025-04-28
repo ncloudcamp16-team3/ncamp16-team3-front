@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate } from "react-router-dom";
 import petEx from "/src/assets/images/User/pet_ex.svg";
-import axios from "axios";
+import instance from "../../services/axiosInstance.js";
 
 const AddPet = () => {
     const navigate = useNavigate();
@@ -26,6 +26,7 @@ const AddPet = () => {
     const [images, setImages] = useState([null, null, null, null, null, null]);
     const [imagePreviews, setImagePreviews] = useState([null, null, null, null, null, null]);
     const [isFavorite, setIsFavorite] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -72,6 +73,7 @@ const AddPet = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         // 필수 입력값 검증
         if (
@@ -83,6 +85,7 @@ const AddPet = () => {
             !petData.introduction
         ) {
             alert("모든 필수 항목을 입력해주세요.");
+            setIsSubmitting(false);
             return;
         }
 
@@ -102,27 +105,55 @@ const AddPet = () => {
         });
         formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
 
-        // 이미지 추가
+        // 이미지 추가 - 메인 이미지가 맨 앞에 오도록 정렬
         const validImages = images.filter((img) => img !== null);
-        validImages.forEach((image) => {
-            formData.append("images", image);
-        });
+
+        // 메인 이미지(currentImageIndex)를 첫 번째로 추가
+        if (validImages.length > 0 && images[currentImageIndex]) {
+            formData.append("images", images[currentImageIndex]);
+
+            // 나머지 이미지 추가 (메인 이미지 제외)
+            validImages.forEach((image, index) => {
+                if (index !== currentImageIndex && image !== null) {
+                    formData.append("images", image);
+                }
+            });
+        }
+
+        // 디버깅을 위한 FormData 내용 로깅
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof Blob) {
+                console.log(`${key}: Blob 파일 (${value.size} bytes)`);
+            } else {
+                console.log(`${key}: ${value}`);
+            }
+        }
 
         try {
-            // API 호출
-            const response = await axios.post("/api/pet/add", formData, {
+            // API 호출 (instance 사용)
+            const response = await instance.post("/pet/add", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                withCredentials: true,
             });
+
+            console.log("반려동물 등록 응답:", response.data);
 
             // 성공 시 처리
             alert("반려동물 등록이 완료되었습니다.");
             navigate("/mypage");
         } catch (error) {
             console.error("반려동물 등록 오류:", error);
+
+            if (error.response && error.response.status === 401) {
+                alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+                navigate("/login");
+                return;
+            }
+
             alert(error.response?.data?.message || "반려동물 등록 중 오류가 발생했습니다.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -176,7 +207,7 @@ const AddPet = () => {
                     />
                 )}
 
-                {/* 좌측 화살표 - 하얀색만 표시 */}
+                {/* 좌측 화살표 */}
                 <IconButton
                     onClick={handlePrevImage}
                     sx={{
@@ -193,7 +224,7 @@ const AddPet = () => {
                     <ArrowBackIosNewIcon fontSize="medium" />
                 </IconButton>
 
-                {/* 우측 화살표 - 하얀색만 표시 */}
+                {/* 우측 화살표 */}
                 <IconButton
                     onClick={handleNextImage}
                     sx={{
@@ -449,6 +480,7 @@ const AddPet = () => {
                     fullWidth
                     type="submit"
                     variant="contained"
+                    disabled={isSubmitting}
                     sx={{
                         py: 1.5,
                         bgcolor: "#E9A260",
@@ -459,7 +491,7 @@ const AddPet = () => {
                         borderRadius: "8px",
                     }}
                 >
-                    저장
+                    {isSubmitting ? "저장 중..." : "저장"}
                 </Button>
             </Box>
         </Box>
