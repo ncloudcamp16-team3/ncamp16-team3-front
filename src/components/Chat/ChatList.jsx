@@ -13,30 +13,42 @@ const ChatList = () => {
     useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const roomList = await getMyChatRooms(); // uniqueId 리스트
+                const roomList = await getMyChatRooms();
+                // roomList: [{ uniqueId, nickname, profileUrl }, ...]
 
                 const result = [];
-                for (let room of roomList) {
-                    const filter = { name: room.channelId }; // uniqueId가 name
-                    const channels = await nc.getChannels(filter, {}, { per_page: 1 });
 
+                for (let room of roomList) {
+                    const filter = { name: room.uniqueId }; // uniqueId = 채널 name
+                    const channels = await nc.getChannels(filter, {}, { per_page: 1 });
                     const edge = (channels.edges || [])[0];
                     if (!edge) continue;
 
                     const ch = edge.node;
-                    const members = ch.members || [];
 
-                    const myChatId = `ncid${user.id}`;
-                    const partnerId = members.find((m) => m !== myChatId) || ch.user_id;
+                    // last_message 뽑기
+                    let lastMessageText = "";
+                    if (ch.last_message?.content) {
+                        try {
+                            const parsed = JSON.parse(ch.last_message.content);
 
-                    // 상대방 정보 가져오기
-                    const partnerInfo = ch.membersDetail?.find((m) => m.id === partnerId) || ch.user || {};
+                            if (typeof parsed.content === "string") {
+                                lastMessageText = parsed.content;
+                            } else if (typeof parsed.content === "object" && parsed.content.text) {
+                                lastMessageText = parsed.content.text;
+                            } else {
+                                lastMessageText = "알 수 없는 메시지";
+                            }
+                        } catch {
+                            lastMessageText = ch.last_message.content;
+                        }
+                    }
 
                     result.push({
-                        id: ch.id,
-                        name: partnerInfo.name || "알 수 없음",
-                        photo: partnerInfo.profile || "",
-                        lastMessage: ch.last_message?.content || "",
+                        id: ch.id, // 채널 ID
+                        name: room.nickname, // 서버에서 준 nickname
+                        photo: room.profileUrl, // 서버에서 준 profileUrl
+                        lastMessage: lastMessageText || "", // 마지막 메시지
                     });
                 }
 

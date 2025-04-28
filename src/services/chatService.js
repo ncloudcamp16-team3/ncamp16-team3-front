@@ -16,10 +16,35 @@ export const createChatRoom = (userId2) => {
 
 export const getMyChatRooms = () => {
     return instance
-        .get("/chat/rooms")
+        .get(`${API_URL}/rooms`)
         .then((res) => res.data)
         .catch((err) => {
             console.error("채팅방 목록 불러오기 실패", err);
+            throw err;
+        });
+};
+
+export const postMatchStart = (petId1, petId2) => {
+    return instance
+        .post(`${API_URL}/match/start?petId1=${petId1}&petId2=${petId2}`)
+        .then((res) => res.data)
+        .catch((err) => {
+            console.error("매칭 시작 실패", err);
+            throw err;
+        });
+};
+
+export const postMatchCheck = (petId1, petId2) => {
+    return instance
+        .get(`${API_URL}/match/check`, {
+            params: {
+                petId1,
+                petId2,
+            },
+        })
+        .then((res) => res.data) // true or false
+        .catch((err) => {
+            console.error("매칭 확인 실패", err);
             throw err;
         });
 };

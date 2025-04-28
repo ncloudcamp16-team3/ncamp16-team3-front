@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const ConfigBtn = ({ img, label, type }) => {
-    const { pet, setOpenPetConfigModal, setView, setOpenActivityModal } = useContext(PetMeetingContext);
+    const { setOpenPetConfigModal, setView, setOpenActivityModal } = useContext(PetMeetingContext);
+    const { pet } = useContext(Context);
     const handleClick = () => {
         switch (type) {
             case "pet":

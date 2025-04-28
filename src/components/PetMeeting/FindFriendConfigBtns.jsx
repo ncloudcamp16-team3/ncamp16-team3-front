@@ -6,12 +6,11 @@ import PlayBtn from "../../assets/images/PetMeeting/play-btn.svg";
 import WalkBtn from "../../assets/images/PetMeeting/walk-btn.svg";
 import RestBtn from "../../assets/images/PetMeeting/rest-btn.svg";
 import ConfigBtn from "./ConfigBtn.jsx";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import { Context } from "../../context/Context.jsx";
 
 const FindFriendConfigBtns = () => {
-    const { user } = useContext(Context);
-    const { pet } = useContext(PetMeetingContext);
+    const { user, pet } = useContext(Context);
+
     let activityImg;
     let activityLabel;
 

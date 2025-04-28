@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const PetCard = ({ friend }) => {
-    const { pet } = useContext(PetMeetingContext);
+    const { pet } = useContext(Context);
     const thumbnailPhoto = friend?.photos.find((photo) => photo.thumbnail === true);
     const navigate = useNavigate();
 
