@@ -17,18 +17,22 @@ export function Provider({ children }) {
         onClose: () => {},
     });
 
+    const [isUserLoading, setUserLoading] = useState(true);
+
     useEffect(() => {
         if (hasRun.current) return;
         hasRun.current = true;
 
         const fetchUserInfo = async () => {
             try {
-                const userData = await getUserInfo(); // JWT 기반 유저 정보 가져오기
+                const userData = await getUserInfo();
                 if (userData) {
-                    setUser(userData); // 유저 정보만 저장
+                    setUser(userData);
                 }
             } catch (err) {
                 console.error("유저 정보 로딩 실패:", err);
+            } finally {
+                setUserLoading(false);
             }
         };
 
@@ -36,7 +40,7 @@ export function Provider({ children }) {
     }, []);
 
     const [user, setUser] = useState({
-        id: 9999,
+        id: "",
         nickname: "",
         path: null,
         address: "",
@@ -48,6 +52,13 @@ export function Provider({ children }) {
     });
 
     const [isLogin, setLogin] = useState(false);
+
+    const [boardTypeList, setBoardTypeList] = useState([
+        {
+            id: 1,
+            name: "자유게시판",
+        },
+    ]);
 
     const [boardType, setBoardType] = useState({
         id: 1,
@@ -75,6 +86,8 @@ export function Provider({ children }) {
         });
     }, []);
 
+    if (isUserLoading) return null;
+
     return (
         <Context.Provider
             value={{
@@ -91,6 +104,8 @@ export function Provider({ children }) {
                 setLogin,
                 nc,
                 setNc,
+                boardTypeList,
+                setBoardTypeList,
             }}
         >
             {children}

@@ -5,11 +5,14 @@ import { Box } from "@mui/material";
 import RightArrow from "../../assets/images/PetMeeting/right-arrow.svg";
 import LeftArrow from "../../assets/images/PetMeeting/left-arrow.svg";
 
-const PetImgSlide = ({ petDetails }) => {
-    const thumbnailPhoto = petDetails.photos.find((photo) => photo.id === petDetails.thumbnail);
+const PetImgSlide = ({ photos }) => {
+    let sortedPhotos = [];
 
-    // 섬네일 가장 앞에 배치하도록 정렬
-    const sortedPhotos = [thumbnailPhoto, ...petDetails.photos.filter((photo) => photo.id !== petDetails.thumbnail)];
+    if (Array.isArray(photos)) {
+        sortedPhotos = [...photos].sort((a, b) => {
+            return (b.thumbnail === true) - (a.thumbnail === true);
+        });
+    }
 
     return (
         <Box
@@ -38,7 +41,7 @@ const PetImgSlide = ({ petDetails }) => {
                 {sortedPhotos.map((src, idx) => (
                     <SwiperSlide key={idx}>
                         <img
-                            src={src.url}
+                            src={src?.path}
                             alt={`slide-${idx}`}
                             style={{
                                 width: "100%",

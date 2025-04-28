@@ -3,7 +3,7 @@ import { Box, CircularProgress } from "@mui/material";
 import PetCard from "./PetCard";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import EmptyFriendCard from "./EmptyFriendCard.jsx";
-import { getFriends } from "../../services/petmeetingService.js";
+import { getFriends } from "../../services/petService.js";
 import { Context } from "../../context/Context.jsx";
 
 const PAGE_SIZE = 3;
@@ -21,7 +21,7 @@ const PetProfiles = () => {
     const loadPets = async (currentPage) => {
         setLoading(true);
 
-        getFriends({
+        await getFriends({
             page: currentPage,
             size: PAGE_SIZE,
             activityStatus: friendType === "산책친구들" ? "WALK" : "PLAY",
@@ -59,10 +59,9 @@ const PetProfiles = () => {
     useEffect(() => {
         if (isInitialMount.current) return;
 
-        setLoading(true);
+        loadPets(0);
         setPetList([]);
         setPage(0);
-        loadPets(0);
     }, [friendType]);
 
     useEffect(() => {

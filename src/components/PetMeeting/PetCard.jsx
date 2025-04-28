@@ -5,7 +5,7 @@ import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 
 const PetCard = ({ friend }) => {
     const { pet } = useContext(PetMeetingContext);
-    const thumbnailPhoto = friend?.photos.find((photo) => photo.id === friend.thumbnail);
+    const thumbnailPhoto = friend?.photos.find((photo) => photo.thumbnail === true);
     const navigate = useNavigate();
 
     const goDetails = () => {

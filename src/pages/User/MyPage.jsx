@@ -1,28 +1,39 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Box, Typography, Button, Card, CardContent, IconButton, Link, Tooltip, Avatar } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import petEx from "/src/assets/images/User/pet_ex.svg";
-import sitter from "/src/assets/images/User/petsit_req.svg";
+import { Box, Typography, Link, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Context } from "../../context/Context.jsx";
+// 모달 컴포넌트
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
 import PetSitterQuitModal from "./PetSitterQuitModal";
-import { Context } from "../../context/Context.jsx";
-import { useNavigate } from "react-router-dom";
-import penIcon1 from "/src/assets/images/User/pen_1.svg";
-import penIcon2 from "/src/assets/images/User/pen_2.svg";
-import axios from "axios";
+// 섹션 컴포넌트
+import UserProfileSection from "../../components/User/Profile/UserProfileSection";
+import PetListSection from "../../components/User/Profile/PetListSection";
+import PetSitterSection from "../../components/User/Profile/PetSitterSection";
 
 const MyPage = () => {
     const navigate = useNavigate();
     const [pets, setPets] = useState([]);
-    const [sitterStatus, setSitterStatus] = useState({});
+    const [sitterStatus, setSitterStatus] = useState({
+        registered: false,
+        isPending: false,
+        isHold: false,
+        status: "NOT_REGISTERED",
+    });
     const { user, setUser } = useContext(Context);
     const [hover, setHover] = useState({});
+
+    // 모달 상태
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
     const [openNicknameModal, setOpenNicknameModal] = useState(false);
     const [openQuitPetsitterModal, setOpenQuitPetsitterModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
+
+    // 로딩 및 오류 상태
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // 파일 입력 참조
     const fileInputRef = useRef(null);
 
     // 마이페이지 데이터 가져오기
@@ -52,7 +63,8 @@ const MyPage = () => {
                     if (response.data.petSitterStatus) {
                         setSitterStatus({
                             registered: response.data.petSitterStatus === "APPROVE",
-                            isPending: response.data.petSitterStatus === "PENDING",
+                            isPending: response.data.petSitterStatus === "NONE",
+                            isHold: response.data.petSitterStatus === "PENDING",
                             status: response.data.petSitterStatus,
                             age: response.data.petSitterInfo?.age,
                             petType: response.data.petSitterInfo?.petType,
@@ -66,56 +78,14 @@ const MyPage = () => {
                         setSitterStatus({
                             registered: false,
                             isPending: false,
-                            status: "NONE",
+                            isHold: false,
+                            status: "NOT_REGISTERED",
                         });
                     }
                 }
             } catch (err) {
                 console.error("마이페이지 데이터 로드 실패:", err);
                 setError("마이페이지 정보를 불러오는데 실패했습니다.");
-
-                // 오류 시에도 로컬 스토리지의 펫시터 정보 확인
-                try {
-                    // 백엔드 펫시터 상태 조회 API 호출
-                    const petSitterResponse = await axios.get("/api/petsitter/status", {
-                        withCredentials: true,
-                    });
-
-                    if (petSitterResponse.data && petSitterResponse.data.data) {
-                        const petSitterInfo = petSitterResponse.data.data;
-                        setSitterStatus({
-                            registered: petSitterInfo.status === "APPROVE",
-                            isPending: petSitterInfo.status === "PENDING",
-                            status: petSitterInfo.status,
-                            age: petSitterInfo.age,
-                            petType: petSitterInfo.petType,
-                            petCount: petSitterInfo.petCount,
-                            houseType: petSitterInfo.houseType,
-                            experience: petSitterInfo.sitterExp,
-                            comment: petSitterInfo.comment,
-                            image: petSitterInfo.imagePath,
-                        });
-                    } else {
-                        setSitterStatus({
-                            registered: false,
-                            isPending: false,
-                            status: "NONE",
-                        });
-                    }
-                } catch (petSitterErr) {
-                    console.error("펫시터 정보 조회 실패:", petSitterErr);
-                    setSitterStatus({
-                        registered: false,
-                        isPending: false,
-                        status: "NONE",
-                    });
-                }
-
-                // 401 오류인 경우 인증 문제로 간주하고 로그인 페이지로 리다이렉트
-                if (err.response && err.response.status === 401) {
-                    alert("로그인이 필요합니다.");
-                    navigate("/login");
-                }
             } finally {
                 setIsLoading(false);
             }
@@ -138,6 +108,7 @@ const MyPage = () => {
         };
     }, [setUser, navigate]);
 
+    // 반려동물 관련 핸들러
     const handleEditPet = (petId) => {
         navigate(`/pet/edit/${petId}`);
     };
@@ -145,6 +116,27 @@ const MyPage = () => {
     const handleHoverEnter = (id) => setHover((prev) => ({ ...prev, [id]: true }));
     const handleHoverLeave = (id) => setHover((prev) => ({ ...prev, [id]: false }));
 
+    const handleAddPet = () => {
+        navigate("/add-pet");
+    };
+
+    const handleDeletePet = async (petId) => {
+        console.log(petId);
+        if (window.confirm("정말로 이 반려동물 정보를 삭제하시겠습니까?")) {
+            try {
+                await axios.delete(`/api/pet/${petId}`, {
+                    withCredentials: true,
+                });
+                setPets(pets.filter((pet) => pet.id !== petId));
+                alert("반려동물 정보가 삭제되었습니다.");
+            } catch (err) {
+                console.error("반려동물 삭제 실패:", err);
+                alert("반려동물 정보 삭제 중 오류가 발생했습니다.");
+            }
+        }
+    };
+
+    // 모달 핸들러
     const handleOpenWithdrawalModal = () => setOpenWithdrawalModal(true);
     const handleCloseWithdrawalModal = () => {
         setOpenWithdrawalModal(false);
@@ -196,6 +188,7 @@ const MyPage = () => {
         }
     };
 
+    // 닉네임 관련 핸들러
     const handleOpenNicknameModal = () => setOpenNicknameModal(true);
     const handleCloseNicknameModal = () => setOpenNicknameModal(false);
 
@@ -219,14 +212,17 @@ const MyPage = () => {
         }
     };
 
-    const handleAddPet = () => {
-        navigate("/add-pet");
+    // 프로필 사진 관련 핸들러
+    const handleProfileClick = () => {
+        fileInputRef.current.click();
     };
 
-    const handleProfilePhotoUpload = async (e) => {
+    // 프로필 이미지 업로드 처리 핸들러
+    const handleProfileImageChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // 파일 크기 및 타입 검증
         if (file.size > 5 * 1024 * 1024) {
             alert("이미지 크기는 5MB 이하여야 합니다.");
             return;
@@ -237,60 +233,62 @@ const MyPage = () => {
             return;
         }
 
-        // 파일 미리보기
+        // 파일 미리보기 생성
         const reader = new FileReader();
-        reader.onload = (event) => {
-            setUser((prev) => ({
-                ...prev,
-                photo: event.target.result,
-                path: event.target.result,
-            }));
-        };
-        reader.readAsDataURL(file);
+        reader.onload = async (event) => {
+            const previewUrl = event.target.result;
 
-        try {
-            // FormData를 사용하여 파일 업로드
-            const formData = new FormData();
-            formData.append("file", file);
+            try {
+                // 프로필 이미지 업로드 API 호출
+                const formData = new FormData();
+                formData.append("image", file);
 
-            // 파일 업로드 API 호출
-            const uploadResponse = await axios.post("/api/file/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                withCredentials: true,
-            });
+                const response = await axios.post("/api/user/profile-image", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true,
+                });
 
-            if (uploadResponse.data && uploadResponse.data.fileId) {
-                // 프로필 이미지 업데이트 API 호출 - 경로 수정
-                const updateResponse = await axios.put(
-                    "/api/user/profile-image",
-                    { fileId: uploadResponse.data.fileId },
-                    { withCredentials: true }
-                );
-
-                if (updateResponse.data && updateResponse.data.profileImageUrl) {
+                // 성공 시 상태 업데이트
+                if (response.data && response.data.profileImageUrl) {
                     setUser((prev) => ({
                         ...prev,
-                        photo: updateResponse.data.profileImageUrl,
-                        path: updateResponse.data.profileImageUrl,
+                        photo: response.data.profileImageUrl,
+                        path: response.data.profileImageUrl,
                     }));
-                    alert("프로필 사진이 성공적으로 업데이트되었습니다.");
+                    alert("프로필 이미지가 성공적으로 변경되었습니다.");
+                } else {
+                    // 임시로 미리보기 적용
+                    setUser((prev) => ({
+                        ...prev,
+                        photo: previewUrl,
+                        path: previewUrl,
+                    }));
+                    console.warn("프로필 이미지 URL이 응답에 없습니다. 미리보기를 표시합니다.");
                 }
+            } catch (err) {
+                console.error("프로필 이미지 업로드 실패:", err);
+                alert("프로필 이미지 업로드 중 오류가 발생했습니다.");
+
+                // 오류 발생 시에도 UI 미리보기는 적용
+                setUser((prev) => ({
+                    ...prev,
+                    photo: previewUrl,
+                    path: previewUrl,
+                }));
             }
-        } catch (err) {
-            console.error("프로필 이미지 업데이트 실패:", err);
-            alert("프로필 이미지 업데이트 중 오류가 발생했습니다.");
-        }
+        };
+        reader.readAsDataURL(file);
     };
 
-    const handleSitterAction = () => {
-        // 이미 등록된 경우, 지금까지 저장된 정보와 함께 수정 모드로 이동
-        if (sitterStatus && sitterStatus.registered) {
-            // URL 파라미터로 수정 모드임을 알림
-            navigate("/petsitter-register?mode=edit");
+    // 펫시터 관련 핸들러
+    const handlePetSitterAction = () => {
+        if (sitterStatus.registered || sitterStatus.isPending) {
+            // 이미 펫시터인 경우 정보 수정 페이지로 이동
+            navigate("/petsitter/edit");
         } else {
-            // 신규 등록
+            // 펫시터가 아닌 경우 등록 페이지로 이동
             navigate("/petsitter-register");
         }
     };
@@ -304,620 +302,125 @@ const MyPage = () => {
     };
 
     const handleQuitPetsitter = async () => {
-        try {
-            // 펫시터 그만두기 API 호출
-            const response = await axios.post(
-                "/api/petsitter/quit",
-                {},
-                {
-                    withCredentials: true,
-                }
-            );
-
-            // 로컬 스토리지에서 펫시터 정보 삭제
-            localStorage.removeItem("petSitterRegistrationCompleted");
-            localStorage.removeItem("petSitterInfo");
-
-            // 상태 업데이트
-            setSitterStatus({
-                registered: false,
-            });
-
-            // 모달 닫기
-            setOpenQuitPetsitterModal(false);
-
-            // 성공 메시지
-            alert("펫시터 활동을 중단하였습니다.");
-        } catch (error) {
-            console.error("펫시터 그만두기 실패:", error);
-
-            // 오류 메시지
-            alert(error.response?.data?.message || "펫시터 그만두기 처리 중 오류가 발생했습니다.");
-            setOpenQuitPetsitterModal(false);
-        }
-    };
-
-    const handleProfileClick = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleDeletePet = async (petId) => {
-        if (window.confirm("정말로 이 반려동물 정보를 삭제하시겠습니까?")) {
+        if (window.confirm("정말로 펫시터를 그만두시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
             try {
-                await axios.delete(`/api/pet/${petId}`, {
-                    withCredentials: true,
-                });
-                setPets(pets.filter((pet) => pet.id !== petId));
-                alert("반려동물 정보가 삭제되었습니다.");
+                // DELETE에서 POST로 변경
+                const response = await axios.post(
+                    "/api/petsitter/quit",
+                    {},
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                if (response.status === 200) {
+                    alert("펫시터 탈퇴가 완료되었습니다.");
+                    // 펫시터 상태 업데이트
+                    setSitterStatus({
+                        registered: false,
+                        isPending: false,
+                        status: "NOT_REGISTERED",
+                    });
+
+                    // 로컬 스토리지에서 펫시터 정보 제거
+                    localStorage.removeItem("petSitterRegistrationCompleted");
+                    localStorage.removeItem("petSitterInfo");
+
+                    // 모달 닫기
+                    handleCloseQuitPetsitterModal();
+                }
             } catch (err) {
-                console.error("반려동물 삭제 실패:", err);
-                alert("반려동물 정보 삭제 중 오류가 발생했습니다.");
+                console.error("펫시터 탈퇴 오류:", err);
+                alert(err.response?.data?.message || "펫시터 탈퇴 처리 중 오류가 발생했습니다.");
             }
         }
     };
 
-    if (isLoading) {
-        return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
-                <Typography>로딩 중...</Typography>
-            </Box>
-        );
-    }
-
-    if (error) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "80vh",
-                }}
-            >
-                <Typography color="error" sx={{ mb: 2 }}>
-                    {error}
-                </Typography>
-                <Button
-                    variant="contained"
-                    onClick={() => window.location.reload()}
-                    sx={{
-                        bgcolor: "#E9A260",
-                        "&:hover": { bgcolor: "#d0905a" },
-                    }}
-                >
-                    다시 시도
-                </Button>
-            </Box>
-        );
-    }
-
-    // 프로필 이미지 경로 처리
-    const getProfileImageUrl = () => {
-        if (!user || !user.path) {
-            return "/src/assets/images/User/profile-pic.jpg"; // 기본 이미지
-        }
-
-        // 이미 전체 URL인 경우 그대로 사용
-        if (user.path.startsWith("http") || user.path.startsWith("data:")) {
-            return user.path;
-        }
-
-        // 상대 경로인 경우 처리
-        return user.path;
-    };
-
     return (
-        <Box sx={{ width: "100%", p: 2, pb: 8 }}>
-            {/* 상단 헤더 */}
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 2,
-                    justifyContent: "space-between",
-                }}
-            >
-                <Typography variant="h6" fontWeight="bold">
-                    회원정보
-                </Typography>
-            </Box>
-
-            {/* 숨겨진 파일 입력 필드 */}
-            <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleProfilePhotoUpload}
-            />
-
-            {/* 프로필 섹션 */}
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 3,
-                    pb: 2,
-                    borderBottom: "1px solid #F0F0F0",
-                }}
-            >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                    {/* 프로필 사진 */}
-                    <Box sx={{ position: "relative", mr: 2 }}>
-                        <Avatar
-                            src={getProfileImageUrl()}
-                            alt="프로필"
-                            sx={{
-                                width: 60,
-                                height: 60,
-                                bgcolor: "#FF5C5C",
-                            }}
-                        />
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                bottom: 0,
-                                right: 0,
-                                width: 12,
-                                height: 12,
-                                bgcolor: "#1877F2",
-                                borderRadius: "50%",
-                                border: "1px solid white",
-                            }}
-                        />
-
-                        {/* 펜 아이콘 (편집 버튼) */}
-                        <Box
-                            onClick={handleProfileClick}
-                            sx={{
-                                position: "absolute",
-                                bottom: 0,
-                                right: -8,
-                                width: 24,
-                                height: 24,
-                                bgcolor: "#1877F2",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                zIndex: 2,
-                            }}
-                        >
-                            <img src={penIcon1} alt="Edit" width="15" height="13" />
-                        </Box>
-                    </Box>
-
-                    {/* 사용자 이름과 편집 버튼 */}
-                    <Box display="flex" alignItems="center">
-                        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>
-                            {user?.nickname || "사용자"}
-                        </Typography>
-                        <IconButton size="small" onClick={handleOpenNicknameModal} sx={{ ml: 0.5, p: 0 }}>
-                            <img src={penIcon2} alt="Edit" width="16" height="16" />
-                        </IconButton>
-                    </Box>
+        <Box sx={{ py: 3, px: 2, maxWidth: "100%", margin: "0 auto" }}>
+            {isLoading ? (
+                <Box sx={{ textAlign: "center", my: 4 }}>
+                    <Typography>로딩 중...</Typography>
                 </Box>
+            ) : error ? (
+                <Box sx={{ textAlign: "center", my: 4, color: "error.main" }}>
+                    <Typography>{error}</Typography>
+                    <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
+                        새로고침
+                    </Button>
+                </Box>
+            ) : (
+                <>
+                    {/* 사용자 프로필 섹션 */}
+                    <UserProfileSection
+                        user={user}
+                        onNicknameEdit={handleOpenNicknameModal}
+                        onProfileClick={handleProfileClick}
+                        onAddPet={handleAddPet}
+                        fileInputRef={fileInputRef}
+                    />
 
-                <Button
-                    variant="contained"
-                    size="small"
-                    onClick={handleAddPet}
-                    sx={{
-                        bgcolor: "#E9A260",
-                        color: "white",
-                        "&:hover": { bgcolor: "#d0905a" },
-                        fontSize: "12px",
-                        py: 0.5,
-                        px: 1.5,
-                        borderRadius: "4px",
-                        boxShadow: "none",
-                    }}
-                >
-                    동물 추가
-                </Button>
-            </Box>
+                    {/* 반려동물 목록 섹션 */}
+                    <PetListSection
+                        pets={pets}
+                        onEditPet={handleEditPet}
+                        onDeletePet={handleDeletePet}
+                        hover={hover}
+                        onHoverEnter={handleHoverEnter}
+                        onHoverLeave={handleHoverLeave}
+                    />
 
-            {/* 반려동물 목록 */}
-            <Box sx={{ mb: 3 }}>
-                {pets.length > 0 ? (
-                    pets.map((pet) => (
-                        <Card
-                            key={pet.id}
-                            sx={{
-                                mb: 2,
-                                borderRadius: "12px",
-                                boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-                                position: "relative",
-                                transition: "transform 0.2s ease",
-                                transform: hover[pet.id] ? "scale(1.02)" : "scale(1)",
-                            }}
-                            onMouseEnter={() => handleHoverEnter(pet.id)}
-                            onMouseLeave={() => handleHoverLeave(pet.id)}
+                    {/* 펫시터 섹션 */}
+                    <PetSitterSection
+                        sitterStatus={sitterStatus}
+                        onActionClick={handlePetSitterAction}
+                        onQuitClick={handleOpenQuitPetsitterModal}
+                    />
+
+                    {/* 회원 탈퇴 링크 */}
+                    <Box sx={{ mt: 6, textAlign: "center" }}>
+                        <Link
+                            component="button"
+                            variant="body2"
+                            onClick={handleOpenWithdrawalModal}
+                            sx={{ color: "#999", textDecoration: "underline" }}
                         >
-                            <CardContent sx={{ display: "flex", p: 2.5, "&:last-child": { paddingBottom: 2.5 } }}>
-                                <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
-                                    <Box
-                                        component="img"
-                                        src={pet.profileImageUrl || petEx}
-                                        alt={pet.name}
-                                        sx={{
-                                            width: 50,
-                                            height: 50,
-                                            borderRadius: "50%",
-                                            mr: 2,
-                                            flexShrink: 0,
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                    <Tooltip title="수정하기">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => handleEditPet(pet.id)}
-                                            sx={{
-                                                position: "absolute",
-                                                right: 2,
-                                                bottom: 2,
-                                                background: "#f0f0f0",
-                                                width: 20,
-                                                height: 20,
-                                                p: 0.3,
-                                                opacity: hover[pet.id] ? 1 : 0.7,
-                                            }}
-                                        >
-                                            <img src={penIcon2} alt="Edit" width="12" height="12" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Box>
-                                <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-                                    <Box>
-                                        <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                                            {pet.name}
-                                        </Typography>
-                                        <Typography sx={{ fontSize: "12px", color: "#999" }}>
-                                            {pet.type} · {pet.gender} · {pet.weight}kg
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <IconButton
-                                    size="small"
-                                    sx={{ color: "#ccc", p: 0.3 }}
-                                    onClick={() => handleDeletePet(pet.id)}
-                                >
-                                    <CloseIcon sx={{ fontSize: 16 }} />
-                                </IconButton>
-                            </CardContent>
-                        </Card>
-                    ))
-                ) : (
-                    <Box sx={{ textAlign: "center", py: 4 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            등록된 반려동물이 없습니다
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            onClick={handleAddPet}
-                            sx={{
-                                mt: 2,
-                                bgcolor: "#E9A260",
-                                color: "white",
-                                "&:hover": { bgcolor: "#d0905a" },
-                                fontSize: "12px",
-                                py: 0.5,
-                                px: 1.5,
-                                borderRadius: "4px",
-                                boxShadow: "none",
-                            }}
-                        >
-                            반려동물 등록하기
-                        </Button>
+                            회원 탈퇴하기
+                        </Link>
                     </Box>
-                )}
-            </Box>
 
-            <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                    펫시터
-                </Typography>
-                <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "90%", mx: "auto" }}>
-                    <CardContent sx={{ p: 2 }}>
-                        {sitterStatus.registered ? (
-                            // 승인된 펫시터의 경우
-                            <>
-                                {/* 프로필 이미지 */}
-                                <Box
-                                    sx={{
-                                        width: 120,
-                                        height: 120,
-                                        borderRadius: "50%",
-                                        overflow: "hidden",
-                                        mb: 3,
-                                        mx: "auto",
-                                    }}
-                                >
-                                    <Box
-                                        component="img"
-                                        src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
-                                        alt="프로필"
-                                        sx={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                </Box>
+                    {/* 모달 컴포넌트 */}
+                    <WithdrawalModal
+                        open={openWithdrawalModal}
+                        onClose={handleCloseWithdrawalModal}
+                        inputValue={withdrawalInput}
+                        onInputChange={handleWithdrawalInputChange}
+                        onWithdraw={handleWithdrawal}
+                    />
 
-                                {/* 등록 정보 테이블 */}
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        mb: 3,
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">연령대</Typography>
-                                        <Typography>{sitterStatus.age || "40대"}</Typography>
-                                    </Box>
+                    <NicknameEditModal
+                        open={openNicknameModal}
+                        onClose={handleCloseNicknameModal}
+                        currentNickname={user?.nickname || ""}
+                        onSave={handleNicknameSave}
+                    />
 
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">반려동물</Typography>
-                                        <Typography>
-                                            {sitterStatus.petType || "강아지"} {sitterStatus.petCount || "1마리"}
-                                        </Typography>
-                                    </Box>
+                    <PetSitterQuitModal
+                        open={openQuitPetsitterModal}
+                        onClose={handleCloseQuitPetsitterModal}
+                        onConfirm={handleQuitPetsitter}
+                    />
 
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">펫시터 경험</Typography>
-                                        <Typography>
-                                            {sitterStatus.experience === true || sitterStatus.sitterExp
-                                                ? "있음"
-                                                : "없음"}
-                                        </Typography>
-                                    </Box>
-
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">주거 형태</Typography>
-                                        <Typography>{sitterStatus.houseType || "오피스텔"}</Typography>
-                                    </Box>
-
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">한마디</Typography>
-                                        <Typography noWrap sx={{ maxWidth: "70%", textOverflow: "ellipsis" }}>
-                                            {sitterStatus.comment || "제 아이라는 마음으로 돌봐드려요 😊"}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                <Box sx={{ display: "flex", gap: 2 }}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleSitterAction}
-                                        sx={{
-                                            flex: 2,
-                                            bgcolor: "#E9A260",
-                                            "&:hover": { bgcolor: "#d0905a" },
-                                            borderRadius: "4px",
-                                            py: 0.7,
-                                            fontSize: "0.9rem",
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        펫시터 정보 수정
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleOpenQuitPetsitterModal}
-                                        sx={{
-                                            flex: 1,
-                                            bgcolor: "#f44336",
-                                            color: "white",
-                                            "&:hover": { bgcolor: "#d32f2f" },
-                                            borderRadius: "4px",
-                                            py: 0.7,
-                                            fontSize: "0.85rem",
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        그만두기
-                                    </Button>
-                                </Box>
-                            </>
-                        ) : sitterStatus.isPending ? (
-                            // 승인 대기 중인 펫시터의 경우
-                            <>
-                                <Box
-                                    component="img"
-                                    src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
-                                    alt="펫시터 프로필"
-                                    sx={{
-                                        width: 120,
-                                        height: 120,
-                                        borderRadius: "50%",
-                                        objectFit: "cover",
-                                        mb: 3,
-                                        mx: "auto",
-                                        display: "block",
-                                    }}
-                                />
-                                <Box
-                                    sx={{
-                                        bgcolor: "rgba(255, 193, 7, 0.2)",
-                                        p: 2,
-                                        borderRadius: 2,
-                                        mb: 2,
-                                        border: "1px solid #FFC107",
-                                    }}
-                                >
-                                    <Typography
-                                        variant="body1"
-                                        align="center"
-                                        sx={{ color: "#856404", fontWeight: "bold" }}
-                                    >
-                                        승인 대기 중
-                                    </Typography>
-                                    <Typography variant="body2" align="center" sx={{ mt: 1, color: "#856404" }}>
-                                        관리자가 신청 내용을 검토 중입니다.
-                                        <br />
-                                        승인이 완료되면 펫시터 활동이 가능합니다.
-                                    </Typography>
-                                </Box>
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        mb: 3,
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">연령대</Typography>
-                                        <Typography>{sitterStatus.age || "40대"}</Typography>
-                                    </Box>
-
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">반려동물</Typography>
-                                        <Typography>
-                                            {sitterStatus.petType || "강아지"} {sitterStatus.petCount || "1마리"}
-                                        </Typography>
-                                    </Box>
-
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            mb: 1,
-                                        }}
-                                    >
-                                        <Typography fontWeight="bold">펫시터 경험</Typography>
-                                        <Typography>
-                                            {sitterStatus.experience === true || sitterStatus.sitterExp
-                                                ? "있음"
-                                                : "없음"}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </>
-                        ) : (
-                            // 미등록 펫시터의 경우
-                            <>
-                                <Box
-                                    component="img"
-                                    src={sitter}
-                                    alt="펫시터 이미지"
-                                    sx={{
-                                        width: "100%",
-                                        height: "auto",
-                                        mb: 2,
-                                        maxWidth: "200px",
-                                        mx: "auto",
-                                        display: "block",
-                                    }}
-                                />
-                                <Typography variant="body2" align="center" sx={{ mb: 1.5 }}>
-                                    소중한 반려동물들에게
-                                    <br />
-                                    펫시터가 찾아갑니다!
-                                </Typography>
-
-                                <Button
-                                    variant="contained"
-                                    fullWidth
-                                    onClick={handleSitterAction}
-                                    sx={{
-                                        bgcolor: "#E9A260",
-                                        "&:hover": { bgcolor: "#d0905a" },
-                                        borderRadius: "4px",
-                                        py: 0.7,
-                                        fontSize: "0.9rem",
-                                        boxShadow: "none",
-                                    }}
-                                >
-                                    펫시터 신청
-                                </Button>
-                            </>
-                        )}
-                    </CardContent>
-                </Card>
-            </Box>
-
-            {/* 회원 탈퇴 링크 */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
-                <Link
-                    component="button"
-                    underline="always"
-                    onClick={handleOpenWithdrawalModal}
-                    sx={{ color: "#888888", fontSize: "0.8rem", textAlign: "right" }}
-                >
-                    회원 탈퇴
-                </Link>
-            </Box>
-
-            {/* 모달 */}
-            <WithdrawalModal
-                open={openWithdrawalModal}
-                onClose={handleCloseWithdrawalModal}
-                inputValue={withdrawalInput}
-                onInputChange={handleWithdrawalInputChange}
-                onWithdrawal={handleWithdrawal}
-            />
-            <NicknameEditModal
-                open={openNicknameModal}
-                onClose={handleCloseNicknameModal}
-                currentNickname={user?.nickname || ""}
-                onSave={handleNicknameSave}
-            />
-            <PetSitterQuitModal
-                open={openQuitPetsitterModal}
-                onClose={handleCloseQuitPetsitterModal}
-                onConfirm={handleQuitPetsitter}
-            />
+                    {/* 숨겨진 파일 입력 필드 */}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        onChange={handleProfileImageChange}
+                    />
+                </>
+            )}
         </Box>
     );
 };
