@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import useInTimeRange from "../hooks/useInTimeRange";
-import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import "../../../css/reserve/card.css";
+import OpeningHour from "./OpeningHour.jsx";
 
-const ReserveCard = ({ item }) => {
+const ReserveCard = ({ item, today }) => {
     const navigate = useNavigate();
     let filledStars = Math.floor(item.rating);
     if (item.rating >= 4.5 && item.rating < 5) filledStars = 4;
@@ -27,18 +27,12 @@ const ReserveCard = ({ item }) => {
                                     className={index < filledStars ? "star-icon filled" : "star-icon"}
                                 />
                             ))}
-                            <span className="rating-count">({item.reviewCount})</span>
                             리뷰 {item.reviewCount}건
                         </Typography>
                         <Typography className="card-address">
-                            {item.distance}km ・ {item.openTimeRange.join(" - ")}
+                            {item.distance}km ・ {item.address}
                         </Typography>
-                        <Chip
-                            size="small"
-                            label={useInTimeRange(item.openTimeRange) ? "영업중" : "영업종료"}
-                            className="open-chip"
-                        />
-                        <Typography className="card-time">{item.openHours}</Typography>
+                        <OpeningHour timeRangeForWeek={item.timeRangeForWeek} today={today} />
                     </Box>
                     <img className="card-image" src={`images/${item.image}`} alt={item.name} />
                 </Box>
