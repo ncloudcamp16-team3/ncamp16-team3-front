@@ -168,6 +168,7 @@ const FacilityDetail = () => {
                                                 <TableRow label="시설이름" value={facility.name} />
                                                 <TableRow label="주소" value={facility.address} />
                                                 <TableRow label="상세주소" value={facility.detailAddress} />
+                                                <TableRow label="설명" value={facility.comment} />
                                                 <TableRow label="등록일자" value={facility.createdAt} />
                                             </tbody>
                                         </table>
