@@ -40,6 +40,7 @@ axiosInstance.interceptors.request.use(
         if (csrfToken) {
             // CSRF 토큰을 헤더에 추가
             config.headers["X-XSRF-TOKEN"] = csrfToken;
+            console.log("잉잉");
         }
 
         // accessToken 쿠키에서 가져오기
