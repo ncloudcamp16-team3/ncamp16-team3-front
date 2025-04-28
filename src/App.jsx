@@ -59,8 +59,70 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 import NotificationClient from "./pages/Notification/NotificationClient.jsx";
+import { useEffect } from "react";
+
+const publicKey = "BCz1BNLNccwKDd9XwGJUnNNcKoluFigzD_5xRlehWtGinDRoESwgR63bHrhHvEcZydUj4qPWDk7YcDhmvisNmrM";
 
 function App() {
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 푸시 알림 구독
+        subscribeToPushNotifications();
+    }, []);
+
+    // 푸시 알림 구독하기
+    const subscribeToPushNotifications = async () => {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+            console.warn("Push 알림이 브라우저에서 지원되지 않습니다.");
+            return;
+        }
+
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicKey), // 서버의 VAPID Public Key
+            });
+
+            const endpoint = subscription.endpoint;
+            const p256dh = subscription.getKey("p256dh")
+                ? btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey("p256dh"))))
+                : null;
+            const auth = subscription.getKey("auth")
+                ? btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey("auth"))))
+                : null;
+
+            // 콘솔에 출력
+            console.log("Endpoint:", endpoint);
+            console.log("p256dh:", p256dh);
+            console.log("Auth:", auth);
+        } catch (error) {
+            console.error("Push 등록 실패", error);
+        }
+    };
+
+    // Helper: VAPID Public Key 디코딩
+    function urlBase64ToUint8Array(base64String) {
+        const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+
+        const rawData = window.atob(base64);
+        return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+    }
+
+    // 구독 정보를 서버로 전송
+    function sendSubscriptionToServer(subscription) {
+        fetch("/api/test/subscribe", {
+            method: "POST",
+            body: JSON.stringify(subscription),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => console.log("서버에 구독 정보 전송 완료:", data))
+            .catch((error) => console.error("구독 정보 전송 실패:", error));
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <Provider>
