@@ -58,11 +58,13 @@ import Notify from "./pages/Notification/Notification.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
+import NotificationClient from "./pages/Notification/NotificationClient.jsx";
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Provider>
+                <NotificationClient />
                 <Router>
                     <Routes>
                         {/* 로그인 페이지는 별도 경로로 유지 */}
