@@ -506,18 +506,44 @@ const FacilityAdd = () => {
             comment: comment.trim(),
             latitude: latitude,
             longitude: longitude,
-        };
 
-        // 영업 시간 데이터 추가
-        if (operationTimeType === "same") {
-            facilityData.openTime = openTime;
-            facilityData.closeTime = closeTime;
-        } else {
-            // 요일별 데이터
-            facilityData.openTimes = dailyOpenTimes;
-            facilityData.closeTimes = dailyCloseTimes;
-            facilityData.openDays = openDays;
-        }
+            openTimes:
+                operationTimeType === "same"
+                    ? {
+                          MON: openTime,
+                          TUE: openTime,
+                          WED: openTime,
+                          THU: openTime,
+                          FRI: openTime,
+                          SAT: openTime,
+                          SUN: openTime,
+                      }
+                    : dailyOpenTimes,
+            closeTimes:
+                operationTimeType === "same"
+                    ? {
+                          MON: closeTime,
+                          TUE: closeTime,
+                          WED: closeTime,
+                          THU: closeTime,
+                          FRI: closeTime,
+                          SAT: closeTime,
+                          SUN: closeTime,
+                      }
+                    : dailyCloseTimes,
+            openDays:
+                operationTimeType === "same"
+                    ? {
+                          MON: true,
+                          TUE: true,
+                          WED: true,
+                          THU: true,
+                          FRI: true,
+                          SAT: true,
+                          SUN: true,
+                      }
+                    : openDays,
+        };
 
         // FormData 객체 생성
         const formData = new FormData();
@@ -533,14 +559,15 @@ const FacilityAdd = () => {
         console.log("Form submitted", {
             name,
             facilityTypeId,
-            openTime,
-            closeTime,
             tel,
             address,
             detailAddress,
             comment,
             latitude,
             longitude,
+            openTime,
+            closeTime,
+            openDays,
         });
 
         try {
@@ -577,7 +604,7 @@ const FacilityAdd = () => {
 
             setTimeout(() => {
                 navigate("/admin/facility/list");
-            }, 2000);
+            }, 1000);
         } catch (error) {
             console.error("업체 등록 오류:", error);
             setSnackbarMessage(error.message || "업체 등록 중 오류가 발생했습니다");
