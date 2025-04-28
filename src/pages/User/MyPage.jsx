@@ -49,6 +49,8 @@ const MyPage = () => {
                     withCredentials: true,
                 });
 
+                console.log("마이페이지 응답 데이터:", response.data);
+
                 // API에서 받아온 데이터로 상태 업데이트
                 if (response.data) {
                     setUser((prevUser) => ({
@@ -327,9 +329,10 @@ const MyPage = () => {
 
                     {/* 펫시터 섹션 */}
                     <PetSitterSection
-                        sitterStatus={sitterStatus}
-                        onActionClick={handlePetSitterAction}
+                        sitterInfo={sitterStatus}
+                        onEditClick={handlePetSitterAction}
                         onQuitClick={handleOpenQuitPetsitterModal}
+                        onApplyClick={handlePetSitterAction}
                     />
 
                     {/* 회원 탈퇴 링크 */}
