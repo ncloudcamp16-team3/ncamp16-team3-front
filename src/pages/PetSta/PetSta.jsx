@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import PhotoPost from "../../components/PetSta/Post/PhotoPost.jsx";
 import VideoPost from "../../components/PetSta/Post/VideoPost.jsx";
 import FriendList from "../../components/PetSta/FriendList.jsx";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import theme from "../../theme/theme.js";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import { getPostLists } from "../../services/petstaService.js";
 import { useFollow } from "../../context/FollowContext.jsx";
+import { useInView } from "react-intersection-observer";
 
 const PetSta = () => {
     const [posts, setPosts] = useState([]);
@@ -15,31 +16,46 @@ const PetSta = () => {
     const [showBox, setShowBox] = useState(false);
     const [rightPosition, setRightPosition] = useState("20px");
     const [followings, setFollowings] = useState([]);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const { ref, inView } = useInView();
     const navigate = useNavigate();
     const { setInitialFollow } = useFollow();
 
-    useEffect(() => {
-        const getPosts = async () => {
-            try {
-                const data = await getPostLists();
-                setPosts(data.posts);
-                setFollowings(data.followings);
-                data.posts.forEach((post) => {
-                    setInitialFollow(post.userId, post.initialFollowed);
-                });
-            } catch (error) {
-                console.error("게시글을 불러오는데 실패했습니다.", error);
+    const loadPosts = async () => {
+        if (isLoading) return; // 중복 방지
+        setIsLoading(true);
+        try {
+            const data = await getPostLists(page);
+            if (data.posts.length === 0) {
+                setHasMore(false);
+                return;
             }
-        };
 
-        getPosts();
-    }, []);
+            setPosts((prev) => [...prev, ...data.posts]);
+            if (page === 0) setFollowings(data.followings);
+            data.posts.forEach((post) => {
+                setInitialFollow(post.userId, post.initialFollowed);
+            });
+            setPage((prev) => prev + 1);
+        } catch (error) {
+            console.error("게시글을 불러오는데 실패했습니다.", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (inView && hasMore) {
+            loadPosts();
+        }
+    }, [inView, hasMore]);
 
     useEffect(() => {
         const updatePosition = () => {
             const windowWidth = window.innerWidth;
             const layoutWidth = 500;
-
             if (windowWidth <= layoutWidth) {
                 setRightPosition("20px");
             } else {
@@ -47,18 +63,13 @@ const PetSta = () => {
                 setRightPosition(`${sideGap}px`);
             }
         };
-
         updatePosition();
         window.addEventListener("resize", updatePosition);
-
         return () => window.removeEventListener("resize", updatePosition);
     }, []);
 
     const handleFabClick = () => setShowBox((prev) => !prev);
-
-    const toggleMute = () => {
-        setIsMute(!isMute);
-    };
+    const toggleMute = () => setIsMute((prev) => !prev);
 
     return (
         <Box>
@@ -102,6 +113,14 @@ const PetSta = () => {
                     />
                 )
             )}
+            {isLoading ? (
+                <Box display="flex" justifyContent="center" mt={3}>
+                    <CircularProgress size={30} />
+                </Box>
+            ) : (
+                <div ref={ref} style={{ height: "1px" }} />
+            )}
+
             {showBox && (
                 <Box
                     position="fixed"

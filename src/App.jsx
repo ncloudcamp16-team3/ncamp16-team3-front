@@ -127,7 +127,7 @@ function App() {
                                     <Route path="following" element={<FollowersTab />} />
                                 </Route>
                                 <Route path="/chat" element={<ChatList />} />
-                                <Route path="/chat/room/:roomId" element={<ChatRoom />} />
+                                <Route path="/chat/room/:channelId" element={<ChatRoom />} />
                                 <Route path="/payment" element={<Payment />} />
                             </Route>
                             <Route element={<Layout2 />}>

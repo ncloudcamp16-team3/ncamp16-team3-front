@@ -20,8 +20,6 @@ const FollowBox = ({ info }) => {
         try {
             await toggleFollow(info.id); // 서버 요청
             setIsFollowing((prev) => !prev); // 로컬 상태 토글
-
-            console.log(`${isFollowing ? "팔로우 취소" : "팔로우 하기"}: ${info.userName}`);
         } catch (error) {
             console.error("팔로우 요청 실패", error);
         }

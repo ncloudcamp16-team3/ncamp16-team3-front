@@ -16,7 +16,6 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
         userPhoto,
         isVisited,
     };
-    console.log("!#!@#@!#@!" + isVisited);
 
     const handleFollowClick = async () => {
         try {
