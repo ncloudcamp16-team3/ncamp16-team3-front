@@ -20,6 +20,9 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
     // sitterInfo가 있으면서 status가 PENDING인 경우 보류된 펫시터
     const isHold = sitterInfo?.status === "PENDING";
 
+    // sitterInfo가 있으면서 status가 DELETE인 경우 정지된 펫시터
+    const isDeleted = sitterInfo?.status === "DELETE";
+
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
@@ -109,6 +112,49 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                     펫시터 그만두기
                                 </Button>
                             </Box>
+                        </>
+                    ) : isDeleted ? (
+                        // 영구 정지된 펫시터의 경우 (재신청 버튼 없음)
+                        <>
+                            <Box
+                                component="img"
+                                src={sitterInfo.image || "/src/assets/images/User/profile-pic.jpg"}
+                                alt="펫시터 프로필"
+                                sx={{
+                                    width: 120,
+                                    height: 120,
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    mb: 3,
+                                    mx: "auto",
+                                    display: "block",
+                                    opacity: 0.5, // 정지 상태를 더 강조하기 위해 투명도 낮춤
+                                    filter: "grayscale(100%)", // 흑백 처리로 비활성화 느낌 강조
+                                }}
+                            />
+                            <Box
+                                sx={{
+                                    bgcolor: "rgba(244, 67, 54, 0.1)",
+                                    p: 2,
+                                    borderRadius: 2,
+                                    mb: 2,
+                                    border: "1px solid #F44336",
+                                }}
+                            >
+                                <Typography
+                                    variant="body1"
+                                    align="center"
+                                    sx={{ color: "#721c24", fontWeight: "bold" }}
+                                >
+                                    펫시터 자격이 영구 정지되었습니다
+                                </Typography>
+                                <Typography variant="body2" align="center" sx={{ mt: 1, color: "#721c24" }}>
+                                    서비스 이용 규정 위반으로 인해
+                                    <br />
+                                    펫시터 자격이 영구적으로 정지되었습니다.
+                                </Typography>
+                            </Box>
+                            {/* 재신청 버튼 제거됨 */}
                         </>
                     ) : isPending ? (
                         // 승인 대기 중인 펫시터의 경우

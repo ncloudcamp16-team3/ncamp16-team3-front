@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, IconButton, CircularProgress, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, IconButton, CircularProgress, Snackbar, Alert } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -18,6 +18,7 @@ import ExperienceStep from "../../components/Sitter/steps/ExperienceStep";
 import HousingTypeStep from "../../components/Sitter/steps/HousingTypeStep";
 import CommentStep from "../../components/Sitter/steps/CommentStep";
 import CompletionStep from "../../components/Sitter/steps/CompletionStep";
+import { getPetTypeId, getPetCountEnum } from "../../components/Sitter/utils/petSitterUtils";
 
 const PetSitterRegister = () => {
     const navigate = useNavigate();
@@ -73,6 +74,114 @@ const PetSitterRegister = () => {
         오피스텔: false,
         기타: false,
     });
+
+    // 로컬 스토리지에서 기존 등록 정보 확인
+    useEffect(() => {
+        const checkExistingRegistration = async () => {
+            const isRegistrationAttempt = localStorage.getItem("petSitterRegistrationCompleted");
+
+            if (isRegistrationAttempt === "true") {
+                try {
+                    // 서버에 실제 등록 여부 확인
+                    const statusResponse = await axios.get("/api/petsitter/status", {
+                        withCredentials: true,
+                    });
+
+                    if (statusResponse.status === 200) {
+                        console.log("펫시터 정보가 이미 서버에 있습니다. 수정 모드로 전환합니다.");
+                        // 서버에서 받은 데이터로 폼 초기화
+                        const sitterData = statusResponse.data.data;
+                        if (sitterData) {
+                            initializeFormFromServer(sitterData);
+                        }
+                    }
+                } catch (err) {
+                    if (err.response?.status === 404) {
+                        console.log("서버에 펫시터 정보가 없습니다. 신규 등록 모드로 진행합니다.");
+                        // 로컬 스토리지에서 정보 초기화
+                        localStorage.removeItem("petSitterRegistrationCompleted");
+                        localStorage.removeItem("petSitterInfo");
+                    } else {
+                        console.error("펫시터 상태 확인 중 오류:", err);
+                    }
+                }
+            }
+        };
+
+        checkExistingRegistration();
+    }, []);
+
+    // 서버 데이터로 폼 초기화
+    const initializeFormFromServer = (data) => {
+        // 연령대 설정
+        if (data.age) {
+            const newAges = { ...selectedAges };
+            Object.keys(newAges).forEach((key) => {
+                newAges[key] = key === data.age;
+            });
+            setSelectedAges(newAges);
+        }
+
+        // 반려동물 여부 설정
+        if (data.grown !== undefined) {
+            setHasPet({
+                "네, 키우고 있습니다": data.grown,
+                "키우고 있지 않습니다": !data.grown,
+            });
+        }
+
+        // 펫 타입 설정
+        if (data.petType) {
+            const petTypeName = data.petType.name || "";
+            const newPetTypes = { ...petTypes };
+            Object.keys(newPetTypes).forEach((key) => {
+                newPetTypes[key] = key === petTypeName;
+            });
+            setPetTypes(newPetTypes);
+        }
+
+        // 펫 수 설정
+        if (data.petCount) {
+            const countMap = {
+                ONE: "1마리",
+                TWO: "2마리",
+                THREE_PLUS: "3마리 이상",
+            };
+            const countStr = countMap[data.petCount] || "1마리";
+            const newPetCount = { ...petCount };
+            Object.keys(newPetCount).forEach((key) => {
+                newPetCount[key] = key === countStr;
+            });
+            setPetCount(newPetCount);
+        }
+
+        // 경험 설정
+        if (data.sitterExp !== undefined) {
+            setSitterExperience({
+                "네, 해본적 있습니다": data.sitterExp,
+                "아니요, 해본적 없습니다": !data.sitterExp,
+            });
+        }
+
+        // 주거형태 설정
+        if (data.houseType) {
+            const newHouseType = { ...houseType };
+            Object.keys(newHouseType).forEach((key) => {
+                newHouseType[key] = key === data.houseType;
+            });
+            setHouseType(newHouseType);
+        }
+
+        // 코멘트 설정
+        if (data.comment) {
+            setCommentText(data.comment);
+        }
+
+        // 이미지 설정
+        if (data.imagePath) {
+            setImagePreview(data.imagePath);
+        }
+    };
 
     const handleBack = () => {
         if (step > 1) setStep(step - 1);
@@ -197,64 +306,167 @@ const PetSitterRegister = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleComplete = async () => {
-        if (!Object.values(selectedAges).some((value) => value) || !Object.values(houseType).some((value) => value)) {
+    // 폼 데이터 검증
+    const validateForm = () => {
+        if (!imagePreview) {
             setSnackbar({
                 open: true,
-                message: "필수 정보를 모두 입력해주세요.",
+                message: "프로필 이미지를 선택해주세요.",
                 severity: "warning",
             });
-            return;
+            return false;
         }
 
-        setIsSubmitting(true);
+        if (!Object.values(selectedAges).some((value) => value)) {
+            setSnackbar({
+                open: true,
+                message: "연령대를 선택해주세요.",
+                severity: "warning",
+            });
+            return false;
+        }
 
-        const attemptSubmit = async () => {
+        if (!Object.values(hasPet).some((value) => value)) {
+            setSnackbar({
+                open: true,
+                message: "반려동물 여부를 선택해주세요.",
+                severity: "warning",
+            });
+            return false;
+        }
+
+        if (hasPet["네, 키우고 있습니다"]) {
+            if (!Object.values(petTypes).some((value) => value)) {
+                setSnackbar({
+                    open: true,
+                    message: "반려동물 종류를 선택해주세요.",
+                    severity: "warning",
+                });
+                return false;
+            }
+
+            if (petTypes["기타"] && !otherPetText.trim()) {
+                setSnackbar({
+                    open: true,
+                    message: "기타 반려동물 종류를 입력해주세요.",
+                    severity: "warning",
+                });
+                return false;
+            }
+
+            if (!Object.values(petCount).some((value) => value)) {
+                setSnackbar({
+                    open: true,
+                    message: "반려동물 마릿수를 선택해주세요.",
+                    severity: "warning",
+                });
+                return false;
+            }
+        }
+
+        if (!Object.values(sitterExperience).some((value) => value)) {
+            setSnackbar({
+                open: true,
+                message: "펫시터 경험 여부를 선택해주세요.",
+                severity: "warning",
+            });
+            return false;
+        }
+
+        if (!Object.values(houseType).some((value) => value)) {
+            setSnackbar({
+                open: true,
+                message: "주거 형태를 선택해주세요.",
+                severity: "warning",
+            });
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleComplete = async () => {
+        if (!validateForm()) return;
+
+        try {
+            setIsSubmitting(true);
+
+            // 서버에 이미 등록된 펫시터인지 확인
+            let isUpdate = false;
             try {
-                // FormData 생성
-                const formData = new FormData();
-
-                // 펫시터 데이터 생성
-                const petSitterData = {
-                    age: Object.keys(selectedAges).find((key) => selectedAges[key]),
-                    houseType: Object.keys(houseType).find((key) => houseType[key]),
-                    comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
-                    grown: hasPet["네, 키우고 있습니다"],
-                    petCount:
-                        Object.keys(petCount).find((key) => petCount[key]) === "1마리"
-                            ? "ONE"
-                            : Object.keys(petCount).find((key) => petCount[key]) === "2마리"
-                              ? "TWO"
-                              : "THREE_PLUS",
-                    sitterExp: sitterExperience["네, 해본적 있습니다"],
-                    petTypeId: petTypes["강아지"]
-                        ? 1
-                        : petTypes["고양이"]
-                          ? 2
-                          : petTypes["앵무새"]
-                            ? 3
-                            : petTypes["햄스터"]
-                              ? 4
-                              : petTypes["기타"]
-                                ? 5
-                                : null,
-                };
-
-                formData.append("data", JSON.stringify(petSitterData));
-                if (imageFile) {
-                    formData.append("image", imageFile);
-                }
-
-                // API 호출
-                const response = await axios.post("/api/petsitter/apply", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
+                const statusResponse = await axios.get("/api/petsitter/status", {
                     withCredentials: true,
                 });
 
-                // 성공 처리
+                if (statusResponse.status === 200) {
+                    console.log("기존 펫시터 정보 업데이트 모드");
+                    isUpdate = true;
+                }
+            } catch (err) {
+                // 404 에러는 정상적인 경우 (신규 등록)
+                if (err.response?.status !== 404) {
+                    console.error("펫시터 상태 확인 중 오류:", err);
+                }
+            }
+
+            // 펫시터 데이터 생성
+            const petSitterData = {
+                age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
+                houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
+                comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
+                grown: hasPet["네, 키우고 있습니다"],
+                petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "1마리"),
+                sitterExp: sitterExperience["네, 해본적 있습니다"],
+                petTypeId: getPetTypeId(Object.keys(petTypes).find((key) => petTypes[key]) || null),
+            };
+
+            console.log("펫시터 데이터:", petSitterData);
+
+            // FormData 객체 생성
+            const formData = new FormData();
+
+            // JSON 데이터를 문자열로 직접 전달
+            formData.append("data", JSON.stringify(petSitterData));
+
+            // 이미지 파일 추가
+            if (imageFile) {
+                formData.append("image", imageFile);
+            } else if (imagePreview && !imagePreview.startsWith("http")) {
+                // 데이터 URL을 Blob으로 변환 (서버 URL이 아닐 경우에만)
+                try {
+                    const response = await fetch(imagePreview);
+                    const imageBlob = await response.blob();
+                    formData.append("image", imageBlob, "profile.jpg");
+                } catch (err) {
+                    console.error("이미지 변환 오류:", err);
+                }
+            }
+
+            // FormData 내용 확인
+            console.log("FormData 내용:");
+            for (let [key, value] of formData.entries()) {
+                console.log(`- ${key}:`, value instanceof Blob ? `Blob (${value.size} bytes)` : value);
+            }
+
+            // API 호출
+            console.log("API 요청 시작");
+            const res = await axios.post("/api/petsitter/apply", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+                timeout: 30000, // 30초 타임아웃
+            });
+
+            console.log("API 응답:", res);
+
+            if (res.status === 200 || res.status === 201) {
+                console.log("API 요청 성공");
+
+                // 로컬 스토리지에 저장할 정보
                 const sitterInfo = {
+                    registered: false,
+                    isPending: true,
                     status: "NONE",
                     age: petSitterData.age,
                     petType: Object.keys(petTypes).find((key) => petTypes[key]) || "강아지",
@@ -263,39 +475,68 @@ const PetSitterRegister = () => {
                     comment: petSitterData.comment,
                     image: imagePreview,
                     experience: petSitterData.sitterExp,
+                    registeredAt: new Date().toISOString(),
                 };
 
+                localStorage.setItem("petSitterRegistrationCompleted", "true");
+                localStorage.setItem("petSitterInfo", JSON.stringify(sitterInfo));
+
+                // 이벤트 발생
                 window.dispatchEvent(
                     new CustomEvent("petSitterRegistered", {
-                        detail: { info: sitterInfo },
+                        detail: {
+                            registered: false,
+                            isPending: true,
+                            status: "NONE",
+                            info: sitterInfo,
+                        },
                     })
                 );
 
                 setSnackbar({
                     open: true,
-                    message: "펫시터 신청이 완료되었습니다. 관리자 승인 후 활동이 가능합니다.",
+                    message: isUpdate
+                        ? "펫시터 정보가 성공적으로 업데이트되었습니다."
+                        : "펫시터 신청이 완료되었습니다. 관리자 승인 후 활동이 가능합니다.",
                     severity: "success",
                 });
 
-                // 마이페이지로 이동
+                // 성공 시 마이페이지로 이동
                 setTimeout(() => {
                     navigate("/mypage");
                 }, 1500);
-            } catch (error) {
-                console.error("펫시터 신청 오류:", error);
-
-                const errorMessage = error.response?.data?.message || "펫시터 신청 중 오류가 발생했습니다.";
-
-                setSnackbar({
-                    open: true,
-                    message: errorMessage,
-                    severity: "error",
-                });
-            } finally {
-                setIsSubmitting(false);
             }
-        };
-        await attemptSubmit();
+        } catch (error) {
+            console.error("펫시터 신청 오류:", error);
+            console.error("오류 상세:", error.response?.data);
+
+            let errorMessage = "펫시터 신청 중 오류가 발생했습니다.";
+
+            if (error.response) {
+                if (error.response.status === 400) {
+                    // 클라이언트 오류 (잘못된 요청)
+                    errorMessage = error.response.data?.message || "입력 정보를 확인해주세요.";
+                } else if (error.response.status === 401) {
+                    // 인증 오류
+                    errorMessage = "로그인이 필요합니다.";
+                    setTimeout(() => navigate("/login"), 1500);
+                } else if (error.response.status === 409) {
+                    // 충돌 오류
+                    errorMessage = "이미 진행 중인 신청이 있습니다.";
+                } else if (error.response.status >= 500) {
+                    // 서버 오류
+                    errorMessage = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+                }
+            }
+
+            setSnackbar({
+                open: true,
+                message: errorMessage,
+                severity: "error",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // 현재 단계에 맞는 컴포넌트 렌더링
