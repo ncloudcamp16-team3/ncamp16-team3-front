@@ -1,4 +1,5 @@
-// 전역으로 한번만 CSRF 토큰 저장
+import axios from "axios";
+
 let csrfToken = null;
 
 // 쿠키에서 accessToken 꺼내는 함수

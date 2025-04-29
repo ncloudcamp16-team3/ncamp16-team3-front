@@ -59,13 +59,24 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 import NotificationClient from "./pages/Notification/NotificationClient.jsx";
+import { useEffect, useState } from "react";
 import { initCsrfToken } from "./services/axiosInstance.js";
-import { useEffect } from "react";
 
 function App() {
+    const [csrfReady, setCsrfReady] = useState(false);
+
     useEffect(() => {
-        initCsrfToken(); // 앱 시작할 때 1번만 호출
+        const fetchCsrf = async () => {
+            await initCsrfToken();
+            setCsrfReady(true);
+            console.log("두번할걸??");
+        };
+        fetchCsrf();
     }, []);
+
+    if (!csrfReady) {
+        return <div>Loading...</div>; // csrf 토큰 준비될 때까지 아무것도 안 띄움
+    }
     return (
         <ThemeProvider theme={theme}>
             <Provider>
