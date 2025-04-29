@@ -14,7 +14,7 @@ import {
     Alert,
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
-import { fetchBoards } from "./AdminBoardApi.js";
+import { fetchBoards } from "./adminBoardApi.js";
 import { useAdmin } from "./AdminContext.jsx";
 
 function DashBoard() {

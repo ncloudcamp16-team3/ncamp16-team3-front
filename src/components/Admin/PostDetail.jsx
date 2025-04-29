@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Card, Button, CardMedia, Paper, Stack, Grid, CircularProgress, Alert } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AdminHeader from "./AdminHeader.jsx";
-import { fetchBoardDetail } from "./AdminBoardApi.js";
+import { fetchBoardDetail } from "./adminBoardApi.js";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
+import adminAxios from "./adminAxios.js";
 
 // 커스텀 스타일 컴포넌트 생성
 const PostHeader = styled(Box)(({ theme }) => ({
@@ -76,18 +77,10 @@ const PostDetail = () => {
     const handleDelete = async () => {
         if (window.confirm("이 게시글을 삭제하시겠습니까?")) {
             try {
-                const token = localStorage.getItem("adminToken");
-                const response = await fetch(`/api/admin/board/${id}/delete`, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await adminAxios.delete(`/api/admin/board/${id}/delete`);
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "게시글 삭제에 실패했습니다");
+                if (response.status != 200) {
+                    throw new Error(response.data.message || "게시글 삭제에 실패했습니다");
                 }
 
                 // 삭제 성공 시 처리
@@ -100,6 +93,7 @@ const PostDetail = () => {
             }
         }
     };
+
     return (
         <Box>
             <AdminHeader onSearch={handleSearch} onFilterChange={handleFilterChange} />

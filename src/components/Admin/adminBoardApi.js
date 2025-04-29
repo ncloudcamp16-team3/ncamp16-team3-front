@@ -1,3 +1,5 @@
+import adminAxios from "./adminAxios.js";
+
 export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searchTerm = "", searchField = "") => {
     try {
         // 기본 URL 구성
@@ -20,26 +22,13 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
             }
         }
 
-        const token = localStorage.getItem("adminToken");
-        // console.log("Using token: " + token ? "Valid token exists" : "No token found");
-        // console.log("API request URL: " + url);
+        const response = await adminAxios.get(url);
 
-        const response = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        // console.log("API response status:", response.status);
-        const data = await response.json();
-        // console.log("API response data:", data);
-
-        if (!response.ok) {
-            throw new Error(data.message || "게시판 목록을 가져오는데 실패했습니다");
+        if (response.status != 200) {
+            throw new Error(response.data.message || "게시판 목록을 가져오는데 실패했습니다");
         }
 
-        return data;
+        return response.data;
     } catch (error) {
         console.log("게시판 API 호출 중 오류 발생: " + error);
         throw error;
@@ -48,20 +37,13 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
 
 export const fetchBoardDetail = async (boardId) => {
     try {
-        const token = localStorage.getItem("adminToken");
-        const response = await fetch(`/api/admin/board/${boardId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await adminAxios.get(`api/admin/board/${boardId}`);
 
-        if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.message || "게시글 정보를 가져오는데 실패했습니다");
+        if (response.status != 200) {
+            throw new Error(response.data.message || "게시글 정보를 가져오는데 실패했습니다");
         }
 
-        return await response.json();
+        return response.data;
     } catch (error) {
         console.error("게시글 상세정보 API 호출 중 오류 발생: " + error);
         throw error;

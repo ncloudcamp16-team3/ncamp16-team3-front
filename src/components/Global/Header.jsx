@@ -12,14 +12,13 @@ import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
 import { logout } from "../../services/authService.js";
 import { Context } from "../../context/Context.jsx";
+
 const Header = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const { user, isLogin, setLogin } = useContext(Context);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-
-    console.log(user);
 
     const handleLogout = async () => {
         try {
@@ -45,6 +44,7 @@ const Header = () => {
         toggleMenu();
         navigate(link);
     };
+
     return (
         <Box component="div" className="header" display="flex" flexDirection="row" justifyContent="space-between">
             <Box
@@ -54,15 +54,21 @@ const Header = () => {
                     overflow: "hidden",
                     width: "40px",
                     height: "40px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "relative",
                 }}
                 onClick={toggleMenu}
             >
                 <Box
                     component="img"
-                    src={user?.path || "/mock/Global/images/haribo.jpg"} // 기본 이미지 fallback 추가
+                    src={user?.path || "/mock/Global/images/haribo.jpg"}
                     alt="profile"
                     sx={{
-                        maxWidth: "100%",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                     }}
                 />
             </Box>

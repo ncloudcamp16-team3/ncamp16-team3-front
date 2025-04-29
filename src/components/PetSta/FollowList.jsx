@@ -29,20 +29,37 @@ const FollowList = ({ type, userId }) => {
             setUsers((prev) => [...prev, ...data]);
             setPage((prev) => prev + 1);
         } catch (e) {
-            console.error("팔로우 목록 로딩 실패", e);
+            console.error("팔로우 목록 추가 로딩 실패", e);
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        setUsers([]); // 새로 로딩 시 초기화
-        setPage(0);
-        setHasMore(true);
+        const initLoad = async () => {
+            setIsLoading(true);
+            try {
+                const pageSize = 10;
+                const data =
+                    type === "followers"
+                        ? await getFollowdUsers(userId, 0, pageSize)
+                        : await getFollowingUsers(userId, 0, pageSize);
+
+                setUsers(data);
+                setPage(1); // 초기 다음 페이지를 1로
+                setHasMore(data.length === pageSize);
+            } catch (e) {
+                console.error("팔로우 목록 초기 로딩 실패", e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        initLoad();
     }, [type, userId]);
 
     useEffect(() => {
-        if ((page === 0 || inView) && hasMore) {
+        if (inView && hasMore) {
             loadMoreUsers();
         }
     }, [inView, hasMore]);
@@ -57,13 +74,13 @@ const FollowList = ({ type, userId }) => {
                 </Typography>
             ) : null}
 
-            {isLoading ? (
+            {isLoading && (
                 <Box display="flex" justifyContent="center" mt={3}>
                     <CircularProgress size={30} />
                 </Box>
-            ) : (
-                hasMore && <div ref={ref} style={{ height: "1px" }} />
             )}
+
+            {!isLoading && hasMore && <div ref={ref} style={{ height: "1px" }} />}
         </Box>
     );
 };

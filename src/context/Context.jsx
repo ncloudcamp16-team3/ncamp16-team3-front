@@ -51,6 +51,20 @@ export function Provider({ children }) {
         chatId: "",
     });
 
+    const [pet, setPet] = useState({
+        id: null,
+        ownerId: 0,
+        petTypeId: null,
+        name: "",
+        gender: "",
+        birth: "",
+        weight: 0,
+        info: "",
+        neutered: false,
+        activityStatus: "NONE",
+        photos: [],
+    });
+
     const [isLogin, setLogin] = useState(false);
 
     const [boardTypeList, setBoardTypeList] = useState([
@@ -106,6 +120,8 @@ export function Provider({ children }) {
                 setNc,
                 boardTypeList,
                 setBoardTypeList,
+                pet,
+                setPet,
             }}
         >
             {children}

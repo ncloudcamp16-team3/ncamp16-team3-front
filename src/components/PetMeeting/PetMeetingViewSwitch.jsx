@@ -2,9 +2,11 @@ import React, { useContext, useEffect } from "react";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import PetMeeting from "./PetMeeting.jsx";
 import LocationConfig from "./LocationConfig.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const PetMeetingViewSwitch = () => {
-    const { view, setPet } = useContext(PetMeetingContext);
+    const { view } = useContext(PetMeetingContext);
+    const { setPet } = useContext(Context);
 
     useEffect(() => {
         const storedPet = sessionStorage.getItem("pet");

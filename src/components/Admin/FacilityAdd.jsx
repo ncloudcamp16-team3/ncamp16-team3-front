@@ -20,6 +20,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import adminAxios from "./adminAxios.js";
 
 // 스타일된 컴포넌트
 const ImageUploadButton = styled("label")(({ theme }) => ({
@@ -506,18 +507,44 @@ const FacilityAdd = () => {
             comment: comment.trim(),
             latitude: latitude,
             longitude: longitude,
-        };
 
-        // 영업 시간 데이터 추가
-        if (operationTimeType === "same") {
-            facilityData.openTime = openTime;
-            facilityData.closeTime = closeTime;
-        } else {
-            // 요일별 데이터
-            facilityData.openTimes = dailyOpenTimes;
-            facilityData.closeTimes = dailyCloseTimes;
-            facilityData.openDays = openDays;
-        }
+            openTimes:
+                operationTimeType === "same"
+                    ? {
+                          MON: openTime,
+                          TUE: openTime,
+                          WED: openTime,
+                          THU: openTime,
+                          FRI: openTime,
+                          SAT: openTime,
+                          SUN: openTime,
+                      }
+                    : dailyOpenTimes,
+            closeTimes:
+                operationTimeType === "same"
+                    ? {
+                          MON: closeTime,
+                          TUE: closeTime,
+                          WED: closeTime,
+                          THU: closeTime,
+                          FRI: closeTime,
+                          SAT: closeTime,
+                          SUN: closeTime,
+                      }
+                    : dailyCloseTimes,
+            openDays:
+                operationTimeType === "same"
+                    ? {
+                          MON: true,
+                          TUE: true,
+                          WED: true,
+                          THU: true,
+                          FRI: true,
+                          SAT: true,
+                          SUN: true,
+                      }
+                    : openDays,
+        };
 
         // FormData 객체 생성
         const formData = new FormData();
@@ -533,42 +560,22 @@ const FacilityAdd = () => {
         console.log("Form submitted", {
             name,
             facilityTypeId,
-            openTime,
-            closeTime,
             tel,
             address,
             detailAddress,
             comment,
             latitude,
             longitude,
+            openTime,
+            closeTime,
+            openDays,
         });
 
         try {
-            const token = localStorage.getItem("adminToken");
-            if (!token) {
-                navigate("/admin");
-                return;
-            }
+            const response = await adminAxios.post("/api/admin/facility/add", formData);
 
-            const response = await fetch("/api/admin/facility/add", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            const contentType = response.headers.get("content-type");
-            let data;
-
-            if (contentType && contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                data = { message: "응답이 비어있습니다" };
-            }
-
-            if (!response.ok) {
-                throw new Error(data.message || "업체 등록에 실패했습니다");
+            if (response.status != 200) {
+                throw new Error(response.data.message || "업체 등록에 실패했습니다");
             }
 
             setSnackbarMessage("업체가 성공적으로 등록되었습니다");
@@ -577,7 +584,7 @@ const FacilityAdd = () => {
 
             setTimeout(() => {
                 navigate("/admin/facility/list");
-            }, 2000);
+            }, 1000);
         } catch (error) {
             console.error("업체 등록 오류:", error);
             setSnackbarMessage(error.message || "업체 등록 중 오류가 발생했습니다");

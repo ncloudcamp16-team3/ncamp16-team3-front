@@ -2,11 +2,11 @@ import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import calendarImg from "../../assets/images/PetMeeting/calendar.svg";
 import { useNavigate } from "react-router-dom";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const Scheduler = () => {
     const navigate = useNavigate();
-    const { pet } = useContext(PetMeetingContext);
+    const { pet } = useContext(Context);
 
     return (
         <Box

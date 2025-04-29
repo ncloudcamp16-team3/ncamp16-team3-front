@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useMemo } from "react";
+import adminAxios from "./adminAxios.js";
 
 // Context 생성
 const AdminContext = createContext();
@@ -127,30 +128,19 @@ export const AdminProvider = ({ children }) => {
 
     // 로그아웃 함수
     const logout = async () => {
-        const token = localStorage.getItem("adminToken");
+        try {
+            await adminAxios.post("/api/admin/logout");
 
-        if (token) {
-            try {
-                await fetch("/api/admin/logout", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            } catch (error) {
-                console.log("로그아웃 API 오류: " + error);
-            }
+            localStorage.removeItem("adminToken");
+            localStorage.removeItem("adminEmail");
+
+            window.location.href = "/admin";
+        } catch (error) {
+            console.log("로그아웃 API 오류: " + error);
+            localStorage.removeItem("adminToken");
+            localStorage.removeItem("adminEmail");
+            window.location.href = "/admin";
         }
-
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("adminEmail");
-        setAdminEmail("");
-        setIsAuthenticated(false);
-        setSelectedMenu("");
-        setSearchField("");
-        setSearchTerm("");
-        setCurrentCategory("전체");
     };
 
     // 검색 실행 함수

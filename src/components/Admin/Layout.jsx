@@ -177,7 +177,6 @@ const Layout = ({ children }) => {
 
     const handleLogout = () => {
         logout();
-        navigate("/admin");
     };
 
     // 게시글 관리 아코디언 토글 - 단순히 열고 닫는 기능만 수행

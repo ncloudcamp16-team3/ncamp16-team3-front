@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // React Router 사용 가정
-import { Box, Typography, Card, Button, Grid, CardContent, Rating, CircularProgress } from "@mui/material";
+import { Box, Typography, Card, Button, CardContent, Rating, CircularProgress } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchFacilityDetail } from "./AdminFacilityApi.js";
+import { fetchFacilityDetail } from "./adminFacilityApi.js";
+import ImageSlider from "./ImageSlider.jsx";
+import adminAxios from "./adminAxios.js";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value, isRating = false }) => (
@@ -71,18 +73,10 @@ const FacilityDetail = () => {
     const handleDelete = async () => {
         if (window.confirm("이 업체를 삭제하시겠습니까?")) {
             try {
-                const token = localStorage.getItem("adminToken");
-                const response = await fetch(`/api/admin/facility/${id}/delete`, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await adminAxios.delete(`/api/admin/facility/${id}/delete`);
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "업체 삭제에 실패했습니다");
+                if (response.status != 200) {
+                    throw new Error(response.data.message || "업체 삭제에 실패했습니다");
                 }
 
                 alert("업체가 삭제되었습니다");
@@ -119,61 +113,24 @@ const FacilityDetail = () => {
                 <Box sx={{ p: 3, maxWidth: "90%", mx: "auto", ml: 50, mr: 5 }}>
                     <Card sx={{ borderRadius: 2, border: "1px solid #cccccc", boxShadow: 0, mt: 5 }}>
                         <CardContent>
-                            <Grid container spacing={2}>
-                                {/* 왼쪽 - 프로필 이미지 영역 */}
-                                <Grid
-                                    item
-                                    xs={12}
-                                    md={4}
-                                    sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: 200,
-                                            height: 200,
-                                            borderRadius: "20px",
-                                            overflow: "hidden",
-                                            backgroundColor: "#c97b7b",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        {facility.imagePath ? (
-                                            <img
-                                                src={facility.imagePath}
-                                                alt="프로필 이미지"
-                                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                            />
-                                        ) : (
-                                            <Typography>이미지 없음</Typography>
-                                        )}
-                                    </Box>
-                                </Grid>
+                            {/* 왼쪽 - 이미지 슬라이더 영역 */}
+                            <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+                                <ImageSlider images={facility.imagePaths || []} />
+                            </Box>
 
-                                {/* 오른쪽 - 펫시터 정보 영역 */}
-                                <Grid
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        width: "100%",
-                                    }}
-                                >
-                                    <Box sx={{ height: "100%", width: "100%" }}>
-                                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                                            <tbody style={{ width: "100%" }}>
-                                                <TableRow label="별점" value={facility.starPoint} isRating={true} />
-                                                <TableRow label="업종" value={getFacilityType(facility.facilityType)} />
-                                                <TableRow label="시설이름" value={facility.name} />
-                                                <TableRow label="주소" value={facility.address} />
-                                                <TableRow label="상세주소" value={facility.detailAddress} />
-                                                <TableRow label="등록일자" value={facility.createdAt} />
-                                            </tbody>
-                                        </table>
-                                    </Box>
-                                </Grid>
-                            </Grid>
+                            <Box sx={{ height: "100%", width: "100%" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <tbody style={{ width: "100%" }}>
+                                        <TableRow label="별점" value={facility.starPoint} isRating={true} />
+                                        <TableRow label="업종" value={getFacilityType(facility.facilityType)} />
+                                        <TableRow label="시설이름" value={facility.name} />
+                                        <TableRow label="주소" value={facility.address} />
+                                        <TableRow label="상세주소" value={facility.detailAddress} />
+                                        <TableRow label="설명" value={facility.comment} />
+                                        <TableRow label="등록일자" value={facility.createdAt} />
+                                    </tbody>
+                                </table>
+                            </Box>
                         </CardContent>
 
                         {/* 버튼 영역 */}
