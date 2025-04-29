@@ -18,7 +18,7 @@ const PhotoDetail = ({ post }) => {
             <PhotoPost
                 userId={post.userId}
                 content={post.content}
-                created_at={post.created_at}
+                createdAt={post.createdAt}
                 fileName={post.fileName}
                 comments={post.comments}
                 postId={post.postId}
@@ -27,6 +27,7 @@ const PhotoDetail = ({ post }) => {
                 likes={post.likes}
                 initialLiked={post.initialLiked}
                 initialBookmarked={post.initialBookmarked}
+                isVisited={post.isVisited}
             />
         </Box>
     );

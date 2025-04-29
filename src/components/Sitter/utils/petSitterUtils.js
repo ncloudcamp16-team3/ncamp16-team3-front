@@ -22,6 +22,8 @@ export const getPetCountEnum = (petCountStr) => {
  * @returns {number|null} 백엔드 API ID 값
  */
 export const getPetTypeId = (petTypeStr) => {
+    if (!petTypeStr) return null;
+
     switch (petTypeStr) {
         case "강아지":
             return 1;

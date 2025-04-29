@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchFacility } from "./AdminFacilityApi.js";
+import { fetchFacility } from "./adminFacilityApi.js";
 
 function FacilityList() {
     const adminContext = useAdmin();
