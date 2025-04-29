@@ -59,23 +59,8 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 import NotificationClient from "./pages/Notification/NotificationClient.jsx";
-import { useEffect, useState } from "react";
-import { initCsrfToken } from "./services/axiosInstance.js";
 
 function App() {
-    const [csrfReady, setCsrfReady] = useState(false);
-
-    useEffect(() => {
-        const init = async () => {
-            await initCsrfToken(); // ⬅️ 토큰 초기화
-            setCsrfReady(true); // ⬅️ 완료되면 렌더링 시작
-        };
-        init();
-    }, []);
-
-    if (!csrfReady) {
-        return <div>로딩 중...</div>; // 또는 로딩 스피너 넣어도 됨
-    }
     return (
         <ThemeProvider theme={theme}>
             <Provider>
