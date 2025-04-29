@@ -57,14 +57,13 @@ import Notify from "./pages/Notification/Notification.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
-import NotificationClient from "./pages/Notification/NotificationClient.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
+// messaging 객체 import
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Provider>
-                <NotificationClient />
                 <Router>
                     <Routes>
                         {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
