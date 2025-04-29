@@ -1,81 +1,166 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, InputBase, Typography } from "@mui/material";
 import ImgSlide from "../../components/Board/ImgSlider.jsx";
-import PostData from "../../mock/Board/postData.json";
 import PostTitleBar from "../../components/Board/PostTitleBar.jsx";
 import DeletePostModal from "../../components/Board/DeletePostModal.jsx";
 import WriterInfo from "../../components/Board/WriterInfo.jsx";
 import UpdatePostModal from "../../components/Board/UpdatePostModal.jsx";
 import WriteCommentBar from "../../components/Board/WriteCommentBar.jsx";
-import CommentCard from "../../components/Board/CommentCard.jsx";
-import { produce } from "immer";
 import { Context } from "../../context/Context.jsx";
 import UsedMarketBar from "../../components/Board/UsedMarketBar.jsx";
 import PostCenterBtns from "../../components/Board/PostCenterBtns.jsx";
+import { useParams } from "react-router-dom";
+import {
+    addComment,
+    getBoardDetail,
+    getBookmarkedAndLiked,
+    toggleBookmarked,
+    toggleLiked,
+} from "../../services/boardService.js";
+import { produce } from "immer";
+import CommentCard from "../../components/Board/CommentCard.jsx";
 
 const PostDetails = () => {
-    const { boardType } = useContext(Context);
+    const { postId } = useParams();
+    const { boardType, user } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
     const [liked, setLiked] = useState(false);
     const [bookMarked, setBookMarked] = useState(false);
+    const [replyingTo, setReplyingTo] = useState(null);
+    const commentInputRef = useRef(null);
+    const commentRefs = useRef({});
+
+    const scrollToComment = (commentId) => {
+        const el = commentRefs.current[commentId];
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    };
 
     const [postData, setPostData] = useState({
         id: null,
         boardTypeId: null,
         title: "",
         content: "",
-        price: 0,
-        sell: true,
-        address: "",
-        user: {
-            id: null,
-            nickname: "",
-            sns_account_id: "",
-            sns_type_id: null,
-            photo: { id: null, url: "" },
-            address: "",
-            dong_name: "",
-            latitude: null,
-            longitude: null,
-            distance: "",
-        },
+        authorNickname: "",
+        authorId: null,
+        authorAddress: "",
+        authorProfileImg: "",
         createdAt: "",
         likeCount: 0,
-        photos: [],
+        commentCount: 0,
+        price: 0,
+        sell: false,
+        address: "",
+        firstImageUrl: null,
+        imageUrls: [],
         comments: [],
     });
 
+    const handleReply = (commentId, authorNickname) => {
+        const mentionMarkup = `@${authorNickname} `;
+        setComment((prev) => mentionMarkup + prev);
+        setReplyingTo({ commentId: commentId, authorNickname: authorNickname });
+
+        setTimeout(() => {
+            commentInputRef.current?.focus();
+        }, 1);
+    };
+
+    const requestCommentCreate = () => {
+        const message = comment.replace(/^@\S+\s*/, "");
+
+        addComment(message, postId, user.id, replyingTo?.commentId)
+            .then((res) => {
+                console.log("응답 결과: " + res.message);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
+    };
+
     useEffect(() => {
-        setPostData(PostData);
+        const mentionPattern = /@([^\s]+)/g;
+        const rawMentions = comment.match(mentionPattern) || [];
+
+        const mentions = rawMentions.map((m) => m.slice(1));
+
+        if (!mentions.includes(replyingTo?.authorNickname)) {
+            setReplyingTo(null);
+        }
+    }, [comment]);
+
+    useEffect(() => {
+        const initPostDetailPage = async () => {
+            getBoardDetail(postId)
+                .then((res) => {
+                    const data = res.data;
+                    console.log(data);
+                    setPostData(data);
+                    console.log("응답 결과 : " + res.message);
+                })
+                .catch((err) => {
+                    console.log("에러 발생 : " + err.message);
+                });
+
+            getBookmarkedAndLiked(user.id, postId)
+                .then((res) => {
+                    const data = res.data;
+                    console.log("응답 결과" + res.message);
+                    console.log(data);
+                    setLiked(data.liked);
+                    setBookMarked(data.bookmarked);
+                })
+                .catch((err) => {
+                    console.log("에러 발생" + err.message);
+                });
+        };
+
+        initPostDetailPage();
     }, []);
 
     const likeBtnClick = () => {
-        if (liked) {
-            setPostData(
-                produce((draft) => {
-                    draft.likeCount -= 1;
-                })
-            );
-        } else {
-            setPostData(
-                produce((draft) => {
-                    draft.likeCount += 1;
-                })
-            );
-        }
-        setLiked(!liked);
+        toggleLiked(user.id, postId, liked)
+            .then((res) => {
+                setLiked(!liked);
+                if (liked) {
+                    setPostData(
+                        produce((draft) => {
+                            draft.likeCount -= 1;
+                        })
+                    );
+                } else {
+                    setPostData(
+                        produce((draft) => {
+                            draft.likeCount += 1;
+                        })
+                    );
+                }
+                console.log("응답 결과: " + res.message);
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
     };
 
     const bookMarkBtnClick = () => {
-        setBookMarked(!bookMarked);
+        toggleBookmarked(user.id, postId, bookMarked)
+            .then((res) => {
+                setBookMarked(!bookMarked);
+                console.log("응답 결과: " + res.message);
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
     };
 
     return (
         <Box>
             <PostTitleBar
-                writer={postData.user}
+                postData={postData}
                 setOpenDeleteModal={setOpenDeleteModal}
                 setOpenUpdateModal={setOpenUpdateModal}
             />
@@ -84,8 +169,7 @@ const PostDetails = () => {
                     margin: "0 10px 80px 10px",
                 }}
             >
-                <ImgSlide photos={postData.photos} />
-
+                {postData?.imageUrls?.length > 0 && <ImgSlide photos={postData.imageUrls} />}
                 <WriterInfo postData={postData} />
                 <Typography
                     sx={{
@@ -181,12 +265,41 @@ const PostDetails = () => {
                         <Box sx={{ display: "flex", flexDirection: "column", p: "10px 10px 10px 10px" }}>
                             <Box sx={{ display: "flex", gap: "10px" }}>
                                 <Typography sx={{ fontSize: "18px" }}>좋아요{postData.likeCount}개</Typography>
-                                <Typography sx={{ fontSize: "18px" }}>
-                                    댓글 {postData.comments ? postData.comments.length : 0}개
-                                </Typography>
+                                <Typography sx={{ fontSize: "18px" }}>댓글 {postData.commentCount}개</Typography>
                             </Box>
                             {postData.comments?.map((commentItem) => {
-                                return <CommentCard commentItem={commentItem} />;
+                                return (
+                                    <Box
+                                        key={commentItem.id}
+                                        ref={(el) => {
+                                            if (el) commentRefs.current[commentItem.id] = el;
+                                        }}
+                                        id={`comment-${commentItem.id}`}
+                                    >
+                                        <CommentCard
+                                            commentItem={commentItem}
+                                            handleReply={handleReply}
+                                            scrollToComment={scrollToComment}
+                                        />
+                                        {commentItem.children?.map((child) => {
+                                            return (
+                                                <Box
+                                                    key={child.id}
+                                                    ref={(el) => {
+                                                        if (el) commentRefs.current[child.id] = el;
+                                                    }}
+                                                    id={`comment-${child.id}`}
+                                                >
+                                                    <CommentCard
+                                                        commentItem={child}
+                                                        handleReply={handleReply}
+                                                        scrollToComment={scrollToComment}
+                                                    />
+                                                </Box>
+                                            );
+                                        })}
+                                    </Box>
+                                );
                             })}
                         </Box>
                     </Box>
@@ -216,6 +329,8 @@ const PostDetails = () => {
                     setComment={setComment}
                     liked={liked}
                     likeBtnClick={likeBtnClick}
+                    commentInputRef={commentInputRef}
+                    requestCommentCreate={requestCommentCreate}
                 />
             )}
 

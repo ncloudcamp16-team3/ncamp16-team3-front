@@ -14,31 +14,13 @@ const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude 
     useEffect(() => {
         if (!window.kakao || !window.kakao.maps) return;
 
-        const container = mapRef.current;
-
-        const currentCenter = () => {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const center = new window.kakao.maps.LatLng(lat, lng);
-
-                    initMap(center);
-                },
-                () => {
-                    const fallbackCenter = new window.kakao.maps.LatLng(37.5665, 126.978);
-                    initMap(fallbackCenter);
-                }
-            );
-        };
-
         const initMap = (center) => {
             const options = {
                 center,
                 level: 3,
             };
 
-            const map = new window.kakao.maps.Map(container, options);
+            const map = new window.kakao.maps.Map(mapRef.current, options);
             mapInstanceRef.current = map;
 
             window.kakao.maps.event.addListener(map, "click", function (mouseEvent) {
@@ -54,7 +36,19 @@ const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude 
             initMap(center);
             placeMarker(user?.latitude, user.longitude);
         } else {
-            currentCenter();
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const center = new window.kakao.maps.LatLng(lat, lng);
+
+                    initMap(center);
+                },
+                () => {
+                    const fallbackCenter = new window.kakao.maps.LatLng(37.5665, 126.978);
+                    initMap(fallbackCenter);
+                }
+            );
         }
     }, []);
 
@@ -113,9 +107,48 @@ const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude 
         });
     };
 
+    const currentCenter = () => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const center = new window.kakao.maps.LatLng(lat, lng);
+            mapInstanceRef.current.panTo(center);
+
+            placeMarker(lat, lng);
+        });
+    };
+
     return (
         <Box>
-            <div ref={mapRef} style={{ width: "100%", height: "350px" }} />
+            <div ref={mapRef} style={{ width: "100%", height: "350px" }}>
+                <Box
+                    onClick={currentCenter}
+                    sx={{
+                        position: "absolute",
+                        display: "flex",
+                        bottom: "10px",
+                        right: "10px",
+                        zIndex: 9999,
+                        backgroundColor: "white",
+                        borderRadius: "50%",
+                        width: "40px",
+                        height: "40px",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        cursor: "pointer",
+                    }}
+                >
+                    <Box
+                        component="img"
+                        src="/mock/PetMeeting/images/myLocation.png"
+                        sx={{
+                            width: "20px",
+                            height: "20px",
+                        }}
+                    />
+                </Box>
+            </div>
+
             <Box
                 sx={{
                     display: "flex",

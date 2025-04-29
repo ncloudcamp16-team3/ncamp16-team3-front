@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
 import { getUserInfo } from "../services/authService.js";
-import { getBoardType } from "../services/boardService.js";
+import { getBoardTypeList } from "../services/boardService.js";
 
 export const Context = createContext();
 
@@ -36,7 +36,7 @@ export function Provider({ children }) {
             }
         };
 
-        getBoardType()
+        getBoardTypeList()
             .then((res) => {
                 const data = res.data;
                 console.log(data);

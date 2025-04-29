@@ -3,12 +3,9 @@ import LikeBtn from "./LikeBtn.jsx";
 import { Box, Button, InputBase } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const WriteCommentBar = ({ comment, setComment, postId, liked, likeBtnClick }) => {
+const WriteCommentBar = ({ comment, setComment, liked, likeBtnClick, commentInputRef, requestCommentCreate }) => {
     const theme = useTheme();
-    const requestCommentCreate = () => {
-        alert(postId + "게시물에 " + comment + " 댓글 작성 요청");
-        window.location.reload();
-    };
+
     return (
         <Box
             sx={{
@@ -29,10 +26,18 @@ const WriteCommentBar = ({ comment, setComment, postId, liked, likeBtnClick }) =
             }}
         >
             <LikeBtn likeBtnClick={likeBtnClick} liked={liked} fontSize="35px" />
+
             <InputBase
+                inputRef={commentInputRef}
                 placeholder="댓글을 작성해주세요"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        requestCommentCreate();
+                    }
+                }}
                 sx={{
                     backgroundColor: "white",
                     borderRadius: "10px",
@@ -42,6 +47,7 @@ const WriteCommentBar = ({ comment, setComment, postId, liked, likeBtnClick }) =
                     pl: "10px",
                 }}
             />
+
             <Button
                 onClick={requestCommentCreate}
                 variant="contained"

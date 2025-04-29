@@ -6,8 +6,6 @@ import RightArrow from "../../assets/images/PetMeeting/right-arrow.svg";
 import LeftArrow from "../../assets/images/PetMeeting/left-arrow.svg";
 
 const ImgSlide = ({ photos }) => {
-    console.log(photos);
-
     return (
         <Box
             sx={{
@@ -32,7 +30,7 @@ const ImgSlide = ({ photos }) => {
                 loop={true}
                 style={{ height: "100%" }}
             >
-                {photos.map((path, idx) => (
+                {photos?.map((path, idx) => (
                     <SwiperSlide key={idx}>
                         <img
                             src={path}
