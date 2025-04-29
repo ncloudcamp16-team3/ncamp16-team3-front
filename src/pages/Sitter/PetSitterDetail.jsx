@@ -1,49 +1,76 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, IconButton, Container, Avatar } from "@mui/material";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Box, Typography, Button, Container, Avatar, CircularProgress, Alert } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useNavigate, useParams } from "react-router-dom";
-import mockPetsitters from "../../mock/Sitter/petsitters.json";
+import TitleBar from "../../components/Global/TitleBar.jsx";
+import { getPetSitterDetails } from "../../services/petSitterService";
+import { createChatRoom } from "../../services/chatService";
 
 const PetSitterDetail = () => {
     const { sitterId } = useParams();
     const navigate = useNavigate();
     const [sitter, setSitter] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // 실제 API 호출 대신 mock 데이터에서 해당 sitterId의 펫시터 찾기
-        const foundSitter = mockPetsitters.find((s) => s.id === parseInt(sitterId));
+        const fetchPetSitterDetails = async () => {
+            try {
+                setLoading(true);
+                const response = await getPetSitterDetails(sitterId);
 
-        // 펫시터 정보가 있으면 설정하고 로딩 상태 해제
-        if (foundSitter) {
-            setSitter(foundSitter);
-        }
-        setLoading(false);
+                if (response && response.data) {
+                    setSitter(response.data);
+                } else {
+                    throw new Error("펫시터 정보를 찾을 수 없습니다.");
+                }
+            } catch (err) {
+                console.error("펫시터 상세 정보 로드 실패:", err);
+                setError(err.response?.data?.message || "펫시터 정보를 불러오는 중 오류가 발생했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPetSitterDetails();
     }, [sitterId]);
 
-    const handleBack = () => {
-        navigate(-1);
-    };
+    const handleChat = async () => {
+        if (!sitter) return;
 
-    const handleChat = () => {
-        // 채팅 페이지로 이동
-        if (sitter) {
-            // 실제 구현에서는 이 부분을 채팅방 생성 또는 기존 채팅방으로 이동하도록 수정
-            navigate(`/chat/room/new?targetId=${sitter.id}&targetName=${sitter.name}`);
+        try {
+            // 채팅방 생성 API
+            const chatRoomResponse = await createChatRoom(sitter.id);
+
+            if (chatRoomResponse) {
+                // 채팅방 ID로 채팅방 이동
+                navigate(`/chat/room/${chatRoomResponse.channelId}`);
+            }
+        } catch (error) {
+            console.error("채팅방 생성 오류:", error);
+            alert("채팅방 생성 중 오류가 발생했습니다.");
         }
     };
 
     const handleCancel = () => {
-        // 취소 기능 구현
-        alert(`${sitter?.name || "펫시터"} 신청을 취소합니다.`);
-        navigate(-1); // 이전 페이지로 돌아가기
+        navigate(-1);
     };
 
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <Typography>로딩 중...</Typography>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ p: 2 }}>
+                <Alert severity="error">{error}</Alert>
+                <Button variant="contained" onClick={() => navigate(-1)} sx={{ mt: 2, width: "100%" }}>
+                    돌아가기
+                </Button>
             </Box>
         );
     }
@@ -59,25 +86,14 @@ const PetSitterDetail = () => {
     return (
         <Box sx={{ bgcolor: "#FFF", minHeight: "100vh", pb: 8 }}>
             {/* 헤더 */}
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    p: 2,
-                    borderBottom: "1px solid #eee",
-                }}
-            >
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    펫시터 상세보기
-                </Typography>
-            </Box>
+            <TitleBar name="펫시터 상세보기" />
 
             <Container maxWidth="sm" sx={{ pt: 3 }}>
                 {/* 프로필 이미지 */}
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
                     <Avatar
-                        src={sitter.image}
-                        alt={sitter.name}
+                        src={sitter.imagePath}
+                        alt={sitter.nickname}
                         sx={{
                             width: 120,
                             height: 120,
@@ -90,9 +106,12 @@ const PetSitterDetail = () => {
                 {/* 기본 정보 테이블 */}
                 <Box sx={{ mb: 4 }}>
                     <InfoItem label="연령대" value={sitter.age} />
-                    <InfoItem label="반려동물" value={`${sitter.pet_type} ${sitter.pet_count}마리`} />
-                    <InfoItem label="임시보호 경험" value={sitter.experience ? "있음" : "없음"} />
-                    <InfoItem label="주거 형태" value={sitter.house_type} />
+                    <InfoItem
+                        label="반려동물"
+                        value={`${sitter.petType?.name || "없음"} ${sitter.petCount || "0"}마리`}
+                    />
+                    <InfoItem label="임시보호 경험" value={sitter.sitterExp ? "있음" : "없음"} />
+                    <InfoItem label="주거 형태" value={sitter.houseType} />
                     <Box
                         sx={{
                             py: 2,
@@ -102,7 +121,7 @@ const PetSitterDetail = () => {
                         }}
                     >
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            {sitter.description}
+                            {sitter.comment || "자기소개가 없습니다."}
                         </Typography>
                     </Box>
                 </Box>
