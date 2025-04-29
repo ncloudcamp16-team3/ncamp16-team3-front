@@ -1,85 +1,222 @@
-import React from "react";
-import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
+import React, { useState } from "react";
+import {
+    Box,
+    Typography,
+    Button,
+    Card,
+    CardMedia,
+    CardContent,
+    Chip,
+    Divider,
+    Alert,
+    CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { getAllApprovedPetSitters } from "../../services/petSitterService";
 
-const PetSitterResults = ({ filteredPetsitters }) => {
+const PetSitterResults = ({ filteredPetsitters, error }) => {
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [allPetsitters, setAllPetsitters] = useState(null);
+    const [loadAllError, setLoadAllError] = useState(null);
 
-    // 펫시터 클릭 핸들러 - 상세 페이지로 이동
-    const handleSitterClick = (sitter) => {
-        navigate(`/petsitter/detail/${sitter.id}`);
+    const handleSitterClick = (sitterId) => {
+        navigate(`/petsitter/${sitterId}`);
     };
 
-    // 펫시터 카드 렌더링
-    const renderPetsitterCard = (sitter) => {
+    // 데이터 구조 확인 및 처리
+    const getSittersList = () => {
+        // 모든 펫시터 목록
+        if (allPetsitters) {
+            return getSittersFromResponse(allPetsitters);
+        }
+
+        // 그렇지 않다면 필터링된 목록
+        if (!filteredPetsitters) return [];
+        return getSittersFromResponse(filteredPetsitters);
+    };
+
+    // 서버 응답에서 펫시터 배열 추출
+    const getSittersFromResponse = (response) => {
+        if (response.content) {
+            // Page 객체인 경우
+            return response.content;
+        } else if (Array.isArray(response)) {
+            // 이미 배열인 경우
+            return response;
+        } else {
+            console.error("예상치 못한 데이터 구조:", response);
+            return [];
+        }
+    };
+
+    const handleViewAllPetsitters = async () => {
+        setIsLoading(true);
+        setLoadAllError(null);
+
+        try {
+          const response = await getAllApprovedPetSitters();
+          console.log("모든 펫시터 목록 응답:", response);
+
+            if (response && response.data) {
+                setAllPetsitters(response.data);
+            } else {
+                throw new Error("펫시터 목록을 불러올 수 없습니다.");
+            }
+        } catch (error) {
+            console.error("모든 펫시터 목록 조회 오류:", error);
+            setLoadAllError("펫시터 목록을 불러오는데 실패했습니다.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const sittersList = getSittersList();
+
+    // 결과가 없는 경우 메시지 표시
+    if (error || loadAllError) {
         return (
-            <Card
-                key={sitter.id}
-                sx={{
-                    mb: 2,
-                    borderRadius: "16px",
-                    boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    transition: "transform 0.2s ease-in-out",
-                    "&:hover": {
-                        transform: "translateY(-2px)",
-                        boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
-                    },
-                }}
-                onClick={() => handleSitterClick(sitter)}
-            >
-                <Box sx={{ display: "flex", p: 2 }}>
-                    <CardMedia
-                        component="img"
-                        sx={{
-                            width: 80,
-                            height: 80,
-                            borderRadius: "12px",
-                            objectFit: "cover",
-                        }}
-                        image={sitter.image}
-                        alt={sitter.name}
-                    />
-                    <CardContent
-                        sx={{
-                            flex: "1 0 auto",
-                            p: 1,
-                            pl: 2,
-                            "&:last-child": { paddingBottom: "8px" },
-                        }}
-                    >
-                        <Typography component="div" variant="h6" sx={{ fontSize: "16px", fontWeight: "bold" }}>
-                            {sitter.name}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                                fontSize: "12px",
-                                display: "-webkit-box",
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                            }}
-                        >
-                            {sitter.description}
-                        </Typography>
-                    </CardContent>
-                </Box>
-            </Card>
+            <Box sx={{ p: 2 }}>
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error || loadAllError}
+                </Alert>
+                <Typography variant="body1" align="center" sx={{ my: 4 }}>
+                    죄송합니다. 서버에서 펫시터 정보를 가져오는 중 오류가 발생했습니다.
+                </Typography>
+            </Box>
         );
-    };
+    }
+
+    if (isLoading) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <CircularProgress sx={{ color: "#E9A260" }} />
+            </Box>
+        );
+    }
+
+    if (!sittersList || sittersList.length === 0) {
+        return (
+            <Box sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+                    검색 결과
+                </Typography>
+                <Typography variant="body1" align="center" sx={{ my: 4 }}>
+                    조건에 맞는 펫시터를 찾지 못했습니다. 다른 조건으로 다시 시도해보세요.
+                </Typography>
+                <Button
+                    variant="contained"
+                    sx={{
+                        bgcolor: "#E9A260",
+                        color: "white",
+                        "&:hover": { bgcolor: "#d0905a" },
+                        width: "100%",
+                        mt: 2,
+                    }}
+                    onClick={handleViewAllPetsitters}
+                >
+                    모든 펫시터 보기
+                </Button>
+            </Box>
+        );
+    }
 
     return (
-        <Box sx={{ mt: 2, mb: 8 }}>
-            {filteredPetsitters.length > 0 ? (
-                filteredPetsitters.map(renderPetsitterCard)
-            ) : (
-                <Box sx={{ textAlign: "center", p: 4 }}>
-                    <Typography>조건에 맞는 펫시터가 없습니다.</Typography>
-                </Box>
+        <Box sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+                {allPetsitters ? "전체 펫시터 목록" : "검색 결과"} ({sittersList.length}명)
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                {allPetsitters
+                    ? "모든 승인된 펫시터 목록입니다."
+                    : `조건에 맞는 펫시터가 ${sittersList.length}명 검색되었습니다.`}
+            </Typography>
+
+            {sittersList.map((sitter) => (
+                <Card
+                    key={sitter.id}
+                    sx={{
+                        mb: 3,
+                        borderRadius: "12px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        cursor: "pointer",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                        "&:hover": {
+                            transform: "translateY(-4px)",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                        },
+                    }}
+                    onClick={() => handleSitterClick(sitter.id)}
+                >
+                    <Box sx={{ display: "flex", p: 2 }}>
+                        <CardMedia
+                            component="img"
+                            sx={{
+                                width: 80,
+                                height: 80,
+                                borderRadius: "8px",
+                                objectFit: "cover",
+                            }}
+                            image={sitter.imagePath || "/src/assets/images/User/profile-pic.jpg"}
+                            alt={sitter.nickname || "펫시터 이미지"}
+                        />
+                        <CardContent sx={{ flex: 1, p: 1, pl: 2 }}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
+                                    {sitter.nickname || "펫시터"}
+                                </Typography>
+                                <Chip
+                                    label={sitter.age || "20대"}
+                                    size="small"
+                                    sx={{ bgcolor: "#F2DFCE", color: "#E9A260", fontWeight: "medium" }}
+                                />
+                            </Box>
+
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1, mb: 1.5 }}>
+                                <Chip
+                                    label={`${sitter.petCount || "-"} 마리`}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ fontSize: "12px" }}
+                                />
+                                <Chip
+                                    label={sitter.sitterExp ? "임시보호 경험 있음" : "임시보호 경험 없음"}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ fontSize: "12px" }}
+                                />
+                                <Chip
+                                    label={sitter.houseType || "주거 정보 없음"}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ fontSize: "12px" }}
+                                />
+                            </Box>
+
+                            <Divider sx={{ my: 1 }} />
+
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: "13px" }}>
+                                {sitter.comment || "자기소개가 없습니다."}
+                            </Typography>
+                        </CardContent>
+                    </Box>
+                </Card>
+            ))}
+
+            {!allPetsitters && (
+                <Button
+                    variant="contained"
+                    sx={{
+                        bgcolor: "#E9A260",
+                        color: "white",
+                        "&:hover": { bgcolor: "#d0905a" },
+                        width: "100%",
+                        mt: 2,
+                    }}
+                    onClick={handleViewAllPetsitters}
+                >
+                    모든 펫시터 보기
+                </Button>
             )}
         </Box>
     );

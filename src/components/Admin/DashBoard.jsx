@@ -14,7 +14,7 @@ import {
     Alert,
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
-import { fetchBoards } from "./AdminBoardApi.js";
+import { fetchBoards } from "./adminBoardApi.js";
 import { useAdmin } from "./AdminContext.jsx";
 
 function DashBoard() {
@@ -68,7 +68,7 @@ function DashBoard() {
             const apiPage = Math.max(0, currentPage - 1);
             const response = await fetchBoards(apiPage, 10, boardTypeId, searchTerm, searchField);
 
-            console.log("API Response: " + response);
+            // console.log("API Response: " + response);
 
             //데이터가 있는지 확인
             if (!response || !response.content) {

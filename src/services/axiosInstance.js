@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 // 쿠키에서 accessToken 꺼내는 함수
 const getCookie = (name) => {
     const matches = document.cookie.match(
@@ -7,15 +8,14 @@ const getCookie = (name) => {
     );
     return matches ? decodeURIComponent(matches[1]) : null;
 };
-
 const axiosInstance = axios.create({
-    baseURL: "/api",
-    withCredentials: true, // ✅ 이거 꼭 추가 (쿠키 전송 허용)
+    baseURL: import.meta.env.MODE === "development" ? "http://localhost:8080/api" : "/api",
+    withCredentials: true, // ✅ 이거 있어야 쿠키 보내짐!
 });
 
-// 요청 보내기 전에 accessToken 쿠키에서 가져오기
+// Axios interceptor 수정
 axiosInstance.interceptors.request.use(
-    (config) => {
+    async (config) => {
         const token = getCookie("accessToken");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -24,9 +24,7 @@ axiosInstance.interceptors.request.use(
         }
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 export default axiosInstance;

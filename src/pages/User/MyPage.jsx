@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Box, Typography, Link, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Context } from "../../context/Context.jsx";
 // 모달 컴포넌트
 import { WithdrawalModal, NicknameEditModal } from "./MyModal";
-import PetSitterQuitModal from "./PetSitterQuitModal";
+import PetSitterQuitModal from "../../components/User/PetSitterQuitModal";
+import ProfileImageModal from "../../components/User/Profile/ProfileImageEditModal";
 // 섹션 컴포넌트
 import UserProfileSection from "../../components/User/Profile/UserProfileSection";
 import PetListSection from "../../components/User/Profile/PetListSection";
 import PetSitterSection from "../../components/User/Profile/PetSitterSection";
+// axios 인스턴스 가져오기
+import instance from "../../services/axiosInstance.js";
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -27,6 +29,7 @@ const MyPage = () => {
     const [openWithdrawalModal, setOpenWithdrawalModal] = useState(false);
     const [openNicknameModal, setOpenNicknameModal] = useState(false);
     const [openQuitPetsitterModal, setOpenQuitPetsitterModal] = useState(false);
+    const [openProfileImageModal, setOpenProfileImageModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
 
     // 로딩 및 오류 상태
@@ -42,10 +45,8 @@ const MyPage = () => {
             setIsLoading(true);
             setError(null);
             try {
-                // 사용자 정보 API 호출
-                const response = await axios.get("/api/user/mypage", {
-                    withCredentials: true,
-                });
+                // 사용자 정보 API 호출 (인스턴스 사용)
+                const response = await instance.get("/user/mypage");
 
                 console.log("마이페이지 응답 데이터:", response.data);
 
@@ -87,7 +88,15 @@ const MyPage = () => {
                 }
             } catch (err) {
                 console.error("마이페이지 데이터 로드 실패:", err);
-                setError("마이페이지 정보를 불러오는데 실패했습니다.");
+
+                if (err.response && err.response.status === 401) {
+                    setError("로그인이 필요합니다.");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 2000);
+                } else {
+                    setError("마이페이지 정보를 불러오는데 실패했습니다.");
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -123,17 +132,22 @@ const MyPage = () => {
     };
 
     const handleDeletePet = async (petId) => {
-        console.log(petId);
         if (window.confirm("정말로 이 반려동물 정보를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`/api/pet/${petId}`, {
-                    withCredentials: true,
-                });
+                // instance 사용하여 API 호출
+                await instance.delete(`/pet/${petId}`);
                 setPets(pets.filter((pet) => pet.id !== petId));
                 alert("반려동물 정보가 삭제되었습니다.");
             } catch (err) {
                 console.error("반려동물 삭제 실패:", err);
-                alert("반려동물 정보 삭제 중 오류가 발생했습니다.");
+
+                if (err.response && err.response.status === 401) {
+                    alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+                    navigate("/login");
+                    return;
+                }
+
+                alert(err.response?.data?.message || "반려동물 정보 삭제 중 오류가 발생했습니다.");
             }
         }
     };
@@ -150,10 +164,8 @@ const MyPage = () => {
     const handleWithdrawal = async () => {
         if (withdrawalInput === "탈퇴합니다") {
             try {
-                // 백엔드 API 호출 - 탈퇴 처리
-                await axios.delete("/api/user/withdraw", {
-                    withCredentials: true,
-                });
+                // 백엔드 API 호출 - 탈퇴 처리 (instance 사용)
+                await instance.delete("/user/withdraw");
 
                 // 상태 및 스토리지 완전 초기화
                 setUser(null); // 컨텍스트 사용자 정보 초기화
@@ -196,11 +208,8 @@ const MyPage = () => {
 
     const handleNicknameSave = async (newNickname) => {
         try {
-            const response = await axios.put(
-                "/api/user/nickname",
-                { nickname: newNickname },
-                { withCredentials: true }
-            );
+            // instance 사용하여 API 호출
+            const response = await instance.put("/user/nickname", { nickname: newNickname });
 
             if (response.data && response.data.nickname) {
                 setUser((prev) => ({ ...prev, nickname: response.data.nickname }));
@@ -210,78 +219,38 @@ const MyPage = () => {
             }
         } catch (err) {
             console.error("닉네임 변경 실패:", err);
+
+            if (err.response && err.response.status === 401) {
+                alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+                navigate("/login");
+                return;
+            }
+
             alert(err.response?.data?.error || "닉네임 변경 중 오류가 발생했습니다.");
         }
     };
 
     // 프로필 사진 관련 핸들러
-    const handleProfileClick = () => {
-        fileInputRef.current.click();
+    const handleOpenProfileImageModal = () => {
+        setOpenProfileImageModal(true);
     };
 
-    // 프로필 이미지 업로드 처리 핸들러
-    const handleProfileImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    const handleCloseProfileImageModal = () => {
+        setOpenProfileImageModal(false);
+    };
 
-        // 파일 크기 및 타입 검증
-        if (file.size > 5 * 1024 * 1024) {
-            alert("이미지 크기는 5MB 이하여야 합니다.");
-            return;
-        }
+    const handleProfileImageUpdate = (imageUrl) => {
+        // Context를 통해 전역 상태 업데이트
+        setUser((prev) => ({
+            ...prev,
+            photo: imageUrl,
+            path: imageUrl,
+        }));
+    };
 
-        if (!file.type.startsWith("image/")) {
-            alert("이미지 파일만 업로드 가능합니다.");
-            return;
-        }
-
-        // 파일 미리보기 생성
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            const previewUrl = event.target.result;
-
-            try {
-                // 프로필 이미지 업로드 API 호출
-                const formData = new FormData();
-                formData.append("image", file);
-
-                const response = await axios.post("/api/user/profile-image", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                    withCredentials: true,
-                });
-
-                // 성공 시 상태 업데이트
-                if (response.data && response.data.profileImageUrl) {
-                    setUser((prev) => ({
-                        ...prev,
-                        photo: response.data.profileImageUrl,
-                        path: response.data.profileImageUrl,
-                    }));
-                    alert("프로필 이미지가 성공적으로 변경되었습니다.");
-                } else {
-                    // 임시로 미리보기 적용
-                    setUser((prev) => ({
-                        ...prev,
-                        photo: previewUrl,
-                        path: previewUrl,
-                    }));
-                    console.warn("프로필 이미지 URL이 응답에 없습니다. 미리보기를 표시합니다.");
-                }
-            } catch (err) {
-                console.error("프로필 이미지 업로드 실패:", err);
-                alert("프로필 이미지 업로드 중 오류가 발생했습니다.");
-
-                // 오류 발생 시에도 UI 미리보기는 적용
-                setUser((prev) => ({
-                    ...prev,
-                    photo: previewUrl,
-                    path: previewUrl,
-                }));
-            }
-        };
-        reader.readAsDataURL(file);
+    // 기존 함수 수정 - 클릭 시 모달 열기
+    const handleProfileClick = () => {
+        handleOpenProfileImageModal();
     };
 
     // 펫시터 관련 핸들러
@@ -306,14 +275,8 @@ const MyPage = () => {
     const handleQuitPetsitter = async () => {
         if (window.confirm("정말로 펫시터를 그만두시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
             try {
-                // DELETE에서 POST로 변경
-                const response = await axios.post(
-                    "/api/petsitter/quit",
-                    {},
-                    {
-                        withCredentials: true,
-                    }
-                );
+                // instance 사용하여 API 호출
+                const response = await instance.post("/petsitter/quit", {});
 
                 if (response.status === 200) {
                     alert("펫시터 탈퇴가 완료되었습니다.");
@@ -333,6 +296,13 @@ const MyPage = () => {
                 }
             } catch (err) {
                 console.error("펫시터 탈퇴 오류:", err);
+
+                if (err.response && err.response.status === 401) {
+                    alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+                    navigate("/login");
+                    return;
+                }
+
                 alert(err.response?.data?.message || "펫시터 탈퇴 처리 중 오류가 발생했습니다.");
             }
         }
@@ -374,9 +344,10 @@ const MyPage = () => {
 
                     {/* 펫시터 섹션 */}
                     <PetSitterSection
-                        sitterStatus={sitterStatus}
-                        onActionClick={handlePetSitterAction}
+                        sitterInfo={sitterStatus}
+                        onEditClick={handlePetSitterAction}
                         onQuitClick={handleOpenQuitPetsitterModal}
+                        onApplyClick={handlePetSitterAction}
                     />
 
                     {/* 회원 탈퇴 링크 */}
@@ -413,13 +384,12 @@ const MyPage = () => {
                         onConfirm={handleQuitPetsitter}
                     />
 
-                    {/* 숨겨진 파일 입력 필드 */}
-                    <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleProfileImageChange}
+                    {/* 프로필 이미지 모달 */}
+                    <ProfileImageModal
+                        open={openProfileImageModal}
+                        onClose={handleCloseProfileImageModal}
+                        currentImage={user?.path || "/src/assets/images/User/profile-pic.jpg"}
+                        onImageUpdate={handleProfileImageUpdate}
                     />
                 </>
             )}

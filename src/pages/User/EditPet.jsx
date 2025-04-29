@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import petEx from "/src/assets/images/User/pet_ex.svg";
-import axios from "axios";
+import instance from "../../services/axiosInstance.js";
 
 const EditPet = () => {
     const navigate = useNavigate();
@@ -39,10 +39,8 @@ const EditPet = () => {
             setIsLoading(true);
             setError(null);
             try {
-                // API 호출로 반려동물 정보 가져오기
-                const response = await axios.get(`/api/pet/${petId}`, {
-                    withCredentials: true,
-                });
+                // API 호출로 반려동물 정보 가져오기 (instance 사용)
+                const response = await instance.get(`/pet/${petId}`);
 
                 console.log("반려동물 정보 응답:", response.data);
 
@@ -185,12 +183,11 @@ const EditPet = () => {
         });
 
         try {
-            // API 호출 - 경로 수정
-            const response = await axios.put(`/api/pet/${petId}/update`, formData, {
+            // API 호출 - instance 사용
+            const response = await instance.put(`/pet/${petId}/update`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                withCredentials: true,
             });
 
             console.log("반려동물 정보 업데이트 응답:", response.data);

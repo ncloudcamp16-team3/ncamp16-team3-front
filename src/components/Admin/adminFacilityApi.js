@@ -1,3 +1,5 @@
+import adminAxios from "./adminAxios.js";
+
 export const fetchFacility = async (page = 0, size = 10, facilityTypeId = null, searchTerm = "", searchField = "") => {
     try {
         let url = `/api/admin/facility/list?page=${page}&size=${size}`;
@@ -18,26 +20,13 @@ export const fetchFacility = async (page = 0, size = 10, facilityTypeId = null, 
             }
         }
 
-        const token = localStorage.getItem("adminToken");
-        // console.log("Using token: " + token ? "Valid token exists" : "No token found");
-        // console.log("API request URL: " + url);
+        const response = await adminAxios.get(url);
 
-        const response = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        // console.log("API response status: " + response.status);
-        const data = await response.json();
-        // console.log("API response data:", data);
-
-        if (!response.ok) {
-            throw new Error(data.message || "펫시터 목록을 가져오는데 실패했습니다");
+        if (response.status != 200) {
+            throw new Error(response.data.message || "펫시터 목록을 가져오는데 실패했습니다");
         }
 
-        return data;
+        return response.data;
     } catch (error) {
         console.log("펫시터 API 호출 중 오류 발생: " + error);
         throw error;
@@ -46,23 +35,16 @@ export const fetchFacility = async (page = 0, size = 10, facilityTypeId = null, 
 
 export const fetchFacilityDetail = async (id) => {
     try {
-        const token = localStorage.getItem("adminToken");
-        const response = await fetch(`/api/admin/petsitter/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await adminAxios.get(`/api/admin/facility/${id}`);
 
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || "펫시터 정보를 가져오는데 실패했습니다");
+        if (response.status != 200) {
+            throw new Error(response.data.message || "업체 정보를 가져오는데 실패했습니다");
         }
         // console.log(data);
 
-        return data;
+        return response.data;
     } catch (error) {
-        console.log("펫시터 상세보기 API 호출 중 오류 발생: " + error);
+        console.log("업체 상세보기 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };

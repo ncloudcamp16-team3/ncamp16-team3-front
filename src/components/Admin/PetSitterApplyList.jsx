@@ -15,7 +15,7 @@ import {
 import Layout from "./Layout.jsx";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchPendingPetSitter } from "./AdminPetSitterApi.js";
+import { fetchPendingPetSitter } from "./adminPetSitterApi.js";
 
 const PetSitterApplyList = () => {
     const [searchTerm, setSearchTerm] = useState("");

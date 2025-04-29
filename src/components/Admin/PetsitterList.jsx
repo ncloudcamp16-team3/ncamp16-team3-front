@@ -15,7 +15,7 @@ import {
 import Layout from "./Layout.jsx";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchPetSitter } from "./AdminPetSitterApi.js";
+import { fetchPetSitter } from "./adminPetSitterApi.js";
 
 const PetsitterList = () => {
     const adminContext = useAdmin();

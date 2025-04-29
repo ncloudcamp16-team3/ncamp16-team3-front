@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
-import { fetchPetSitterDetail } from "./AdminPetSitterApi.js";
+import { fetchPetSitterDetail } from "./adminPetSitterApi.js";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value }) => (
@@ -31,13 +31,9 @@ const PetSitterDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const adminContext = useAdmin();
-    const currentFilter = adminContext.currentFilter;
-    const setCurrentFilter = adminContext.setCurrentFilter;
+    const { setSearchField, executeSearch, setCurrentCategory } = adminContext;
     const [petSitter, setPetSitter] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredRows, setFilteredRows] = useState([]);
-    const [rows, setRows] = useState([]);
     const [error, setError] = useState(null);
     const [approveLoading, setApproveLoading] = useState(false);
 
@@ -47,28 +43,18 @@ const PetSitterDetail = () => {
     const [isSuccess, setIsSuccess] = useState(false);
 
     // 검색 핸들러
-    const handleSearch = (term) => {
-        setSearchTerm(term);
+    const handleSearch = (term, field) => {
+        if (field) setSearchField(field);
+        setSearchField(term);
 
-        if (!term) {
-            setFilteredRows(rows);
-            return;
-        }
+        executeSearch(term, field);
 
-        const filtered = rows.filter(
-            (row) =>
-                row.title.toLowerCase().includes(term.toLowerCase()) ||
-                row.content.toLowerCase().includes(term.toLowerCase())
-        );
-
-        setFilteredRows(filtered);
+        navigate("/admin/petsitter/list");
     };
 
     // 필터 핸들러
     const handleFilterChange = (filter) => {
-        setCurrentFilter(filter);
-        // 실제 필터링 로직 구현
-        console.log(`필터 변경: ${filter}`);
+        setCurrentCategory(filter);
     };
 
     // 컴포넌트 마운트 시 데이터 가져오기

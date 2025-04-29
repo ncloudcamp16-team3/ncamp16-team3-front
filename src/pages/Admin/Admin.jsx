@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Paper, TextField, Button, DialogActions, DialogContent, DialogContentText, Modal } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Background from "../../components/Admin/Background.jsx";
+import { useAdmin } from "../../components/Admin/AdminContext.jsx"; // 이미 이 부분은 올바르게 되어 있음.
 
 const Admin = () => {
+    const { login, isAuthenticated } = useAdmin();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [openDialog, setOpenDialog] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/admin/board/list");
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -20,30 +28,12 @@ const Admin = () => {
         }
 
         try {
-            const response = await fetch("/api/admin/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "로그인에 실패했습니다");
-            }
-
-            const data = await response.json();
-
-            // 토큰 저장
-            localStorage.setItem("adminToken", data.token);
-            localStorage.setItem("adminEmail", data.email || email);
-
-            // 로그인 성공 후 리다이렉트
+            await login(email, password);
             navigate("/admin/board/list");
         } catch (error) {
             console.log(error);
-            setError(error.message);
+            const errorMessage = error.response?.data?.message || "로그인에 실패했습니다";
+            setError(errorMessage);
             setOpenDialog(true);
         }
     };

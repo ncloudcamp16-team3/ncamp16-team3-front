@@ -56,14 +56,14 @@ const ScheduleFormCard = ({
                     <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>
                         <MobileDateTimePicker
                             label="시작일"
-                            value={formData.start_date}
-                            onChange={(val) => onDateChange("start_date", val)}
+                            value={formData.startDate}
+                            onChange={(val) => onDateChange("startDate", val)}
                             slotProps={{ textField: { fullWidth: true, size: "small" } }}
                         />
                         <MobileDateTimePicker
                             label="종료일"
-                            value={formData.end_date}
-                            onChange={(val) => onDateChange("end_date", val)}
+                            value={formData.endDate}
+                            onChange={(val) => onDateChange("endDate", val)}
                             slotProps={{ textField: { fullWidth: true, size: "small" } }}
                         />
                     </Box>

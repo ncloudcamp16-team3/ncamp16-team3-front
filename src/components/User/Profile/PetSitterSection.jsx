@@ -5,11 +5,24 @@ import sitter from "/src/assets/images/User/petsit_req.svg";
 /**
  * 펫시터 섹션 컴포넌트
  * @param {Object} props
- * @param {Object} props.sitterStatus 펫시터 상태 객체
- * @param {Function} props.onActionClick 액션 버튼 클릭 핸들러
- * @param {Function} props.onQuitClick 그만두기 버튼 클릭 핸들러
+ * @param {Object} props.sitterInfo - 펫시터 정보 객체
+ * @param {Function} props.onEditClick - 펫시터 정보 수정 핸들러
+ * @param {Function} props.onQuitClick - 펫시터 그만두기 핸들러
+ * @param {Function} props.onApplyClick - 펫시터 신청 핸들러
  */
-const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
+const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }) => {
+    // sitterInfo가 있으면서 status가 APPROVE인 경우 승인된 펫시터
+    const isApproved = sitterInfo?.status === "APPROVE";
+
+    // sitterInfo가 있으면서 status가 NONE인 경우 대기 중인 펫시터
+    const isPending = sitterInfo?.status === "NONE";
+
+    // sitterInfo가 있으면서 status가 PENDING인 경우 보류된 펫시터
+    const isHold = sitterInfo?.status === "PENDING";
+
+    // sitterInfo가 있으면서 status가 DELETE인 경우 정지된 펫시터
+    const isDeleted = sitterInfo?.status === "DELETE";
+
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
@@ -17,7 +30,7 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
             </Typography>
             <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "90%", mx: "auto" }}>
                 <CardContent sx={{ p: 2 }}>
-                    {sitterStatus.registered ? (
+                    {isApproved ? (
                         // 승인된 펫시터의 경우
                         <>
                             {/* 프로필 이미지 */}
@@ -33,7 +46,7 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                             >
                                 <Box
                                     component="img"
-                                    src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
+                                    src={sitterInfo.image || "/src/assets/images/User/profile-pic.jpg"}
                                     alt="프로필"
                                     sx={{
                                         width: "100%",
@@ -52,23 +65,16 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                                     mb: 3,
                                 }}
                             >
-                                <InfoRow label="연령대" value={sitterStatus.age || "40대"} />
-
+                                <InfoRow label="연령대" value={sitterInfo.age || "40대"} />
                                 <InfoRow
                                     label="반려동물"
-                                    value={`${sitterStatus.petType || "강아지"} ${sitterStatus.petCount || "1마리"}`}
+                                    value={`${sitterInfo.petType || "강아지"} ${sitterInfo.petCount || "1마리"}`}
                                 />
-
-                                <InfoRow
-                                    label="펫시터 경험"
-                                    value={sitterStatus.experience === true || sitterStatus.sitterExp ? "있음" : "없음"}
-                                />
-
-                                <InfoRow label="주거 형태" value={sitterStatus.houseType || "오피스텔"} />
-
+                                <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
+                                <InfoRow label="주거 형태" value={sitterInfo.houseType || "오피스텔"} />
                                 <InfoRow
                                     label="한마디"
-                                    value={sitterStatus.comment || "제 아이라는 마음으로 돌봐드려요 😊"}
+                                    value={sitterInfo.comment || "제 아이라는 마음으로 돌봐드려요 😊"}
                                     isComment={true}
                                 />
                             </Box>
@@ -76,7 +82,7 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                 <Button
                                     variant="contained"
-                                    onClick={onActionClick}
+                                    onClick={onEditClick}
                                     sx={{
                                         width: "100%",
                                         bgcolor: "#E9A260",
@@ -107,12 +113,55 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                                 </Button>
                             </Box>
                         </>
-                    ) : sitterStatus.status === "NONE" ? (
+                    ) : isDeleted ? (
+                        // 영구 정지된 펫시터의 경우 (재신청 버튼 없음)
+                        <>
+                            <Box
+                                component="img"
+                                src={sitterInfo.image || "/src/assets/images/User/profile-pic.jpg"}
+                                alt="펫시터 프로필"
+                                sx={{
+                                    width: 120,
+                                    height: 120,
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    mb: 3,
+                                    mx: "auto",
+                                    display: "block",
+                                    opacity: 0.5, // 정지 상태를 더 강조하기 위해 투명도 낮춤
+                                    filter: "grayscale(100%)", // 흑백 처리로 비활성화 느낌 강조
+                                }}
+                            />
+                            <Box
+                                sx={{
+                                    bgcolor: "rgba(244, 67, 54, 0.1)",
+                                    p: 2,
+                                    borderRadius: 2,
+                                    mb: 2,
+                                    border: "1px solid #F44336",
+                                }}
+                            >
+                                <Typography
+                                    variant="body1"
+                                    align="center"
+                                    sx={{ color: "#721c24", fontWeight: "bold" }}
+                                >
+                                    펫시터 자격이 영구 정지되었습니다
+                                </Typography>
+                                <Typography variant="body2" align="center" sx={{ mt: 1, color: "#721c24" }}>
+                                    서비스 이용 규정 위반으로 인해
+                                    <br />
+                                    펫시터 자격이 영구적으로 정지되었습니다.
+                                </Typography>
+                            </Box>
+                            {/* 재신청 버튼 제거됨 */}
+                        </>
+                    ) : isPending ? (
                         // 승인 대기 중인 펫시터의 경우
                         <>
                             <Box
                                 component="img"
-                                src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
+                                src={sitterInfo.image || "/src/assets/images/User/profile-pic.jpg"}
                                 alt="펫시터 프로필"
                                 sx={{
                                     width: 120,
@@ -154,24 +203,20 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                                     mb: 3,
                                 }}
                             >
-                                <InfoRow label="연령대" value={sitterStatus.age || "40대"} />
-
+                                <InfoRow label="연령대" value={sitterInfo.age || "40대"} />
                                 <InfoRow
                                     label="반려동물"
-                                    value={`${sitterStatus.petType || "강아지"} ${sitterStatus.petCount || "1마리"}`}
+                                    value={`${sitterInfo.petType || "강아지"} ${sitterInfo.petCount || "1마리"}`}
                                 />
-
-                                <InfoRow
-                                    label="펫시터 경험"
-                                    value={sitterStatus.experience === true || sitterStatus.sitterExp ? "있음" : "없음"}
-                                />
+                                <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
                             </Box>
                         </>
-                    ) : sitterStatus.isPending ? (
+                    ) : isHold ? (
+                        // 보류된 펫시터의 경우
                         <>
                             <Box
                                 component="img"
-                                src={sitterStatus.image || "/src/assets/images/User/profile-pic.jpg"}
+                                src={sitterInfo.image || "/src/assets/images/User/profile-pic.jpg"}
                                 alt="펫시터 프로필"
                                 sx={{
                                     width: 120,
@@ -185,57 +230,44 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                             />
                             <Box
                                 sx={{
-                                    bgcolor: sitterStatus.isHold ? "rgba(244, 67, 54, 0.1)" : "rgba(255, 193, 7, 0.2)",
+                                    bgcolor: "rgba(244, 67, 54, 0.1)",
                                     p: 2,
                                     borderRadius: 2,
                                     mb: 2,
-                                    border: sitterStatus.isHold ? "1px solid #F44336" : "1px solid #FFC107",
+                                    border: "1px solid #F44336",
                                 }}
                             >
                                 <Typography
                                     variant="body1"
                                     align="center"
-                                    sx={{
-                                        color: sitterStatus.isHold ? "#721c24" : "#856404",
-                                        fontWeight: "bold",
-                                    }}
+                                    sx={{ color: "#721c24", fontWeight: "bold" }}
                                 >
-                                    {sitterStatus.isHold ? "검토 보류중입니다" : "승인 요청중입니다"}
+                                    검토 보류중입니다
                                 </Typography>
-                                <Typography
-                                    variant="body2"
-                                    align="center"
-                                    sx={{
-                                        mt: 1,
-                                        color: sitterStatus.isHold ? "#721c24" : "#856404",
-                                    }}
-                                >
-                                    {sitterStatus.isHold
-                                        ? "관리자가 신청 내용을 검토 후 보류 처리하였습니다.\n아래 정보를 수정하여 다시 신청해주세요."
-                                        : "관리자가 신청 내용을 검토 중입니다.\n승인이 완료되면 펫시터 활동이 가능합니다."}
+                                <Typography variant="body2" align="center" sx={{ mt: 1, color: "#721c24" }}>
+                                    관리자가 신청 내용을 검토 후 보류 처리하였습니다.
+                                    <br />
+                                    아래 정보를 수정하여 다시 신청해주세요.
                                 </Typography>
                             </Box>
-                            {/* 정보 표시 및 수정 버튼 */}
-                            {sitterStatus.isHold && (
-                                <Button
-                                    variant="contained"
-                                    onClick={onActionClick}
-                                    sx={{
-                                        width: "100%",
-                                        bgcolor: "#E9A260",
-                                        "&:hover": { bgcolor: "#d0905a" },
-                                        borderRadius: "4px",
-                                        py: 0.7,
-                                        fontSize: "0.9rem",
-                                        boxShadow: "none",
-                                    }}
-                                >
-                                    펫시터 정보 수정
-                                </Button>
-                            )}
+                            <Button
+                                variant="contained"
+                                onClick={onEditClick}
+                                sx={{
+                                    width: "100%",
+                                    bgcolor: "#E9A260",
+                                    "&:hover": { bgcolor: "#d0905a" },
+                                    borderRadius: "4px",
+                                    py: 0.7,
+                                    fontSize: "0.9rem",
+                                    boxShadow: "none",
+                                }}
+                            >
+                                펫시터 정보 수정
+                            </Button>
                         </>
                     ) : (
-                        // 그 외의 경우 (기본값: 미등록 펫시터)
+                        // 펫시터가 아닌 경우 (등록하지 않은 상태)
                         <>
                             <Box
                                 component="img"
@@ -259,7 +291,7 @@ const PetSitterSection = ({ sitterStatus, onActionClick, onQuitClick }) => {
                             <Button
                                 variant="contained"
                                 fullWidth
-                                onClick={onActionClick}
+                                onClick={onApplyClick}
                                 sx={{
                                     bgcolor: "#E9A260",
                                     "&:hover": { bgcolor: "#d0905a" },

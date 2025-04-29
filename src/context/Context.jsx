@@ -7,6 +7,7 @@ import { getBoardTypeList } from "../services/boardService.js";
 export const Context = createContext();
 
 export function Provider({ children }) {
+    const [nc, setNc] = useState(null);
     const [isMute, setIsMute] = useState(true);
     const [address, setAddress] = useState("");
     const hasRun = useRef(false); // ✅ useEffect 두 번 실행 방지
@@ -62,6 +63,21 @@ export function Provider({ children }) {
         latitude: null,
         longitude: null,
         distance: null,
+        chatId: "",
+    });
+
+    const [pet, setPet] = useState({
+        id: null,
+        ownerId: 0,
+        petTypeId: null,
+        name: "",
+        gender: "",
+        birth: "",
+        weight: 0,
+        info: "",
+        neutered: false,
+        activityStatus: "NONE",
+        photos: [],
     });
 
     const [isLogin, setLogin] = useState(false);
@@ -107,8 +123,12 @@ export function Provider({ children }) {
                 showModal,
                 isLogin,
                 setLogin,
+                nc,
+                setNc,
                 boardTypeList,
                 setBoardTypeList,
+                pet,
+                setPet,
             }}
         >
             {children}
