@@ -2,6 +2,9 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
 import { getUserInfo } from "../services/authService.js";
+import { registerSW } from "../../public/firebase-messaging-sw-register.js";
+import { getToken, onMessage } from "firebase/messaging";
+import { messaging } from "../../public/firebase.js";
 
 export const Context = createContext();
 
@@ -18,6 +21,41 @@ export function Provider({ children }) {
     });
 
     const [isUserLoading, setUserLoading] = useState(true);
+
+    const [fcmToken, setFcmToken] = useState("");
+    useEffect(() => {
+        // 서비스워커 등록
+        registerSW();
+        // 푸시 알림 권한 요청
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+
+                // 토큰 가져오기
+                getToken(messaging, {
+                    vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
+                })
+                    .then((currentToken) => {
+                        if (currentToken) {
+                            console.log("FCM Token:", currentToken);
+                            setFcmToken(currentToken);
+                            // 서버에 토큰 전달
+                        } else {
+                            console.log("No token available");
+                        }
+                    })
+                    .catch((err) => {
+                        console.log("Error getting token:", err);
+                    });
+            }
+        });
+
+        // 푸시 알림 수신 처리
+        onMessage(messaging, (payload) => {
+            console.log("Foreground message received:", payload);
+            // 푸시 알림 처리 코드 추가
+        });
+    }, []);
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -122,6 +160,8 @@ export function Provider({ children }) {
                 setBoardTypeList,
                 pet,
                 setPet,
+                fcmToken,
+                setFcmToken,
             }}
         >
             {children}
