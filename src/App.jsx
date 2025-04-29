@@ -59,8 +59,45 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 import NotificationClient from "./pages/Notification/NotificationClient.jsx";
+import { useEffect } from "react";
+import { getToken, onMessage } from "firebase/messaging";
+import { messaging } from "../public/firebase.js"; // messaging 객체 import
+import { registerSW } from "../public/firebase-messaging-sw-register.js";
 
 function App() {
+    useEffect(() => {
+        // 서비스워커 등록
+        registerSW();
+        // 푸시 알림 권한 요청
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+
+                // 토큰 가져오기
+                getToken(messaging, {
+                    vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
+                })
+                    .then((currentToken) => {
+                        if (currentToken) {
+                            console.log("FCM Token:", currentToken);
+                            // 서버에 토큰 전달
+                        } else {
+                            console.log("No token available");
+                        }
+                    })
+                    .catch((err) => {
+                        console.log("Error getting token:", err);
+                    });
+            }
+        });
+
+        // 푸시 알림 수신 처리
+        onMessage(messaging, (payload) => {
+            console.log("Foreground message received:", payload);
+            // 푸시 알림 처리 코드 추가
+        });
+    }, []);
+
     return (
         <ThemeProvider theme={theme}>
             <Provider>
