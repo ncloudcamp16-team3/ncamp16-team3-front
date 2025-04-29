@@ -4,10 +4,12 @@ const ReserveContext = createContext();
 
 export const ReserveProvider = ({ children }) => {
     const [category, setCategory] = useState("HOTEL");
-    const [sortBy, setSortBy] = useState("rating");
+    const [sortBy, setSortBy] = useState("starPoint");
     const [data, setData] = useState([]);
-    const [page, setPage] = useState(1);
+    const [noData, setNoData] = useState(false);
+    const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
+    const [last, setLast] = useState(false);
     const [scrollMap, setScrollMap] = useState({});
     const [location, setLocation] = useState({ latitude: null, longitude: null });
 
@@ -34,6 +36,10 @@ export const ReserveProvider = ({ children }) => {
                 setScrollY,
                 location,
                 setLocation,
+                noData,
+                setNoData,
+                last,
+                setLast,
             }}
         >
             {children}

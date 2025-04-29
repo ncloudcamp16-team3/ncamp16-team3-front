@@ -2,7 +2,14 @@ import instance from "./axiosInstance.js";
 
 const API_URL = "/reserve"; // 상대 URL
 
-export const getFacilityListsToReserve = ({ page = 1, size = 10, sortBy = "rating", category = "HOTEL", location, today }) => {
+export const getFacilityListsToReserve = ({
+    page = 1,
+    size = 10,
+    sortBy = "starPoint",
+    category = "HOTEL",
+    location,
+    today,
+}) => {
     return instance
         .get(`${API_URL}/facility/lists`, {
             params: {

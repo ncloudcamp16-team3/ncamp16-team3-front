@@ -3,12 +3,14 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useReserveContext } from "../../../context/ReserveContext.jsx";
 
 const SortFilter = () => {
-    const { sortBy, setSortBy, setPage } = useReserveContext();
+    const { sortBy, setSortBy, setPage, setNoData, setLast } = useReserveContext();
 
     const handleSort = (event, newSort) => {
         if (newSort !== null) {
             setSortBy(newSort);
-            setPage(1); // 페이지 초기화
+            setPage(0); // 페이지 초기화
+            setNoData(false);
+            setLast(false);
         }
     };
 
