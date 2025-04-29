@@ -37,7 +37,7 @@ const axiosInstance = axios.create({
 // Axios interceptor 수정
 axiosInstance.interceptors.request.use(
     async (config) => {
-        await waitForCsrfToken(); // csrfToken 초기화가 끝날 때까지 기다림
+        await waitForCsrfToken; // csrfToken 초기화가 끝날 때까지 기다림
 
         if (csrfToken) {
             config.headers["X-XSRF-TOKEN"] = csrfToken;
