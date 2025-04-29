@@ -50,7 +50,7 @@ const ChatRoom = () => {
 
         const init = async () => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                await new Promise((resolve) => setTimeout(resolve, 1000));
                 const filter = { channel_id: channelId };
                 const sort = { created_at: 1 };
                 const option = { per_page: 100 };

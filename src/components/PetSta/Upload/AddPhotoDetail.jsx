@@ -10,13 +10,13 @@ const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {
     const [content, setContent] = React.useState(""); // 내용 저장
     const navigate = useNavigate();
 
-    const handleShare = () => {
+    const handleShare = async () => {
         try {
             const formData = new FormData();
             formData.append("content", content);
             formData.append("image", imageFile);
 
-            addPhoto(formData);
+            await addPhoto(formData);
 
             alert("게시물이 업로드되었습니다!");
             navigate("/petsta");
