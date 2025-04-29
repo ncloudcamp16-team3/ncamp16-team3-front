@@ -15,22 +15,18 @@ let waitForCsrfToken = () => Promise.resolve(); // 기본은 그냥 통과
 export const initCsrfToken = async () => {
     try {
         const response = await fetch("/api/auth/csrf", {
-            credentials: "include",
+            credentials: "include", // ✅ 쿠키 저장을 위한 필수 옵션
         });
         const data = await response.json();
         csrfToken = data.csrfToken;
-
-        // 이 시점에만 요청 허용
-        waitForCsrfToken = () => Promise.resolve();
     } catch (error) {
         console.error("CSRF 토큰 가져오기 실패:", error);
     }
 };
-const baseURL = import.meta.env.MODE === "development" ? "http://localhost:8080/api" : "/api";
 
 const axiosInstance = axios.create({
-    baseURL: baseURL,
-    withCredentials: true,
+    baseURL: import.meta.env.MODE === "development" ? "http://localhost:8080/api" : "/api",
+    withCredentials: true, // ✅ 이거 있어야 쿠키 보내짐!
 });
 
 // Axios interceptor 수정

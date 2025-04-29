@@ -69,7 +69,6 @@ function App() {
         const fetchCsrf = async () => {
             await initCsrfToken();
             setCsrfReady(true);
-            console.log("두번할걸??");
         };
         fetchCsrf();
     }, []);
