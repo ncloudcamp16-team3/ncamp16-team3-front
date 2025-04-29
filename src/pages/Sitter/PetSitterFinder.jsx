@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
-import mockPetsitters from "../../mock/Sitter/petsitters.json";
 import PetSitterSurvey from "../../components/Sitter/PetSitterSurvey";
 import PetSitterResults from "../../components/Sitter/PetSitterResults";
+import { getApprovedPetSitters } from "../../services/petSitterService";
 
 const PetSitterFinder = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [progress, setProgress] = useState(0);
     const [showResults, setShowResults] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // 사용자 응답 저장
+    // 사용자 응답
     const [selectedAges, setSelectedAges] = useState({
         "20대": false,
         "30대": false,
@@ -90,46 +92,63 @@ const PetSitterFinder = () => {
                 setHistory([...history, { question: "임시보호 경험이 있으신 분을 찾으시나요?", answer: hasExpAnswer }]);
 
                 setStep(4);
+                // 조건에 맞는 펫시터 검색
+                fetchApprovedPetSitters();
                 break;
 
-            case 4: // 완료 시 결과 표시
-                // 선택된 조건으로 펫시터 필터링
-                filterPetsitters();
+            case 4: // 완료 시 결과
                 setShowResults(true);
                 break;
         }
     };
 
-    // 펫시터 필터링 함수
-    const filterPetsitters = () => {
-        // 선택된 옵션 추출
-        const selectedAge = Object.keys(selectedAges).find((age) => selectedAges[age]);
-        const wantsPetOwner = hasPet["네"];
-        const wantsExperienced = hasSitterExperience["네"];
+    const fetchApprovedPetSitters = async () => {
+        setIsLoading(true);
+        setError(null);
 
-        // 필터링 로직
-        let filtered = [...mockPetsitters];
+        try {
+            // 선택된 옵션 추출
+            const selectedAge = Object.keys(selectedAges).find((age) => selectedAges[age]);
 
-        // 연령대 필터링
-        if (selectedAge) {
-            filtered = filtered.filter((sitter) => sitter.age === selectedAge);
+            // 파라미터 객체 생성
+            const params = {
+                age: selectedAge,
+            };
+
+            // 반려동물 소유 여부 처리
+            if (hasPet["네"]) {
+                params.grown = true;
+                params.petOwnership = true;
+            } else if (hasPet["아니오"]) {
+                params.grown = false;
+                params.petOwnership = false;
+            }
+
+            // 펫시터 경험 여부 처리
+            if (hasSitterExperience["네"]) {
+                params.sitterExp = true;
+            } else if (hasSitterExperience["아니오"]) {
+                params.sitterExp = false;
+            }
+
+            console.log("API 요청 파라미터:", params);
+
+            // API 호출
+            const response = await getApprovedPetSitters(params);
+            console.log("서버 응답:", response);
+
+            // 서버 응답에서 데이터 추출
+            if (response && response.data) {
+                setFilteredPetsitters(response.data);
+            } else {
+                throw new Error("펫시터 데이터를 불러오는데 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("펫시터 검색 오류:", error);
+            setError("펫시터 정보를 불러오는데 실패했습니다. 다시 시도해주세요.");
+        } finally {
+            setIsLoading(false);
         }
-
-        // 반려동물 소유 여부 필터링 (상관없어요는 필터링 안함)
-        if (wantsPetOwner) {
-            filtered = filtered.filter((sitter) => sitter.pet_count > 0);
-        } else if (hasPet["아니오"]) {
-            filtered = filtered.filter((sitter) => sitter.pet_count === 0);
-        }
-
-        // 경험 여부 필터링 (상관없어요는 필터링 안함)
-        if (wantsExperienced) {
-            filtered = filtered.filter((sitter) => sitter.experience);
-        } else if (hasSitterExperience["아니오"]) {
-            filtered = filtered.filter((sitter) => !sitter.experience);
-        }
-
-        setFilteredPetsitters(filtered);
     };
 
     // 뒤로가기 처리
@@ -223,11 +242,15 @@ const PetSitterFinder = () => {
                     mb: 2,
                 }}
             >
-                {showResults ? (
-                    // 결과 화면 - PetSitterResults 컴포넌트 사용
-                    <PetSitterResults filteredPetsitters={filteredPetsitters} />
+                {isLoading ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                        <CircularProgress sx={{ color: "#E9A260" }} />
+                    </Box>
+                ) : showResults ? (
+                    // 결과 화면 - PetSitterResults
+                    <PetSitterResults filteredPetsitters={filteredPetsitters} error={error} />
                 ) : (
-                    // 질문 화면 - PetSitterSurvey 컴포넌트 사용
+                    // 질문 화면 - PetSitterSurvey
                     <PetSitterSurvey
                         step={step}
                         history={history}

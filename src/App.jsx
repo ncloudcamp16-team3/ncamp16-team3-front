@@ -108,7 +108,7 @@ function App() {
                                 <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
                                 <Route path="/reserve/review/:id" element={<Review />} />
                                 <Route path="/petsitter" element={<PetSitter />} />
-                                <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
+                                <Route path="/petsitter/:sitterId" element={<PetSitterDetail />} />
                                 <Route path="/calendar" element={<Cal />} />
                                 <Route path="/notification" element={<Notify />} />
                                 <Route path="/mypage" element={<MyPage />} />
