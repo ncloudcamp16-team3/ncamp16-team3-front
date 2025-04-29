@@ -10,7 +10,10 @@ const getCookie = (name) => {
     return matches ? decodeURIComponent(matches[1]) : null;
 };
 
-let waitForCsrfToken = () => Promise.resolve(); // 기본은 그냥 통과
+let resolveTokenReady;
+let waitForCsrfToken = new Promise((resolve) => {
+    resolveTokenReady = resolve;
+});
 
 export const initCsrfToken = async () => {
     try {
@@ -19,8 +22,10 @@ export const initCsrfToken = async () => {
         });
         const data = await response.json();
         csrfToken = data.csrfToken;
+        resolveTokenReady(); // ✅ 이제 waitForCsrfToken을 통과시킴
     } catch (error) {
         console.error("CSRF 토큰 가져오기 실패:", error);
+        resolveTokenReady(); // 실패해도 진행은 시킴
     }
 };
 

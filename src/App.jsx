@@ -66,15 +66,15 @@ function App() {
     const [csrfReady, setCsrfReady] = useState(false);
 
     useEffect(() => {
-        const fetchCsrf = async () => {
-            await initCsrfToken();
-            setCsrfReady(true);
+        const init = async () => {
+            await initCsrfToken(); // ⬅️ 토큰 초기화
+            setCsrfReady(true); // ⬅️ 완료되면 렌더링 시작
         };
-        fetchCsrf();
+        init();
     }, []);
 
     if (!csrfReady) {
-        return <div>Loading...</div>; // csrf 토큰 준비될 때까지 아무것도 안 띄움
+        return <div>로딩 중...</div>; // 또는 로딩 스피너 넣어도 됨
     }
     return (
         <ThemeProvider theme={theme}>
