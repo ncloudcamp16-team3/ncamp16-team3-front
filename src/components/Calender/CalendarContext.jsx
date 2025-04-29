@@ -29,7 +29,7 @@ export const CalendarProvider = ({ children }) => {
         longitude: "",
     });
     const [address, setAddress] = useState("");
-    const { user } = useContext(Context);
+    const { user, fcmToken } = useContext(Context);
 
     const getTypeColor = (type) => {
         const colors = {
@@ -174,6 +174,7 @@ export const CalendarProvider = ({ children }) => {
                 longitude: formData.longitude || null,
                 startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
                 endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                fcmToken: fcmToken,
             };
 
             // 새로운 일정 추가
@@ -197,6 +198,7 @@ export const CalendarProvider = ({ children }) => {
                 longitude: "",
                 startDate: dayjs(selectedDate),
                 endDate: dayjs(selectedDate),
+                fcmToken: "",
             });
             alert("일정이 성공적으로 등록되었습니다!");
         } catch (error) {

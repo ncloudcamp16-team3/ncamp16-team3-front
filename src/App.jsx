@@ -13,7 +13,6 @@ import Review from "./pages/Reserve/Review.jsx";
 import PetSitter from "./pages/Sitter/PetSitter.jsx";
 import Layout0 from "./components/Global/Layout0.jsx";
 import Register from "./pages/User/Register.jsx";
-import Admin from "./pages/Admin/Admin.jsx";
 import MyPage from "./pages/User/MyPage.jsx";
 import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
@@ -58,19 +57,18 @@ import Notify from "./pages/Notification/Notification.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
-import NotificationClient from "./pages/Notification/NotificationClient.jsx";
+import Admin from "./pages/Admin/Admin.jsx";
+// messaging 객체 import
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <Provider>
-                <NotificationClient />
                 <Router>
                     <Routes>
-                        {/* 로그인 페이지는 별도 경로로 유지 */}
-                        <Route path="/admin" element={<Admin />} />
                         {/* 관리자 레이아웃은 /admin/* 하위 경로에 적용 */}
-                        <Route path="/admin/*" element={<AdminLayout />}>
+                        <Route path="/admin" element={<AdminLayout />}>
+                            <Route index element={<Admin />} />
                             {/* 인증 보호 라우트 */}
                             <Route element={<ProtectedAdminRoute />}>
                                 <Route path="board/list" element={<AdminDashboard />} />
@@ -109,7 +107,7 @@ function App() {
                                 <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
                                 <Route path="/reserve/review/:id" element={<Review />} />
                                 <Route path="/petsitter" element={<PetSitter />} />
-                                <Route path="/petsitter/detail/:sitterId" element={<PetSitterDetail />} />
+                                <Route path="/petsitter/:sitterId" element={<PetSitterDetail />} />
                                 <Route path="/calendar" element={<Cal />} />
                                 <Route path="/notification" element={<Notify />} />
                                 <Route path="/mypage" element={<MyPage />} />

@@ -17,6 +17,7 @@ import {
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
+import adminAxios from "./adminAxios.js";
 
 // 스타일된 컴포넌트
 const ImageUploadButton = styled("label")(({ theme }) => ({
@@ -77,13 +78,6 @@ const Notice = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    // // 게시판 타입 매핑을 추가합니다
-    // const boardTypeMapping = {
-    //     자유게시판: 1,
-    //     중고장터: 2,
-    //     정보게시판: 3,
-    // };
 
     // 이미지 업로드 핸들러
     const handleImageUpload = (event) => {
@@ -190,55 +184,23 @@ const Notice = () => {
         });
 
         try {
-            const token = localStorage.getItem("adminToken");
+            const response = await adminAxios.post("/api/admin/announce/post", formData);
 
-            if (!token) {
-                navigate("/admin");
-                return;
-            }
-
-            const response = await fetch("/api/admin/announce/post", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            // 401 오류 처리
-            // if (response.status === 401) {
-            //     // 토큰이 만료되었거나 유효하지 않은 경우
-            //     localStorage.removeItem("adminToken");
-            //     navigate("/admin");
-            //     return;
-            // }
-
-            // 응답 body가 비어있을 수 있으므로 확인
-            const contentType = response.headers.get("content-type");
-            let data;
-
-            if (contentType && contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                // JSON이 아닌 경우 또는 비어있는 경우
-                data = { message: "응답이 비어있습니다" };
-            }
-
-            if (!response.ok) {
-                throw new Error(data.message || "공지사항 등록에 실패했습니다");
+            if (!response.data) {
+                throw new Error("응답이 비어있습니다");
             }
 
             setSnackbarMessage("공지사항이 성공적으로 등록되었습니다");
             setSnackbarSeverity("success");
             setOpenSnackbar(true);
 
-            // 성공 시 2초 후 목록 페이지로 이동
+            // 성공 시 1초 후 목록 페이지로 이동
             setTimeout(() => {
                 navigate("/admin/board/list");
-            }, 2000);
+            }, 1000);
         } catch (error) {
             console.error("공지사항 등록 오류:", error);
-            setSnackbarMessage(error.message || "공지사항 등록 중 오류가 발생했습니다");
+            setSnackbarMessage(error.response?.data?.message || "공지사항 등록 중 오류가 발생했습니다");
             setSnackbarSeverity("error");
             setOpenSnackbar(true);
         } finally {
@@ -401,6 +363,22 @@ const Notice = () => {
                     {/* 등록 버튼 */}
                     <Grid item xs={12}>
                         <Button
+                            variant="contained"
+                            sx={{
+                                mt: 2,
+                                backgroundColor: "#e2ccb5",
+                                "&:hover": { backgroundColor: "#d4bea7" },
+                                color: "#000",
+                                width: "300px",
+                                fontSize: "large",
+                                float: "right",
+                                ml: 3,
+                            }}
+                            onClick={() => window.history.back()}
+                        >
+                            뒤로
+                        </Button>
+                        <Button
                             type="submit"
                             fullWidth
                             variant="contained"
@@ -411,9 +389,9 @@ const Notice = () => {
                                 "&:hover": {
                                     backgroundColor: "#D9A873",
                                 },
-                                width: "500px",
-                                float: "right",
+                                width: "300px",
                                 fontSize: "large",
+                                float: "right",
                             }}
                         >
                             {loading ? "등록 중..." : "등록"}

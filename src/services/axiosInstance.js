@@ -1,6 +1,5 @@
 import axios from "axios";
 
-let csrfToken = null;
 
 // 쿠키에서 accessToken 꺼내는 함수
 const getCookie = (name) => {
@@ -9,7 +8,6 @@ const getCookie = (name) => {
     );
     return matches ? decodeURIComponent(matches[1]) : null;
 };
-
 const axiosInstance = axios.create({
     baseURL: import.meta.env.MODE === "development" ? "http://localhost:8080/api" : "/api",
     withCredentials: true, // ✅ 이거 있어야 쿠키 보내짐!
