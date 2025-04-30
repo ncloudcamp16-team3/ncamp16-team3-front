@@ -30,10 +30,10 @@ const AnnounceSlider = ({ announceData }) => {
                     direction="vertical"
                     loop={true}
                     autoplay={{
-                        delay: 3000,
+                        delay: 2000,
                         disableOnInteraction: false,
                     }}
-                    speed={1000}
+                    speed={500}
                     modules={[Autoplay]}
                     style={{ height: "100%", width: "100%" }}
                 >

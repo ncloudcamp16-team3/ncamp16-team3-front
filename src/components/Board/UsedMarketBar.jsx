@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick }) => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const requestCommentCreate = () => {
+    const requestChat = () => {
         navigate("/chat/room/undefined");
     };
     return (
@@ -48,7 +48,7 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick }) => {
             </Typography>
 
             <Button
-                onClick={requestCommentCreate}
+                onClick={requestChat}
                 variant="contained"
                 sx={{
                     position: "absolute",

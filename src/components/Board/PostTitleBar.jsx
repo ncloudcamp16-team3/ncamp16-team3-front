@@ -7,7 +7,7 @@ import Arrow from "../../assets/images/Global/left-arrow-brand.svg";
 import { useNavigate } from "react-router-dom";
 import DropdownPostBtns from "./DropdownPostBtns.jsx";
 
-const PostTitleBar = ({ writer, setOpenDeleteModal, setOpenUpdateModal }) => {
+const PostTitleBar = ({ postData, setOpenDeleteModal, setOpenUpdateModal }) => {
     const { boardType, user } = useContext(Context);
     const [dropPostBtn, setDropPostBtn] = useState(false);
     const theme = useTheme();
@@ -32,7 +32,7 @@ const PostTitleBar = ({ writer, setOpenDeleteModal, setOpenUpdateModal }) => {
                     {boardType.name}
                 </Typography>
             </Box>
-            {user.id === writer.id && (
+            {user.id === postData.authorId && (
                 <MoreVertIcon
                     onClick={() => setDropPostBtn(!dropPostBtn)}
                     sx={{

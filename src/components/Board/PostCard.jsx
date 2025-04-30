@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { useNavigate } from "react-router-dom";
 import useTimeAgo from "../../hook/useTimeAgo.js";
+import { Context } from "../../context/Context.jsx";
 
 const PostCard = ({ postItem }) => {
     const navigate = useNavigate();
     const timeAgo = useTimeAgo(postItem.createdAt);
+    const { boardType } = useContext(Context);
 
     return (
         <Card
@@ -60,16 +62,18 @@ const PostCard = ({ postItem }) => {
                     {postItem.product?.price}원
                 </Typography>
 
-                <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "10px" }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                        <FavoriteIcon sx={{ fontSize: 16, marginTop: "2px" }} />
-                        <span sx={{ marginTop: "2px" }}>{postItem.likeCount}</span>
+                {boardType.id !== 2 && (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "10px" }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "3px" }}>
+                            <FavoriteIcon sx={{ fontSize: 16, marginTop: "2px" }} />
+                            <span sx={{ marginTop: "2px" }}>{postItem.likeCount}</span>
+                        </Box>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "3px" }}>
+                            <ChatBubbleIcon sx={{ fontSize: 16, marginTop: "2px" }} />
+                            <span sx={{ marginTop: "2px" }}>{postItem.commentCount}</span>
+                        </Box>
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                        <ChatBubbleIcon sx={{ fontSize: 16, marginTop: "2px" }} />
-                        <span sx={{ marginTop: "2px" }}>{postItem.commentCount}</span>
-                    </Box>
-                </Box>
+                )}
             </CardContent>
         </Card>
     );
