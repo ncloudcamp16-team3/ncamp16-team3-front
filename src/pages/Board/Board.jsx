@@ -146,7 +146,7 @@ const Board = () => {
                     {postList.map((item, index) => {
                         const isLast = index === postList.length - 1;
                         return (
-                            <Box key={item.id} ref={isLast ? lastItemRef : null}>
+                            <Box ref={isLast ? lastItemRef : null}>
                                 <PostCard postItem={item} />
                             </Box>
                         );

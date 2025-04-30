@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import useTimeAgo from "../../hook/useTimeAgo.js";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -13,6 +13,18 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
     const [dropCommentBtn, setDropCommentBtn] = useState(false);
     const [updateAble, setUpdateAble] = useState(false);
     const [comment, setComment] = useState("");
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropCommentBtn && dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropCommentBtn(false); // 🔹 외부 클릭 시 닫기
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropCommentBtn]);
 
     useEffect(() => {
         setComment(commentItem.content);
@@ -127,9 +139,13 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
                             </Box>
                         </Box>
                         {user.id === commentItem.authorId && (
-                            <Box>
+                            <Box ref={dropdownRef}>
                                 <MoreVertIcon
-                                    onClick={() => setDropCommentBtn(!dropCommentBtn)}
+                                    onClick={() => {
+                                        if (!dropCommentBtn) {
+                                            setDropCommentBtn(true);
+                                        }
+                                    }}
                                     sx={{
                                         position: "absolute",
                                         right: "10px",

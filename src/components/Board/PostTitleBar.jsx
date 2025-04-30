@@ -24,7 +24,7 @@ const PostTitleBar = ({ postData, setOpenDeleteModal, setOpenUpdateModal }) => {
                 justifyContent: "center",
             }}
         >
-            <Box position="absolute" left={10} onClick={() => navigate(-1)} sx={{ cursor: "pointer" }}>
+            <Box position="absolute" left={10} onClick={() => navigate("/board")} sx={{ cursor: "pointer" }}>
                 <img src={Arrow} width="26px" height="26px" alt="back" />
             </Box>
             <Box>

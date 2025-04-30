@@ -3,6 +3,32 @@ import instance from "./axiosInstance.js";
 const API_URL = "/board"; // 상대 URL
 const SIZE = 10; // 상대 URL
 
+export const saveBoard = async (formData) => {
+    return await instance
+        .post(`${API_URL}`, formData)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};
+
+export const deleteBoard = async (postId) => {
+    return await instance
+        .delete(`${API_URL}`, {
+            params: {
+                postId,
+            },
+        })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};
+
 export const getBoardDetail = async (boardId) => {
     return await instance
         .get(`${API_URL}/detail/${boardId}`)
