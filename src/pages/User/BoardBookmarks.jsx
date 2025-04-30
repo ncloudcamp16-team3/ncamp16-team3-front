@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography, Card, Tab, Tabs, Checkbox, FormControlLabel } from "@mui/material";
+import React, { useState, useEffect, useContext } from "react";
+import { Box, Typography, Card, Tab, Tabs, Checkbox, FormControlLabel, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
+import { getBoardBookmarks } from "../../services/bookmarkService.js";
+import { Context } from "../../context/Context.jsx";
 
 // 게시판 타입에 따른 이름 매핑
 const boardTypeMap = {
@@ -10,53 +12,60 @@ const boardTypeMap = {
     4: "정보",
 };
 
-// Mock 데이터
-const mockPostBookmarks = [
-    {
-        id: 1,
-        title: "제 반려견 도비에요!",
-        thumbnail: "/mock/Global/images/haribo.jpg",
-        content: "안녕하세요 도비에요 오늘은...\n다양 종류로 돌봄 가능...",
-        boardTypeId: 1, // 자유
-    },
-    {
-        id: 2,
-        title: "2025 어질리티 대회",
-        thumbnail: "/mock/PetMeeting/images/pet4.jpg",
-        content: "안녕하세요 오는 2025-02 ~2025-03-14 제휴사...",
-        boardTypeId: 4, // 정보
-    },
-];
-
-const PostBookmarks = () => {
+const BoardBookmarks = () => {
     const [bookmarks, setBookmarks] = useState([]);
     const [filteredBookmarks, setFilteredBookmarks] = useState([]);
     const [category, setCategory] = useState("전체");
     const [myPosts, setMyPosts] = useState(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const { user } = useContext(Context);
 
     useEffect(() => {
-        // Mock 데이터 로드
-        setBookmarks(mockPostBookmarks);
-        setFilteredBookmarks(mockPostBookmarks);
+        const fetchBookmarks = async () => {
+            try {
+                setLoading(true);
+                console.log("게시물 북마크 요청 시작");
+                const data = await getBoardBookmarks();
+                console.log("게시물 북마크 응답 데이터:", data);
+                setBookmarks(data || []);
+                setFilteredBookmarks(data || []);
+            } catch (error) {
+                console.error("북마크를 불러오는 중 오류 발생:", error);
+                if (error.response) {
+                    console.error("응답 상태:", error.response.status);
+                    console.error("응답 데이터:", error.response.data);
+                }
+                setBookmarks([]);
+                setFilteredBookmarks([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBookmarks();
     }, []);
 
+    // 필터링 로직
     useEffect(() => {
+        let filtered = [...bookmarks];
+
         // 카테고리 필터링
-        if (category === "전체") {
-            setFilteredBookmarks(bookmarks);
-        } else {
+        if (category !== "전체") {
             const categoryId = Object.keys(boardTypeMap).find((key) => boardTypeMap[key] === category);
-            setFilteredBookmarks(bookmarks.filter((item) => item.boardTypeId.toString() === categoryId));
+            filtered = filtered.filter((item) => item.boardTypeId.toString() === categoryId);
         }
-    }, [category, bookmarks]);
+
+        // 내 게시물 필터링
+        if (myPosts) {
+            filtered = filtered.filter((item) => item.authorId === user.id);
+        }
+
+        setFilteredBookmarks(filtered);
+    }, [category, myPosts, bookmarks, user.id]);
 
     const handlePostClick = (postId) => {
-        navigate(`/post/${postId}`);
-    };
-
-    const handleBack = () => {
-        navigate(-1);
+        navigate(`/board/${postId}`);
     };
 
     const handleCategoryChange = (_, newValue) => {
@@ -69,15 +78,8 @@ const PostBookmarks = () => {
 
     return (
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
-            <TitleBar name="북마크 게시물" onBack={handleBack} />
+            <TitleBar name="게시물 북마크" />
 
-            <Box
-                sx={{
-                    position: "absolute",
-                    top: 14,
-                    right: 16,
-                }}
-            ></Box>
             <Box sx={{ display: "flex", justifyContent: "flex-end", px: 2, mt: 1 }}>
                 <FormControlLabel
                     control={<Checkbox checked={myPosts} onChange={handleMyPostsChange} size="small" />}
@@ -85,6 +87,7 @@ const PostBookmarks = () => {
                     sx={{ margin: 0 }}
                 />
             </Box>
+
             {/* 카테고리 탭 */}
             <Tabs
                 value={category}
@@ -115,7 +118,11 @@ const PostBookmarks = () => {
 
             {/* 게시물 목록 */}
             <Box sx={{ p: 2 }}>
-                {filteredBookmarks.length > 0 ? (
+                {loading ? (
+                    <Box display="flex" justifyContent="center" my={3}>
+                        <CircularProgress size={30} />
+                    </Box>
+                ) : filteredBookmarks.length > 0 ? (
                     filteredBookmarks.map((item) => (
                         <Card
                             key={item.id}
@@ -136,17 +143,19 @@ const PostBookmarks = () => {
                         >
                             <Box sx={{ p: 2 }}>
                                 <Box sx={{ display: "flex", gap: 2 }}>
-                                    <Box
-                                        component="img"
-                                        src={item.thumbnail}
-                                        alt={item.title}
-                                        sx={{
-                                            width: "80px",
-                                            height: "80px",
-                                            borderRadius: 2,
-                                            objectFit: "cover",
-                                        }}
-                                    />
+                                    {item.firstImageUrl && (
+                                        <Box
+                                            component="img"
+                                            src={item.firstImageUrl}
+                                            alt={item.title}
+                                            sx={{
+                                                width: "80px",
+                                                height: "80px",
+                                                borderRadius: 2,
+                                                objectFit: "cover",
+                                            }}
+                                        />
+                                    )}
                                     <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                                         <Box
                                             sx={{
@@ -166,7 +175,7 @@ const PostBookmarks = () => {
                                                     fontWeight: "medium",
                                                 }}
                                             >
-                                                {boardTypeMap[item.boardTypeId]}
+                                                {boardTypeMap[item.boardTypeId] || "기타"}
                                             </Typography>
                                         </Box>
                                         <Typography
@@ -184,6 +193,18 @@ const PostBookmarks = () => {
                                         >
                                             {item.content}
                                         </Typography>
+                                        {item.price && (
+                                            <Typography
+                                                sx={{
+                                                    fontSize: "15px",
+                                                    fontWeight: "bold",
+                                                    color: "#E9A260",
+                                                    mt: 1,
+                                                }}
+                                            >
+                                                {item.price.toLocaleString()}원
+                                            </Typography>
+                                        )}
                                     </Box>
                                 </Box>
                             </Box>
@@ -212,4 +233,4 @@ const PostBookmarks = () => {
     );
 };
 
-export default PostBookmarks;
+export default BoardBookmarks;

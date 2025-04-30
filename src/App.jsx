@@ -18,7 +18,7 @@ import AddPet from "./pages/User/AddPet.jsx";
 import EditPet from "./pages/User/EditPet.jsx";
 import Bookmark from "./pages/User/Bookmark";
 import PetstaBookmarks from "./pages/User/PetstaBookmarks";
-import PostBookmarks from "./pages/User/PostBookmarks";
+import BoardBookmarks from "./pages/User/BoardBookmarks.jsx";
 import PetSitterRegister from "./pages/Sitter/PetSitterRegister.jsx";
 import PetSitterFinder from "./pages/Sitter/PetSitterFinder.jsx";
 import PetSitterDetail from "./pages/Sitter/PetSitterDetail.jsx";
@@ -101,7 +101,7 @@ function App() {
                                 <Route path="/reserve" element={<Reserve />} />
                                 <Route path="/bookmark" element={<Bookmark />} />
                                 <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
-                                <Route path="/bookmarks/posts" element={<PostBookmarks />} />
+                                <Route path="/bookmarks/board" element={<BoardBookmarks />} />
                                 <Route path="/reserve/:id" element={<ReserveDetail />} />
                                 <Route path="/reserve/list" element={<ReservationList />} />
                                 <Route path="/reserve/success/:id" element={<Reservation />} />
