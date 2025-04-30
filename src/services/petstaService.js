@@ -46,6 +46,10 @@ export const addComment = async (postId, formData) => {
     });
 };
 
+export const deletePetstaComment = async (commentId) => {
+    return await instance.delete(`${API_URL}/post/comment/${commentId}`);
+};
+
 export const toggleLike = (postId) => {
     return instance
         .post(`${API_URL}/post/${postId}/like`)

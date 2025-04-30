@@ -60,64 +60,44 @@ const ProtectedRoute = () => {
         })();
     }, []);
 
+    // ✅ FCM 설정은 로그인/유저 정보 세팅 완료 후 지연 실행
     useEffect(() => {
-        const setupFCM = async () => {
-            try {
-                // 서비스 워커 등록
-                registerSW();
+        if (!user?.id) return;
 
-                // 알림 권한 요청
-                const permission = await Notification.requestPermission();
-                console.log("Notification permission:", permission);
-                if (permission !== "granted") return;
+        const timer = setTimeout(() => {
+            setupFCM(user.id);
+        }, 1500); // 로그인 후 1.5초 뒤에 실행
 
-                // 로그인한 유저 정보 확인
-                const userId = user?.id;
-                if (!userId) {
-                    console.log("User ID is not available");
-                    return;
-                }
+        return () => clearTimeout(timer);
+    }, [user?.id]);
 
-                // FCM 토큰 발급
-                const currentToken = await getToken(messaging, {
-                    vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
-                });
+    // 🔧 FCM 설정 함수 분리
+    const setupFCM = async (userId) => {
+        try {
+            registerSW();
 
-                if (!currentToken) {
-                    console.log("No FCM token available");
-                    return;
-                }
+            const permission = await Notification.requestPermission();
+            if (permission !== "granted") return;
 
-                console.log("Current FCM Token:", currentToken);
+            const currentToken = await getToken(messaging, {
+                vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
+            });
 
-                // 서버에서 기존 등록된 토큰 조회
-                //         const savedToken = await getUserFcmToken({ userId }); // 🔁 DB에서 저장된 토큰을 받아옴
-                //         console.log("Saved FCM Token:", savedToken);
-                //
-                //         // 토큰이 다르면 등록 또는 갱신
-                //         if (savedToken !== currentToken) {
-                //             await saveOrUpdateFcmToken({ userId, fcmToken: currentToken }); // 등록 또는 갱신 API
-                //             console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
-                //         } else {
-                //             console.log("FCM 토큰이 이미 최신입니다.");
-                //         }
-                //     } catch (error) {
-                //         console.error("FCM 설정 에러:", error);
-                //     }
-                // };
+            if (!currentToken) return;
 
-                // 서버에 FCM 토큰 저장 또는 갱신
-                await saveOrUpdateFcmToken({ userId, fcmToken: currentToken });
-                console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
-            } catch (error) {
-                console.error("FCM 설정 에러:", error);
-            }
-        };
-        setupFCM();
-        // 포그라운드 푸시 수신
+            console.log("Current FCM Token:", currentToken);
+            await saveOrUpdateFcmToken({ userId, fcmToken: currentToken });
+            console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
+        } catch (error) {
+            console.error("FCM 설정 에러:", error);
+        }
+    };
+
+    // 🔔 포그라운드 메시지 수신 처리
+    useEffect(() => {
         onMessage(messaging, (payload) => {
             console.log("Foreground message received:", payload);
-            // 알림 UI 띄우기 등 처리
+            // 알림 UI 처리 가능
         });
     }, []);
 
