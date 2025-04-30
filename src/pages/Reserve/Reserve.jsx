@@ -1,38 +1,56 @@
-import React, { useState } from "react";
-import CategoryTabs from "../../components/Reserve/tabs/CategoryTabs";
+import React from "react";
+import CategoryFilter from "../../components/Reserve/filter/CategoryFilter.jsx";
 import SortFilter from "../../components/Reserve/filter/SortFilter";
-import ReserveList from "../../components/Reserve/list/ReserveList";
-import ReserveMap from "../../components/Reserve/map/ReserveMap";
-import useReserveFilter from "../../components/Reserve/hooks/useReserveFilter";
-import data from "../../mock/Reserve/reserve.json";
-import { Box, Button, Container } from "@mui/material";
+import ListContent from "../../components/Reserve/content/ListContent.jsx";
+import { Box, Button, Container, Divider } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useNavigate } from "react-router-dom";
+import { ReserveProvider } from "../../context/ReserveContext";
 
-const Reserve = () => {
-    const [category, setCategory] = useState("호텔");
-    const [sortType, setSortType] = useState("rating");
+const ReserveContent = () => {
     const navigate = useNavigate();
-    const filteredData = useReserveFilter(data, category, sortType);
+
+    // 에러 처리
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Container>
-                <CategoryTabs category={category} setCategory={setCategory} />
-                <Box my={2} sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <SortFilter sortType={sortType} setSortType={setSortType} />
+        <Container sx={{ maxWidth: 500 }}>
+            <Box
+                sx={{
+                    maxWidth: 500,
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    gap: 2,
+                    position: "fixed",
+                    top: 122,
+                    left: "50%",
+                    transform: "translate(calc(-50%), -50%)", // 가운데 정렬 후 왼쪽으로 5px 더 이동
+                    background: "white",
+                    zIndex: 10,
+                }}
+            >
+                <CategoryFilter />
+                <Box my={2} sx={{ display: "flex", justifyContent: "row", pl: 2, pr: 2, gap: 31, mb: 0 }}>
+                    <SortFilter />
                     <Button sx={{ bgcolor: "#FFF", borderRadius: 2 }} onClick={() => navigate("/reserve/list")}>
                         내 예약 목록
                     </Button>
                 </Box>
-                <ReserveList data={filteredData} />
-                <Box mt={4}>
-                    <ReserveMap data={filteredData} />
-                </Box>
-            </Container>
-        </LocalizationProvider>
+                <Divider />
+            </Box>
+            <ListContent />
+        </Container>
     );
 };
+
+const Reserve = () => (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ReserveProvider>
+            <ReserveContent />
+        </ReserveProvider>
+    </LocalizationProvider>
+);
 
 export default Reserve;

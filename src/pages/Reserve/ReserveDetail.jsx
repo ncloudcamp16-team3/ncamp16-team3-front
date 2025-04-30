@@ -25,7 +25,7 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import useInTimeRange from "../../components/Reserve/hooks/useInTimeRange.js";
+import useInTimeRange from "../../hook/Reserve/useInTimeRange.js";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
