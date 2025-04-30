@@ -16,11 +16,6 @@ export const getPetstaBookmarks = async (page = 0, size = 20) => {
 
         if (!response.data) return [];
 
-        // 데이터 로깅 추가
-        console.log("서비스 함수 - 원본 응답:", response);
-        console.log("서비스 함수 - 데이터:", response.data.data);
-        console.log("서비스 함수 - 첫 번째 이미지 URL:", response.data.data[0]?.fileName);
-
         return response.data.data || [];
     } catch (error) {
         console.error("펫스타 북마크 요청 실패:", error);
