@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Box, InputBase, Typography } from "@mui/material";
+import { Box, Button, InputBase, Typography } from "@mui/material";
 import ImgSlide from "../../components/Board/ImgSlider.jsx";
 import PostTitleBar from "../../components/Board/PostTitleBar.jsx";
 import DeletePostModal from "../../components/Board/DeletePostModal.jsx";
@@ -19,6 +19,8 @@ import {
 } from "../../services/boardService.js";
 import { produce } from "immer";
 import CommentCard from "../../components/Board/CommentCard.jsx";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "@mui/material/styles";
 
 const PostDetails = () => {
     const { postId } = useParams();
@@ -29,8 +31,10 @@ const PostDetails = () => {
     const [liked, setLiked] = useState(false);
     const [bookMarked, setBookMarked] = useState(false);
     const [replyingTo, setReplyingTo] = useState(null);
+    const [isReply, setIsReply] = useState(true);
     const commentInputRef = useRef(null);
     const commentRefs = useRef({});
+    const theme = useTheme();
 
     const scrollToComment = (commentId) => {
         const el = commentRefs.current[commentId];
@@ -61,7 +65,24 @@ const PostDetails = () => {
 
     const handleReply = (commentId, authorNickname) => {
         const mentionMarkup = `@${authorNickname} `;
-        setComment((prev) => mentionMarkup + prev);
+        if (isReply) {
+            const result = comment.replace(/^@\S+\s*/, "");
+            setComment(mentionMarkup + result);
+            setReplyingTo({ commentId: commentId, authorNickname: authorNickname });
+            setIsReply(true);
+
+            setTimeout(() => {
+                commentInputRef.current?.focus();
+            }, 1);
+        } else {
+            setComment((prev) => mentionMarkup + prev);
+            setReplyingTo({ commentId: commentId, authorNickname: authorNickname });
+            setIsReply(true);
+
+            setTimeout(() => {
+                commentInputRef.current?.focus();
+            }, 1);
+        }
         setReplyingTo({ commentId: commentId, authorNickname: authorNickname });
 
         setTimeout(() => {
@@ -88,8 +109,10 @@ const PostDetails = () => {
 
         const mentions = rawMentions.map((m) => m.slice(1));
 
-        if (!mentions.includes(replyingTo?.authorNickname)) {
-            setReplyingTo(null);
+        if (isReply) {
+            if (!mentions.includes(replyingTo?.authorNickname)) {
+                handleCancelReply();
+            }
         }
     }, [comment]);
 
@@ -155,6 +178,12 @@ const PostDetails = () => {
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
             });
+    };
+
+    const handleCancelReply = () => {
+        setIsReply(false);
+        setReplyingTo(null);
+        setComment("");
     };
 
     return (
@@ -323,15 +352,58 @@ const PostDetails = () => {
             {boardType.id === 2 ? (
                 <UsedMarketBar postData={postData} bookMarked={bookMarked} bookMarkBtnClick={bookMarkBtnClick} />
             ) : (
-                <WriteCommentBar
-                    postId={postData.id}
-                    comment={comment}
-                    setComment={setComment}
-                    liked={liked}
-                    likeBtnClick={likeBtnClick}
-                    commentInputRef={commentInputRef}
-                    requestCommentCreate={requestCommentCreate}
-                />
+                <Box
+                    sx={{
+                        position: "fixed",
+                        bottom: "85px",
+                        left: "10px",
+                        right: "10px",
+                        maxWidth: "480px",
+                        zIndex: 1000,
+                        margin: "0 auto",
+                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        p: "2px",
+                    }}
+                >
+                    <AnimatePresence>
+                        {isReply && (
+                            <motion.div
+                                initial={{ y: 100, opacity: 0 }} // 처음 아래에서 시작 (조절 가능)
+                                animate={{ y: 0, opacity: 1 }} // 올라오면서 나타남
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                style={{ width: "100%" }}
+                            >
+                                <Box
+                                    bgcolor={theme.brand1}
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    padding={1}
+                                    zIndex={1}
+                                >
+                                    <Typography color={theme.secondary}>
+                                        {replyingTo?.authorNickname}님에게 남기는 답글
+                                    </Typography>
+                                    <Button sx={{ padding: 0, width: "0px" }} onClick={handleCancelReply}>
+                                        ❌
+                                    </Button>
+                                </Box>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    <WriteCommentBar
+                        postId={postData.id}
+                        comment={comment}
+                        setComment={setComment}
+                        liked={liked}
+                        likeBtnClick={likeBtnClick}
+                        commentInputRef={commentInputRef}
+                        requestCommentCreate={requestCommentCreate}
+                        isReply={isReply}
+                    />
+                </Box>
             )}
 
             <DeletePostModal

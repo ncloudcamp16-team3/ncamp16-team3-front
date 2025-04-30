@@ -229,6 +229,7 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
                                 sx={{
                                     color: "gray",
                                     borderRadius: "20px",
+                                    cursor: "pointer",
                                 }}
                             >
                                 답글 달기
