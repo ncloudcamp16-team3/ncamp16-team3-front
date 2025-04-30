@@ -10,7 +10,18 @@ import { useNavigate } from "react-router-dom";
 import BookmarkButton from "./BookmarkButton.jsx";
 import LikeButton from "./LikeButton.jsx";
 import FollowButton from "./FollowButton.jsx";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MyPostDropdown from "./MyPostDropdown.jsx";
+import { deletePetstaPost } from "../../../services/petstaService.js";
+import * as PropTypes from "prop-types";
+import MyPostCenterMenu from "./MyPostCenterMenu.jsx";
 
+MyPostCenterMenu.propTypes = {
+    open: PropTypes.any,
+    onClose: PropTypes.func,
+    onDelete: PropTypes.func,
+    onEdit: PropTypes.func,
+};
 const VideoDetail = ({ post, currentTime = 0 }) => {
     const [isExpended, setIsExpended] = useState(false);
     const [likeCount, setLikeCount] = useState(post.likes); // 숫자
@@ -18,10 +29,22 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
     const [commentCount, setCommentCount] = useState(post.comments); // 숫자
     const [commentCountDisplay, setCommentCountDisplay] = useState(""); // 문자열
     const [showIcon, setShowIcon] = useState(false);
-
+    const [dropOpen, setDropOpen] = useState(false);
     const videoRef = useRef(null);
     const { isMute, toggleMute, user } = useContext(Context);
     const navigate = useNavigate();
+    const dropdownRef = useRef(null);
+    const [centerMenuOpen, setCenterMenuOpen] = useState(false);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropOpen && dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropOpen]);
 
     const handleLikeChange = (newLiked) => {
         setLikeCount((prev) => (newLiked ? prev + 1 : prev - 1));
@@ -64,6 +87,15 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                 <br />
             </span>
         ));
+    };
+
+    const handleDeletePost = async () => {
+        try {
+            await deletePetstaPost(post.postId);
+            navigate(-1);
+        } catch (e) {
+            alert("게시글 삭제 실패");
+        }
     };
 
     const shortContent = post.content.length > 20 ? post.content.slice(0, 20) + "..." : post.content;
@@ -147,6 +179,24 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                             width={32}
                         />
                     </Box>
+                    {user.id === post.userId && (
+                        <Box mt={1} sx={{ position: "relative" }} ref={dropdownRef}>
+                            <MoreVertIcon
+                                onClick={() => setCenterMenuOpen(true)}
+                                fontSize="20px"
+                                sx={{ cursor: "pointer" }}
+                            />
+                            <MyPostCenterMenu
+                                open={centerMenuOpen}
+                                onClose={() => setCenterMenuOpen(false)}
+                                onDelete={handleDeletePost}
+                                onEdit={() => {
+                                    setCenterMenuOpen(false);
+                                    navigate(`/petsta/post/edit/video/${post.postId}`);
+                                }}
+                            />
+                        </Box>
+                    )}
                 </Box>
             </Box>
             {/* 비디오 */}

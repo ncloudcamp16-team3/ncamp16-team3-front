@@ -14,6 +14,8 @@ import AdminLayout from "./components/Admin/AdminLayout.jsx";
 // Protected Routes
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
+import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
+import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
 
 // Lazy-loaded Pages
 const Main = lazy(() => import("./pages/PetMeeting/Main.jsx"));
@@ -126,6 +128,8 @@ function App() {
                                     <Route path="/petsta/post/comment/:postId" element={<PostComment />} />
                                     <Route path="/petsta/post/add/photo" element={<AddPhoto />} />
                                     <Route path="/petsta/post/add/video" element={<AddVideo />} />
+                                    <Route path="/petsta/post/edit/photo/:postId" element={<EditPhotoDetail />} />
+                                    <Route path="/petsta/post/edit/video/:postId" element={<EditVideoDetail />} />
                                     <Route path="/petsta/user/:userId" element={<UserLayout />}>
                                         <Route index element={<UserPage />} />
                                         <Route path="follower" element={<FollowersTab />} />

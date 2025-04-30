@@ -101,7 +101,7 @@ const ChatRoom = () => {
             const width = window.innerWidth;
             const layoutWidth = 500;
             if (width <= layoutWidth) {
-                setRightPosition("20px");
+                setRightPosition("0px");
             } else {
                 const sideGap = (width - layoutWidth) / 2 - 8;
                 setRightPosition(`${sideGap}px`);

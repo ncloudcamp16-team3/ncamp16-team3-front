@@ -22,6 +22,16 @@ export const getPostById = (postId) => {
         });
 };
 
+export const updatePost = (postId, { content }) => {
+    return instance
+        .patch(`${API_URL}/post/${postId}`, { content })
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("게시글 수정에 실패했습니다.", error);
+            throw error;
+        });
+};
+
 export const addPhoto = async (formData) => {
     return await instance.post(`${API_URL}/post/add/photo`, formData, {
         headers: {
@@ -48,6 +58,10 @@ export const addComment = async (postId, formData) => {
 
 export const deletePetstaComment = async (commentId) => {
     return await instance.delete(`${API_URL}/post/comment/${commentId}`);
+};
+
+export const deletePetstaPost = async (postId) => {
+    return await instance.delete(`${API_URL}/post/${postId}`);
 };
 
 export const toggleLike = (postId) => {

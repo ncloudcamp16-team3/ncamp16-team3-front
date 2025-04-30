@@ -40,9 +40,11 @@ const PostCommentPage = () => {
             const windowWidth = window.innerWidth;
             const layoutWidth = 500;
             if (windowWidth <= layoutWidth) {
-                setRightPosition("20px");
+                setRightPosition("0px");
             } else {
                 const sideGap = (windowWidth - layoutWidth) / 2 - 8;
+                console.log(windowWidth);
+                console.log(layoutWidth);
                 setRightPosition(`${sideGap}px`);
             }
         };
