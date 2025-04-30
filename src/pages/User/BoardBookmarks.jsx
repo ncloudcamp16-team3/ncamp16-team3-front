@@ -9,7 +9,7 @@ import { Context } from "../../context/Context.jsx";
 const boardTypeMap = {
     1: "자유",
     2: "중고거래",
-    4: "정보",
+    3: "정보",
 };
 
 const BoardBookmarks = () => {
@@ -25,17 +25,11 @@ const BoardBookmarks = () => {
         const fetchBookmarks = async () => {
             try {
                 setLoading(true);
-                console.log("게시물 북마크 요청 시작");
                 const data = await getBoardBookmarks();
-                console.log("게시물 북마크 응답 데이터:", data);
                 setBookmarks(data || []);
                 setFilteredBookmarks(data || []);
             } catch (error) {
                 console.error("북마크를 불러오는 중 오류 발생:", error);
-                if (error.response) {
-                    console.error("응답 상태:", error.response.status);
-                    console.error("응답 데이터:", error.response.data);
-                }
                 setBookmarks([]);
                 setFilteredBookmarks([]);
             } finally {
@@ -144,14 +138,13 @@ const BoardBookmarks = () => {
                             <Box sx={{ p: 2 }}>
                                 <Box sx={{ display: "flex", gap: 2 }}>
                                     {item.firstImageUrl && (
-                                        <Box
-                                            component="img"
+                                        <img
                                             src={item.firstImageUrl}
                                             alt={item.title}
-                                            sx={{
+                                            style={{
                                                 width: "80px",
                                                 height: "80px",
-                                                borderRadius: 2,
+                                                borderRadius: 8,
                                                 objectFit: "cover",
                                             }}
                                         />
@@ -175,7 +168,7 @@ const BoardBookmarks = () => {
                                                     fontWeight: "medium",
                                                 }}
                                             >
-                                                {boardTypeMap[item.boardTypeId] || "기타"}
+                                                {boardTypeMap[item.boardTypeId]}
                                             </Typography>
                                         </Box>
                                         <Typography

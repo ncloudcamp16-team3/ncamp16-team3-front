@@ -9,7 +9,7 @@ import Loading from "../../components/Global/Loading";
 const boardTypeMap = {
     1: "자유",
     2: "중고거래",
-    4: "정보",
+    3: "정보",
 };
 
 const Bookmark = () => {
@@ -41,7 +41,7 @@ const Bookmark = () => {
         navigate(`/petsta/post/${postId}`);
     };
 
-    const handlePostClick = (postId) => {
+    const handleBoardClick = (postId) => {
         navigate(`/board/${postId}`);
     };
 
@@ -49,8 +49,8 @@ const Bookmark = () => {
         navigate("/bookmarks/petsta");
     };
 
-    const handleSeeMorePosts = () => {
-        navigate("/bookmarks/posts");
+    const handleSeeMoreBoards = () => {
+        navigate("/bookmarks/board");
     };
 
     if (loading) {
@@ -165,7 +165,7 @@ const Bookmark = () => {
                             fontSize: "14px",
                             cursor: "pointer",
                         }}
-                        onClick={handleSeeMorePosts}
+                        onClick={handleSeeMoreBoards}
                     >
                         <Typography sx={{ fontSize: "14px", color: "#777" }}>더보기</Typography>
                         <KeyboardArrowRightIcon sx={{ fontSize: 18 }} />
@@ -177,7 +177,7 @@ const Bookmark = () => {
                     boardBookmarks.slice(0, 2).map((item) => (
                         <Card
                             key={item.id}
-                            onClick={() => handlePostClick(item.id)}
+                            onClick={() => handleBoardClick(item.id)}
                             sx={{
                                 mb: 2,
                                 borderRadius: 3,
