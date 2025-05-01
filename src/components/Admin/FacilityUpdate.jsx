@@ -15,11 +15,12 @@ import {
     Alert,
     FormControlLabel,
     Switch,
+    CircularProgress,
 } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import adminAxios from "./adminAxios.js";
 
 // 스타일된 컴포넌트
@@ -66,7 +67,11 @@ const DeleteButtonContainer = styled(Box)(({ theme }) => ({
 
 const MAX_IMAGES = 5;
 
-const FacilityAdd = () => {
+const FacilityUpdate = () => {
+    // URL 파라미터에서 시설 ID 가져오기
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     // 상태 관리
     const [imageFiles, setImageFiles] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
@@ -82,16 +87,18 @@ const FacilityAdd = () => {
     const [comment, setComment] = useState("");
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
-    const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
+    const [existingImages, setExistingImages] = useState([]);
+    const [existingImageIds, setExistingImageIds] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fileInputRef = useRef(null);
     const [scriptLoaded, setScriptLoaded] = useState(false);
+    const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const [operationTimeType, setOperationTimeType] = useState("same"); // "same" 또는 "different"
     const [dailyOpenTimes, setDailyOpenTimes] = useState({
@@ -124,7 +131,130 @@ const FacilityAdd = () => {
         SUN: true,
     });
 
+    // 문자열 타입을 ID로 매핑하는 객체
+    const facilityTypeMapping = {
+        HOTEL: 1,
+        BEAUTY: 2,
+        CAFE: 3,
+    };
+
+    // 기존 시설 데이터 불러오기
+    const loadFacilityData = async () => {
+        try {
+            setLoading(true);
+            const response = await adminAxios.get(`/api/admin/facility/${id}`);
+
+            if (!response.data) {
+                throw new Error("시설 정보를 불러오는데 실패했습니다");
+            }
+
+            const facility = response.data;
+            console.log("시설 정보:", facility);
+
+            const typeId = facilityTypeMapping[facility.facilityType] || "";
+
+            // 기본 정보 설정
+            setName(facility.name || "");
+            setFacilityTypeId(typeId);
+            setTel(facility.tel || "");
+            setAddress(facility.address || "");
+            setDetailAddress(facility.detailAddress || "");
+            setComment(facility.comment || "");
+            setLatitude(facility.latitude);
+            setLongitude(facility.longitude);
+
+            // console.log("latitude: " + latitude);
+            // console.log("longitude: " + longitude);
+
+            // 이미지 처리 (예외 처리 수정)
+            if (facility.images && Array.isArray(facility.images)) {
+                console.log("이미지 데이터:", facility.images);
+
+                // 이미지 URL 설정
+                const urls = facility.images.map((img) => img.url);
+                setExistingImages(urls);
+                console.log("설정된 이미지 URL:", urls);
+
+                // 이미지 ID 설정
+                const ids = facility.images.map((img) => img.id);
+                setExistingImageIds(ids);
+                console.log("설정된 이미지 ID:", ids);
+            } else {
+                console.warn("이미지 데이터가 없거나 배열이 아님:", facility.images);
+                setExistingImages([]);
+                setExistingImageIds([]);
+            }
+
+            // 영업 시간 처리
+            if (facility.openingHours) {
+                // 모든 요일의 시간이 같은지 확인
+                const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+                // 영업일인 요일만 필터링
+                const openDays = days.filter((day) => facility.openingHours[day] && facility.openingHours[day].isOpen);
+
+                // 각 요일별 오픈 및 마감 시간 추출
+                const openTimes = {};
+                const closeTimes = {};
+                const dayOpenStatus = {};
+
+                days.forEach((day) => {
+                    const dayData = facility.openingHours[day];
+                    // isOpen 여부 설정
+                    dayOpenStatus[day] = dayData ? dayData.isOpen : false;
+
+                    // 영업 시간 설정 (null 체크 및 시간 포맷 처리)
+                    if (dayData && dayData.isOpen) {
+                        openTimes[day] = dayData.openTime ? dayData.openTime.substring(0, 5) : "09:00";
+                        closeTimes[day] = dayData.closeTime ? dayData.closeTime.substring(0, 5) : "18:00";
+                    } else {
+                        // 휴무일 기본값
+                        openTimes[day] = "09:00";
+                        closeTimes[day] = "18:00";
+                    }
+                });
+
+                // 모든 영업일의 시간이 동일한지 확인
+                const uniqueOpenTimes = [...new Set(openDays.map((day) => openTimes[day]))];
+                const uniqueCloseTimes = [...new Set(openDays.map((day) => closeTimes[day]))];
+
+                if (uniqueOpenTimes.length == 1 && uniqueCloseTimes.length == 1 && openDays.length == 7) {
+                    // 모든 요일 동일한 시간
+                    setOperationTimeType("same");
+                    setOpenTime(uniqueOpenTimes[0]);
+                    setCloseTime(uniqueCloseTimes[0]);
+                } else {
+                    // 요일별 다른 시간
+                    setOperationTimeType("different");
+                    setDailyOpenTimes(openTimes);
+                    setDailyCloseTimes(closeTimes);
+                    setOpenDays(dayOpenStatus);
+                }
+            } else {
+                // openingHours가 없는 경우 기본값
+                setOperationTimeType("same");
+                setOpenTime("09:00");
+                setCloseTime("18:00");
+            }
+
+            // 주소가 있으면 우편번호 검색됨 상태로 설정
+            if (facility.address) {
+                setIsZipCodeFound(true);
+            }
+        } catch (error) {
+            console.error("시설 정보 불러오기 실패: ", error);
+            setSnackbarMessage("시설 정보를 불러오는데 실패했습니다");
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
+        // 시설 정보 불러오기
+        loadFacilityData();
+
         // 우편번호 스크립트 로드
         const loadPostcodeScript = () => {
             return new Promise((resolve) => {
@@ -151,7 +281,6 @@ const FacilityAdd = () => {
         };
 
         // 카카오 맵 스크립트 로드
-        // 직접 autoload=true로 변경하여 카카오맵 스크립트 로드
         const loadKakaoMapScript = () => {
             return new Promise((resolve) => {
                 // console.log("카카오맵 스크립트 로드 시작");
@@ -180,8 +309,6 @@ const FacilityAdd = () => {
 
                 // 스크립트 새로 로드
                 const kakaoScript = document.createElement("script");
-
-                // autoload=true로 변경 (자동 로드)
                 kakaoScript.src =
                     "//dapi.kakao.com/v2/maps/sdk.js?appkey=7ac55a0491ab1e4fb8a487b6d212f9bd&libraries=services";
                 kakaoScript.async = true;
@@ -206,25 +333,15 @@ const FacilityAdd = () => {
 
         // 순차적으로 스크립트 로드
         loadPostcodeScript()
-            .then(() => {
-                // console.log("우편번호 스크립트 로드 완료, 카카오맵 스크립트 로드 시작");
-                return loadKakaoMapScript();
-            })
-            .then(() => {
-                // console.log("모든 스크립트 로드 완료");
-            })
+            .then(() => loadKakaoMapScript())
             .catch((err) => {
                 console.error("스크립트 로드 오류:", err);
             });
-    }, []);
+    }, [id]);
 
     // 주소를 좌표로 변환
     const convertAddressToCoords = (address) => {
         return new Promise((resolve) => {
-            // console.log("convertAddressToCoords 호출됨");
-            // console.log("mapScriptLoaded:", mapScriptLoaded);
-            // console.log("address:", address);
-
             if (!address) {
                 // console.log("주소가 없음");
                 resolve(false);
@@ -233,14 +350,10 @@ const FacilityAdd = () => {
 
             // 지도 스크립트가 로드될 때까지 대기
             const waitForMapScript = () => {
-                // console.log("카카오맵 스크립트 로드 대기 중...");
-
                 if (window.kakao && window.kakao.maps) {
-                    // console.log("카카오맵 객체 확인됨");
                     setMapScriptLoaded(true);
                     return true;
                 }
-
                 return false;
             };
 
@@ -249,7 +362,6 @@ const FacilityAdd = () => {
 
                 const tryGeocode = () => {
                     if (attempts >= 20) {
-                        // 최대 20번 시도 (2초)
                         // console.log("좌표 변환 시도 횟수 초과");
                         setSnackbarMessage("주소 좌표 변환에 실패했습니다. 다시 시도해주세요.");
                         setSnackbarSeverity("error");
@@ -267,14 +379,9 @@ const FacilityAdd = () => {
                     }
 
                     try {
-                        // console.log("Geocoder 초기화 시도");
                         const geocoder = new window.kakao.maps.services.Geocoder();
-                        // console.log("Geocoder 초기화 성공");
 
                         geocoder.addressSearch(address, (result, status) => {
-                            // console.log("Geocoder 결과:", result);
-                            // console.log("Geocoder 상태:", status);
-
                             if (status === window.kakao.maps.services.Status.OK) {
                                 const lat = result[0].y;
                                 const lng = result[0].x;
@@ -283,12 +390,6 @@ const FacilityAdd = () => {
 
                                 setLatitude(lat);
                                 setLongitude(lng);
-
-                                // 추가 확인을 위한 타임아웃
-                                setTimeout(() => {
-                                    // console.log("상태 업데이트 후 위도/경도:", latitude, longitude);
-                                }, 100);
-
                                 resolve(true);
                             } else {
                                 console.error("주소 변환 실패:", status);
@@ -350,12 +451,6 @@ const FacilityAdd = () => {
                 // console.log("좌표 변환 시작...");
                 const success = await convertAddressToCoords(roadAddr);
                 // console.log("좌표 변환 결과:", success);
-
-                if (success) {
-                    // console.log("좌표 변환 성공!");
-                } else {
-                    // console.log("좌표 변환 실패 또는 타임아웃");
-                }
             },
         }).open();
     };
@@ -388,7 +483,7 @@ const FacilityAdd = () => {
         const files = Array.from(event.target.files);
 
         // 현재 이미지 수 + 새로 선택한 이미지 수가 최대치를 넘는지 확인
-        if (imageFiles.length + files.length > MAX_IMAGES) {
+        if (imageFiles.length + existingImages.length + files.length > MAX_IMAGES) {
             setSnackbarMessage(`최대 ${MAX_IMAGES}개의 이미지만 업로드할 수 있습니다`);
             setSnackbarSeverity("warning");
             setOpenSnackbar(true);
@@ -429,18 +524,49 @@ const FacilityAdd = () => {
 
     // 이미지 삭제 핸들러
     const handleImageDelete = (index) => {
-        const newFiles = [...imageFiles];
-        const newPreviews = [...imagePreviews];
+        if (index < existingImages.length) {
+            // 기존 이미지 삭제
+            const updateImages = [...existingImages];
+            const removedImage = updateImages.splice(index, 1)[0];
+            setExistingImages(updateImages);
 
-        newFiles.splice(index, 1);
-        newPreviews.splice(index, 1);
+            const match = removedImage.match(/\/(\d+)\.(jpg|png|jpeg|gif)$/i);
+            if (match) {
+                const idToRemove = parseInt(match[1], 10);
+                setExistingImageIds((prev) => prev.filter((id) => id !== idToRemove));
+            }
+        } else {
+            // 새 이미지 삭제
+            const adjustedIndex = index - existingImages.length;
 
-        setImageFiles(newFiles);
-        setImagePreviews(newPreviews);
+            const newFiles = [...imageFiles];
+            const newPreviews = [...imagePreviews];
+
+            newFiles.splice(adjustedIndex, 1);
+            newPreviews.splice(adjustedIndex, 1);
+
+            setImageFiles(newFiles);
+            setImagePreviews(newPreviews);
+        }
 
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
+    };
+
+    // 기존 이미지 삭제 핸들러
+    const handleExistingImageDelete = (index) => {
+        const newExistingImages = [...existingImages];
+        const newExistingImageIds = [...existingImageIds];
+
+        newExistingImages.splice(index, 1);
+
+        if (index < newExistingImageIds.length) {
+            newExistingImageIds.splice(index, 1);
+        }
+
+        setExistingImages(newExistingImages);
+        setExistingImageIds(newExistingImageIds);
     };
 
     // 폼 제출 핸들러
@@ -471,7 +597,7 @@ const FacilityAdd = () => {
 
         // 위도/경도 확인
         if (!latitude || !longitude) {
-            // console.log("위도/경도 누락:", { latitude, longitude, address });
+            console.log("위도/경도 누락:", { latitude, longitude, address });
 
             // 주소가 있으면 좌표 변환 재시도
             if (address) {
@@ -495,19 +621,18 @@ const FacilityAdd = () => {
             }
         }
 
-        setLoading(true);
+        setSubmitLoading(true);
 
         // 폼 데이터 구성
         const facilityData = {
+            facilityTypeId: facilityTypeId,
             name: name.trim(),
-            facilityTypeId: facilityTypeId.toString(),
             tel: tel.trim(),
             address: address.trim(),
             detailAddress: detailAddress.trim(),
             comment: comment.trim(),
             latitude: latitude,
             longitude: longitude,
-
             openTimes:
                 operationTimeType === "same"
                     ? {
@@ -553,55 +678,86 @@ const FacilityAdd = () => {
         const dataBlob = new Blob([JSON.stringify(facilityData)], { type: "application/json" });
         formData.append("data", dataBlob);
 
-        imageFiles.forEach((file) => {
-            formData.append("images", file);
-        });
+        // 이미지 처리
+        // 1. 새 이미지 파일 추가
+        if (imageFiles.length > 0) {
+            imageFiles.forEach((file) => {
+                formData.append("newImages", file);
+            });
+        }
 
-        // console.log("Form submitted", {
-        //     name,
-        //     facilityTypeId,
-        //     tel,
-        //     address,
-        //     detailAddress,
-        //     comment,
-        //     latitude,
-        //     longitude,
-        //     openTime,
-        //     closeTime,
-        //     openDays,
-        // });
+        // 유지할 이미지 ID 추가
+        console.log("existingImageIds (원본):", existingImageIds);
+
+        // 유지할 이미지 ID 배열에서 유효한 ID만 필터링
+        const validImageIds = existingImageIds.filter((id) => id !== null && !isNaN(id) && id > 0);
+
+        console.log("validImageIds (필터링 후):", validImageIds);
+
+        // 2. 유효한 이미지 ID가 있는 경우만 추가
+        if (validImageIds.length > 0) {
+            // 문자열로 직접 폼데이터에 추가
+            formData.append("imageIdsToKeep", JSON.stringify(validImageIds));
+            console.log("유지할 이미지 ID 추가됨:", JSON.stringify(validImageIds));
+        } else {
+            // 빈 배열이라도 명시적으로 추가 (서버에서 null 대신 빈 배열로 받게)
+            formData.append("imageIdsToKeep", JSON.stringify([]));
+            console.log("유지할 이미지 ID가 없어 빈 배열 추가됨");
+        }
 
         try {
-            const response = await adminAxios.post("/api/admin/facility/add", formData);
-
-            if (response.status != 200) {
-                throw new Error(response.data.message || "업체 등록에 실패했습니다");
+            for (let [key, value] of formData.entries()) {
+                console.log(
+                    `FormData 항목 - ${key}:`,
+                    key === "data" ? "(JSON Blob)" : key === "newImages" ? "(파일)" : value
+                );
             }
 
-            setSnackbarMessage("업체가 성공적으로 등록되었습니다");
+            const response = await adminAxios.patch(`/api/admin/facility/${id}/update`, formData);
+
+            if (response.status !== 200) {
+                throw new Error(response.data.message || "업체 수정에 실패했습니다");
+            }
+
+            console.log("업데이트 응답: ", response.data);
+
+            setSnackbarMessage("업체가 성공적으로 수정되었습니다");
             setSnackbarSeverity("success");
             setOpenSnackbar(true);
 
             setTimeout(() => {
-                navigate("/admin/facility/list");
+                navigate(`/admin/facility/list/${id}`);
             }, 1000);
         } catch (error) {
-            console.error("업체 등록 오류:", error);
-            setSnackbarMessage(error.message || "업체 등록 중 오류가 발생했습니다");
+            console.error("업체 수정 오류:", error);
+
+            const errorMessage = error.response?.data?.message || error.message || "업체 수정 중 오류가 발생했습니다";
+
+            setSnackbarMessage(errorMessage || "업체 수정 중 오류가 발생했습니다");
             setSnackbarSeverity("error");
             setOpenSnackbar(true);
         } finally {
-            setLoading(false);
+            setSubmitLoading(false);
         }
     };
 
-    // 스낵바 핸들러 추가
+    // 스낵바 핸들러
     const handleCloseSnackbar = (event, reason) => {
         if (reason === "clickaway") {
             return;
         }
         setOpenSnackbar(false);
     };
+
+    // 로딩 중이면 로딩 화면 표시
+    if (loading) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>시설 정보를 불러오는 중...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -619,18 +775,48 @@ const FacilityAdd = () => {
             <Box component="form" onSubmit={handleSubmit} noValidate>
                 <Grid container spacing={6} sx={{ display: "flex", flexDirection: "column", p: 5 }}>
                     {/* 이미지 업로드 영역 */}
-                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 2 }}>
-                        {imagePreviews.length > 0 ? (
-                            // 선택된 이미지들 표시
-                            imagePreviews.map((preview, index) => (
-                                <SquareImageContainer key={index}>
+                    <Grid item xs={12}>
+                        <Typography variant="h6" gutterBottom>
+                            시설 이미지
+                        </Typography>
+
+                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+                            {/* 기존 이미지 표시 */}
+                            {existingImages.map((image, index) => (
+                                <SquareImageContainer key={`existing-${index}`}>
+                                    <Box
+                                        component="img"
+                                        src={image}
+                                        alt={`기존 이미지 ${index + 1}`}
+                                        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                    />
+                                    <DeleteButtonContainer>
+                                        <IconButton
+                                            aria-label="delete image"
+                                            onClick={() => handleExistingImageDelete(index)}
+                                            size="small"
+                                            sx={{
+                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                "&:hover": {
+                                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                                },
+                                            }}
+                                        >
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </DeleteButtonContainer>
+                                </SquareImageContainer>
+                            ))}
+
+                            {/* 새로 업로드한 이미지 미리보기 */}
+                            {imagePreviews.map((preview, index) => (
+                                <SquareImageContainer key={`new-${index}`}>
                                     <Box
                                         component="img"
                                         src={preview}
                                         alt={`미리보기 ${index + 1}`}
                                         sx={{ width: "100%", height: "100%", objectFit: "cover" }}
                                     />
-                                    {/* 이미지 삭제 버튼 - label 밖에 위치 */}
                                     <DeleteButtonContainer>
                                         <IconButton
                                             aria-label="delete image"
@@ -647,60 +833,51 @@ const FacilityAdd = () => {
                                         </IconButton>
                                     </DeleteButtonContainer>
                                 </SquareImageContainer>
-                            ))
-                        ) : (
-                            // 이미지가 없을 때는 원형 컨테이너와 업로드 레이블
-                            <ImageUploadButton htmlFor="upload-image">
-                                <CircleImageContainer>
-                                    <PhotoCameraIcon sx={{ fontSize: 150, color: "#757575" }} />
-                                </CircleImageContainer>
-                            </ImageUploadButton>
-                        )}
+                            ))}
 
-                        {/* 추가 업로드 버튼 - 이미지가 있어도 더 추가할 수 있도록 */}
-                        {imagePreviews.length > 0 && imagePreviews.length < MAX_IMAGES && (
-                            <ImageUploadButton htmlFor="upload-image">
-                                <Box
-                                    sx={{
-                                        width: 300,
-                                        height: 300,
-                                        border: "2px dashed #ccc",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        cursor: "pointer",
-                                        "&:hover": {
-                                            backgroundColor: "#f5f5f5",
-                                        },
-                                    }}
-                                >
-                                    <PhotoCameraIcon sx={{ fontSize: 60, color: "#757575" }} />
-                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                        이미지 추가 ({imagePreviews.length}/{MAX_IMAGES})
-                                    </Typography>
-                                </Box>
-                            </ImageUploadButton>
-                        )}
+                            {/* 이미지 추가 버튼 */}
+                            {existingImages.length + imagePreviews.length < MAX_IMAGES && (
+                                <ImageUploadButton htmlFor="upload-image">
+                                    <Box
+                                        sx={{
+                                            width: 300,
+                                            height: 300,
+                                            border: "2px dashed #ccc",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            cursor: "pointer",
+                                            "&:hover": {
+                                                backgroundColor: "#f5f5f5",
+                                            },
+                                        }}
+                                    >
+                                        <PhotoCameraIcon sx={{ fontSize: 60, color: "#757575" }} />
+                                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                            이미지 추가 ({existingImages.length + imagePreviews.length}/{MAX_IMAGES})
+                                        </Typography>
+                                    </Box>
+                                </ImageUploadButton>
+                            )}
 
-                        {/* 파일 입력 - multiple 속성 추가 */}
-                        <input
-                            id="upload-image"
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            onChange={handleImageUpload}
-                            style={{ display: "none" }}
-                        />
-                    </Grid>
+                            {/* 파일 입력 - multiple 속성 추가 */}
+                            <input
+                                id="upload-image"
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleImageUpload}
+                                style={{ display: "none" }}
+                            />
+                        </Box>
 
-                    {/* 이미지 제한 안내 메시지 */}
-                    <Grid item xs={12}>
+                        {/* 이미지 제한 안내 메시지 */}
                         <Typography
                             variant="caption"
                             color="text.secondary"
-                            sx={{ textAlign: "center", display: "block" }}
+                            sx={{ textAlign: "center", display: "block", mb: 3 }}
                         >
                             최대 {MAX_IMAGES}개의 이미지를 업로드할 수 있습니다
                         </Typography>
@@ -1058,6 +1235,7 @@ const FacilityAdd = () => {
                         <Button
                             type="submit"
                             variant="contained"
+                            disabled={submitLoading}
                             sx={{
                                 backgroundColor: "#E9B883",
                                 "&:hover": {
@@ -1068,7 +1246,14 @@ const FacilityAdd = () => {
                                 boxShadow: "none",
                             }}
                         >
-                            등록
+                            {submitLoading ? (
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                    <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
+                                    수정 중...
+                                </Box>
+                            ) : (
+                                "수정"
+                            )}
                         </Button>
                         <Button
                             variant="outlined"
@@ -1085,8 +1270,7 @@ const FacilityAdd = () => {
                                 boxShadow: "none",
                             }}
                             onClick={() => {
-                                // 뒤로가기 동작
-                                window.history.back();
+                                navigate(`/admin/facility/list/${id}`);
                             }}
                         >
                             뒤로가기
@@ -1110,4 +1294,4 @@ const FacilityAdd = () => {
     );
 };
 
-export default FacilityAdd;
+export default FacilityUpdate;

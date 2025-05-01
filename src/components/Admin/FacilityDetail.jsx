@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // React Router 사용 가정
-import { Box, Typography, Card, Button, CardContent, Rating, CircularProgress } from "@mui/material";
+import { Box, Typography, Card, Button, CardContent, Rating, CircularProgress, Chip } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
 import { fetchFacilityDetail } from "./adminFacilityApi.js";
@@ -25,6 +25,54 @@ const TableRow = ({ label, value, isRating = false }) => (
         </td>
     </tr>
 );
+
+// 영업시간 표시 컴포넌트 추가
+const OpeningHoursRow = ({ openingHours }) => {
+    // 요일 매핑
+    const dayMapping = {
+        MON: "월요일",
+        TUE: "화요일",
+        WED: "수요일",
+        THU: "목요일",
+        FRI: "금요일",
+        SAT: "토요일",
+        SUN: "일요일",
+    };
+
+    // 요일 순서 정의
+    const dayOrder = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+    return (
+        <tr style={{ borderBottom: "1px solid #f0f0f0" }}>
+            <td style={{ padding: "16px 8px", fontWeight: "bold", width: "20%" }}>영업시간</td>
+            <td style={{ padding: "16px 8px" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                    {dayOrder.map((day) => (
+                        <Box key={day} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                            <Typography sx={{ width: 70, fontWeight: "bold" }}>{dayMapping[day]}:</Typography>
+                            {openingHours[day]?.isOpen ? (
+                                <Typography>
+                                    {openingHours[day].openTime?.substring(0, 5)} ~{" "}
+                                    {openingHours[day].closeTime?.substring(0, 5)}
+                                </Typography>
+                            ) : (
+                                <Chip
+                                    label="휴무일"
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: "#f8d7da",
+                                        color: "#721c24",
+                                        fontSize: "0.75rem",
+                                    }}
+                                />
+                            )}
+                        </Box>
+                    ))}
+                </Box>
+            </td>
+        </tr>
+    );
+};
 
 const FacilityDetail = () => {
     // 라우터에서 ID 파라미터 가져오기
@@ -124,8 +172,13 @@ const FacilityDetail = () => {
                                         <TableRow label="별점" value={facility.starPoint} isRating={true} />
                                         <TableRow label="업종" value={getFacilityType(facility.facilityType)} />
                                         <TableRow label="시설이름" value={facility.name} />
+                                        <TableRow label="전화번호" value={facility.tel} />
                                         <TableRow label="주소" value={facility.address} />
                                         <TableRow label="상세주소" value={facility.detailAddress} />
+                                        {/* 영업시간 정보 표시 */}
+                                        {facility.openingHours && (
+                                            <OpeningHoursRow openingHours={facility.openingHours} />
+                                        )}
                                         <TableRow label="설명" value={facility.comment} />
                                         <TableRow label="등록일자" value={facility.createdAt} />
                                     </tbody>
@@ -143,9 +196,22 @@ const FacilityDetail = () => {
                                     borderRadius: 2,
                                     px: 4,
                                 }}
-                                onClick={() => window.history.back()}
+                                onClick={() => navigate("/admin/facility/list")}
                             >
                                 뒤로
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: "#4caf50",
+                                    "&:hover": { backgroundColor: "#388e3c" },
+                                    color: "#fff",
+                                    borderRadius: 2,
+                                    px: 4,
+                                }}
+                                onClick={() => navigate(`/admin/facility/${id}/update`)}
+                            >
+                                수정
                             </Button>
                             <Button
                                 variant="contained"

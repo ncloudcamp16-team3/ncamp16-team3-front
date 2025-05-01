@@ -59,6 +59,7 @@ import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
 import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 import NotificationClient from "./pages/Notification/NotificationClient.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
+import AdminFacilityUpdate from "./pages/Admin/AdminFacilityUpdate.jsx";
 
 function App() {
     return (
@@ -82,6 +83,7 @@ function App() {
                                 <Route path="facility/list" element={<AdminFacilityList />} />
                                 <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
                                 <Route path="facility/add" element={<AdminFacilityAdd />} />
+                                <Route path="facility/:id/update" element={<AdminFacilityUpdate />} />
                             </Route>
                         </Route>
                         <Route element={<Layout0 />}>
