@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Card, CardMedia, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { getAllBookmarks } from "../../services/bookmarkService";
+import { getAllBookmarks } from "../../services/bookmarkService.js";
 import Loading from "../../components/Global/Loading";
 
 // 게시판 타입에 따른 이름 매핑

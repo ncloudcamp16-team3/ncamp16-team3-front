@@ -17,15 +17,15 @@ const ChatRoom = () => {
     const [input, setInput] = useState("");
     const [rightPosition, setRightPosition] = useState("20px");
     const [isLoading, setIsLoading] = useState(true);
-    const messagesEndRef = useRef(null); // 이제 사실상 필요없지만 남겨둠
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         if (!nc || !channelId) return;
 
-        const handleReceiveMessage = (channel, msg) => {
+        const handleReceiveMessage = async (channel, msg) => {
             if (msg.channel_id !== channelId) return;
 
-            let parsed = null;
+            let parsed;
             try {
                 parsed = JSON.parse(msg.content);
             } catch {
@@ -46,19 +46,33 @@ const ChatRoom = () => {
             };
 
             setMessages((prev) => [...prev, newMessage]);
+
+            // ✅ 내가 보낸 메시지면 바로 읽음 처리
+            if (msg.sender?.id === `ncid${user.id}`) {
+                try {
+                    await nc.markRead(channelId, {
+                        user_id: msg.sender.id,
+                        message_id: msg.message_id,
+                        sort_id: msg.sort_id,
+                    });
+                } catch (err) {
+                    console.warn("내 메시지 markRead 실패:", err);
+                }
+            }
         };
 
         const init = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 const filter = { channel_id: channelId };
                 const sort = { created_at: 1 };
                 const option = { per_page: 100 };
-
                 const result = await nc.getMessages(filter, sort, option);
+
                 const loadedMessages = (result.edges || []).map((edge) => {
                     const msg = edge.node;
-                    let parsed = null;
+                    let parsed;
                     try {
                         parsed = JSON.parse(msg.content);
                     } catch {
@@ -80,6 +94,17 @@ const ChatRoom = () => {
                 });
 
                 setMessages(loadedMessages);
+
+                // ✅ 마지막 메시지 기준으로 읽음 처리
+                const lastNode = result.edges?.[result.edges.length - 1]?.node;
+                if (lastNode) {
+                    await nc.markRead(channelId, {
+                        user_id: lastNode.sender?.id,
+                        message_id: lastNode.message_id,
+                        sort_id: lastNode.sort_id,
+                    });
+                }
+
                 await nc.subscribe(channelId);
             } catch (e) {
                 console.error("메시지 초기 불러오기 실패", e);
@@ -94,7 +119,7 @@ const ChatRoom = () => {
         return () => {
             nc.unbind("onMessageReceived", handleReceiveMessage);
         };
-    }, [nc, channelId]);
+    }, [nc, channelId, user.id]);
 
     useEffect(() => {
         const updateRight = () => {
@@ -126,6 +151,7 @@ const ChatRoom = () => {
                 type: "text",
                 message: JSON.stringify(payload),
             });
+
             setInput("");
         } catch (e) {
             console.error("메시지 전송 실패:", e);
@@ -134,7 +160,6 @@ const ChatRoom = () => {
 
     return (
         <>
-            {/* 🔝 상단 고정 헤더 */}
             <Box
                 display="flex"
                 alignItems="center"
@@ -157,7 +182,6 @@ const ChatRoom = () => {
                 </Typography>
             </Box>
 
-            {/* 💬 메시지 영역 */}
             <Box
                 mt="50px"
                 mb="70px"
@@ -165,7 +189,7 @@ const ChatRoom = () => {
                 overflow="auto"
                 height="calc(100vh - 250px)"
                 display="flex"
-                flexDirection="column-reverse" // ✅ 여기 변경
+                flexDirection="column-reverse"
                 gap={1}
             >
                 {isLoading ? (
@@ -191,7 +215,6 @@ const ChatRoom = () => {
                 )}
             </Box>
 
-            {/* ⌨️ 하단 입력창 */}
             {!isLoading && (
                 <Box
                     display="flex"

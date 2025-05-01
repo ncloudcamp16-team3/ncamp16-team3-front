@@ -60,7 +60,7 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                 bgcolor="white"
             >
                 {videoData?.videoUrl && (
-                    <Box borderRadius="25px" overflow="hidden" display="flex" justifyContent="center">
+                    <Box mx={3} overflow="hidden" display="flex" justifyContent="center">
                         <video
                             autoPlay
                             ref={videoRef}
@@ -83,7 +83,6 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                                 maxHeight: "100%",
                                 objectFit: "contain",
                                 cursor: "pointer",
-                                borderRadius: "25px",
                             }}
                         />
                     </Box>

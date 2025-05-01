@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField } from "@mui/material";
-import ModalWrapper from "/src/components/Global/darkModal.jsx";
+import ModalWrapper from "/src/components/Global/DarkModal.jsx";
 
 const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawal }) => {
     return (
