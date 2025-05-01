@@ -31,7 +31,7 @@ const PostDetails = () => {
     const [liked, setLiked] = useState(false);
     const [bookMarked, setBookMarked] = useState(false);
     const [replyingTo, setReplyingTo] = useState(null);
-    const [isReply, setIsReply] = useState(true);
+    const [isReply, setIsReply] = useState(false);
     const commentInputRef = useRef(null);
     const commentRefs = useRef({});
     const theme = useTheme();

@@ -47,6 +47,9 @@ const PostCard = ({ postItem }) => {
                 <Typography variant="body1" sx={{ fontWeight: "bold", fontSize: "15px", mb: 0.5 }}>
                     {postItem.title}
                 </Typography>
+                <Typography variant="body1" sx={{ fontSize: "13px", mb: 0.5 }}>
+                    {postItem.authorNickname}
+                </Typography>
                 <Typography variant="body1" sx={{ fontSize: "13px", mb: 0.5, color: "#888" }}>
                     {timeAgo}
                 </Typography>

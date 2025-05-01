@@ -23,7 +23,7 @@ const MainPageHeader = () => {
         >
             <Box sx={{ flex: 1 }}>
                 <Typography variant="h5">{pet?.name} 동네친구들</Typography>
-                <Typography variant="caption">8시, 12시, 18시마다 새로운 친구를 만나보아요</Typography>
+                <Typography variant="caption">새로운 친구를 만나보아요</Typography>
             </Box>
             <Box
                 sx={{
