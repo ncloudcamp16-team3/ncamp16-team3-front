@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import UpdateFile from "../../components/Board/UpdateFile.jsx";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import UploadFiles from "../../components/Board/UploadFiles.jsx";
 import { produce } from "immer";
 import UpdatePostBtn from "../../components/Board/UpdatePostBtn.jsx";
 import { Box, Button, InputAdornment, InputBase, Typography } from "@mui/material";
@@ -8,17 +8,15 @@ import { Context } from "../../context/Context.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import AddPostBtn from "../../components/Board/AddPostBtn.jsx";
 import Loading from "../../components/Global/Loading.jsx";
-import { getBoardDetail } from "../../services/boardService.js";
+import { getBoardDetail, saveBoard } from "../../services/boardService.js";
 
 const PostSave = () => {
     const { boardType, user, showModal } = useContext(Context);
     const { postId } = useParams();
     const isEdit = !!postId;
     const navigate = useNavigate();
-    const [freeTrade, setFreeTrade] = useState(false);
-    const [price, setPrice] = useState(0);
-    const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
+    const deleteFileIds = useRef([]);
 
     const [postData, setPostData] = useState({
         id: null,
@@ -32,6 +30,10 @@ const PostSave = () => {
         commentCount: 0,
         firstImageUrl: "",
         imageUrls: [],
+        photos: [],
+        price: 0,
+        sell: false,
+        address: "",
         comments: [],
     });
 
@@ -70,7 +72,9 @@ const PostSave = () => {
             produce((draft) => {
                 const target = draft.photos[index];
                 if (!target.id) {
-                    URL.revokeObjectURL(target.url);
+                    URL.revokeObjectURL(target.path);
+                } else {
+                    deleteFileIds.current.push(target.id);
                 }
                 draft.photos.splice(index, 1);
             })
@@ -79,16 +83,18 @@ const PostSave = () => {
 
     const handleAddPhoto = (e) => {
         const files = e.target.files;
-        let fileCount = postData.photos.length;
+        const selectedFiles = Array.from(files);
 
-        for (let i = 0; i < files.length; i++) {
+        let fileCount = postData?.photos.length;
+        for (let i = 0; i < selectedFiles.length; i++) {
             const file = files[i];
+            const fileData = selectedFiles[i];
 
             if (fileCount < 5) {
                 const newPhoto = {
                     id: null,
-                    file: file,
-                    url: URL.createObjectURL(file),
+                    file: fileData,
+                    path: URL.createObjectURL(file),
                 };
 
                 setPostData((prev) =>
@@ -104,14 +110,40 @@ const PostSave = () => {
         }
     };
 
-    const requestUpdatePost = () => {
-        alert(postId + "번 게시물" + "\n제목=" + postData.title + "\n내용=" + postData.content + "\n으로 수정요청");
-        navigate(`/board/${postData.id}`);
-    };
+    const requestSavePost = () => {
+        const boardData = {
+            id: postData.id,
+            boardTypeId: boardType.id,
+            title: postData.title,
+            content: postData.content,
+            authorId: postData.authorId,
+            price: postData.price,
+            sell: postData.sell,
+            address: postData.address,
+            deleteFileIds: deleteFileIds.current,
+        };
 
-    const requestAddPost = () => {
-        alert("제목=" + postData.title + "내용=" + postData.content + "으로 게시글 추가 요청");
-        navigate(`/board/${postData.id}`);
+        const formData = new FormData();
+        formData.append("postData", new Blob([JSON.stringify(boardData)], { type: "application/json" }));
+
+        postData.photos
+            .filter((p) => p.id === null)
+            .forEach((p) => {
+                formData.append("photos", p.file);
+            });
+
+        console.log(boardData);
+
+        saveBoard(formData)
+            .then((res) => {
+                const data = res.data;
+                console.log("응답 결과" + res.message);
+                console.log(data);
+                navigate(`/board/${data}`);
+            })
+            .catch((err) => {
+                console.log("에러 발생" + err.message);
+            });
     };
 
     return (
@@ -126,8 +158,8 @@ const PostSave = () => {
                     <Loading />
                 ) : (
                     <Box>
-                        <UpdateFile
-                            imageUrls={postData.imageUrls}
+                        <UploadFiles
+                            photos={postData.photos}
                             handleAddPhoto={handleAddPhoto}
                             handleDeletePhoto={handleDeletePhoto}
                         />
@@ -180,10 +212,16 @@ const PostSave = () => {
                                     }}
                                 >
                                     <Button
-                                        onClick={() => setFreeTrade(false)}
+                                        onClick={() => {
+                                            setPostData((prev) =>
+                                                produce(prev, (draft) => {
+                                                    draft.sell = true;
+                                                })
+                                            );
+                                        }}
                                         variant="contained"
                                         sx={{
-                                            backgroundColor: !freeTrade ? "#F3BE96" : "#D9D9D9",
+                                            backgroundColor: postData.sell ? "#F3BE96" : "#D9D9D9",
                                             color: "black",
                                             boxShadow: "none",
                                             borderRadius: "20px",
@@ -193,12 +231,16 @@ const PostSave = () => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            setFreeTrade(true);
-                                            setPrice(0);
+                                            setPostData((prev) =>
+                                                produce(prev, (draft) => {
+                                                    draft.price = 0;
+                                                    draft.sell = false;
+                                                })
+                                            );
                                         }}
                                         variant="contained"
                                         sx={{
-                                            backgroundColor: freeTrade ? "#F3BE96" : "#D9D9D9",
+                                            backgroundColor: postData.sell ? "#D9D9D9" : "#F3BE96",
                                             color: "black",
                                             boxShadow: "none",
                                             borderRadius: "20px",
@@ -208,10 +250,16 @@ const PostSave = () => {
                                     </Button>
                                 </Box>
                                 <InputBase
-                                    readOnly={freeTrade}
+                                    readOnly={!postData.sell}
                                     type="number"
-                                    value={price}
-                                    onChange={(e) => setPrice(e.target.value)}
+                                    value={postData.price}
+                                    onChange={(e) =>
+                                        setPostData((prev) =>
+                                            produce(prev, (draft) => {
+                                                draft.price = e.target.value;
+                                            })
+                                        )
+                                    }
                                     placeholder={"가격을 입력해주세요."}
                                     startAdornment={<InputAdornment position="start">₩</InputAdornment>}
                                     sx={{
@@ -220,7 +268,7 @@ const PostSave = () => {
                                         border: "1px solid rgba(0, 0, 0, 0.3)",
                                         borderRadius: "10px",
                                         my: "10px",
-                                        backgroundColor: freeTrade ? "#E9E9E9" : "white",
+                                        backgroundColor: !postData.sell ? "#E9E9E9" : "white",
                                         "& .MuiInputBase-input.Mui-disabled": {
                                             WebkitTextFillColor: "#9e9e9e",
                                             cursor: "not-allowed",
@@ -246,8 +294,8 @@ const PostSave = () => {
                             maxRows={Infinity}
                             placeholder={"자세한 설명을 적어주세요."}
                             onChange={(e) =>
-                                setPostData(
-                                    produce((draft) => {
+                                setPostData((prev) =>
+                                    produce(prev, (draft) => {
                                         draft.content = e.target.value;
                                     })
                                 )
@@ -273,8 +321,14 @@ const PostSave = () => {
                                     거래 희망 장소
                                 </Typography>
                                 <InputBase
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
+                                    value={postData.address}
+                                    onChange={(e) =>
+                                        setPostData((prev) =>
+                                            produce(prev, (draft) => {
+                                                draft.address = e.target.value;
+                                            })
+                                        )
+                                    }
                                     placeholder={"거래 장소를 적어주세요."}
                                     sx={{
                                         width: "100%",
@@ -303,9 +357,9 @@ const PostSave = () => {
                     </Box>
                 )}
                 {isEdit ? (
-                    <UpdatePostBtn requestUpdatePost={requestUpdatePost} />
+                    <UpdatePostBtn requestUpdatePost={requestSavePost} />
                 ) : (
-                    <AddPostBtn requestAddPost={requestAddPost} />
+                    <AddPostBtn requestAddPost={requestSavePost} />
                 )}
             </Box>
         </div>

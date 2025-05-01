@@ -18,7 +18,7 @@ const PetDetails = () => {
     const { petId } = useParams();
     const [currentPet, setCurrentPet] = useState({});
     const navigate = useNavigate();
-    const { nc, user, pet } = useContext(Context);
+    const { nc, user, pet, showModal } = useContext(Context);
     const [loading, setLoading] = useState(true);
 
     const getAge = (birthDateString) => {
@@ -32,7 +32,11 @@ const PetDetails = () => {
     };
 
     const handleChat = async () => {
-        if (!nc || !pet || !currentPet || !user) return;
+        if (!pet.id) {
+            showModal(null, "나의 반려동물을 선택해주세요", null);
+        }
+
+        if (!nc || !currentPet || !user) return;
 
         try {
             const uniqueId = await createChatRoom(currentPet.ownerId);

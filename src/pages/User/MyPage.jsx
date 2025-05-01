@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Box, Typography, Link, Button } from "@mui/material";
+import { Box, Typography, Link, Button, CircularProgress, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../context/Context.jsx";
 // 모달 컴포넌트
@@ -36,6 +36,13 @@ const MyPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // 스낵바 상태
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
+
     // 파일 입력 참조
     const fileInputRef = useRef(null);
 
@@ -45,9 +52,8 @@ const MyPage = () => {
             setIsLoading(true);
             setError(null);
             try {
-                // 사용자 정보 API 호출 (인스턴스 사용)
+                // 사용자 정보 API 호출
                 const response = await instance.get("/user/mypage");
-
                 console.log("마이페이지 응답 데이터:", response.data);
 
                 // API에서 받아온 데이터로 상태 업데이트
@@ -60,7 +66,64 @@ const MyPage = () => {
                         path: response.data.profileImageUrl,
                     }));
 
-                    setPets(response.data.pets || []);
+                    // 반려동물 정보 처리 - 주요 수정 부분
+                    if (response.data.pets && Array.isArray(response.data.pets)) {
+                        console.log("원본 반려동물 데이터:", response.data.pets);
+
+                        const petsWithProfiles = response.data.pets.map((pet) => {
+                            console.log(`반려동물 ID ${pet.id} 원본 데이터:`, pet);
+
+                            // 프로필 이미지 URL 찾기 로직 개선
+                            let profileImageUrl = null;
+
+                            // 1. 사진 정보가 photos 배열로 제공되는 경우
+                            if (pet.photos && Array.isArray(pet.photos) && pet.photos.length > 0) {
+                                // 우선 썸네일 사진을 찾음
+                                const thumbnailPhoto = pet.photos.find((photo) => photo.thumbnail);
+
+                                if (thumbnailPhoto) {
+                                    profileImageUrl = thumbnailPhoto.path;
+                                    console.log(`ID ${pet.id} - 썸네일 이미지 발견:`, thumbnailPhoto.path);
+                                } else {
+                                    // 썸네일이 없으면 첫 번째 사진 사용
+                                    profileImageUrl = pet.photos[0].path;
+                                    console.log(`ID ${pet.id} - 썸네일 없음, 첫 번째 이미지 사용:`, pet.photos[0].path);
+                                }
+                            }
+                            // 2. profileImageUrl 필드가 직접 제공되는 경우
+                            else if (pet.profileImageUrl) {
+                                profileImageUrl = pet.profileImageUrl;
+                                console.log(`ID ${pet.id} - profileImageUrl 직접 사용:`, pet.profileImageUrl);
+                            }
+                            // 3. petPhotoUrls 배열이 제공되는 경우
+                            else if (
+                                pet.petPhotoUrls &&
+                                Array.isArray(pet.petPhotoUrls) &&
+                                pet.petPhotoUrls.length > 0
+                            ) {
+                                profileImageUrl = pet.petPhotoUrls[0];
+                                console.log(`ID ${pet.id} - petPhotoUrls 배열에서 사용:`, pet.petPhotoUrls[0]);
+                            }
+
+                            return {
+                                ...pet,
+                                profileImageUrl: profileImageUrl,
+                                type: pet.type || pet.petType?.name || "",
+                                gender: pet.gender || "정보 없음",
+                                birth: pet.birth || pet.birthDate || "",
+                                weight: pet.weight || 0,
+                                name: pet.name || "",
+                                introduction: pet.introduction || pet.info || "",
+                                isNeutered: pet.isNeutered !== undefined ? pet.isNeutered : pet.neutered,
+                            };
+                        });
+
+                        console.log("변환된 반려동물 데이터:", petsWithProfiles);
+                        setPets(petsWithProfiles);
+                    } else {
+                        console.log("반려동물 데이터가 없거나 배열이 아님");
+                        setPets([]);
+                    }
 
                     // 펫시터 상태 확인
                     if (response.data.petSitterStatus) {
@@ -91,11 +154,21 @@ const MyPage = () => {
 
                 if (err.response && err.response.status === 401) {
                     setError("로그인이 필요합니다.");
+                    setSnackbar({
+                        open: true,
+                        message: "로그인이 필요합니다. 로그인 페이지로 이동합니다.",
+                        severity: "error",
+                    });
                     setTimeout(() => {
                         navigate("/login");
                     }, 2000);
                 } else {
                     setError("마이페이지 정보를 불러오는데 실패했습니다.");
+                    setSnackbar({
+                        open: true,
+                        message: "마이페이지 정보를 불러오는데 실패했습니다.",
+                        severity: "error",
+                    });
                 }
             } finally {
                 setIsLoading(false);
@@ -134,20 +207,31 @@ const MyPage = () => {
     const handleDeletePet = async (petId) => {
         if (window.confirm("정말로 이 반려동물 정보를 삭제하시겠습니까?")) {
             try {
-                // instance 사용하여 API 호출
                 await instance.delete(`/pet/${petId}`);
                 setPets(pets.filter((pet) => pet.id !== petId));
-                alert("반려동물 정보가 삭제되었습니다.");
+                setSnackbar({
+                    open: true,
+                    message: "반려동물 정보가 삭제되었습니다.",
+                    severity: "success",
+                });
             } catch (err) {
                 console.error("반려동물 삭제 실패:", err);
 
                 if (err.response && err.response.status === 401) {
-                    alert("인증이 만료되었습니다. 다시 로그인해주세요.");
-                    navigate("/login");
+                    setSnackbar({
+                        open: true,
+                        message: "인증이 만료되었습니다. 다시 로그인해주세요.",
+                        severity: "error",
+                    });
+                    setTimeout(() => navigate("/login"), 2000);
                     return;
                 }
 
-                alert(err.response?.data?.message || "반려동물 정보 삭제 중 오류가 발생했습니다.");
+                setSnackbar({
+                    open: true,
+                    message: err.response?.data?.message || "반려동물 정보 삭제 중 오류가 발생했습니다.",
+                    severity: "error",
+                });
             }
         }
     };
@@ -164,41 +248,52 @@ const MyPage = () => {
     const handleWithdrawal = async () => {
         if (withdrawalInput === "탈퇴합니다") {
             try {
-                // 백엔드 API 호출 - 탈퇴 처리 (instance 사용)
                 await instance.delete("/user/withdraw");
 
                 // 상태 및 스토리지 완전 초기화
-                setUser(null); // 컨텍스트 사용자 정보 초기화
-                setPets([]); // 펫 정보 초기화
-                setSitterStatus({}); // 펫시터 정보 초기화
-
-                // 로컬 스토리지 전체 클리어
+                setUser(null);
+                setPets([]);
+                setSitterStatus({});
                 localStorage.clear();
-
-                // 쿠키 삭제 시도 (주요 인증 쿠키)
                 document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-                alert("회원 탈퇴가 완료되었습니다.");
+                setSnackbar({
+                    open: true,
+                    message: "회원 탈퇴가 완료되었습니다.",
+                    severity: "success",
+                });
 
-                // 즉시 로그인 페이지로 이동
-                window.location.href = "/login"; // navigate 대신 강제 리로드
+                // 잠시 후 로그인 페이지로 이동
+                setTimeout(() => {
+                    window.location.href = "/login"; // 강제 리로드
+                }, 1500);
             } catch (err) {
                 console.error("회원 탈퇴 처리 실패:", err);
-                console.error("오류 상세 정보:", err.response?.data);
 
                 if (err.response?.status === 401) {
-                    alert("회원탈퇴 되셨습니다.");
-                    navigate("/login");
+                    setSnackbar({
+                        open: true,
+                        message: "회원탈퇴 되셨습니다.",
+                        severity: "info",
+                    });
+                    setTimeout(() => navigate("/login"), 1500);
                 } else {
-                    alert(
-                        "회원 탈퇴 처리 중 오류가 발생했습니다: " +
-                            (err.response?.data?.error || err.message || "알 수 없는 오류")
-                    );
+                    setSnackbar({
+                        open: true,
+                        message:
+                            "회원 탈퇴 처리 중 오류가 발생했습니다: " +
+                            (err.response?.data?.error || err.message || "알 수 없는 오류"),
+                        severity: "error",
+                    });
                 }
             }
             handleCloseWithdrawalModal();
         } else {
-            alert("'탈퇴합니다'를 정확히 입력해주세요.");
+            setSnackbar({
+                open: true,
+                message: "'탈퇴합니다'를 정확히 입력해주세요.",
+                severity: "warning",
+            });
         }
     };
 
@@ -208,12 +303,15 @@ const MyPage = () => {
 
     const handleNicknameSave = async (newNickname) => {
         try {
-            // instance 사용하여 API 호출
             const response = await instance.put("/user/nickname", { nickname: newNickname });
 
             if (response.data && response.data.nickname) {
                 setUser((prev) => ({ ...prev, nickname: response.data.nickname }));
-                alert("닉네임이 성공적으로 변경되었습니다.");
+                setSnackbar({
+                    open: true,
+                    message: "닉네임이 성공적으로 변경되었습니다.",
+                    severity: "success",
+                });
             } else {
                 throw new Error("닉네임 업데이트 응답 형식이 올바르지 않습니다.");
             }
@@ -221,12 +319,20 @@ const MyPage = () => {
             console.error("닉네임 변경 실패:", err);
 
             if (err.response && err.response.status === 401) {
-                alert("인증이 만료되었습니다. 다시 로그인해주세요.");
-                navigate("/login");
+                setSnackbar({
+                    open: true,
+                    message: "인증이 만료되었습니다. 다시 로그인해주세요.",
+                    severity: "error",
+                });
+                setTimeout(() => navigate("/login"), 2000);
                 return;
             }
 
-            alert(err.response?.data?.error || "닉네임 변경 중 오류가 발생했습니다.");
+            setSnackbar({
+                open: true,
+                message: err.response?.data?.error || "닉네임 변경 중 오류가 발생했습니다.",
+                severity: "error",
+            });
         }
     };
 
@@ -248,7 +354,6 @@ const MyPage = () => {
         }));
     };
 
-    // 기존 함수 수정 - 클릭 시 모달 열기
     const handleProfileClick = () => {
         handleOpenProfileImageModal();
     };
@@ -256,10 +361,8 @@ const MyPage = () => {
     // 펫시터 관련 핸들러
     const handlePetSitterAction = () => {
         if (sitterStatus.registered || sitterStatus.isPending) {
-            // 이미 펫시터인 경우 정보 수정 페이지로 이동
             navigate("/petsitter/edit");
         } else {
-            // 펫시터가 아닌 경우 등록 페이지로 이동
             navigate("/petsitter-register");
         }
     };
@@ -275,35 +378,42 @@ const MyPage = () => {
     const handleQuitPetsitter = async () => {
         if (window.confirm("정말로 펫시터를 그만두시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
             try {
-                // instance 사용하여 API 호출
                 const response = await instance.post("/petsitter/quit", {});
 
                 if (response.status === 200) {
-                    alert("펫시터 탈퇴가 완료되었습니다.");
-                    // 펫시터 상태 업데이트
+                    setSnackbar({
+                        open: true,
+                        message: "펫시터 탈퇴가 완료되었습니다.",
+                        severity: "success",
+                    });
+
                     setSitterStatus({
                         registered: false,
                         isPending: false,
                         status: "NOT_REGISTERED",
                     });
-
-                    // 로컬 스토리지에서 펫시터 정보 제거
                     localStorage.removeItem("petSitterRegistrationCompleted");
                     localStorage.removeItem("petSitterInfo");
-
-                    // 모달 닫기
                     handleCloseQuitPetsitterModal();
                 }
             } catch (err) {
                 console.error("펫시터 탈퇴 오류:", err);
 
                 if (err.response && err.response.status === 401) {
-                    alert("인증이 만료되었습니다. 다시 로그인해주세요.");
-                    navigate("/login");
+                    setSnackbar({
+                        open: true,
+                        message: "인증이 만료되었습니다. 다시 로그인해주세요.",
+                        severity: "error",
+                    });
+                    setTimeout(() => navigate("/login"), 2000);
                     return;
                 }
 
-                alert(err.response?.data?.message || "펫시터 탈퇴 처리 중 오류가 발생했습니다.");
+                setSnackbar({
+                    open: true,
+                    message: err.response?.data?.message || "펫시터 탈퇴 처리 중 오류가 발생했습니다.",
+                    severity: "error",
+                });
             }
         }
     };
@@ -311,8 +421,17 @@ const MyPage = () => {
     return (
         <Box sx={{ py: 3, px: 2, maxWidth: "100%", margin: "0 auto" }}>
             {isLoading ? (
-                <Box sx={{ textAlign: "center", my: 4 }}>
-                    <Typography>로딩 중...</Typography>
+                <Box
+                    sx={{
+                        textAlign: "center",
+                        my: 4,
+                        height: "60vh",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <CircularProgress color="primary" />
                 </Box>
             ) : error ? (
                 <Box sx={{ textAlign: "center", my: 4, color: "error.main" }}>
@@ -328,7 +447,6 @@ const MyPage = () => {
                         user={user}
                         onNicknameEdit={handleOpenNicknameModal}
                         onProfileClick={handleProfileClick}
-                        onAddPet={handleAddPet}
                         fileInputRef={fileInputRef}
                     />
 
@@ -340,6 +458,7 @@ const MyPage = () => {
                         hover={hover}
                         onHoverEnter={handleHoverEnter}
                         onHoverLeave={handleHoverLeave}
+                        onAddPet={handleAddPet}
                     />
 
                     {/* 펫시터 섹션 */}
@@ -391,9 +510,26 @@ const MyPage = () => {
                         currentImage={user?.path || "/src/assets/images/User/profile-pic.jpg"}
                         onImageUpdate={handleProfileImageUpdate}
                     />
+
+                    {/* 스낵바 알림 */}
+                    <Snackbar
+                        open={snackbar.open}
+                        autoHideDuration={4000}
+                        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    >
+                        <Alert
+                            onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+                            severity={snackbar.severity}
+                            sx={{ width: "100%" }}
+                        >
+                            {snackbar.message}
+                        </Alert>
+                    </Snackbar>
                 </>
             )}
         </Box>
     );
 };
+
 export default MyPage;
