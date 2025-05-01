@@ -1,5 +1,5 @@
 import "./css/App.css";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";/theme.js";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme.js";
 import { Provider } from "./context/Context.jsx";
