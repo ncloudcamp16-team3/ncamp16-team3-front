@@ -3,7 +3,11 @@ import TitleBar from "../../components/Global/TitleBar.jsx";
 import { MessageSquareText, PawPrint, CalendarCheck, CalendarDays, Bell, Globe, Trash2 } from "lucide-react";
 import { styled } from "@mui/material/styles";
 import { Context } from "../../context/Context.jsx";
-import { getNotificationsByUserId } from "../../services/notificationService.js";
+import {
+    getNotificationsByUserId,
+    deleteAllNotificationsByUserId,
+    deleteNotificationById,
+} from "../../services/notificationService.js";
 
 // 숫자 ID에 따라 아이콘 매핑
 const getIconByTypeId = (typeId) => {
@@ -59,13 +63,29 @@ const Notification = () => {
         setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, readStatus: true } : n)));
     };
 
-    const handleDelete = (id, e) => {
+    const handleDelete = async (id, e) => {
         e.stopPropagation();
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        const notification = notifications.find((n) => n.id === id);
+        if (notification) {
+            await deleteSingleNotification(notification);
+        }
     };
 
-    const deleteAll = () => {
-        setNotifications([]);
+    const deleteSingleNotification = async (notification) => {
+        try {
+            await deleteNotificationById(notification.id);
+            setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+        } catch (error) {
+            console.error("Error deleting notification:", error);
+        }
+    };
+    const deleteAllNotifications = async () => {
+        try {
+            await deleteAllNotificationsByUserId(user.id);
+            setNotifications([]); // 직접 비우기
+        } catch (error) {
+            console.error("Error deleting all notifications:", error);
+        }
     };
 
     return (
@@ -79,7 +99,7 @@ const Notification = () => {
         >
             <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
                 <TitleBar name="알림">
-                    <HoverTrash onClick={deleteAll} />
+                    <HoverTrash onClick={deleteAllNotifications} />
                 </TitleBar>
             </div>
 
