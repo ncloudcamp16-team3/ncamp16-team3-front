@@ -1,4 +1,3 @@
-// import { Bell, MessageSquareText, CalendarCheck, Globe, PawPrint, Trash2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { MessageSquareText, PawPrint, CalendarCheck, CalendarDays, Bell, Globe, Trash2 } from "lucide-react";
@@ -10,43 +9,23 @@ import { getNotificationsByUserId } from "../../services/notificationService.js"
 const getIconByTypeId = (typeId) => {
     switch (typeId) {
         case 1:
-            return {
-                icon: <MessageSquareText color="#4A90E2" />,
-                label: "게시판 댓글",
-            };
+            return { icon: <MessageSquareText color="#4A90E2" />, label: "게시판 댓글" };
         case 2:
-            return {
-                icon: <PawPrint color="#7D4CDB" />,
-                label: "펫스타 댓글",
-            };
+            return { icon: <PawPrint color="#7D4CDB" />, label: "펫스타 댓글" };
         case 3:
-            return {
-                icon: <CalendarCheck color="#00BFA5" />,
-                label: "시설 예약 알림",
-            };
+            return { icon: <CalendarCheck color="#00BFA5" />, label: "시설 예약 알림" };
         case 4:
-            return {
-                icon: <CalendarDays color="#FFA000" />,
-                label: "일정 알림",
-            };
+            return { icon: <CalendarDays color="#FFA000" />, label: "일정 알림" };
         case 5:
-            return {
-                icon: <Bell color="#FF5722" />,
-                label: "채팅 메시지",
-            };
+            return { icon: <Bell color="#FF5722" />, label: "채팅 메시지" };
         case 6:
-            return {
-                icon: <Globe color="#607D8B" />,
-                label: "전체 공지",
-            };
+            return { icon: <Globe color="#607D8B" />, label: "전체 공지" };
         default:
-            return {
-                icon: <Bell />,
-                label: "기타 알림",
-            };
+            return { icon: <Bell />, label: "기타 알림" };
     }
 };
 
+// 쓰레기통 아이콘에 hover 효과
 const HoverTrash = styled(Trash2)(({ theme }) => ({
     cursor: "pointer",
     marginLeft: "auto",
@@ -90,7 +69,14 @@ const Notification = () => {
     };
 
     return (
-        <div style={{ backgroundColor: "white", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <div
+            style={{
+                backgroundColor: "white",
+                minHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
+            }}
+        >
             <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
                 <TitleBar name="알림">
                     <HoverTrash onClick={deleteAll} />
@@ -99,7 +85,7 @@ const Notification = () => {
 
             <div style={{ padding: "16px" }}>
                 {notifications.map((notification) => {
-                    const { icon, label } = getIconByTypeId(notification.notificationTypeId);
+                    const { icon } = getIconByTypeId(notification.notificationTypeId);
 
                     return (
                         <div
@@ -108,7 +94,7 @@ const Notification = () => {
                             style={{
                                 position: "relative",
                                 display: "flex",
-                                alignItems: "center",
+                                alignItems: "flex-start",
                                 padding: "12px",
                                 marginBottom: "12px",
                                 backgroundColor: notification.readStatus ? "#f9f9f9" : "#fff5e5",
@@ -137,11 +123,20 @@ const Notification = () => {
                             </button>
 
                             <div style={{ marginRight: "12px" }}>{icon}</div>
-                            <div style={{ paddingRight: "24px" }}>
-                                <div style={{ fontWeight: notification.readStatus ? "normal" : "bold" }}>
-                                    {notification.content}
+
+                            <div style={{ paddingRight: "24px", flex: 1 }}>
+                                <div
+                                    style={{
+                                        fontWeight: notification.readStatus ? "normal" : "bold",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    {notification.title}
                                 </div>
-                                <div style={{ fontSize: "0.85em", color: "#888", marginTop: "4px" }}>
+                                <div style={{ marginTop: "4px", fontSize: "0.95em", color: "#555" }}>
+                                    {notification.body}
+                                </div>
+                                <div style={{ fontSize: "0.8em", color: "#888", marginTop: "6px" }}>
                                     {new Date(notification.createdAt).toLocaleString()}
                                 </div>
                             </div>
