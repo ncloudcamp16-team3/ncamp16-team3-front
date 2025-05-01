@@ -15,8 +15,8 @@ import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 
-import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
-import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
+// import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
+// import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
 
 import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
 import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
