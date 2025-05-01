@@ -14,6 +14,10 @@ import AdminLayout from "./components/Admin/AdminLayout.jsx";
 // Protected Routes
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
+
+import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
+import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
+
 import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
 import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
 
@@ -67,6 +71,7 @@ const AdminPetSitterApplyDetail = lazy(() => import("./pages/Admin/AdminPetSitte
 const AdminFacilityList = lazy(() => import("./pages/Admin/AdminFacilityList.jsx"));
 const AdminFacilityDetail = lazy(() => import("./pages/Admin/AdminFacilityDetail.jsx"));
 const AdminFacilityAdd = lazy(() => import("./pages/Admin/AdminFacilityAdd.jsx"));
+const AdminFacilityUpdate = lazy(() => import("./pages/Admin/AdminFacilityUpdate.jsx"));
 
 function App() {
     return (
@@ -88,6 +93,7 @@ function App() {
                                     <Route path="facility/list" element={<AdminFacilityList />} />
                                     <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
                                     <Route path="facility/add" element={<AdminFacilityAdd />} />
+                                    <Route path="facility/:id/update" element={<AdminFacilityUpdate />} />
                                 </Route>
                             </Route>
 
