@@ -14,7 +14,7 @@ const MyPostDropdown = ({ open, setOpen, onDelete }) => {
                 top: "30px",
                 right: "0px",
                 pointerEvents: open ? "auto" : "none",
-                zIndex: 1000,
+                zIndex: 100000,
                 width: "150px",
             }}
         >

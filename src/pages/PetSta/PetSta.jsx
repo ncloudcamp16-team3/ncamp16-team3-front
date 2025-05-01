@@ -181,6 +181,9 @@ const PetSta = () => {
                 width="50px"
                 height="50px"
                 onClick={handleFabClick}
+                sx={{
+                    cursor: "pointer",
+                }}
             >
                 <AddIcon sx={{ fontSize: "35px", color: "white" }} />
             </Box>

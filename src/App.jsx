@@ -1,5 +1,5 @@
 import "./css/App.css";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";/theme.js";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme.js";
 import { Provider } from "./context/Context.jsx";
@@ -34,7 +34,7 @@ const AddPet = lazy(() => import("./pages/User/AddPet.jsx"));
 const EditPet = lazy(() => import("./pages/User/EditPet.jsx"));
 const Bookmark = lazy(() => import("./pages/User/Bookmark"));
 const PetstaBookmarks = lazy(() => import("./pages/User/PetstaBookmarks"));
-const PostBookmarks = lazy(() => import("./pages/User/PostBookmarks"));
+const PostBookmarks = lazy(() => import("./pages/User/BoardBookmarks.jsx"));
 const PetSitterRegister = lazy(() => import("./pages/Sitter/PetSitterRegister.jsx"));
 const PetSitterFinder = lazy(() => import("./pages/Sitter/PetSitterFinder.jsx"));
 const PetSitterDetail = lazy(() => import("./pages/Sitter/PetSitterDetail.jsx"));
