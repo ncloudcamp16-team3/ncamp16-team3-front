@@ -92,6 +92,7 @@ const PostCommentPage = () => {
             alert("댓글을 작성해 주세요!");
             return;
         }
+
         try {
             const mention = extractMention(commentContent);
             const requestBody = {
@@ -99,14 +100,43 @@ const PostCommentPage = () => {
                 parentId: replyTo ? (replyTo.parentId ?? replyTo.id) : null,
                 mention,
             };
-            await addComment(postId, requestBody);
-            alert("댓글이 작성되었습니다!");
+
+            const response = await addComment(postId, requestBody);
+            const newComment = response.data;
+
+            if (!replyTo) {
+                // 부모 댓글
+                setComments((prev) => [newComment, ...prev]);
+            } else {
+                const parentId = replyTo.parentId ?? replyTo.id;
+
+                // 답글이 닫혀 있다면 열기
+                if (!openRepliesMap[parentId]) {
+                    setOpenRepliesMap((prev) => ({ ...prev, [parentId]: true }));
+
+                    // setState 비동기이므로 잠깐 기다렸다가 loadReplies 후 추가
+                    setTimeout(() => {
+                        // PostCommentItem 내부에서 replies 불러온 후 상태 관리
+                        document.dispatchEvent(
+                            new CustomEvent("reply-added", {
+                                detail: { parentId, newReply: newComment },
+                            })
+                        );
+                    }, 300);
+                } else {
+                    // 이미 열려 있으면 바로 이벤트로 추가
+                    document.dispatchEvent(
+                        new CustomEvent("reply-added", {
+                            detail: { parentId, newReply: newComment },
+                        })
+                    );
+                }
+            }
+
             setCommentContent("");
             setIsReply(false);
             setReplyTo(null);
             setMentionUserList([]);
-            fetchComments();
-            setRefreshTrigger((prev) => prev + 1);
         } catch (error) {
             console.error(error);
             alert("댓글 작성에 실패했습니다!");
