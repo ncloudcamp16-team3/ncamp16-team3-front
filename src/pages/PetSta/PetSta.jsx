@@ -23,6 +23,10 @@ const PetSta = () => {
     const navigate = useNavigate();
     const { setInitialFollow } = useFollow();
 
+    const handleRemovePost = (postId) => {
+        setPosts((prev) => prev.filter((p) => p.postId !== postId));
+    };
+
     const loadPosts = async () => {
         if (isLoading) return; // 중복 방지
         setIsLoading(true);
@@ -93,6 +97,7 @@ const PetSta = () => {
                         isMute={isMute}
                         toggleMute={toggleMute}
                         isVisited={post.isVisited}
+                        onRemove={handleRemovePost}
                     />
                 ) : (
                     <PhotoPost
@@ -110,6 +115,7 @@ const PetSta = () => {
                         initialLiked={post.initialLiked}
                         initialBookmarked={post.initialBookmarked}
                         isVisited={post.isVisited}
+                        onRemove={handleRemovePost}
                     />
                 )
             )}
