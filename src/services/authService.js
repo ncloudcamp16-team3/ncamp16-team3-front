@@ -32,6 +32,32 @@ export const checkLogin = async () => {
     }
 };
 
+export const saveOrUpdateFcmToken = async ({ userId, fcmToken }) => {
+    console.log("📦 FCM Token to be sent:", fcmToken);
+    try {
+        const response = await instance.post(`${API_URL}/fcm`, {
+            userId,
+            fcmToken,
+        });
+        console.log("✅ FCM 토큰 등록 성공:", response.data);
+        return true;
+    } catch (error) {
+        console.error("❌ FCM 토큰 등록 실패:", error);
+        return false;
+    }
+};
+
+export const getUserFcmToken = async ({ userId }) => {
+    try {
+        const response = await instance.get(`${API_URL}/exists`, {
+            params: { userId },
+        });
+        console.log("Response Data:", response.data); // 응답 데이터 확인
+        return response.data; // 토큰 반환 // exists가 false일 경우 문제가 없으므로 확인
+    } catch (error) {
+        console.error("FCM 토큰 존재 확인 실패:", error);
+    }
+};
 // API 호출
 export const registration = async (formData) => {
     try {

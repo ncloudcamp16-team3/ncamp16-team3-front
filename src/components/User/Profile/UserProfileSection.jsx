@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Button, IconButton, Avatar } from "@mui/material";
+import { Box, Typography,  IconButton, Avatar } from "@mui/material";
 import penIcon1 from "/src/assets/images/User/pen_1.svg";
 import penIcon2 from "/src/assets/images/User/pen_2.svg";
 
@@ -9,10 +9,9 @@ import penIcon2 from "/src/assets/images/User/pen_2.svg";
  * @param {Object} props.user 사용자 정보 객체
  * @param {Function} props.onNicknameEdit 닉네임 수정 핸들러
  * @param {Function} props.onProfileClick 프로필 사진 클릭 핸들러
- * @param {Function} props.onAddPet 반려동물 추가 핸들러
  * @param {React.RefObject} props.fileInputRef 파일 입력 참조
  */
-const UserProfileSection = ({ user, onNicknameEdit, onProfileClick, onAddPet, fileInputRef }) => {
+const UserProfileSection = ({ user, onNicknameEdit, onProfileClick, fileInputRef }) => {
     // 프로필 이미지 경로 처리
     const getProfileImageUrl = () => {
         if (!user || !user.path) {
@@ -49,6 +48,7 @@ const UserProfileSection = ({ user, onNicknameEdit, onProfileClick, onAddPet, fi
                             width: 60,
                             height: 60,
                             bgcolor: "#FF5C5C",
+                            objectFit: "cover",
                         }}
                     />
                     <Box
@@ -94,24 +94,6 @@ const UserProfileSection = ({ user, onNicknameEdit, onProfileClick, onAddPet, fi
                     </IconButton>
                 </Box>
             </Box>
-
-            <Button
-                variant="contained"
-                size="small"
-                onClick={onAddPet}
-                sx={{
-                    bgcolor: "#E9A260",
-                    color: "white",
-                    "&:hover": { bgcolor: "#d0905a" },
-                    fontSize: "12px",
-                    py: 0.5,
-                    px: 1.5,
-                    borderRadius: "4px",
-                    boxShadow: "none",
-                }}
-            >
-                동물 추가
-            </Button>
 
             {/* 숨겨진 파일 입력 필드 */}
             <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} />

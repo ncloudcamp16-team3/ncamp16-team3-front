@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, CircularProgress, Snackbar, Alert } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import instance from "../../services/axiosInstance.js";
 
 // 공통 컴포넌트
 import StepProgress from "../../components/Sitter/common/StepProgress";
@@ -82,10 +82,8 @@ const PetSitterRegister = () => {
 
             if (isRegistrationAttempt === "true") {
                 try {
-                    // 서버에 실제 등록 여부 확인
-                    const statusResponse = await axios.get("/api/petsitter/status", {
-                        withCredentials: true,
-                    });
+                    // 서버에 실제 등록 여부 확인 (instance 사용)
+                    const statusResponse = await instance.get("/petsitter/status");
 
                     if (statusResponse.status === 200) {
                         console.log("펫시터 정보가 이미 서버에 있습니다. 수정 모드로 전환합니다.");
@@ -394,9 +392,7 @@ const PetSitterRegister = () => {
             // 서버에 이미 등록된 펫시터인지 확인
             let isUpdate = false;
             try {
-                const statusResponse = await axios.get("/api/petsitter/status", {
-                    withCredentials: true,
-                });
+                const statusResponse = await instance.get("/petsitter/status");
 
                 if (statusResponse.status === 200) {
                     console.log("기존 펫시터 정보 업데이트 모드");
@@ -448,13 +444,12 @@ const PetSitterRegister = () => {
                 console.log(`- ${key}:`, value instanceof Blob ? `Blob (${value.size} bytes)` : value);
             }
 
-            // API 호출
+            // API 호출 (instance 사용)
             console.log("API 요청 시작");
-            const res = await axios.post("/api/petsitter/apply", formData, {
+            const res = await instance.post("/petsitter/apply", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                withCredentials: true,
                 timeout: 30000, // 30초 타임아웃
             });
 

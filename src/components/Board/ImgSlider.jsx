@@ -30,10 +30,10 @@ const ImgSlide = ({ photos }) => {
                 loop={true}
                 style={{ height: "100%" }}
             >
-                {photos.map((src, idx) => (
+                {photos?.map((path, idx) => (
                     <SwiperSlide key={idx}>
                         <img
-                            src={src.url}
+                            src={path}
                             alt={`slide-${idx}`}
                             style={{
                                 width: "100%",

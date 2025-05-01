@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
 import { getUserInfo } from "../services/authService.js";
+import { getBoardTypeList } from "../services/boardService.js";
 
 export const Context = createContext();
 
@@ -36,6 +37,20 @@ export function Provider({ children }) {
             }
         };
 
+        getBoardTypeList()
+            .then((res) => {
+                const data = res.data;
+                console.log(data);
+                console.log("응답 성공: " + res.message);
+                if (data.length > 0) {
+                    setBoardTypeList(data);
+                    setBoardType(data[0]);
+                }
+            })
+            .catch((err) => {
+                console.log("에러 발생" + err.message);
+            });
+
         fetchUserInfo();
     }, []);
 
@@ -67,17 +82,9 @@ export function Provider({ children }) {
 
     const [isLogin, setLogin] = useState(false);
 
-    const [boardTypeList, setBoardTypeList] = useState([
-        {
-            id: 1,
-            name: "자유게시판",
-        },
-    ]);
+    const [boardTypeList, setBoardTypeList] = useState([]);
 
-    const [boardType, setBoardType] = useState({
-        id: 1,
-        name: "자유게시판",
-    });
+    const [boardType, setBoardType] = useState({});
 
     const toggleMute = () => {
         setIsMute((prev) => !prev);

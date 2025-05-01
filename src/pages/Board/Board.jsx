@@ -5,12 +5,12 @@ import AnnounceContainer from "../../components/Board/AnnounceContainer.jsx";
 import { Context } from "../../context/Context.jsx";
 import PostCard from "../../components/Board/PostCard.jsx";
 import AddBtn from "../../components/Board/AddBtn.jsx";
-import { getBoardType, searchPost } from "../../services/boardService.js";
+import { searchPost } from "../../services/boardService.js";
 import Loading from "../../components/Global/Loading.jsx";
 import { getAnnounces } from "../../services/announceService.js";
 
 const Board = () => {
-    const { setBoardTypeList, setBoardType, boardType } = useContext(Context);
+    const { boardType } = useContext(Context);
     const [postList, setPostList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
@@ -21,7 +21,14 @@ const Board = () => {
     const isInitialMount = useRef(true);
 
     useEffect(() => {
-        const getBoardTypes = async () => {
+        console.log(boardType);
+        const boardInit = async () => {
+            await requestAnnounce(boardType);
+            await getPostList({ boardType: boardType, page: 0 });
+            isInitialMount.current = false;
+        };
+
+        /*const getBoardTypes = async () => {
             try {
                 const res = await getBoardType();
                 const data = res.data;
@@ -42,9 +49,8 @@ const Board = () => {
             } finally {
                 setLoading(false);
             }
-        };
-
-        getBoardTypes();
+        };*/
+        boardInit();
     }, []);
 
     const getPostList = async ({ boardType, keyword, page }) => {
@@ -140,7 +146,7 @@ const Board = () => {
                     {postList.map((item, index) => {
                         const isLast = index === postList.length - 1;
                         return (
-                            <Box key={item.id} ref={isLast ? lastItemRef : null}>
+                            <Box ref={isLast ? lastItemRef : null}>
                                 <PostCard postItem={item} />
                             </Box>
                         );

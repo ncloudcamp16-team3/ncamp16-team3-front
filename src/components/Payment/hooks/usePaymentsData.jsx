@@ -1,32 +1,51 @@
 import { useState, useEffect } from "react";
-import paymentsData from "../../../mock/Payments/payments.json";
-// In a real project, this would be imported directly
-// import bookingsData from '../data/bookings.json';
 
-export const usePaymentsData = () => {
+export const usePaymentsData = (params = {}) => {
+    const { userId = 1, startDate, endDate, page, size } = params;
+
     const [payments, setPayments] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
+    const [last, setLast] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //     try {
-        //         const response = await fetch("/api/payments"); // 예시 URL
-        //         const data = await response.json();
-        //         setPayments(data);
-        //     } catch (err) {
-        //         setError(err);
-        //     } finally {
-        //         setLoading(false);
-        //     }
-        // };
-        //
-        // fetchData();
+        const fetchData = async () => {
+            setLoading(true);
 
-        const paymentData = paymentsData;
-        setPayments(paymentData);
-        setLoading(false);
-    }, []);
+            try {
+                const query = new URLSearchParams();
 
-    return { payments, loading, error };
+                query.append("id", userId);
+                if (startDate) query.append("startDate", startDate);
+                if (endDate) query.append("endDate", endDate);
+                if (page) query.append("page", page);
+                if (size) query.append("size", size);
+                console.log(query);
+
+                const response = await fetch(`http://localhost:8080/api/payment/get?${query}`);
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    throw new Error(`데이터 요청 실패: ${response.status} ${errorData}`);
+                }
+
+                const data = await response.json();
+                setCurrentPage(data.currentPage);
+                setTotalPages(data.totalPages);
+                setTotalElements(data.totalElements);
+                if (totalPages - data.currentPage <= 10) setLast(true);
+                setPayments(data.data || []);
+            } catch (err) {
+                setError(err);
+                console.error("Payment data fetch error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [userId, startDate, endDate, page, size]);
+    return { payments, currentPage, totalPages, totalElements, last, loading, error };
 };

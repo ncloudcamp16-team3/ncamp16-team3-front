@@ -17,6 +17,7 @@ const PhotoPost = ({
     initialLiked,
     initialBookmarked,
     isVisited,
+    onRemove,
 }) => {
     const navigate = useNavigate();
     const handlePostClick = () => {
@@ -26,7 +27,14 @@ const PhotoPost = ({
     return (
         <Box sx={{ width: "100%", maxHeight: "100vh", marginBottom: 1 }}>
             <Box sx={{ position: "relative" }}>
-                <PostProfile userId={userId} userName={userName} userPhoto={userPhoto} isVisited={isVisited} />
+                <PostProfile
+                    userId={userId}
+                    userName={userName}
+                    userPhoto={userPhoto}
+                    isVisited={isVisited}
+                    onRemove={onRemove}
+                    postId={postId}
+                />
                 <Box onClick={handlePostClick}>
                     <img style={{ width: "100%" }} src={`${fileName}`} />
                 </Box>

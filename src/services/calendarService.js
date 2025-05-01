@@ -14,7 +14,17 @@ export const getScheduleAll = async (userId) => {
         });
 };
 
-export const postSchedule = async ({ userId, title, content, startDate, endDate, address, latitude, longitude }) => {
+export const postSchedule = async ({
+    userId,
+    title,
+    content,
+    startDate,
+    endDate,
+    address,
+    latitude,
+    longitude,
+    fcmToken,
+}) => {
     try {
         const response = await instance.post(`${API_URL}/schedule`, {
             userId,
@@ -25,6 +35,7 @@ export const postSchedule = async ({ userId, title, content, startDate, endDate,
             address,
             latitude,
             longitude,
+            fcmToken,
         });
 
         return response.data;

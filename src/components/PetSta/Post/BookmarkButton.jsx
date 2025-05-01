@@ -28,10 +28,7 @@ const BookmarkButton = ({ postId, initialBookmarked, isWhite = false, width = 24
           : PetStaBookmark;
 
     return (
-        <Box
-            sx={{ padding: 1, display: "flex", alignItems: "center", cursor: "pointer" }}
-            onClick={handleBookmarkClick}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={handleBookmarkClick}>
             <img src={bookmarkIcon} alt="Bookmark Icon" width={width} />
         </Box>
     );

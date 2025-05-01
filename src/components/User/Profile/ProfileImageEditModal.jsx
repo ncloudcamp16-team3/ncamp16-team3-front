@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
-import { Box, Modal, Typography, Button, Avatar, CircularProgress } from "@mui/material";
+import { Box, Typography, Button, Avatar, CircularProgress } from "@mui/material";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import axios from "axios";
+import instance from "/src/services/axiosInstance.js";
+import DarkModal from "/src/components/Global/DarkModal.jsx";
 
 const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -14,7 +15,6 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // 파일 크기 및 타입 검증
         if (file.size > 5 * 1024 * 1024) {
             setError("이미지 크기는 5MB 이하여야 합니다.");
             return;
@@ -28,7 +28,6 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
         setError(null);
         setSelectedFile(file);
 
-        // 미리보기 생성
         const reader = new FileReader();
         reader.onload = () => {
             setPreviewUrl(reader.result);
@@ -46,23 +45,27 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
             const formData = new FormData();
             formData.append("image", selectedFile);
 
-            const response = await axios.post("/api/user/profile-image", formData, {
+            const response = await instance.post("/user/profile-image", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                withCredentials: true,
             });
 
             if (response.data && response.data.profileImageUrl) {
                 onImageUpdate(response.data.profileImageUrl);
                 handleClose();
             } else {
-                // 서버에서 URL을 반환하지 않은 경우에도 미리보기는 적용
                 onImageUpdate(previewUrl);
                 handleClose();
             }
         } catch (err) {
             console.error("프로필 이미지 업로드 실패:", err);
+
+            if (err.response && err.response.status === 401) {
+                setError("인증이 만료되었습니다. 다시 로그인해주세요.");
+                return;
+            }
+
             setError("이미지 업로드 중 오류가 발생했습니다.");
 
             // 개발 중에는 미리보기로 대체 (실제 운영시에는 제거)
@@ -87,7 +90,7 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
     };
 
     return (
-        <Modal open={open} onClose={handleClose} aria-labelledby="profile-image-modal-title" disableScrollLock>
+        <DarkModal open={open} onClose={handleClose}>
             <Box
                 sx={{
                     position: "absolute",
@@ -102,6 +105,7 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    zIndex: 1500,
                 }}
             >
                 <Typography id="profile-image-modal-title" variant="h6" component="h2" fontWeight="bold" mb={3}>
@@ -123,6 +127,7 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
                             width: "100%",
                             height: "100%",
                             border: "1px solid #eee",
+                            objectFit: "cover",
                         }}
                     />
                     <Button
@@ -194,7 +199,7 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
                     </Button>
                 </Box>
             </Box>
-        </Modal>
+        </DarkModal>
     );
 };
 

@@ -33,7 +33,12 @@ const InfoModal = ({ open, title, message, onClose }) => {
                         </Typography>
                     )}
                     <Typography variant="h6" component="h2" gutterBottom>
-                        {message}
+                        {message.split("\n").map((line, index) => (
+                            <React.Fragment key={index}>
+                                {line}
+                                <br />
+                            </React.Fragment>
+                        ))}
                     </Typography>
                     <Button
                         onClick={onClose}
