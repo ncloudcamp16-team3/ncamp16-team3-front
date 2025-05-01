@@ -48,3 +48,27 @@ export const postMatchCheck = (petId1, petId2) => {
             throw err;
         });
 };
+
+// 거래 매칭 시작
+export const postTradeStart = (postId) => {
+    return instance
+        .post(`${API_URL}/trade/start?postId=${postId}`)
+        .then((res) => res.data)
+        .catch((err) => {
+            console.error("거래 매칭 시작 실패", err);
+            throw err;
+        });
+};
+
+// 거래 매칭 여부 확인
+export const postTradeCheck = (postId) => {
+    return instance
+        .get(`${API_URL}/trade/check`, {
+            params: { postId },
+        })
+        .then((res) => res.data) // true or false
+        .catch((err) => {
+            console.error("거래 매칭 확인 실패", err);
+            throw err;
+        });
+};

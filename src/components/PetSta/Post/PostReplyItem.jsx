@@ -25,6 +25,15 @@ const PostReplyItem = ({ reply, onReply, onRemove }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [dropOpen]);
 
+    const formattedCreatedAt = new Date(reply.createdAt).toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+
     const navigate = useNavigate();
 
     const handleDelete = async () => {
@@ -80,7 +89,7 @@ const PostReplyItem = ({ reply, onReply, onRemove }) => {
                     <Box display="flex" alignItems="center">
                         <Typography fontWeight="bold">{userInfo.userName || "알 수 없음"}</Typography>
                         <Typography fontSize="12px" color="gray" marginLeft={1}>
-                            {reply.createdAt}
+                            {formattedCreatedAt}
                         </Typography>
                     </Box>
 

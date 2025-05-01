@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 const MyPostCenterMenu = ({ open, onClose, onDelete, onEdit }) => {
     if (!open) return null;
@@ -11,7 +11,7 @@ const MyPostCenterMenu = ({ open, onClose, onDelete, onEdit }) => {
                 position: "fixed",
                 top: 0,
                 left: 0,
-                zIndex: 1300,
+                zIndex: 13000,
                 width: "100vw",
                 height: "100vh",
                 backgroundColor: "rgba(0, 0, 0, 0.6)",

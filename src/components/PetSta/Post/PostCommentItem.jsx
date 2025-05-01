@@ -17,7 +17,14 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, onRemo
     const dropdownRef = useRef(null);
     const { user } = useContext(Context);
     const isMyComment = user?.id === comment.userId;
-
+    const formattedCreatedAt = new Date(localComment.createdAt).toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
     const userInfo = {
         userName: localComment.userName,
         userId: localComment.userId,
@@ -58,6 +65,21 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, onRemo
         setReplyCount((prev) => prev - 1);
     };
 
+    useEffect(() => {
+        const listener = (e) => {
+            const { parentId, newReply } = e.detail;
+            if (parentId === comment.id) {
+                setReplies((prev) => [...prev, newReply]);
+                setReplyCount((prev) => prev + 1);
+            }
+        };
+
+        document.addEventListener("reply-added", listener);
+        return () => {
+            document.removeEventListener("reply-added", listener);
+        };
+    }, []);
+
     const requestCommentDelete = async () => {
         try {
             await deletePetstaComment(comment.id);
@@ -91,7 +113,7 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, onRemo
                                 <Box display="flex" alignItems="center">
                                     <Typography fontWeight="bold">{userInfo.userName || "알 수 없음"}</Typography>
                                     <Typography fontSize="12px" color="gray" marginLeft={1}>
-                                        {localComment.createdAt}
+                                        {formattedCreatedAt}
                                     </Typography>
                                 </Box>
                                 {isMyComment && (

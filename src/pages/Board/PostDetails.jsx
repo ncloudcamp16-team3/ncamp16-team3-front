@@ -9,7 +9,7 @@ import WriteCommentBar from "../../components/Board/WriteCommentBar.jsx";
 import { Context } from "../../context/Context.jsx";
 import UsedMarketBar from "../../components/Board/UsedMarketBar.jsx";
 import PostCenterBtns from "../../components/Board/PostCenterBtns.jsx";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     addComment,
     getBoardDetail,
@@ -21,10 +21,11 @@ import { produce } from "immer";
 import CommentCard from "../../components/Board/CommentCard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
+import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/chatService.js";
 
 const PostDetails = () => {
     const { postId } = useParams();
-    const { boardType, user } = useContext(Context);
+    const { boardType, user, nc } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
@@ -35,6 +36,7 @@ const PostDetails = () => {
     const commentInputRef = useRef(null);
     const commentRefs = useRef({});
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const scrollToComment = (commentId) => {
         const el = commentRefs.current[commentId];
@@ -62,6 +64,70 @@ const PostDetails = () => {
         imageUrls: [],
         comments: [],
     });
+
+    const handleTradeChat = async () => {
+        if (!user || !nc || !postData.authorId || !postData.imageUrls?.[0]) return;
+
+        try {
+            const targetUserId = postData.authorId;
+            const myId = user.id;
+            const uniqueId = await createChatRoom(targetUserId);
+
+            // 채널 조회
+            const filter = { name: uniqueId };
+            const channels = await nc.getChannels(filter, {}, { per_page: 1 });
+            const edge = (channels.edges || [])[0];
+            let channelId;
+
+            if (edge) {
+                channelId = edge.node.id;
+            } else {
+                // 채널 없으면 생성
+                const newChannel = await nc.createChannel({
+                    type: "PRIVATE",
+                    name: uniqueId,
+                });
+                channelId = newChannel.id;
+                await nc.addUsers(channelId, [`ncid${myId}`, `ncid${targetUserId}`]);
+            }
+
+            // 구독 여부 확인 후 구독
+            const subFilter = {
+                channel_id: channelId,
+                user_id: `ncid${myId}`,
+            };
+            const subs = await nc.getSubscriptions(subFilter, {}, { per_page: 1 });
+            if (!subs.length) {
+                await nc.subscribe(channelId);
+            }
+
+            // 매칭 여부 확인 및 없으면 매칭 등록
+            const matched = await postTradeCheck(postData.id);
+            if (!matched.data) {
+                await postTradeStart(postData.id);
+
+                // 메시지 전송
+                const payload = {
+                    customType: "TRADE",
+                    content: {
+                        title: postData.title,
+                        price: postData.price,
+                        image: postData.imageUrls?.[0],
+                        postId: postData.id,
+                    },
+                };
+
+                await nc.sendMessage(channelId, {
+                    type: "text",
+                    message: JSON.stringify(payload),
+                });
+            }
+
+            navigate(`/chat/room/${channelId}`);
+        } catch (e) {
+            console.error("❌ 중고거래 채팅 생성 실패:", e);
+        }
+    };
 
     const handleReply = (commentId, authorNickname) => {
         const mentionMarkup = `@${authorNickname} `;
@@ -350,7 +416,12 @@ const PostDetails = () => {
             />
 
             {boardType.id === 2 ? (
-                <UsedMarketBar postData={postData} bookMarked={bookMarked} bookMarkBtnClick={bookMarkBtnClick} />
+                <UsedMarketBar
+                    postData={postData}
+                    bookMarked={bookMarked}
+                    bookMarkBtnClick={bookMarkBtnClick}
+                    onClickChat={handleTradeChat}
+                />
             ) : (
                 <Box
                     sx={{
