@@ -1,18 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Box, Typography } from "@mui/material";
-import PostReplyItem from "./PostReplyItem.jsx";
 import UserIcon from "../UserIcon.jsx";
-import { getReplyComments } from "../../../services/petstaService.js";
+import { deletePetstaComment, getReplyComments } from "../../../services/petstaService.js";
+import PostReplyItem from "./PostReplyItem.jsx";
+import MyCommentDropdown from "./MyCommentDropdown.jsx";
+import { Context } from "../../../context/Context.jsx";
 
-const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, refreshTrigger }) => {
+const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, onRemove }) => {
     const [replies, setReplies] = useState([]);
+    const [replyCount, setReplyCount] = useState(comment.replyCount);
     const [loading, setLoading] = useState(false);
-    const user = {
-        userName: comment.userName,
-        userId: comment.userId,
-        isVisited: comment.isVisited,
-        userPhoto: comment.userPhoto,
+    const [dropOpen, setDropOpen] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [localComment, setLocalComment] = useState(comment); // 🔥 comment 상태로 관리
+
+    const dropdownRef = useRef(null);
+    const { user } = useContext(Context);
+    const isMyComment = user?.id === comment.userId;
+
+    const userInfo = {
+        userName: localComment.userName,
+        userId: localComment.userId,
+        isVisited: localComment.isVisited,
+        userPhoto: localComment.userPhoto,
     };
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropOpen && dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropOpen]);
 
     const loadReplies = async () => {
         try {
@@ -32,8 +53,25 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, refres
         }
         setShowReplies(!showReplies);
     };
+    const handleRemoveReply = (commentId) => {
+        setReplies((prev) => prev.filter((c) => c.id !== commentId));
+        setReplyCount((prev) => prev - 1);
+    };
 
-    // ⭐ refreshTrigger 변경 시 + 펼쳐진 상태면 답글 새로고침
+    const requestCommentDelete = async () => {
+        try {
+            await deletePetstaComment(comment.id);
+            if (replyCount === 0) {
+                onRemove(comment.id);
+            } else {
+                setLocalComment({ ...localComment, deleted: true }); // 🔥 여기서 상태 변경
+                setRefreshTrigger((prev) => prev + 1);
+            }
+        } catch (e) {
+            alert("삭제 실패");
+        }
+    };
+
     useEffect(() => {
         if (showReplies) {
             loadReplies();
@@ -42,28 +80,65 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, refres
 
     return (
         <Box display="flex" flexDirection="column" borderBottom="1px solid #ccc" padding={1}>
-            <Box display="flex" alignItems="flex-start" gap={1}>
-                <UserIcon userInfo={user} />
+            <Box display="flex" alignItems="flex-start" gap={1} position="relative">
+                {!localComment.deleted && <UserIcon userInfo={userInfo} />}
                 <Box flex={1}>
-                    <Box display="flex" alignItems="center">
-                        <Typography fontWeight="bold">{user?.userName || "알 수 없음"}</Typography>
-                        <Typography fontSize="12px" color="gray" marginLeft={1}>
-                            {comment.createdAt}
-                        </Typography>
-                    </Box>
-                    <Typography>{comment.content}</Typography>
-                    <Typography
-                        fontSize="14px"
-                        color="#A8A8A9"
-                        sx={{ cursor: "pointer", marginTop: 0.5 }}
-                        onClick={() => onReply(comment)}
-                    >
-                        답글 달기
-                    </Typography>
+                    {localComment.deleted ? (
+                        <Typography sx={{ color: "#A8A8A9", fontStyle: "italic" }}>삭제된 댓글입니다</Typography>
+                    ) : (
+                        <>
+                            <Box display="flex" alignItems="center" justifyContent="space-between">
+                                <Box display="flex" alignItems="center">
+                                    <Typography fontWeight="bold">{userInfo.userName || "알 수 없음"}</Typography>
+                                    <Typography fontSize="12px" color="gray" marginLeft={1}>
+                                        {localComment.createdAt}
+                                    </Typography>
+                                </Box>
+                                {isMyComment && (
+                                    <Box sx={{ position: "relative" }} ref={dropdownRef}>
+                                        <Typography
+                                            onClick={() => setDropOpen(!dropOpen)}
+                                            fontSize="20px"
+                                            sx={{ ml: 1, cursor: "pointer", userSelect: "none" }}
+                                        >
+                                            ⋯
+                                        </Typography>
+                                        <MyCommentDropdown
+                                            open={dropOpen}
+                                            setOpen={setDropOpen}
+                                            onDelete={() => {
+                                                requestCommentDelete();
+                                                setDropOpen(false);
+                                            }}
+                                        />
+                                    </Box>
+                                )}
+                            </Box>
+
+                            <Typography>{localComment.content}</Typography>
+
+                            <Typography
+                                fontSize="14px"
+                                color="#A8A8A9"
+                                sx={{ cursor: "pointer", marginTop: 0.5 }}
+                                onClick={() => onReply(localComment)}
+                            >
+                                답글 달기
+                            </Typography>
+                        </>
+                    )}
 
                     {showReplies &&
-                        replies.map((reply) => <PostReplyItem key={reply.id} reply={reply} onReply={onReply} />)}
-                    {comment.replyCount > 0 && (
+                        replies.map((reply) => (
+                            <PostReplyItem
+                                key={reply.id}
+                                reply={reply}
+                                onReply={onReply}
+                                onRemove={handleRemoveReply}
+                            />
+                        ))}
+
+                    {replyCount > 0 && (
                         <Box display="flex" alignItems="center" marginTop={1.2}>
                             <Box
                                 sx={{
@@ -82,7 +157,7 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, refres
                                     ? "불러오는 중..."
                                     : showReplies
                                       ? "답글 숨기기"
-                                      : `이전 답글 ${comment.replyCount}개 보기`}
+                                      : `이전 답글 ${replyCount}개 보기`}
                             </Typography>
                         </Box>
                     )}

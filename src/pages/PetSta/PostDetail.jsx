@@ -8,6 +8,8 @@ import { useFollow } from "../../context/FollowContext.jsx";
 const PostDetail = () => {
     const { postId } = useParams();
     const [post, setPost] = useState({});
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
     const currentTime = location.state?.currentTime || 0;
     const { setInitialFollow } = useFollow();
@@ -15,16 +17,29 @@ const PostDetail = () => {
     useEffect(() => {
         const getPost = async () => {
             try {
-                const data = await getPostById(postId); // 서비스에서 데이터를 기다림
-                setPost(data); // ★ 받은 데이터 저장
+                const data = await getPostById(postId);
+                setPost(data);
                 setInitialFollow(data.userId, data.initialFollowed);
             } catch (error) {
-                console.error("게시글을 불러오는데 실패했습니다.", error);
+                const msg = error?.response?.data?.message || "게시글을 불러오는 중 오류가 발생했습니다.";
+                setError(msg);
+            } finally {
+                setLoading(false);
             }
         };
 
-        getPost(); // useEffect 내에서 비동기 함수 호출
+        getPost();
     }, []);
+
+    if (loading) return <div>로딩 중...</div>;
+
+    if (error) {
+        return (
+            <div style={{ textAlign: "center", marginTop: "100px" }}>
+                <p style={{ color: "gray", fontSize: "18px" }}>{error}</p>
+            </div>
+        );
+    }
 
     return (
         <>
