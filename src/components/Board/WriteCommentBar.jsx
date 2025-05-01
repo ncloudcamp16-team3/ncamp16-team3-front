@@ -3,20 +3,27 @@ import LikeBtn from "./LikeBtn.jsx";
 import { Box, Button, InputBase } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const WriteCommentBar = ({ comment, setComment, liked, likeBtnClick, commentInputRef, requestCommentCreate }) => {
+const WriteCommentBar = ({
+    comment,
+    setComment,
+    liked,
+    likeBtnClick,
+    commentInputRef,
+    requestCommentCreate,
+    isReply,
+}) => {
     const theme = useTheme();
 
     return (
         <Box
             sx={{
-                position: "fixed",
                 bottom: "85px",
                 left: "10px",
                 right: "10px",
                 height: "50px",
-                maxWidth: "480px",
+                width: "100%",
                 backgroundColor: theme.brand2,
-                borderRadius: "10px",
+                borderRadius: isReply ? "0 0 10px 10px" : "10px",
                 color: "white",
                 zIndex: 1000,
                 margin: "0 auto",

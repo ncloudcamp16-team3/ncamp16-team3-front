@@ -4,7 +4,7 @@ import { Photo } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 
-const UpdateFile = ({ imageUrls, handleAddPhoto, handleDeletePhoto }) => {
+const UploadFiles = ({ photos, handleAddPhoto, handleDeletePhoto }) => {
     const theme = useTheme();
     return (
         <Box sx={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
@@ -18,16 +18,16 @@ const UpdateFile = ({ imageUrls, handleAddPhoto, handleDeletePhoto }) => {
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
+                        cursor: "pointer",
                     }}
                 >
                     <Photo
                         sx={{
                             color: theme.brand3,
-                            cursor: "pointer",
                             fontSize: "30px",
                         }}
                     />
-                    <Typography sx={{ fontSize: "10px" }}>{imageUrls.length}/5</Typography>
+                    <Typography sx={{ fontSize: "10px" }}>{photos?.length ?? 0}/5</Typography>
                 </Box>
             </label>
             <input
@@ -38,11 +38,11 @@ const UpdateFile = ({ imageUrls, handleAddPhoto, handleDeletePhoto }) => {
                 style={{ display: "none" }}
                 multiple
             />
-            {imageUrls.map((photo, index) => (
+            {photos?.map((photo, index) => (
                 <Box key={index} sx={{ position: "relative" }}>
                     <Box
                         component="img"
-                        src={photo.url}
+                        src={photo.path}
                         alt="uploaded"
                         sx={{
                             width: "50px",
@@ -62,4 +62,4 @@ const UpdateFile = ({ imageUrls, handleAddPhoto, handleDeletePhoto }) => {
     );
 };
 
-export default UpdateFile;
+export default UploadFiles;
