@@ -23,7 +23,6 @@ const PhotoPost = ({
     const handlePostClick = () => {
         navigate(`/petsta/post/${postId}`);
     };
-    console.log("시간:" + createdAt);
 
     return (
         <Box sx={{ width: "100%", maxHeight: "100vh", marginBottom: 1 }}>
