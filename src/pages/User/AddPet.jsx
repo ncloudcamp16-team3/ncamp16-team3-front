@@ -19,7 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate } from "react-router-dom";
-import petEx from "/src/assets/images/User/pet_ex.svg"; // 반려동물 기본 이미지
+import petEx from "/src/assets/images/User/profile.png";
 import instance from "../../services/axiosInstance.js";
 
 const AddPet = () => {
@@ -291,8 +291,8 @@ const AddPet = () => {
         selectedImageIndex >= 0 && selectedImageIndex < imagePreviews.length
             ? imagePreviews[selectedImageIndex]
             : imagePreviews.length > 0
-              ? imagePreviews[0]
-              : null;
+                ? imagePreviews[0]
+                : null;
 
     return (
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
