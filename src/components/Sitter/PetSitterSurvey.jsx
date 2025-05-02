@@ -10,7 +10,8 @@ const PetSitterSurvey = ({
     setHasPet,
     hasSitterExperience,
     setHasSitterExperience,
-    handleNext, handleBack,
+    handleNext,
+    handleBack,
 }) => {
     // 체크박스 선택 핸들러
     const handleCheckboxChange = (option, setter, currentState) => {
