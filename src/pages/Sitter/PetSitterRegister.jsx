@@ -182,8 +182,15 @@ const PetSitterRegister = () => {
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
-        else navigate(-1);
+        if (step > 1) {
+            if (step === 6) {
+                setStep(3);
+            } else {
+                setStep(step - 1);
+            }
+        } else {
+            navigate(-1);
+        }
     };
 
     const handleNext = () => {
@@ -238,7 +245,6 @@ const PetSitterRegister = () => {
                     errorMessage = "주거 형태를 선택해주세요.";
                 }
                 break;
-            // 8단계(한마디)는 필수가 아니므로 검증 생략
         }
 
         if (!isValid) {
@@ -250,7 +256,11 @@ const PetSitterRegister = () => {
             return;
         }
 
-        setStep((prev) => Math.min(prev + 1, 9));
+        if (step === 3 && hasPet["키우고 있지 않습니다"]) {
+            setStep(6);=
+        } else {
+            setStep((prev) => Math.min(prev + 1, 9));
+        }
     };
 
     const [commentText, setCommentText] = useState("");
@@ -678,6 +688,10 @@ const PetSitterRegister = () => {
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    bottom: "150px",
+                    zIndex: 100000,
+                }}
             >
                 <Alert
                     onClose={handleCloseSnackbar}
