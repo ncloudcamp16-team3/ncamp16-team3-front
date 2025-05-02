@@ -8,6 +8,7 @@ import TradeStart from "./TradeStart.jsx";
 import MatchStart from "./MatchStart.jsx";
 import { Context } from "../../context/Context";
 import { useNavigate, useParams } from "react-router-dom";
+import { sendChatNotification } from "../../services/notificationService.js";
 
 const ChatRoom = () => {
     const { user, nc } = useContext(Context);
@@ -47,8 +48,35 @@ const ChatRoom = () => {
 
             setMessages((prev) => [...prev, newMessage]);
 
-            // ✅ 내가 보낸 메시지면 바로 읽음 처리
-            if (msg.sender?.id === `ncid${user.id}`) {
+            // // ✅ 내가 보낸 메시지면 바로 읽음 처리
+            // if (msg.sender?.id === `ncid${user.id}`) {
+            //     try {
+            //         await nc.markRead(channelId, {
+            //             user_id: msg.sender.id,
+            //             message_id: msg.message_id,
+            //             sort_id: msg.sort_id,
+            //         });
+            //     } catch (err) {
+            //         console.warn("내 메시지 markRead 실패:", err);
+            //     }
+            // }
+            if (msg.sender?.id !== `ncid${user.id}`) {
+                const payload = {
+                    userId: user.id,
+                    channelId: msg.channel_id,
+                    senderId: msg.sender?.id,
+                    message: parsed.content,
+                    type: parsed.customType,
+                    createdAt: new Date().toISOString(),
+                };
+                console.log("전송할 알림 내용:", payload);
+                try {
+                    await sendChatNotification(payload);
+                } catch (err) {
+                    console.error("알림 전송 실패:", err);
+                }
+
+                // 2. 읽음 처리
                 try {
                     await nc.markRead(channelId, {
                         user_id: msg.sender.id,
@@ -56,11 +84,10 @@ const ChatRoom = () => {
                         sort_id: msg.sort_id,
                     });
                 } catch (err) {
-                    console.warn("내 메시지 markRead 실패:", err);
+                    console.error("읽음 처리 실패:", err);
                 }
             }
         };
-
         const init = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
