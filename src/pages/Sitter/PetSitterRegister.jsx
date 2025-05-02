@@ -257,7 +257,7 @@ const PetSitterRegister = () => {
         }
 
         if (step === 3 && hasPet["키우고 있지 않습니다"]) {
-            setStep(6);=
+            setStep(6);
         } else {
             setStep((prev) => Math.min(prev + 1, 9));
         }
