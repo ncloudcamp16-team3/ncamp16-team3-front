@@ -671,7 +671,6 @@ const PetSitterRegister = () => {
                     </Box>
                 </Box>
             )}
-
             {/* 알림 Snackbar */}
             <Snackbar
                 open={snackbar.open}
