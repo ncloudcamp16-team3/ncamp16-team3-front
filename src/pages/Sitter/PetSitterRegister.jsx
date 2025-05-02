@@ -256,9 +256,8 @@ const PetSitterRegister = () => {
             return;
         }
 
-        // 반려동물을 키우고 있지 않은 경우 반려동물 관련 단계들을 건너뛰도록 수정
         if (step === 3 && hasPet["키우고 있지 않습니다"]) {
-            setStep(6); // 펫시터 경험 단계로 직접 이동
+            setStep(6);=
         } else {
             setStep((prev) => Math.min(prev + 1, 9));
         }
@@ -690,7 +689,7 @@ const PetSitterRegister = () => {
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 sx={{
-                    bottom: "1000px",
+                    bottom: "150px",
                     zIndex: 100000,
                 }}
             >
