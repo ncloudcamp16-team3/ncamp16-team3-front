@@ -47,12 +47,30 @@ const AddPet = () => {
         severity: "info",
     });
 
+    // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
+    const today = new Date().toISOString().split("T")[0];
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPetData({
             ...petData,
             [name]: value,
         });
+    };
+
+    // 몸무게 입력 처리 함수 추가
+    const handleWeightChange = (e) => {
+        const value = e.target.value;
+
+        // 숫자와 소수점만 허용
+        const regex = /^[0-9]*\.?[0-9]*$/;
+
+        if (value === "" || regex.test(value)) {
+            setPetData({
+                ...petData,
+                weight: value,
+            });
+        }
     };
 
     const handleImageUpload = (e) => {
@@ -172,29 +190,44 @@ const AddPet = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // 필수 입력값 검증
-        if (
-            !petData.name ||
-            !petData.birthDate ||
-            !petData.type ||
-            !petData.gender ||
-            petData.weight === "" ||
-            !petData.introduction
-        ) {
-            setSnackbar({
-                open: true,
-                message: "모든 필수 항목을 입력해주세요.",
-                severity: "error",
-            });
-            setIsSubmitting(false);
-            return;
+        // 상세한 필수 입력값 검증
+        let errorMessages = [];
+
+        if (!petData.name || !petData.name.trim()) {
+            errorMessages.push("반려동물 이름을 입력해주세요.");
         }
 
-        // 적어도 하나의 이미지가 필요
+        if (!petData.birthDate) {
+            errorMessages.push("반려동물의 생일을 선택해주세요.");
+        }
+
+        if (!petData.type) {
+            errorMessages.push("반려동물 종류를 선택해주세요.");
+        }
+
+        if (!petData.gender) {
+            errorMessages.push("반려동물의 성별을 선택해주세요.");
+        }
+
+        if (!petData.weight || !petData.weight.trim()) {
+            errorMessages.push("반려동물의 몸무게를 입력해주세요.");
+        } else if (Number(petData.weight) <= 0) {
+            errorMessages.push("몸무게는 0보다 커야 합니다.");
+        }
+
+        if (!petData.introduction || !petData.introduction.trim()) {
+            errorMessages.push("반려동물 소개를 입력해주세요.");
+        }
+
         if (images.length === 0) {
+            errorMessages.push("반려동물 사진을 최소 1장 이상 등록해주세요.");
+        }
+
+        // 에러 메시지가 있으면 첫 번째 메시지를 표시
+        if (errorMessages.length > 0) {
             setSnackbar({
                 open: true,
-                message: "최소 한 장의 사진이 필요합니다.",
+                message: errorMessages[0], // 첫 번째 에러만 표시
                 severity: "error",
             });
             setIsSubmitting(false);
@@ -218,7 +251,7 @@ const AddPet = () => {
 
             formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
 
-// 이미지 추가 - 중요: 대표 이미지를 먼저 추가
+            // 이미지 추가 - 중요: 대표 이미지를 먼저 추가
             if (images.length > 0) {
                 // 먼저 메인 이미지 (썸네일)을 추가
                 formData.append("images", images[mainPhotoIndex]);
@@ -291,8 +324,8 @@ const AddPet = () => {
         selectedImageIndex >= 0 && selectedImageIndex < imagePreviews.length
             ? imagePreviews[selectedImageIndex]
             : imagePreviews.length > 0
-                ? imagePreviews[0]
-                : null;
+              ? imagePreviews[0]
+              : null;
 
     return (
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
@@ -502,6 +535,9 @@ const AddPet = () => {
                     value={petData.birthDate}
                     onChange={handleChange}
                     sx={{ mb: 2 }}
+                    inputProps={{
+                        max: today, // 오늘 날짜까지만 선택 가능
+                    }}
                 />
 
                 <Divider sx={{ my: 3, borderColor: "#f0f0f0", borderWidth: 2 }} />
@@ -630,11 +666,15 @@ const AddPet = () => {
                     fullWidth
                     size="small"
                     name="weight"
-                    type="number"
+                    type="text"
                     value={petData.weight}
-                    onChange={handleChange}
+                    onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
+                    inputProps={{
+                        pattern: "^[0-9]*\.?[0-9]*$",
+                        inputMode: "decimal",
+                    }}
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
@@ -670,17 +710,25 @@ const AddPet = () => {
                 </Button>
             </Box>
 
-            {/* 스낵바 알림 */}
+            {/* 스낵바 알림 - Footer 위에 위치 */}
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={4000}
+                autoHideDuration={6000}
                 onClose={() => setSnackbar({ ...snackbar, open: false })}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    "& .SnackbarContent-root": {
+                        bottom: 80,
+                    },
+                }}
             >
                 <Alert
                     onClose={() => setSnackbar({ ...snackbar, open: false })}
                     severity={snackbar.severity}
-                    sx={{ width: "100%" }}
+                    sx={{
+                        width: "100%",
+                        mb: 8, // Footer 높이만큼 margin-bottom 추가
+                    }}
                 >
                     {snackbar.message}
                 </Alert>
