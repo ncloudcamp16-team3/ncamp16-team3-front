@@ -68,6 +68,7 @@ const AdminFacilityList = lazy(() => import("./pages/Admin/AdminFacilityList.jsx
 const AdminFacilityDetail = lazy(() => import("./pages/Admin/AdminFacilityDetail.jsx"));
 const AdminFacilityAdd = lazy(() => import("./pages/Admin/AdminFacilityAdd.jsx"));
 const AdminFacilityUpdate = lazy(() => import("./pages/Admin/AdminFacilityUpdate.jsx"));
+const MyPosts = lazy(() => import("./pages/User/MyPosts.jsx"));
 
 function App() {
     return (
@@ -112,6 +113,7 @@ function App() {
                                     <Route path="/bookmark" element={<Bookmark />} />
                                     <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
                                     <Route path="/bookmarks/posts" element={<PostBookmarks />} />
+                                    <Route path="/my-posts" element={<MyPosts />} />
                                     <Route path="/reserve/:id" element={<ReserveDetail />} />
                                     <Route path="/reserve/list" element={<ReservationList />} />
                                     <Route path="/reserve/success/:id" element={<Reservation />} />

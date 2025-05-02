@@ -117,7 +117,7 @@ const PetDetails = () => {
             try {
                 const res = await getPet({ id: petId });
                 setCurrentPet(res.data);
-
+                console.log(res.data);
                 setLoading(false);
             } catch (err) {
                 console.log("에러 발생: " + err.message);

@@ -10,6 +10,7 @@ const ChatList = () => {
     const { user, nc } = useContext(Context);
     const [chatList, setChatList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         if (!user || !nc) return;
@@ -27,9 +28,8 @@ const ChatList = () => {
                     if (!edge) continue;
 
                     const ch = edge.node;
-                    await nc.subscribe(ch.id); // ✅ 실시간 메시지 받기 위해 구독
+                    await nc.subscribe(ch.id);
 
-                    // 마지막 메시지 파싱
                     let lastMessageText = "";
                     if (ch.last_message?.content) {
                         try {
@@ -46,7 +46,6 @@ const ChatList = () => {
                         }
                     }
 
-                    // 안 읽은 메시지 수
                     let unreadCount = 0;
                     try {
                         const unreadResult = await nc.unreadCount(ch.id);
@@ -70,7 +69,7 @@ const ChatList = () => {
             } catch (e) {
                 console.error("채팅방 정보 조회 실패:", e);
             } finally {
-                setIsLoading(false); // ✅ 로딩 끝
+                setIsLoading(false);
             }
         };
 
@@ -102,7 +101,6 @@ const ChatList = () => {
                         unreadCount: isMine ? 0 : updated[idx].unreadCount + 1,
                     };
 
-                    // 정렬 다시
                     updated.sort((a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt));
                 }
 
@@ -112,11 +110,13 @@ const ChatList = () => {
 
         fetchRooms();
         nc.bind("onMessageReceived", handleReceiveMessage);
-
-        return () => {
-            nc.unbind("onMessageReceived", handleReceiveMessage);
-        };
+        return () => nc.unbind("onMessageReceived", handleReceiveMessage);
     }, [user, nc]);
+
+    const filteredChatList = chatList.filter((item) => {
+        const keyword = search.toLowerCase();
+        return item.name.toLowerCase().includes(keyword) || item.lastMessage.toLowerCase().includes(keyword);
+    });
 
     return (
         <Box p={1}>
@@ -124,20 +124,30 @@ const ChatList = () => {
 
             <Box bgcolor="#d9d9d9" p={2} borderRadius="15px" display="flex" alignItems="center">
                 <img src={SearchIcon} alt="search" />
-                <Typography fontWeight="bold" ml={2}>
-                    검색
-                </Typography>
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="채팅방 검색"
+                    style={{
+                        marginLeft: "10px",
+                        border: "none",
+                        background: "transparent",
+                        outline: "none",
+                        fontSize: "16px",
+                        flex: 1,
+                    }}
+                />
             </Box>
 
             <Typography p={1}>메시지</Typography>
 
-            {/* ✅ 4. 로딩 상태일 때 스피너 표시 */}
             {isLoading ? (
                 <Box display="flex" justifyContent="center" py={5}>
                     <CircularProgress size={32} />
                 </Box>
             ) : (
-                chatList.map((item) => (
+                filteredChatList.map((item) => (
                     <ChatItem
                         key={item.id}
                         name={item.name}

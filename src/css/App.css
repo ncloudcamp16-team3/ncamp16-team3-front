@@ -54,7 +54,7 @@ body.modal-open {
     font-size: 18px;
     height: 50px;
     padding: 5px 15px 0 15px;
-    z-index: 9999;
+    z-index: 8000;
 }
 
 .footer{
@@ -75,7 +75,7 @@ body.modal-open {
     transform: translateZ(0);
     font-size: 10px;
     height: 65px;
-    z-index: 9999;
+    z-index: 5000;
 }
 
 .bottom-button{

@@ -155,7 +155,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                 </Typography>
             </Box>
             {/* 좋아요, 댓글, 북마크 */}
-            <Box position="absolute" right="5px" bottom="50px" color="white" zIndex="999">
+            <Box position="absolute" right="5px" bottom="50px" color="white" zIndex="9999">
                 <Box display="flex" flexDirection="column" alignItems="center" width="50px">
                     <LikeButton
                         postId={post.postId}
@@ -180,11 +180,11 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                         />
                     </Box>
                     {user.id === post.userId && (
-                        <Box mt={1} sx={{ position: "relative" }} ref={dropdownRef}>
+                        <Box mt={1} sx={{ position: "relative"}} ref={dropdownRef}>
                             <MoreVertIcon
                                 onClick={() => setCenterMenuOpen(true)}
-                                fontSize="20px"
-                                sx={{ cursor: "pointer" }}
+                                sx={{ fontSize : "35px", cursor: "pointer" }}
+
                             />
                             <MyPostCenterMenu
                                 open={centerMenuOpen}

@@ -16,7 +16,7 @@ const Footer = () => {
         <Box component="div" className="footer" display="flex" alignItems="end" justifyContent="space-between">
             <BottomButton icon={petsta} label="펫스타" onClick={() => navigate("/petsta")} />
             <BottomButton icon={board} label="게시판" onClick={() => navigate("/board")} />
-            <Box component="div" onClick={() => navigate("/")}>
+            <Box component="div" onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
                 <img src={main} />
             </Box>
             <BottomButton icon={reserve} label="예약" onClick={() => navigate("/reserve")} />

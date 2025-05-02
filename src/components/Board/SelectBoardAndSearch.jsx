@@ -20,7 +20,7 @@ const SelectBoardAndSearch = ({ keywordSearch }) => {
                     position: "relative",
                 }}
             >
-                <Box onClick={() => setDroplist((prev) => !prev)}>
+                <Box width="220px" onClick={() => setDroplist((prev) => !prev)}>
                     <Typography
                         sx={{
                             display: "inline",

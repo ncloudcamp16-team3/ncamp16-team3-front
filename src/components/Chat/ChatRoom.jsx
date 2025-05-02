@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Typography, TextField, IconButton, CircularProgress } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
 import SendIcon from "@mui/icons-material/Send";
 import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
 import ChatMessageLeft from "./ChatMessageLeft";
@@ -9,6 +10,30 @@ import MatchStart from "./MatchStart.jsx";
 import { Context } from "../../context/Context";
 import { useNavigate, useParams } from "react-router-dom";
 import { sendChatNotification } from "../../services/notificationService.js";
+
+const PetSitterStart = ({ sitter }) => {
+    return (
+        <Box textAlign="center" py={2}>
+            <Box display="flex" justifyContent="center" gap={2} mb={1}>
+                <Box textAlign="center">
+                    <Avatar
+                        src={sitter.image}
+                        alt={sitter.sitterName}
+                        sx={{ width: 60, height: 60, margin: "0 auto" }}
+                    />
+                    <Typography variant="body2">
+                        {sitter.sitterName} ({sitter.age})
+                    </Typography>
+                </Box>
+            </Box>
+            <Typography fontWeight="bold">펫시터 {sitter.sitterName}님과 채팅을 시작합니다.</Typography>
+            <Typography variant="body2" color="text.secondary">
+                {sitter.hasPet ? `반려동물: ${sitter.petInfo}` : "반려동물 없음"} /{" "}
+                {sitter.experience ? "펫시터 경험 있음" : "펫시터 경험 없음"}
+            </Typography>
+        </Box>
+    );
+};
 
 const ChatRoom = () => {
     const { user, nc } = useContext(Context);
@@ -36,6 +61,7 @@ const ChatRoom = () => {
             let typeId = 1;
             if (parsed.customType === "MATCH") typeId = 2;
             else if (parsed.customType === "TRADE") typeId = 3;
+            else if (parsed.customType === "PETSITTER") typeId = 4;
 
             const newMessage = {
                 id: msg.message_id,
@@ -100,6 +126,7 @@ const ChatRoom = () => {
                     let typeId = 1;
                     if (parsed.customType === "MATCH") typeId = 2;
                     else if (parsed.customType === "TRADE") typeId = 3;
+                    else if (parsed.customType === "PETSITTER") typeId = 4;
 
                     return {
                         id: msg.message_id,
@@ -222,6 +249,8 @@ const ChatRoom = () => {
                             .map((msg) => {
                                 if (msg.type_id === 2) return <MatchStart key={msg.id} {...msg.metadata.content} />;
                                 if (msg.type_id === 3) return <TradeStart key={msg.id} {...msg.metadata.content} />;
+                                if (msg.type_id === 4)
+                                    return <PetSitterStart key={msg.id} sitter={msg.metadata.content} />;
                                 return msg.senderId === `ncid${user.id}` ? (
                                     <ChatMessageRight key={msg.id} text={msg.text} />
                                 ) : (
