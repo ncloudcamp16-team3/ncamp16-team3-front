@@ -94,38 +94,6 @@ const ProtectedRoute = () => {
         }
     };
 
-    // // 🔔 포그라운드 메시지 수신 처리
-    // useEffect(() => {
-    //     const unsubscribe = onMessage(messaging, (payload) => {
-    //         console.log("Foreground message received:", payload);
-    //         const data = payload?.data;
-    //         if (!data) return;
-    //
-    //         // 브라우저 알림
-    //         if (Notification.permission === "granted") {
-    //             new Notification(data.title || "알림", {
-    //                 body: data.body || "",
-    //                 icon: "/logo192.png",
-    //             });
-    //         }
-    //
-    //         // 알림 리스트에 추가
-    //         const newNotification = {
-    //             id: Number(data.id) || Date.now(),
-    //             title: data.title,
-    //             body: data.body,
-    //             content: data.content,
-    //             notificationTypeId: Number(data.notificationTypeId),
-    //             readStatus: false,
-    //             createdAt: new Date().toISOString(),
-    //         };
-    //
-    //         setNotifications((prev) => [newNotification, ...prev]);
-    //     });
-    //
-    //     return () => unsubscribe();
-    // }, []);
-
     // Notification List component
     const NotificationList = () => {
         const [notifications, setNotifications] = useState([]);
