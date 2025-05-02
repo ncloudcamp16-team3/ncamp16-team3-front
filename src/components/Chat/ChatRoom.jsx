@@ -232,7 +232,7 @@ const ChatRoom = () => {
                                 if (msg.type_id === 2) return <MatchStart key={msg.id} {...msg.metadata.content} />;
                                 if (msg.type_id === 3) return <TradeStart key={msg.id} {...msg.metadata.content} />;
                                 if (msg.type_id === 4)
-                                    return <PetSitterStart key={msg.id} sitter={msg.metadata.content} />; // 추가
+                                    return <PetSitterStart key={msg.id} sitter={msg.metadata.content} />;
                                 return msg.senderId === `ncid${user.id}` ? (
                                     <ChatMessageRight key={msg.id} text={msg.text} />
                                 ) : (
