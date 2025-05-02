@@ -5,7 +5,6 @@ import {
     TextField,
     Button,
     IconButton,
-    Stack,
     Divider,
     Chip,
     Alert,
@@ -227,7 +226,7 @@ const AddPet = () => {
         if (errorMessages.length > 0) {
             setSnackbar({
                 open: true,
-                message: errorMessages[0], // 첫 번째 에러만 표시
+                message: errorMessages[0],
                 severity: "error",
             });
             setIsSubmitting(false);
@@ -536,7 +535,7 @@ const AddPet = () => {
                     onChange={handleChange}
                     sx={{ mb: 2 }}
                     inputProps={{
-                        max: today, // 오늘 날짜까지만 선택 가능
+                        max: today,
                     }}
                 />
 
@@ -710,7 +709,7 @@ const AddPet = () => {
                 </Button>
             </Box>
 
-            {/* 스낵바 알림 - Footer 위에 위치 */}
+            {/* 스낵바 알림 */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}
@@ -727,7 +726,7 @@ const AddPet = () => {
                     severity={snackbar.severity}
                     sx={{
                         width: "100%",
-                        mb: 8, // Footer 높이만큼 margin-bottom 추가
+                        mb: 8,
                     }}
                 >
                     {snackbar.message}
