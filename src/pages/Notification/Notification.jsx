@@ -85,7 +85,7 @@ const Notification = () => {
                         navigate(`/calendar`);
                         break;
                     case 5: // 채팅 메시지
-                        navigate(`/chat/${notification.content}`);
+                        navigate(`/chat/room/${notification.content}`);
                         break;
                     case 6: // 전체 공지
                         navigate(`/announce/${notification.content}`);

@@ -48,23 +48,14 @@ const ChatRoom = () => {
 
             setMessages((prev) => [...prev, newMessage]);
 
-            // // ✅ 내가 보낸 메시지면 바로 읽음 처리
-            // if (msg.sender?.id === `ncid${user.id}`) {
-            //     try {
-            //         await nc.markRead(channelId, {
-            //             user_id: msg.sender.id,
-            //             message_id: msg.message_id,
-            //             sort_id: msg.sort_id,
-            //         });
-            //     } catch (err) {
-            //         console.warn("내 메시지 markRead 실패:", err);
-            //     }
-            // }
             if (msg.sender?.id !== `ncid${user.id}`) {
+                const rawSenderId = msg.sender?.id; // "ncid25"
+                const numericSenderId = rawSenderId?.replace(/\D/g, ""); // 숫자만 추출
+
                 const payload = {
                     userId: user.id,
                     channelId: msg.channel_id,
-                    senderId: msg.sender?.id,
+                    senderId: numericSenderId,
                     message: parsed.content,
                     type: parsed.customType,
                     createdAt: new Date().toISOString(),
@@ -84,7 +75,7 @@ const ChatRoom = () => {
                         sort_id: msg.sort_id,
                     });
                 } catch (err) {
-                    console.error("읽음 처리 실패:", err);
+                    console.warn("내 메시지 markRead 실패:", err);
                 }
             }
         };
