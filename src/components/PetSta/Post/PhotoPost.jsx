@@ -23,6 +23,7 @@ const PhotoPost = ({
     const handlePostClick = () => {
         navigate(`/petsta/post/${postId}`);
     };
+    console.log("시간:" + createdAt);
 
     return (
         <Box sx={{ width: "100%", maxHeight: "100vh", marginBottom: 1 }}>
@@ -36,7 +37,7 @@ const PhotoPost = ({
                     postId={postId}
                 />
                 <Box onClick={handlePostClick}>
-                    <img style={{ width: "100%" }} src={`${fileName}`} />
+                    <img style={{ width: "100%", maxHeight: "60vh" }} src={`${fileName}`} />
                 </Box>
             </Box>
 
