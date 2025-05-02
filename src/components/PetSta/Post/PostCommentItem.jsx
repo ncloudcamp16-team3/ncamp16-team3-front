@@ -17,7 +17,8 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, onRemo
     const dropdownRef = useRef(null);
     const { user } = useContext(Context);
     const isMyComment = user?.id === comment.userId;
-    const formattedCreatedAt = new Date(localComment.createdAt).toLocaleString("ko-KR", {
+    console.log("받은시간:" + localComment.createdAt);
+    const formattedCreatedAt = new Date(localComment.createdAt).toLocaleString(undefined, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -25,6 +26,7 @@ const PostCommentItem = ({ comment, onReply, setShowReplies, showReplies, onRemo
         minute: "2-digit",
         hour12: false,
     });
+
     const userInfo = {
         userName: localComment.userName,
         userId: localComment.userId,

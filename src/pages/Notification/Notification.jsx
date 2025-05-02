@@ -148,6 +148,7 @@ const Notification = () => {
 
             <div style={{ padding: "16px" }}>
                 {notifications.map((notification) => {
+                    console.log("알림받은거 시간:" + notification.createdAt);
                     const { icon } = getIconByTypeId(notification.notificationTypeId);
 
                     return (
