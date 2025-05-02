@@ -22,7 +22,7 @@ messaging.onBackgroundMessage(function (payload) {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: "/firebase-logo.png", // 아이콘 경로 수정 가능
+        icon: payload.notification.image,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);

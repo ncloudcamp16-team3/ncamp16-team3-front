@@ -41,3 +41,20 @@ export const markNotificationAsRead = async (notificationId) => {
         return false; // 실패 처리
     }
 };
+
+export const sendChatNotification = async ({ userId, channelId, senderId, message, type, createdAt }) => {
+    try {
+        const response = await instance.post(`${API_URL}/chat`, {
+            userId,
+            channelId,
+            senderId,
+            message,
+            type,
+            createdAt,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("채팅 알림 전달 실패", error);
+        throw error;
+    }
+};
