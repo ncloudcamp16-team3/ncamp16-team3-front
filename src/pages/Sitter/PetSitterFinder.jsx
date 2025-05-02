@@ -261,6 +261,7 @@ const PetSitterFinder = () => {
                         hasSitterExperience={hasSitterExperience}
                         setHasSitterExperience={setHasSitterExperience}
                         handleNext={handleNext}
+                        handleBack={handleBack}
                     />
                 )}
             </Box>

@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Box, Typography, Button, Container, Avatar, CircularProgress, Alert } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useNavigate, useParams } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { getPetSitterDetails } from "../../services/petSitterService";
 import { createChatRoom } from "../../services/chatService";
+import { Context } from "../../context/Context.jsx";
 
 const PetSitterDetail = () => {
     const { sitterId } = useParams();
     const navigate = useNavigate();
+    const { user, nc } = useContext(Context);
     const [sitter, setSitter] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -36,22 +38,65 @@ const PetSitterDetail = () => {
     }, [sitterId]);
 
     const handleChat = async () => {
-        if (!sitter) return;
+        if (!sitter || !user || !nc) return;
 
         try {
-            // 채팅방 생성 API
-            const chatRoomResponse = await createChatRoom(sitter.id);
+            const targetUserId = sitter.id;
+            const myId = user.id;
+            const uniqueId = await createChatRoom(targetUserId);
 
-            if (chatRoomResponse) {
-                // 채팅방 ID로 채팅방 이동
-                navigate(`/chat/room/${chatRoomResponse.channelId}`);
+            // 채널 조회
+            const filter = { name: uniqueId };
+            const channels = await nc.getChannels(filter, {}, { per_page: 1 });
+            const edge = (channels.edges || [])[0];
+            let channelId;
+
+            if (edge) {
+                channelId = edge.node.id;
+            } else {
+                // 채널 없으면 생성
+                const newChannel = await nc.createChannel({
+                    type: "PRIVATE",
+                    name: uniqueId,
+                });
+                channelId = newChannel.id;
+                await nc.addUsers(channelId, [`ncid${myId}`, `ncid${targetUserId}`]);
             }
-        } catch (error) {
-            console.error("채팅방 생성 오류:", error);
-            alert("채팅방 생성 중 오류가 발생했습니다.");
+
+            // 구독 여부 확인 후 구독
+            const subFilter = {
+                channel_id: channelId,
+                user_id: `ncid${myId}`,
+            };
+            const subs = await nc.getSubscriptions(subFilter, {}, { per_page: 1 });
+            if (!subs.length) {
+                await nc.subscribe(channelId);
+            }
+
+            // 메시지 전송 (PostDetails와 같은 패턴)
+            const payload = {
+                customType: "PETSITTER",
+                content: {
+                    sitterName: sitter.nickname,
+                    image: sitter.imagePath,
+                    sitterId: sitter.id,
+                    age: sitter.age,
+                    hasPet: sitter.grown,
+                    petInfo: `${sitter.petType?.name || "없음"} ${sitter.petCount || "0"}마리`, // 반려동물 정보
+                    experience: sitter.sitterExp,
+                },
+            };
+
+            await nc.sendMessage(channelId, {
+                type: "text",
+                message: JSON.stringify(payload),
+            });
+
+            navigate(`/chat/room/${channelId}`);
+        } catch (e) {
+            console.error("❌ 펫시터 채팅 생성 실패:", e);
         }
     };
-
     const handleCancel = () => {
         navigate(-1);
     };
