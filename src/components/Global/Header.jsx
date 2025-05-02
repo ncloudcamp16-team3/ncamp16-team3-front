@@ -63,7 +63,7 @@ const Header = () => {
             >
                 <Box
                     component="img"
-                    src={user?.path || "/mock/Global/images/haribo.jpg"}
+                    src={user?.path || "../../assets/images/Global/default-profile.png"}
                     alt="profile"
                     sx={{
                         width: "100%",

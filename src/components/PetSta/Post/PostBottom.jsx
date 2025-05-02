@@ -28,6 +28,9 @@ const PostBottom = ({ initialLiked, initialBookmarked, userName, postId, likes, 
     useEffect(() => {
         const now = new Date();
         const created = new Date(createdAt);
+        console.log("createdat:" + createdAt);
+        console.log("현재시간" + now.toString());
+        console.log("시간시간" + created.toString());
         const diff = now - created;
         const minutes = diff / (1000 * 60);
         const hours = diff / (1000 * 60 * 60);
