@@ -180,7 +180,10 @@ const FacilityDetail = () => {
                                             <OpeningHoursRow openingHours={facility.openingHours} />
                                         )}
                                         <TableRow label="설명" value={facility.comment} />
-                                        <TableRow label="등록일자" value={facility.createdAt} />
+                                        <TableRow
+                                            label="등록일자"
+                                            value={new Date(facility.createdAt).toLocaleString()}
+                                        />
                                     </tbody>
                                 </table>
                             </Box>

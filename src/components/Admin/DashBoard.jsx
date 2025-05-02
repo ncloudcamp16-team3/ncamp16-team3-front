@@ -141,13 +141,6 @@ function DashBoard() {
                 </Alert>
             )}
 
-            {/* 검색 상태 표시 */}
-            {/*{searchTerm && (*/}
-            {/*    <Alert severity="info" sx={{ my: 2 }}>*/}
-            {/*        "{searchField}"(으)로 "{searchTerm}" 검색 결과*/}
-            {/*    </Alert>*/}
-            {/*)}*/}
-
             {/* 테이블 부분 */}
             <Box>
                 {!loading && !error && (

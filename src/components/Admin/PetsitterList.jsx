@@ -193,8 +193,8 @@ const PetsitterList = () => {
                                                     <Box
                                                         component="img"
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 100,
+                                                            width: 100,
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}

@@ -167,20 +167,31 @@ const FacilityUpdate = () => {
             // console.log("longitude: " + longitude);
 
             // 이미지 처리 (예외 처리 수정)
-            if (facility.images && Array.isArray(facility.images)) {
-                console.log("이미지 데이터:", facility.images);
+            if (facility.imagePaths && Array.isArray(facility.imagePaths)) {
+                console.log("이미지 데이터:", facility.imagePaths);
 
                 // 이미지 URL 설정
-                const urls = facility.images.map((img) => img.url);
-                setExistingImages(urls);
-                console.log("설정된 이미지 URL:", urls);
+                setExistingImages(facility.imagePaths);
+
+                // URL에서 파일 경로만 추출 (물음표 이전 부분)
+                const filePathsOnly = facility.imagePaths
+                    .map((url) => {
+                        const pathOnly = url.split("?")[0]; // URL 쿼리 파라미터 제거
+
+                        // 파일 경로만 추출 (예: uploads/facility/file.jpg)
+                        const pathMatch = pathOnly.match(/uploads\/facility\/([^\/]+)$/);
+                        if (pathMatch && pathMatch[1]) {
+                            return pathMatch[1]; // 파일명만 추출
+                        }
+                        return null;
+                    })
+                    .filter((path) => path !== null);
 
                 // 이미지 ID 설정
-                const ids = facility.images.map((img) => img.id);
-                setExistingImageIds(ids);
-                console.log("설정된 이미지 ID:", ids);
+                setExistingImageIds(filePathsOnly);
+                console.log("추출된 파일 경로: " + filePathsOnly);
             } else {
-                console.warn("이미지 데이터가 없거나 배열이 아님:", facility.images);
+                console.warn("이미지 데이터가 없거나 배열이 아님:", facility.imagePaths);
                 setExistingImages([]);
                 setExistingImageIds([]);
             }
@@ -560,10 +571,7 @@ const FacilityUpdate = () => {
         const newExistingImageIds = [...existingImageIds];
 
         newExistingImages.splice(index, 1);
-
-        if (index < newExistingImageIds.length) {
-            newExistingImageIds.splice(index, 1);
-        }
+        newExistingImageIds.splice(index, 1);
 
         setExistingImages(newExistingImages);
         setExistingImageIds(newExistingImageIds);
@@ -689,16 +697,11 @@ const FacilityUpdate = () => {
         // 유지할 이미지 ID 추가
         console.log("existingImageIds (원본):", existingImageIds);
 
-        // 유지할 이미지 ID 배열에서 유효한 ID만 필터링
-        const validImageIds = existingImageIds.filter((id) => id !== null && !isNaN(id) && id > 0);
-
-        console.log("validImageIds (필터링 후):", validImageIds);
-
-        // 2. 유효한 이미지 ID가 있는 경우만 추가
-        if (validImageIds.length > 0) {
+        // 이미지 ID가 있는 경우만 추가
+        if (existingImageIds.length > 0) {
             // 문자열로 직접 폼데이터에 추가
-            formData.append("imageIdsToKeep", JSON.stringify(validImageIds));
-            console.log("유지할 이미지 ID 추가됨:", JSON.stringify(validImageIds));
+            formData.append("imageIdsToKeep", JSON.stringify(existingImageIds));
+            console.log("유지할 이미지 ID 추가됨:", JSON.stringify(existingImageIds));
         } else {
             // 빈 배열이라도 명시적으로 추가 (서버에서 null 대신 빈 배열로 받게)
             formData.append("imageIdsToKeep", JSON.stringify([]));
