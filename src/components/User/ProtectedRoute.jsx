@@ -7,6 +7,7 @@ import * as ncloudchat from "ncloudchat";
 import { registerSW } from "../../../public/firebase-messaging-sw-register.js";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
+import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
@@ -93,19 +94,128 @@ const ProtectedRoute = () => {
         }
     };
 
-    // 🔔 포그라운드 메시지 수신 처리
-    useEffect(() => {
-        onMessage(messaging, (payload) => {
-            console.log("Foreground message received:", payload);
-            // 알림 UI 처리 가능
-        });
-    }, []);
+    // // 🔔 포그라운드 메시지 수신 처리
+    // useEffect(() => {
+    //     const unsubscribe = onMessage(messaging, (payload) => {
+    //         console.log("Foreground message received:", payload);
+    //         const data = payload?.data;
+    //         if (!data) return;
+    //
+    //         // 브라우저 알림
+    //         if (Notification.permission === "granted") {
+    //             new Notification(data.title || "알림", {
+    //                 body: data.body || "",
+    //                 icon: "/logo192.png",
+    //             });
+    //         }
+    //
+    //         // 알림 리스트에 추가
+    //         const newNotification = {
+    //             id: Number(data.id) || Date.now(),
+    //             title: data.title,
+    //             body: data.body,
+    //             content: data.content,
+    //             notificationTypeId: Number(data.notificationTypeId),
+    //             readStatus: false,
+    //             createdAt: new Date().toISOString(),
+    //         };
+    //
+    //         setNotifications((prev) => [newNotification, ...prev]);
+    //     });
+    //
+    //     return () => unsubscribe();
+    // }, []);
+
+    // Notification List component
+    const NotificationList = () => {
+        const [notifications, setNotifications] = useState([]);
+
+        useEffect(() => {
+            const unsubscribe = onMessage(messaging, (payload) => {
+                console.log("Foreground message received:", payload);
+
+                const notificationData = payload?.notification;
+                if (notificationData) {
+                    const newNotification = {
+                        id: Date.now(),
+                        title: notificationData.title || "알림",
+                        body: notificationData.body || "",
+                        image: notificationData.image || "",
+                        createdAt: new Date().toISOString(),
+                    };
+
+                    // 브라우저 알림
+                    if (Notification.permission === "granted") {
+                        new Notification(newNotification.title, {
+                            body: newNotification.body,
+                            icon: newNotification.image,
+                        });
+                    }
+
+                    setNotifications((prev) => [...prev, newNotification]);
+
+                    // 3초 후 알림 제거
+                    setTimeout(() => {
+                        setNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
+                    }, 5000);
+                }
+            });
+
+            return () => unsubscribe();
+        }, []);
+
+        return (
+            <>
+                {notifications.map((notification) => (
+                    <Snackbar
+                        key={notification.id}
+                        open={true}
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        sx={{
+                            top: "80px", // 알림이 좀 더 아래에서 나오도록 위치 조정
+                        }}
+                    >
+                        <Alert
+                            severity="info"
+                            variant="filled"
+                            icon={false}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                backgroundColor: "#fff5e5",
+                                color: "#333",
+                                boxShadow: 3,
+                                borderRadius: 2,
+                                minWidth: 300,
+                                maxWidth: 500,
+                            }}
+                        >
+                            <Stack direction="row" spacing={2} alignItems="center">
+                                {notification.image && (
+                                    <Avatar alt="알림 이미지" src={notification.image} sx={{ width: 40, height: 40 }} />
+                                )}
+                                <div>
+                                    <div style={{ fontWeight: "bold" }}>{notification.title}</div>
+                                    <div>{notification.body}</div>
+                                </div>
+                            </Stack>
+                        </Alert>
+                    </Snackbar>
+                ))}
+            </>
+        );
+    };
 
     if (loading) return <div>로그인 상태 확인 중...</div>;
 
     if (!isLogin) return <Navigate to="/login" replace />;
 
-    return <Outlet />;
+    return (
+        <>
+            <NotificationList />
+            <Outlet />
+        </>
+    );
 };
 
 export default ProtectedRoute;
