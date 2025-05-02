@@ -3,7 +3,13 @@ import TitleBar from "../../components/Global/TitleBar.jsx";
 import { MessageSquareText, PawPrint, CalendarCheck, CalendarDays, Bell, Globe, Trash2 } from "lucide-react";
 import { styled } from "@mui/material/styles";
 import { Context } from "../../context/Context.jsx";
-import { getNotificationsByUserId } from "../../services/notificationService.js";
+import {
+    getNotificationsByUserId,
+    deleteAllNotificationsByUserId,
+    deleteNotificationById,
+    markNotificationAsRead,
+} from "../../services/notificationService.js";
+import { useNavigate } from "react-router-dom";
 
 // 숫자 ID에 따라 아이콘 매핑
 const getIconByTypeId = (typeId) => {
@@ -39,6 +45,7 @@ const HoverTrash = styled(Trash2)(({ theme }) => ({
 const Notification = () => {
     const [notifications, setNotifications] = useState([]);
     const { user } = useContext(Context);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -55,17 +62,73 @@ const Notification = () => {
         }
     }, [user]);
 
-    const handleRead = (id) => {
-        setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, readStatus: true } : n)));
+    const handleRead = async (id) => {
+        try {
+            const notification = notifications.find((n) => n.id === id);
+            if (!notification) return;
+
+            const success = await markNotificationAsRead(id);
+            if (success) {
+                setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, readStatus: true } : n)));
+
+                switch (notification.notificationTypeId) {
+                    case 1: // 게시판 댓글
+                        navigate(`/board/${notification.content}`); // 댓글ID
+                        break;
+                    case 2: // 펫스타 댓글
+                        navigate(`/petsta/post/comment/${notification.content}`);
+                        break;
+                    case 3: // 시설 예약 알림
+                        navigate(`/calendar`);
+                        break;
+                    case 4: // 일정 알림
+                        navigate(`/calendar`);
+                        break;
+                    case 5: // 채팅 메시지
+                        navigate(`/chat/${notification.content}`);
+                        break;
+                    case 6: // 전체 공지
+                        navigate(`/announce/${notification.content}`);
+                        break;
+                    default:
+                        console.warn("Unknown notification type:", notification.notificationTypeId);
+                        break;
+                }
+            }
+        } catch (error) {
+            console.error("Error marking as read:", error);
+        }
+    };
+    const handleDelete = async (id, e) => {
+        e.stopPropagation(); // 이벤트 버블링 방지
+        const notification = notifications.find((n) => n.id === id);
+
+        if (notification) {
+            try {
+                // 삭제 처리 함수 호출
+                await deleteSingleNotification(notification);
+                setNotifications((prev) => prev.filter((n) => n.id !== id)); // 삭제된 알림 제외하고 업데이트
+            } catch (error) {
+                console.error("Error deleting notification:", error);
+            }
+        }
     };
 
-    const handleDelete = (id, e) => {
-        e.stopPropagation();
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
+    const deleteSingleNotification = async (notification) => {
+        try {
+            await deleteNotificationById(notification.id);
+            setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+        } catch (error) {
+            console.error("Error deleting notification:", error);
+        }
     };
-
-    const deleteAll = () => {
-        setNotifications([]);
+    const deleteAllNotifications = async () => {
+        try {
+            await deleteAllNotificationsByUserId(user.id);
+            setNotifications([]); // 직접 비우기
+        } catch (error) {
+            console.error("Error deleting all notifications:", error);
+        }
     };
 
     return (
@@ -79,7 +142,7 @@ const Notification = () => {
         >
             <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
                 <TitleBar name="알림">
-                    <HoverTrash onClick={deleteAll} />
+                    <HoverTrash onClick={deleteAllNotifications} />
                 </TitleBar>
             </div>
 

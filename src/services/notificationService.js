@@ -10,3 +10,34 @@ export const getNotificationsByUserId = async (userId) => {
             throw error.response?.data || error;
         });
 };
+
+export const deleteNotificationById = async (notificationId) => {
+    return await instance
+        .delete(`${API_URL}/${notificationId}`)
+        .then((response) => response.data)
+        .catch((error) => {
+            throw error.response?.data || error;
+        });
+};
+
+export const deleteAllNotificationsByUserId = async (userId) => {
+    return await instance
+        .delete(`${API_URL}/user/${userId}`)
+        .then((response) => response.data)
+        .catch((error) => {
+            throw error.response?.data || error;
+        });
+};
+
+export const markNotificationAsRead = async (notificationId) => {
+    try {
+        const response = await instance.patch(`${API_URL}/${notificationId}/read`);
+        if (response.status === 204) {
+            return true; // 성공적으로 처리됨
+        }
+        return true; // 실패 처리
+    } catch (error) {
+        console.error("Error marking notification as read:", error);
+        return false; // 실패 처리
+    }
+};
