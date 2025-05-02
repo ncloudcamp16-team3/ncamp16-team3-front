@@ -182,8 +182,15 @@ const PetSitterRegister = () => {
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
-        else navigate(-1);
+        if (step > 1) {
+            if (step === 6) {
+                setStep(3);
+            } else {
+                setStep(step - 1);
+            }
+        } else {
+            navigate(-1);
+        }
     };
 
     const handleNext = () => {
@@ -238,7 +245,6 @@ const PetSitterRegister = () => {
                     errorMessage = "주거 형태를 선택해주세요.";
                 }
                 break;
-            // 8단계(한마디)는 필수가 아니므로 검증 생략
         }
 
         if (!isValid) {
@@ -250,7 +256,12 @@ const PetSitterRegister = () => {
             return;
         }
 
-        setStep((prev) => Math.min(prev + 1, 9));
+        // 반려동물을 키우고 있지 않은 경우 반려동물 관련 단계들을 건너뛰도록 수정
+        if (step === 3 && hasPet["키우고 있지 않습니다"]) {
+            setStep(6); // 펫시터 경험 단계로 직접 이동
+        } else {
+            setStep((prev) => Math.min(prev + 1, 9));
+        }
     };
 
     const [commentText, setCommentText] = useState("");
@@ -671,12 +682,17 @@ const PetSitterRegister = () => {
                     </Box>
                 </Box>
             )}
+
             {/* 알림 Snackbar */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    bottom: "1000px",
+                    zIndex: 100000,
+                }}
             >
                 <Alert
                     onClose={handleCloseSnackbar}
