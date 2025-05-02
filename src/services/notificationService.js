@@ -28,3 +28,16 @@ export const deleteAllNotificationsByUserId = async (userId) => {
             throw error.response?.data || error;
         });
 };
+
+export const markNotificationAsRead = async (notificationId) => {
+    try {
+        const response = await instance.patch(`${API_URL}/${notificationId}/read`);
+        if (response.status === 204) {
+            return true; // 성공적으로 처리됨
+        }
+        return true; // 실패 처리
+    } catch (error) {
+        console.error("Error marking notification as read:", error);
+        return false; // 실패 처리
+    }
+};
