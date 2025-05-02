@@ -14,10 +14,6 @@ import AdminLayout from "./components/Admin/AdminLayout.jsx";
 // Protected Routes
 import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
-
-// import PetstaMain from "./pages/PetSta/PetstaMain.jsx";
-// import PostDetailWrapper from "./pages/PetSta/PostDetailWrapper.jsx";
-
 import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
 import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
 
@@ -36,9 +32,9 @@ const PetSitter = lazy(() => import("./pages/Sitter/PetSitter.jsx"));
 const MyPage = lazy(() => import("./pages/User/MyPage.jsx"));
 const AddPet = lazy(() => import("./pages/User/AddPet.jsx"));
 const EditPet = lazy(() => import("./pages/User/EditPet.jsx"));
-const Bookmark = lazy(() => import("./pages/User/Bookmark"));
-const PetstaBookmarks = lazy(() => import("./pages/User/PetstaBookmarks"));
-const PostBookmarks = lazy(() => import("./pages/User/BoardBookmarks"));
+const Bookmark = lazy(() => import("./pages/User/Bookmark.jsx"));
+const PetstaBookmarks = lazy(() => import("./pages/User/PetstaBookmarks.jsx"));
+const PostBookmarks = lazy(() => import("./pages/User/BoardBookmarks.jsx"));
 const PetSitterRegister = lazy(() => import("./pages/Sitter/PetSitterRegister.jsx"));
 const PetSitterFinder = lazy(() => import("./pages/Sitter/PetSitterFinder.jsx"));
 const PetSitterDetail = lazy(() => import("./pages/Sitter/PetSitterDetail.jsx"));
