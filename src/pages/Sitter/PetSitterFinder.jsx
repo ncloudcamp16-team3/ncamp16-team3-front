@@ -9,52 +9,98 @@ import { getApprovedPetSitters } from "../../services/petSitterService";
 
 const PetSitterFinder = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(1);
-    const [progress, setProgress] = useState(0);
-    const [showResults, setShowResults] = useState(false);
+
+    const [savedConditions, setSavedConditions] = useState(() => {
+        const saved = sessionStorage.getItem("petSitterConditions");
+        return saved ? JSON.parse(saved) : null;
+    });
+
+    // 초기 상태를 저장된 조건으로 설정
+    const [selectedAges, setSelectedAges] = useState(() => {
+        return (
+            savedConditions?.selectedAges || {
+                "20대": false,
+                "30대": false,
+                "40대": false,
+                "50대이상": false,
+            }
+        );
+    });
+
+    const [hasPet, setHasPet] = useState(() => {
+        return (
+            savedConditions?.hasPet || {
+                네: false,
+                아니오: false,
+                상관없어요: false,
+            }
+        );
+    });
+
+    const [hasSitterExperience, setHasSitterExperience] = useState(() => {
+        return (
+            savedConditions?.hasSitterExperience || {
+                네: false,
+                아니오: false,
+                상관없어요: false,
+            }
+        );
+    });
+
+    // 초기 진행 상태 설정
+    const [step, setStep] = useState(() => {
+        return savedConditions?.step || 1;
+    });
+
+    const [history, setHistory] = useState(() => {
+        return savedConditions?.history || [];
+    });
+
+    const [showResults, setShowResults] = useState(() => {
+        return savedConditions?.showResults || false;
+    });
+
+    const [progress, setProgress] = useState(() => {
+        return savedConditions?.progress || 0;
+    });
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    // 사용자 응답
-    const [selectedAges, setSelectedAges] = useState({
-        "20대": false,
-        "30대": false,
-        "40대": false,
-        "50대이상": false,
+    const [filteredPetsitters, setFilteredPetsitters] = useState(() => {
+        return savedConditions?.filteredPetsitters || [];
     });
-
-    const [hasPet, setHasPet] = useState({
-        네: false,
-        아니오: false,
-        상관없어요: false,
-    });
-
-    const [hasSitterExperience, setHasSitterExperience] = useState({
-        네: false,
-        아니오: false,
-        상관없어요: false,
-    });
-
-    // 필터링된 펫시터 목록
-    const [filteredPetsitters, setFilteredPetsitters] = useState([]);
 
     // 진행률 매핑
     const progressMapping = {
-        1: 0, // 첫 번째 질문
-        2: 35, // 두 번째 질문
-        3: 70, // 세 번째 질문
-        4: 100, // 완료
+        1: 0,
+        2: 35,
+        3: 70,
+        4: 100,
     };
-
-    // 사용자 응답 표시
-    const [history, setHistory] = useState([]);
 
     // 단계에 따른 진행률 업데이트
     useEffect(() => {
         setProgress(progressMapping[step] || 0);
     }, [step]);
 
+    // 조건 변경 시 sessionStorage에 저장
+    useEffect(() => {
+        const conditions = {
+            selectedAges,
+            hasPet,
+            hasSitterExperience,
+            step,
+            history,
+            progress,
+            showResults,
+            filteredPetsitters,
+        };
+        sessionStorage.setItem("petSitterConditions", JSON.stringify(conditions));
+    }, [selectedAges, hasPet, hasSitterExperience, step, history, progress, showResults, filteredPetsitters]);
+
     const resetSearch = () => {
+        sessionStorage.removeItem("petSitterConditions");
+
         setStep(1);
         setProgress(0);
         setShowResults(false);
@@ -62,7 +108,6 @@ const PetSitterFinder = () => {
         setFilteredPetsitters([]);
         setHistory([]);
 
-        // 선택사항들 초기화
         setSelectedAges({
             "20대": false,
             "30대": false,
@@ -85,7 +130,7 @@ const PetSitterFinder = () => {
 
     const handleNext = () => {
         switch (step) {
-            case 1: // 연령대 선택 후
+            case 1: // 연령대
                 if (!Object.values(selectedAges).some((v) => v)) {
                     alert("연령대를 하나 이상 선택해주세요.");
                     return;
@@ -100,7 +145,7 @@ const PetSitterFinder = () => {
                 setStep(2);
                 break;
 
-            case 2: // 반려동물 여부 선택 후
+            case 2: // 반려동물 여부
                 if (!Object.values(hasPet).some((v) => v)) {
                     alert("선택지를 하나 선택해주세요.");
                     return;
@@ -112,7 +157,7 @@ const PetSitterFinder = () => {
                 setStep(3);
                 break;
 
-            case 3: // 펫시터 경험 여부 선택 후
+            case 3: // 펫시터 경험 여부
                 if (!Object.values(hasSitterExperience).some((v) => v)) {
                     alert("선택지를 하나 선택해주세요.");
                     return;
@@ -122,11 +167,10 @@ const PetSitterFinder = () => {
                 setHistory([...history, { question: "임시보호 경험이 있으신 분을 찾으시나요?", answer: hasExpAnswer }]);
 
                 setStep(4);
-                // 조건에 맞는 펫시터 검색
                 fetchApprovedPetSitters();
                 break;
 
-            case 4: // 완료 시 결과
+            case 4: //결과
                 setShowResults(true);
                 break;
         }
@@ -181,13 +225,12 @@ const PetSitterFinder = () => {
         }
     };
 
-    // 뒤로가기 처리
+    // 뒤로가기
     const handleBack = () => {
         if (showResults) {
             setShowResults(false);
         } else if (step > 1) {
             setStep(step - 1);
-            // 히스토리에서 마지막 항목 제거
             setHistory(history.slice(0, -1));
         } else {
             navigate(-1);
@@ -303,7 +346,7 @@ const PetSitterFinder = () => {
                         sx={{
                             position: "fixed",
                             bottom: "97px",
-                            right: "1040px",
+                            right: "32%",
                             borderRadius: "50%",
                             minWidth: "56px",
                             width: "56px",
