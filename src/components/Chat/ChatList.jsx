@@ -5,12 +5,37 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import SearchIcon from "../../assets/images/Chat/search-icon.svg";
 import ChatItem from "./ChatItem.jsx";
 import { getMyChatRooms } from "../../services/chatService.js";
+import { sendChatNotification } from "../../services/notificationService.js";
 
 const ChatList = () => {
-    const { user, nc } = useContext(Context);
+    const { user, nc, isChatOpen, isChatRoomOpen } = useContext(Context);
     const [chatList, setChatList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState("");
+
+    const parseMessage = (msg) => {
+        let parsed;
+        try {
+            parsed = JSON.parse(msg.content);
+        } catch {
+            parsed = { customType: "TEXT", content: msg.content };
+        }
+
+        let typeId = 1;
+        if (parsed.customType === "MATCH") typeId = 2;
+        else if (parsed.customType === "TRADE") typeId = 3;
+        else if (parsed.customType === "PETSITTER") typeId = 4;
+
+        return {
+            id: msg.message_id,
+            senderId: msg.sender?.id,
+            text: parsed.content,
+            type_id: typeId,
+            metadata: parsed,
+            photo: msg.sender?.profile,
+            parsed,
+        };
+    };
 
     useEffect(() => {
         if (!user || !nc) return;
@@ -73,7 +98,28 @@ const ChatList = () => {
             }
         };
 
-        const handleReceiveMessage = (channel, msg) => {
+        const handleReceiveMessage = async (channel, msg) => {
+            const { parsed } = parseMessage(msg);
+            const isMine = msg.sender.id === `ncid${user.id}`;
+            if (isMine) return; // 내 메시지는 무시
+
+            const numericSenderId = msg.sender.id.replace(/\D/g, "");
+
+            const payload = {
+                userId: user.id,
+                channelId: msg.channel_id,
+                senderId: numericSenderId,
+                message: parsed.content,
+                type: parsed.customType,
+                createdAt: new Date().toISOString(),
+            };
+
+            try {
+                await sendChatNotification(payload);
+            } catch (err) {
+                console.error("알림 전송 실패:", err);
+            }
+
             setChatList((prev) => {
                 const updated = [...prev];
                 const idx = updated.findIndex((item) => item.id === msg.channel_id);
@@ -109,9 +155,14 @@ const ChatList = () => {
         };
 
         fetchRooms();
-        nc.bind("onMessageReceived", handleReceiveMessage);
-        return () => nc.unbind("onMessageReceived", handleReceiveMessage);
-    }, [user, nc]);
+        if (isChatOpen && !isChatRoomOpen) {
+            nc.bind("onMessageReceived", handleReceiveMessage);
+        }
+
+        return () => {
+            nc.unbind("onMessageReceived", handleReceiveMessage);
+        };
+    }, [user, nc, isChatOpen, isChatRoomOpen]);
 
     const filteredChatList = chatList.filter((item) => {
         const keyword = search.toLowerCase();
