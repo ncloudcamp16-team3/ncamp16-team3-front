@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, IconButton, CircularProgress } from "@mui/material";
+import { Box, Typography, IconButton, CircularProgress, Button } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
 import PetSitterSurvey from "../../components/Sitter/PetSitterSurvey";
 import PetSitterResults from "../../components/Sitter/PetSitterResults";
@@ -52,6 +53,35 @@ const PetSitterFinder = () => {
     useEffect(() => {
         setProgress(progressMapping[step] || 0);
     }, [step]);
+
+    const resetSearch = () => {
+        setStep(1);
+        setProgress(0);
+        setShowResults(false);
+        setError(null);
+        setFilteredPetsitters([]);
+        setHistory([]);
+
+        // 선택사항들 초기화
+        setSelectedAges({
+            "20대": false,
+            "30대": false,
+            "40대": false,
+            "50대이상": false,
+        });
+
+        setHasPet({
+            네: false,
+            아니오: false,
+            상관없어요: false,
+        });
+
+        setHasSitterExperience({
+            네: false,
+            아니오: false,
+            상관없어요: false,
+        });
+    };
 
     const handleNext = () => {
         switch (step) {
@@ -240,6 +270,7 @@ const PetSitterFinder = () => {
                     flex: 1,
                     overflow: "auto",
                     mb: 2,
+                    position: "relative",
                 }}
             >
                 {isLoading ? (
@@ -263,6 +294,36 @@ const PetSitterFinder = () => {
                         handleNext={handleNext}
                         handleBack={handleBack}
                     />
+                )}
+
+                {/* 새로고침 버튼 */}
+                {showResults && (
+                    <Button
+                        variant="contained"
+                        sx={{
+                            position: "fixed",
+                            bottom: "97px",
+                            right: "1040px",
+                            borderRadius: "50%",
+                            minWidth: "56px",
+                            width: "56px",
+                            height: "56px",
+                            bgcolor: "#E9A260",
+                            color: "white",
+                            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                            "&:hover": {
+                                bgcolor: "#d0905a",
+                                boxShadow: "0 6px 12px rgba(0,0,0,0.3)",
+                            },
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            zIndex: 1000,
+                        }}
+                        onClick={resetSearch}
+                    >
+                        <RefreshIcon fontSize="large" />
+                    </Button>
                 )}
             </Box>
         </Box>
