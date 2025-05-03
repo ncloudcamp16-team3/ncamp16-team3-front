@@ -44,7 +44,8 @@ const HoverTrash = styled(Trash2)(({ theme }) => ({
 
 const Notification = () => {
     const [notifications, setNotifications] = useState([]);
-    const { user } = useContext(Context);
+    const [lastMessages, setLastMessages] = useState({});
+    const { user, nc } = useContext(Context);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,6 +62,57 @@ const Notification = () => {
             fetchNotifications();
         }
     }, [user]);
+
+    const fetchNotificationLastMessage = async (channelId) => {
+        try {
+            const filter1 = { id: channelId };
+            const filter2 = { channel_id: channelId };
+            const sort = { created_at: -1 };
+            const option = { offset: 0, per_page: 20 };
+
+            const channels = await nc.getChannels(filter1, sort, option);
+            const edge = channels.edges?.[0];
+            const ch = edge?.node;
+
+            const subscriptions = await nc.getSubscriptions(filter2, sort, option);
+            console.log(subscriptions);
+            const subEdge1 = subscriptions.edges?.[0];
+            const subEdge2 = subscriptions.edges?.[1];
+
+            const user1 = subEdge1?.node.user.id.replace(/^ncid/, "") || null;
+            const user2 = subEdge2?.node.user.id.replace(/^ncid/, "") || null;
+            const user1_name = subEdge1?.node.user.name || null;
+            const user2_name = subEdge2?.node.user.name || null;
+
+            let message = "";
+
+            if (ch?.last_message?.content) {
+                try {
+                    const parsed = JSON.parse(ch.last_message.content);
+                    message = parsed?.content?.text || parsed?.content || ch.last_message.content;
+                } catch (e) {
+                    message = ch.last_message.content;
+                }
+            }
+
+            return {
+                user1,
+                user2,
+                user1_name,
+                user2_name,
+                message,
+            };
+        } catch (err) {
+            console.error("메시지 로딩 실패:", err);
+            return {
+                user1: "",
+                user2: "",
+                user1_name: "",
+                user2_name: "",
+                message: "메시지를 불러올 수 없습니다.",
+            };
+        }
+    };
 
     const handleRead = async (id) => {
         try {
@@ -131,6 +183,33 @@ const Notification = () => {
         }
     };
 
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const messageMap = {};
+
+            await Promise.all(
+                notifications.map(async (notification) => {
+                    if (notification.notificationTypeId === 5) {
+                        const channelId = notification.content;
+                        const { user1, user2, user1_name, user2_name, message } =
+                            await fetchNotificationLastMessage(channelId);
+                        console.log(user1, user2, message);
+
+                        messageMap[notification.id] = {
+                            user1,
+                            user2,
+                            user1_name,
+                            user2_name,
+                            message,
+                        };
+                    }
+                })
+            );
+            setLastMessages(messageMap);
+        };
+        fetchMessages();
+    }, [notifications]);
+
     return (
         <div
             style={{
@@ -148,8 +227,19 @@ const Notification = () => {
 
             <div style={{ padding: "16px" }}>
                 {notifications.map((notification) => {
-                    console.log("알림받은거 시간:" + notification.createdAt);
                     const { icon } = getIconByTypeId(notification.notificationTypeId);
+                    const last = lastMessages[notification.id];
+
+                    const displayTitle =
+                        notification.title ||
+                        (notification.notificationTypeId === 5 &&
+                            last &&
+                            (notification.userId === last.user1
+                                ? last.user2_name
+                                : last.user1_name || "유저를 알 수 없습니다."));
+
+                    const displayBody =
+                        notification.notificationTypeId === 5 ? last?.message || "불러오는 중..." : notification.body;
 
                     return (
                         <div
@@ -195,11 +285,9 @@ const Notification = () => {
                                         fontSize: "1rem",
                                     }}
                                 >
-                                    {notification.title}
+                                    {displayTitle}
                                 </div>
-                                <div style={{ marginTop: "4px", fontSize: "0.95em", color: "#555" }}>
-                                    {notification.body}
-                                </div>
+                                <div style={{ marginTop: "4px", fontSize: "0.95em", color: "#555" }}>{displayBody}</div>
                                 <div style={{ fontSize: "0.8em", color: "#888", marginTop: "6px" }}>
                                     {new Date(notification.createdAt).toLocaleString()}
                                 </div>
