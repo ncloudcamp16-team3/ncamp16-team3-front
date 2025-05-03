@@ -234,9 +234,10 @@ const Notification = () => {
                         notification.title ||
                         (notification.notificationTypeId === 5 &&
                             last &&
-                            (notification.userId === last.user1
-                                ? last.user2_name
-                                : last.user1_name || "유저를 알 수 없습니다."));
+                            ((notification.userId == last.user1
+                                ? `${last.user2_name} 님으로부터 메세지가 왔습니다.`
+                                : `${last.user1_name} 님으로부터 메세지가 왔습니다.`) ||
+                                "유저를 알 수 없습니다."));
 
                     const displayBody =
                         notification.notificationTypeId === 5 ? last?.message || "불러오는 중..." : notification.body;
