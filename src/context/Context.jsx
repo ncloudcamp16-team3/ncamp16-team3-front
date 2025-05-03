@@ -3,6 +3,7 @@ import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
 import { getUserInfo } from "../services/authService.js";
 import { getBoardTypeList } from "../services/boardService.js";
+import { useLocation } from "react-router-dom";
 
 export const Context = createContext();
 
@@ -107,6 +108,22 @@ export function Provider({ children }) {
         });
     }, []);
 
+    const location = useLocation();
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isChatRoomOpen, setIsChatRoomOpen] = useState(false);
+
+    useEffect(() => {
+        const isChat = location.pathname === "/chat"; // 완전 일치
+        console.log("Path changed:", location.pathname, "→ setIsChatOpen:", isChat);
+        setIsChatOpen(isChat);
+    }, [location.pathname]);
+
+    useEffect(() => {
+        const isChatRoom = location.pathname.startsWith("/chat/room"); // /chat/room 경로로 시작
+        console.log("Path changed:", location.pathname, "→ setIsChatRoomOpen:", isChatRoom);
+        setIsChatRoomOpen(isChatRoom);
+    }, [location.pathname]);
+
     if (isUserLoading) return null;
 
     return (
@@ -129,6 +146,10 @@ export function Provider({ children }) {
                 setBoardTypeList,
                 pet,
                 setPet,
+                isChatOpen,
+                setIsChatOpen,
+                isChatRoomOpen,
+                setIsChatRoomOpen,
             }}
         >
             {children}

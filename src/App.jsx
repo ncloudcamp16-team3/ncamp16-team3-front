@@ -73,8 +73,8 @@ const MyPosts = lazy(() => import("./pages/User/MyPosts.jsx"));
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <Provider>
-                <Router>
+            <Router>
+                <Provider>
                     <Suspense fallback={<div>로딩 중...</div>}>
                         <Routes>
                             <Route path="/admin" element={<AdminLayout />}>
@@ -149,8 +149,8 @@ function App() {
                             </Route>
                         </Routes>
                     </Suspense>
-                </Router>
-            </Provider>
+                </Provider>
+            </Router>
         </ThemeProvider>
     );
 }

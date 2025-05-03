@@ -36,7 +36,7 @@ const PetSitterStart = ({ sitter }) => {
 };
 
 const ChatRoom = () => {
-    const { user, nc } = useContext(Context);
+    const { user, nc, isChatOpen, isChatRoomOpen } = useContext(Context);
     const { channelId } = useParams();
     const navigate = useNavigate();
     const [messages, setMessages] = useState([]);
@@ -45,32 +45,37 @@ const ChatRoom = () => {
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef(null);
 
+    const parseMessage = (msg) => {
+        let parsed;
+        try {
+            parsed = JSON.parse(msg.content);
+        } catch {
+            parsed = { customType: "TEXT", content: msg.content };
+        }
+
+        let typeId = 1;
+        if (parsed.customType === "MATCH") typeId = 2;
+        else if (parsed.customType === "TRADE") typeId = 3;
+        else if (parsed.customType === "PETSITTER") typeId = 4;
+
+        return {
+            id: msg.message_id,
+            senderId: msg.sender?.id,
+            text: parsed.content,
+            type_id: typeId,
+            metadata: parsed,
+            photo: msg.sender?.profile,
+            parsed,
+        };
+    };
+
     useEffect(() => {
         if (!nc || !channelId) return;
 
         const handleReceiveMessage = async (channel, msg) => {
             if (msg.channel_id !== channelId) return;
 
-            let parsed;
-            try {
-                parsed = JSON.parse(msg.content);
-            } catch {
-                parsed = { customType: "TEXT", content: msg.content };
-            }
-
-            let typeId = 1;
-            if (parsed.customType === "MATCH") typeId = 2;
-            else if (parsed.customType === "TRADE") typeId = 3;
-            else if (parsed.customType === "PETSITTER") typeId = 4;
-
-            const newMessage = {
-                id: msg.message_id,
-                senderId: msg.sender?.id,
-                text: parsed.content,
-                type_id: typeId,
-                metadata: parsed,
-                photo: msg.sender?.profile,
-            };
+            const { parsed, ...newMessage } = parseMessage(msg);
 
             setMessages((prev) => [...prev, newMessage]);
 
@@ -159,12 +164,14 @@ const ChatRoom = () => {
         };
 
         init();
-        nc.bind("onMessageReceived", handleReceiveMessage);
+        if (!isChatOpen && isChatRoomOpen) {
+            nc.bind("onMessageReceived", handleReceiveMessage);
+        }
 
         return () => {
             nc.unbind("onMessageReceived", handleReceiveMessage);
         };
-    }, [nc, channelId, user.id]);
+    }, [nc, channelId, user.id, isChatOpen, isChatRoomOpen]);
 
     useEffect(() => {
         const updateRight = () => {

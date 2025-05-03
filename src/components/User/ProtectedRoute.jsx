@@ -8,12 +8,13 @@ import { registerSW } from "../../../public/firebase-messaging-sw-register.js";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
 import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
+import { sendChatNotification } from "../../services/notificationService.js";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
     const hasRun = useRef(false);
 
-    const { isLogin, setLogin, setUser, nc, setNc, user } = useContext(Context);
+    const { isLogin, setLogin, setUser, nc, setNc, user, isChatOpen, isChatRoomOpen } = useContext(Context);
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -93,6 +94,67 @@ const ProtectedRoute = () => {
             console.error("FCM 설정 에러:", error);
         }
     };
+
+    const parseMessage = (msg) => {
+        let parsed;
+        try {
+            parsed = JSON.parse(msg.content);
+        } catch {
+            parsed = { customType: "TEXT", content: msg.content };
+        }
+
+        let typeId = 1;
+        if (parsed.customType === "MATCH") typeId = 2;
+        else if (parsed.customType === "TRADE") typeId = 3;
+        else if (parsed.customType === "PETSITTER") typeId = 4;
+
+        return {
+            id: msg.message_id,
+            senderId: msg.sender?.id,
+            text: parsed.content,
+            type_id: typeId,
+            metadata: parsed,
+            photo: msg.sender?.profile,
+            parsed,
+        };
+    };
+
+    useEffect(() => {
+        if (!nc || !user?.id) return;
+
+        const backgroundHandler = async (channel, msg) => {
+            if (!msg || !msg.sender?.id) return;
+
+            const { parsed } = parseMessage(msg);
+            const isMine = msg.sender.id === `ncid${user.id}`;
+            if (isMine) return; // 내 메시지는 무시
+
+            const numericSenderId = msg.sender.id.replace(/\D/g, "");
+
+            const payload = {
+                userId: user.id,
+                channelId: msg.channel_id,
+                senderId: numericSenderId,
+                message: parsed.content,
+                type: parsed.customType,
+                createdAt: new Date().toISOString(),
+            };
+
+            try {
+                await sendChatNotification(payload);
+            } catch (err) {
+                console.error("알림 전송 실패:", err);
+            }
+        };
+
+        if (!isChatOpen && !isChatRoomOpen) {
+            nc.bind("onMessageReceived", backgroundHandler);
+        }
+
+        return () => {
+            nc.unbind("onMessageReceived", backgroundHandler);
+        };
+    }, [nc, user.id, isChatOpen, isChatRoomOpen]);
 
     // Notification List component
     const NotificationList = () => {
