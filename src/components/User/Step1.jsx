@@ -7,7 +7,8 @@ import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+import "dayjs/locale/ko";
+import { checkNickname } from "../../services/authService.js"; // ✅ 한글 로케일 불러오기
 dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step1 = () => {
@@ -16,6 +17,7 @@ const Step1 = () => {
     const [error, setError] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [showSnackbar, setShowSnackbar] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(""); // 어떤 에러인지 저장
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -42,16 +44,38 @@ const Step1 = () => {
     const handleChange = (e) => {
         const value = e.target.value;
         setNickname(value);
+        setError(false);
+        setShowSnackbar(false);
+        setErrorMessage("");
     };
 
-    const handleNext = () => {
-        const isValid = validateNickname(nickname);
-        setError(!isValid);
-        setShowSnackbar(!isValid);
+    const handleNext = async () => {
+        const trimmedNickname = nickname.trim();
 
-        if (isValid) {
-            nextStep();
+        if (!validateNickname(trimmedNickname)) {
+            setError(true);
+            setErrorMessage("닉네임은 2~16자 이내로 입력해주세요.");
+            setShowSnackbar(true);
+            return;
         }
+
+        const result = await checkNickname(trimmedNickname);
+        if (result?.exists) {
+            setError(true);
+            setErrorMessage("이미 사용 중인 닉네임입니다.");
+            setShowSnackbar(true);
+            return;
+        }
+
+        if (result === null) {
+            // API 호출 자체 실패한 경우
+            setError(true);
+            setErrorMessage("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            setShowSnackbar(true);
+            return;
+        }
+
+        nextStep();
     };
 
     return (
@@ -96,7 +120,7 @@ const Step1 = () => {
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
                 <Alert severity="error" onClose={() => setShowSnackbar(false)}>
-                    닉네임은 2~16자 이내로 입력해주세요.
+                    {errorMessage}
                 </Alert>
             </Snackbar>
 

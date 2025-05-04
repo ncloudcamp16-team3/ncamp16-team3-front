@@ -32,6 +32,16 @@ export const checkLogin = async () => {
     }
 };
 
+export const checkNickname = async (nickname) => {
+    try {
+        const response = await instance.get(`${API_URL}/check-nickname?nickname=${nickname}`);
+        return response.data;
+    } catch (error) {
+        console.error("닉네임 중복 확인 중 오류:", error);
+        return null;
+    }
+};
+
 export const saveOrUpdateFcmToken = async ({ userId, fcmToken }) => {
     console.log("📦 FCM Token to be sent:", fcmToken);
     try {
