@@ -203,6 +203,7 @@ const ProtectedRoute = () => {
                         anchorOrigin={{ vertical: "top", horizontal: "center" }}
                         sx={{
                             top: "80px", // 알림이 좀 더 아래에서 나오도록 위치 조정
+                            zIndex: 20000,
                         }}
                     >
                         <Alert
