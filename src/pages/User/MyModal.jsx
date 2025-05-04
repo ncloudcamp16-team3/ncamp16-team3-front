@@ -80,7 +80,6 @@ const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawa
         </ModalWrapper>
     );
 };
-
 const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
     const [nickname, setNickname] = useState(currentNickname);
     const [error, setError] = useState("");
