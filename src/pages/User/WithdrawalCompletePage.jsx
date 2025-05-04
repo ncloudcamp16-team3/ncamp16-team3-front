@@ -1,10 +1,10 @@
-`import React, { useEffect } from "react";
-import { Box, Typography, Button, Container, Paper } from "@mui/material";
+import React, { useEffect } from "react";
+import { Typography, Button, Container, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const WithdrawalCompletePage = () => {
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const timer = setTimeout(() => {
             navigate("/login");
@@ -58,4 +58,3 @@ const WithdrawalCompletePage = () => {
 };
 
 export default WithdrawalCompletePage;
-`;
