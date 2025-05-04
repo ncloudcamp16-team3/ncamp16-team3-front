@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme.js";
 import { Provider } from "./context/Context.jsx";
 import { Suspense, lazy } from "react";
+import WithdrawalCompletePage from "./pages/User/WithdrawalCompletePage";
 
 // Global Layouts
 import Layout0 from "./components/Global/Layout0.jsx";
@@ -97,6 +98,7 @@ function App() {
                             <Route element={<Layout0 />}>
                                 <Route path="/oauth2/success" element={<OAuth2Success />} />
                                 <Route path="/login" element={<Login />} />
+                                <Route path="/withdrawal-complete" element={<WithdrawalCompletePage />} />
                                 <Route path="/register" element={<Register />} />
                             </Route>
 
