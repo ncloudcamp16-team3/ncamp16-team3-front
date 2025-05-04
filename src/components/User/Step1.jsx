@@ -1,7 +1,7 @@
 import * as React from "react";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, InputLabel, Typography, Grid } from "@mui/material";
+import { Box, Button, InputLabel, Typography, Grid, Alert, Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
@@ -15,6 +15,7 @@ const Step1 = () => {
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [loaded, setLoaded] = useState(false);
+    const [showSnackbar, setShowSnackbar] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -34,13 +35,23 @@ const Step1 = () => {
         }
     }, [loaded, snsAccountId, snsTypeId]);
 
+    const validateNickname = (value) => {
+        return value.trim().length >= 2 && value.trim().length <= 16;
+    };
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setNickname(value);
+    };
+
     const handleNext = () => {
-        if (!nickname || nickname.trim().length < 2 || nickname.trim().length > 16) {
-            setError(true);
-            return;
+        const isValid = validateNickname(nickname);
+        setError(!isValid);
+        setShowSnackbar(!isValid);
+
+        if (isValid) {
+            nextStep();
         }
-        setError(false);
-        nextStep();
     };
 
     return (
@@ -65,15 +76,7 @@ const Step1 = () => {
 
                 <FormControl variant="standard" fullWidth error={error}>
                     <InputLabel htmlFor="nickname">
-                        {error ? (
-                            <>
-                                닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
-                            </>
-                        ) : (
-                            <>
-                                닉네임 <ReqUi />
-                            </>
-                        )}
+                        닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
                     </InputLabel>
                     <Input
                         required
@@ -81,10 +84,21 @@ const Step1 = () => {
                         name="nickname"
                         placeholder="2~16자 이내로 입력해주세요"
                         value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
+                        onChange={handleChange}
                     />
                 </FormControl>
             </Box>
+
+            <Snackbar
+                open={showSnackbar}
+                autoHideDuration={3000}
+                onClose={() => setShowSnackbar(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="error" onClose={() => setShowSnackbar(false)}>
+                    닉네임은 2~16자 이내로 입력해주세요.
+                </Alert>
+            </Snackbar>
 
             <Box
                 sx={{

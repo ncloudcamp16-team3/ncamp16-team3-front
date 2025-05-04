@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Box, Button, FormHelperText, Grid, IconButton, Typography } from "@mui/material";
+import { Alert, Avatar, Box, Button, FormHelperText, Grid, IconButton, Snackbar, Typography } from "@mui/material";
 import { useRegister } from "./RegisterContext.jsx";
 import FormControl from "@mui/material/FormControl";
 import ReqUi from "./ReqUi.jsx";
@@ -26,11 +26,14 @@ const Step3 = () => {
         window.scrollTo(0, 0);
     }, []); // 화면 이동시 스크롤 맨 위로
 
-    const [errors, setErrors] = useState({
-        petInfo: false,
-        petPhotos: false,
-        petNeutered: false,
-    });
+    const [errors, setErrors] = useState({});
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    const showSnackbar = (message) => {
+        setSnackbarMessage(message);
+        setSnackbarOpen(true);
+    };
 
     const handleNext = () => {
         const newErrors = {
@@ -40,8 +43,19 @@ const Step3 = () => {
         };
         setErrors(newErrors);
 
-        const hasError = Object.values(newErrors).some((val) => val === true);
-        if (hasError) return;
+        // 에러 메시지 처리
+        if (newErrors.petPhotos) {
+            showSnackbar("사진을 한 장 이상 등록해 주세요.");
+            return;
+        }
+        if (newErrors.petInfo) {
+            showSnackbar("소개글을 입력해 주세요.");
+            return;
+        }
+        if (newErrors.petNeutered) {
+            showSnackbar("중성화 여부를 선택해 주세요.");
+            return;
+        }
 
         const newPetData = {
             ...formData,
@@ -105,7 +119,6 @@ const Step3 = () => {
                     <FormHelperText sx={{ mb: 1 }}>
                         <>
                             중성화 여부를 알려주세요 <ReqUi />
-                            {errors.petNeutered && ` (중성화 여부를 선택해 주세요.)`}
                         </>
                     </FormHelperText>
                     <Grid container spacing={1}>
@@ -155,7 +168,6 @@ const Step3 = () => {
                     <FormHelperText sx={{ mb: 1 }}>
                         <>
                             사진을 등록해 주세요 <ReqUi />
-                            {errors.petPhotos && ` (사진을 한 장 이상 등록해 주세요.)`}
                         </>
                     </FormHelperText>
 
@@ -241,7 +253,6 @@ const Step3 = () => {
                     <FormHelperText sx={{ mb: 1 }}>
                         <>
                             아이를 소개해 주세요 <ReqUi />
-                            {errors.petInfo && ` (소개글을 입력해주세요.)`}
                         </>
                     </FormHelperText>
                     <TextareaAutosize
@@ -300,6 +311,18 @@ const Step3 = () => {
                     </Grid>
                 </Grid>
             </Box>
+
+            {/* Snackbar 컴포넌트 추가 */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert onClose={() => setSnackbarOpen(false)} severity="error">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };
