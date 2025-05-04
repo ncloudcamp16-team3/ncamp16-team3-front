@@ -44,7 +44,7 @@ body.modal-open {
     font-family: "Roboto", sans-serif;
     width: 100%;
     min-width: 320px;
-    max-width: 500px;
+    max-width: var(--max-width);
     margin: 0 auto;
     position: fixed;
     top: 0;
@@ -59,7 +59,7 @@ body.modal-open {
     font-family: "Roboto", sans-serif;
     width: 100%;
     min-width: 320px;
-    max-width: 500px;
+    max-width: var(--max-width);
     margin: 0 auto;
     display: flex;
     gap: 5px;
