@@ -5,9 +5,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Context } from "../../context/Context.jsx";
 import { useTheme } from "@mui/material/styles";
 import DropdownCommentBtns from "./DropdownCommentBtns.jsx";
-import { deleteComment, updateComment } from "../../services/boardService.js";
+import { deleteComment, getComments, updateComment } from "../../services/boardService.js";
 
-const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbarOpen, setPostComments }) => {
+const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbarOpen, setPostComments, postId }) => {
     const { user } = useContext(Context);
     const timeAgo = useTimeAgo(commentItem.createdAt);
     const [dropCommentBtn, setDropCommentBtn] = useState(false);
@@ -35,8 +35,13 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
             .then((res) => {
                 console.log("응답 결과: " + res.message);
                 handleSnackbarOpen(res.message, "success");
-                setPostComments(res.data);
                 setUpdateAble(false);
+
+                return getComments(postId);
+            })
+            .then((res) => {
+                console.log(res.data);
+                setPostComments(res.data);
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);

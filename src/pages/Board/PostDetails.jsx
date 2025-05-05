@@ -421,6 +421,7 @@ const PostDetails = () => {
                                             scrollToComment={scrollToComment}
                                             handleSnackbarOpen={handleSnackbarOpen}
                                             setPostComments={setPostComments}
+                                            postId={postId}
                                         />
                                         {commentItem.children?.map((child) => {
                                             return (
@@ -437,6 +438,7 @@ const PostDetails = () => {
                                                         scrollToComment={scrollToComment}
                                                         handleSnackbarOpen={handleSnackbarOpen}
                                                         setPostComments={setPostComments}
+                                                        postId={postId}
                                                     />
                                                 </Box>
                                             );
