@@ -26,7 +26,7 @@ import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/c
 
 const PostDetails = () => {
     const { postId } = useParams();
-    const { boardType, user, nc, showModal, handleSnackbarOpen } = useContext(Context);
+    const { boardType, user, nc, showModal, handleSnackbarOpen, boardTypeList, setBoardType } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
@@ -205,6 +205,8 @@ const PostDetails = () => {
                     console.log(data);
                     setPostData(data);
                     setPostComments(data.comments);
+
+                    setBoardType(boardTypeList.find((item) => item.id === data.boardTypeId));
                     console.log("응답 결과 : " + res.message);
                 })
                 .catch((err) => {
