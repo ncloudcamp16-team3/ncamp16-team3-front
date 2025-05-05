@@ -2,12 +2,7 @@ import React, { useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import penIcon from "/src/assets/images/User/pen_2.svg";
 
-/**
- * 프로필 사진 업로드 단계 컴포넌트
- * @param {Object} props
- * @param {string|null} props.imagePreview 이미지 미리보기 URL
- * @param {Function} props.onImageUpload 이미지 업로드 핸들러
- */
+
 const ProfileUploadStep = ({ imagePreview, onImageUpload }) => {
     const fileInputRef = useRef(null);
 

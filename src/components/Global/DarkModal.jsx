@@ -1,14 +1,7 @@
 import React, { useEffect } from "react";
 import { Modal } from "@mui/material";
 
-const DarkModal = ({
-    open,
-    onClose,
-    children,
-    backdropProps = {},
-    modalProps = {},
-    overlayBrightness = 0.5,
-}) => {
+const DarkModal = ({ open, onClose, children, backdropProps = {}, modalProps = {} }) => {
     useEffect(() => {
         if (!open) return;
 
@@ -18,7 +11,6 @@ const DarkModal = ({
         styleElement.textContent = `
       .header, .footer {
         pointer-events: none !important;
-        filter: brightness(${overlayBrightness});
         transition: opacity 0.3s ease, filter 0.3s ease;
       }
     `;
@@ -31,7 +23,7 @@ const DarkModal = ({
                 document.head.removeChild(existingStyle);
             }
         };
-    }, [open, overlayBrightness]);
+    }, [open]);
 
     return (
         <Modal

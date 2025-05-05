@@ -10,12 +10,11 @@ import { getApprovedPetSitters } from "../../services/petSitterService";
 const PetSitterFinder = () => {
     const navigate = useNavigate();
 
-    const [savedConditions, setSavedConditions] = useState(() => {
+    const [savedConditions] = useState(() => {
         const saved = sessionStorage.getItem("petSitterConditions");
         return saved ? JSON.parse(saved) : null;
     });
 
-    // 초기 상태를 저장된 조건으로 설정
     const [selectedAges, setSelectedAges] = useState(() => {
         return (
             savedConditions?.selectedAges || {
@@ -47,7 +46,6 @@ const PetSitterFinder = () => {
         );
     });
 
-    // 초기 진행 상태 설정
     const [step, setStep] = useState(() => {
         return savedConditions?.step || 1;
     });

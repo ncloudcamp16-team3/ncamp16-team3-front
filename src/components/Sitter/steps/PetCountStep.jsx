@@ -2,12 +2,6 @@ import React from "react";
 import { Box, Typography, FormGroup } from "@mui/material";
 import OptionCheckboxGroup from "../common/OptionCheckboxGroup";
 
-/**
- * 반려동물 마릿수 선택 단계 컴포넌트
- * @param {Object} props
- * @param {Object} props.petCount 반려동물 마릿수 객체
- * @param {Function} props.onChange 선택 변경 핸들러
- */
 const PetCountStep = ({ petCount, onChange }) => {
     return (
         <Box

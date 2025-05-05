@@ -2,12 +2,7 @@ import React from "react";
 import { Box, Typography, FormGroup } from "@mui/material";
 import OptionCheckboxGroup from "../common/OptionCheckboxGroup";
 
-/**
- * 펫시터 경험 여부 선택 단계 컴포넌트
- * @param {Object} props
- * @param {Object} props.sitterExperience 펫시터 경험 여부 객체
- * @param {Function} props.onChange 선택 변경 핸들러
- */
+
 const ExperienceStep = ({ sitterExperience, onChange }) => {
   return (
     <Box

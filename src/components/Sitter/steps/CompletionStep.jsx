@@ -1,13 +1,7 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 
-/**
- * 등록 완료 단계 컴포넌트
- * @param {Object} props
- * @param {string|null} props.imagePreview 이미지 미리보기 URL
- * @param {Object} props.formData 폼 데이터 객체
- * @param {Function} props.onComplete 완료 처리 핸들러
- */
+
 const CompletionStep = ({ imagePreview, formData, onComplete }) => {
     const { selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText } = formData;
 

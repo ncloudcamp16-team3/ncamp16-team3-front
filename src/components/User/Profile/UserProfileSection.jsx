@@ -3,27 +3,17 @@ import { Box, Typography,  IconButton, Avatar } from "@mui/material";
 import penIcon1 from "/src/assets/images/User/pen_1.svg";
 import penIcon2 from "/src/assets/images/User/pen_2.svg";
 
-/**
- * 사용자 프로필 섹션 컴포넌트
- * @param {Object} props
- * @param {Object} props.user 사용자 정보 객체
- * @param {Function} props.onNicknameEdit 닉네임 수정 핸들러
- * @param {Function} props.onProfileClick 프로필 사진 클릭 핸들러
- * @param {React.RefObject} props.fileInputRef 파일 입력 참조
- */
 const UserProfileSection = ({ user, onNicknameEdit, onProfileClick, fileInputRef }) => {
     // 프로필 이미지 경로 처리
     const getProfileImageUrl = () => {
         if (!user || !user.path) {
-            return "/src/assets/images/User/profile-pic.jpg"; // 기본 이미지
+            return "/src/assets/images/User/profile-pic.jpg";
         }
 
-        // 이미 전체 URL인 경우 그대로 사용
         if (user.path.startsWith("http") || user.path.startsWith("data:")) {
             return user.path;
         }
 
-        // 상대 경로인 경우 처리
         return user.path;
     };
 
