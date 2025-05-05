@@ -1,8 +1,3 @@
-/**
- * 선택된 마릿수 문자열을 백엔드 API가 요구하는 enum 값으로 변환
- * @param {string} petCountStr 마릿수 문자열
- * @returns {string} 백엔드 API enum 값
- */
 export const getPetCountEnum = (petCountStr) => {
     switch (petCountStr) {
         case "1마리":
@@ -12,15 +7,10 @@ export const getPetCountEnum = (petCountStr) => {
         case "3마리 이상":
             return "THREE_PLUS";
         default:
-            return "ONE"; // 기본값
+            return "ONE";
     }
 };
 
-/**
- * 선택된 반려동물 종류를 백엔드 API가 요구하는 ID 값으로 변환
- * @param {string} petTypeStr 반려동물 종류 문자열
- * @returns {number|null} 백엔드 API ID 값
- */
 export const getPetTypeId = (petTypeStr) => {
     if (!petTypeStr) return null;
 
@@ -36,21 +26,16 @@ export const getPetTypeId = (petTypeStr) => {
         case "기타":
             return 5;
         default:
-            return null; // 선택된 값이 없는 경우
+            return null;
     }
 };
 
-/**
- * API 요청용 펫시터 데이터 객체 생성
- * @param {Object} formData 폼 데이터 객체
- * @returns {Object} API 요청용 데이터 객체
- */
 export const createPetSitterRequestData = (formData) => {
     const { selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText } = formData;
 
     return {
         // 필수 필드
-        userId: null, // 토큰에서 추출될 값
+        userId: null,
         age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
         houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
         comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
@@ -67,12 +52,6 @@ export const createPetSitterRequestData = (formData) => {
     };
 };
 
-/**
- * FormData 객체를 생성하여 API 요청에 필요한 데이터를 설정
- * @param {Object} petSitterData 펫시터 데이터 객체
- * @param {Blob|null} imageBlob 이미지 Blob 객체
- * @returns {FormData} API 요청에 사용할 FormData 객체
- */
 export const createFormData = (petSitterData, imageBlob) => {
     const formData = new FormData();
 

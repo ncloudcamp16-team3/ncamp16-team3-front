@@ -8,6 +8,19 @@ const theme = createTheme({
     brand4: "#363636",
     brand5: "#FDF1E5",
     secondary: "#9A9090",
+
+    components: {
+        MuiModal: {
+            defaultProps: {
+                disableScrollLock: true,
+            },
+        },
+        MuiDialog: {
+            defaultProps: {
+                disableScrollLock: true,
+            },
+        },
+    },
 });
 
 export default theme;

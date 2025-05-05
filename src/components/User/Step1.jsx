@@ -1,13 +1,14 @@
 import * as React from "react";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, InputLabel, Typography, Grid } from "@mui/material";
+import { Box, Button, InputLabel, Typography, Grid, Alert, Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import "dayjs/locale/ko"; // ✅ 한글 로케일 불러오기
+import "dayjs/locale/ko";
+import { checkNickname } from "../../services/authService.js"; // ✅ 한글 로케일 불러오기
 dayjs.locale("ko"); // ✅ 한글 설정
 
 const Step1 = () => {
@@ -15,6 +16,8 @@ const Step1 = () => {
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [loaded, setLoaded] = useState(false);
+    const [showSnackbar, setShowSnackbar] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(""); // 어떤 에러인지 저장
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -34,12 +37,44 @@ const Step1 = () => {
         }
     }, [loaded, snsAccountId, snsTypeId]);
 
-    const handleNext = () => {
-        if (!nickname || nickname.trim().length < 2 || nickname.trim().length > 16) {
+    const validateNickname = (value) => {
+        return value.trim().length >= 2 && value.trim().length <= 16;
+    };
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setNickname(value);
+        setError(false);
+        setShowSnackbar(false);
+        setErrorMessage("");
+    };
+
+    const handleNext = async () => {
+        const trimmedNickname = nickname.trim();
+
+        if (!validateNickname(trimmedNickname)) {
             setError(true);
+            setErrorMessage("닉네임은 2~16자 이내로 입력해주세요.");
+            setShowSnackbar(true);
             return;
         }
-        setError(false);
+
+        const result = await checkNickname(trimmedNickname);
+        if (result?.exists) {
+            setError(true);
+            setErrorMessage("이미 사용 중인 닉네임입니다.");
+            setShowSnackbar(true);
+            return;
+        }
+
+        if (result === null) {
+            // API 호출 자체 실패한 경우
+            setError(true);
+            setErrorMessage("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            setShowSnackbar(true);
+            return;
+        }
+
         nextStep();
     };
 
@@ -65,15 +100,7 @@ const Step1 = () => {
 
                 <FormControl variant="standard" fullWidth error={error}>
                     <InputLabel htmlFor="nickname">
-                        {error ? (
-                            <>
-                                닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
-                            </>
-                        ) : (
-                            <>
-                                닉네임 <ReqUi />
-                            </>
-                        )}
+                        닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
                     </InputLabel>
                     <Input
                         required
@@ -81,10 +108,21 @@ const Step1 = () => {
                         name="nickname"
                         placeholder="2~16자 이내로 입력해주세요"
                         value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
+                        onChange={handleChange}
                     />
                 </FormControl>
             </Box>
+
+            <Snackbar
+                open={showSnackbar}
+                autoHideDuration={3000}
+                onClose={() => setShowSnackbar(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="error" onClose={() => setShowSnackbar(false)}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
 
             <Box
                 sx={{

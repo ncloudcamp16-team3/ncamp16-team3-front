@@ -255,18 +255,17 @@ const MyPage = () => {
                 setPets([]);
                 setSitterStatus({});
                 localStorage.clear();
-                document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                sessionStorage.clear();
 
-                setSnackbar({
-                    open: true,
-                    message: "회원 탈퇴가 완료되었습니다.",
-                    severity: "success",
+                // 쿠키 삭제
+                document.cookie.split(";").forEach(function (c) {
+                    document.cookie = c
+                        .replace(/^ +/, "")
+                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                 });
 
-                // 잠시 후 로그인 페이지로 이동
-                setTimeout(() => {
-                    window.location.href = "/login"; // 강제 리로드
-                }, 1500);
+                // 회원탈퇴 완료 페이지로 이동
+                navigate("/withdrawal-complete");
             } catch (err) {
                 console.error("회원 탈퇴 처리 실패:", err);
 
@@ -487,7 +486,7 @@ const MyPage = () => {
                         onClose={handleCloseWithdrawalModal}
                         inputValue={withdrawalInput}
                         onInputChange={handleWithdrawalInputChange}
-                        onWithdraw={handleWithdrawal}
+                        onWithdrawal={handleWithdrawal}
                     />
 
                     <NicknameEditModal
