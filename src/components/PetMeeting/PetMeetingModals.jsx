@@ -3,13 +3,30 @@ import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import { Box, Button, Fade, Modal, Typography } from "@mui/material";
 import Dog from "../../assets/images/PetMeeting/dog.svg";
 import SelectPetDropdown from "./SelectPetDropdown.jsx";
-import { savePet } from "../../services/petService.js";
+import { getMyPets, savePet } from "../../services/petService.js";
 import { Context } from "../../context/Context.jsx";
 
 const PetConfigModal = () => {
     const { openPetConfigModal, drop, setDrop, setClose } = useContext(PetMeetingContext);
     const { pet, setPet, user } = useContext(Context);
     const [selectedPet, setSelectedPet] = useState(null);
+    const [myPets, setMyPets] = useState([]);
+
+    useEffect(() => {
+        getMyPets({ userId: user.id })
+            .then((res) => {
+                const data = res.data;
+                console.log("응답 성공: " + res.message);
+                console.log(data);
+                setMyPets(data);
+                if (data.length > 0) {
+                    setPet(data[0]);
+                }
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
+    }, []);
 
     useEffect(() => {
         if (pet) {
@@ -103,7 +120,13 @@ const PetConfigModal = () => {
                         >
                             {selectedPet?.name ? selectedPet.name : "친구 선택"}
                         </Button>
-                        {drop && <SelectPetDropdown selectedPet={selectedPet} setSelectedPet={setSelectedPet} />}
+                        {drop && (
+                            <SelectPetDropdown
+                                selectedPet={selectedPet}
+                                setSelectedPet={setSelectedPet}
+                                myPets={myPets}
+                            />
+                        )}
                     </Box>
                     <Typography
                         sx={{

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { Context } from "../../context/Context.jsx";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -12,6 +12,18 @@ const PostTitleBar = ({ postData, setOpenDeleteModal, setOpenUpdateModal }) => {
     const [dropPostBtn, setDropPostBtn] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropPostBtn && dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropPostBtn(false); // 🔹 외부 클릭 시 닫기
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropPostBtn]);
 
     return (
         <Box
@@ -33,23 +45,29 @@ const PostTitleBar = ({ postData, setOpenDeleteModal, setOpenUpdateModal }) => {
                 </Typography>
             </Box>
             {user.id === postData.authorId && (
-                <MoreVertIcon
-                    onClick={() => setDropPostBtn(!dropPostBtn)}
+                <Box
+                    ref={dropdownRef}
                     sx={{
                         position: "absolute",
                         right: "20px",
-                        cursor: "pointer",
-                        color: theme.brand3,
-                        fontSize: "28px",
                     }}
-                />
+                >
+                    <MoreVertIcon
+                        onClick={() => setDropPostBtn(!dropPostBtn)}
+                        sx={{
+                            cursor: "pointer",
+                            color: theme.brand3,
+                            fontSize: "28px",
+                        }}
+                    />
+                    <DropdownPostBtns
+                        dropPostBtn={dropPostBtn}
+                        setDropPostBtn={setDropPostBtn}
+                        setOpenDeleteModal={setOpenDeleteModal}
+                        setOpenUpdateModal={setOpenUpdateModal}
+                    />
+                </Box>
             )}
-            <DropdownPostBtns
-                dropPostBtn={dropPostBtn}
-                setDropPostBtn={setDropPostBtn}
-                setOpenDeleteModal={setOpenDeleteModal}
-                setOpenUpdateModal={setOpenUpdateModal}
-            />
         </Box>
     );
 };

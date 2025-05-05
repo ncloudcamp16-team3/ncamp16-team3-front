@@ -121,7 +121,9 @@ const PetDetails = () => {
                 setLoading(false);
             } catch (err) {
                 console.log("에러 발생: " + err.message);
-                setLoading(false);
+                showModal(null, "친구를 찾지 못했습니다", () => {
+                    navigate(`/`);
+                });
             }
         };
         fetchPet();
@@ -134,7 +136,7 @@ const PetDetails = () => {
                 <Loading />
             ) : (
                 <Box sx={{ width: "100% - 20px", margin: "0 10px 75px 10px", pb: "0" }}>
-                    <PetImgSlide photos={currentPet.photos} />
+                    {currentPet?.photos?.length > 0 && <PetImgSlide photos={currentPet.photos} />}
                     <Typography sx={{ mt: "0", fontSize: "25px", display: "inline", verticalAlign: "middle" }}>
                         {currentPet?.name}
                     </Typography>
