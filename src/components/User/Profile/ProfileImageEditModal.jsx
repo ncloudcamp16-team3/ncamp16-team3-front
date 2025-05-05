@@ -67,12 +67,6 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
             }
 
             setError("이미지 업로드 중 오류가 발생했습니다.");
-
-            // 개발 중에는 미리보기로 대체 (실제 운영시에는 제거)
-            if (process.env.NODE_ENV === "development") {
-                onImageUpdate(previewUrl);
-                handleClose();
-            }
         } finally {
             setIsLoading(false);
         }

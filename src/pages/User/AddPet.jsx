@@ -316,7 +316,7 @@ const AddPet = () => {
         navigate(-1);
     };
 
-    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
+    const petTypes = ["강아지", "고양이", "햄스터", "새", "물고기", "기타"];
 
     // 현재 보여줄 이미지 (선택된 이미지 또는 첫 번째 이미지)
     const currentDisplayImage =
@@ -453,7 +453,7 @@ const AddPet = () => {
                                         image={preview}
                                         alt={`펫 사진 ${index + 1}`}
                                         sx={{
-                                            width: "100%",
+                                            width: 100,
                                             height: 100,
                                             objectFit: "cover",
                                         }}
@@ -487,6 +487,7 @@ const AddPet = () => {
                                     component="label"
                                     sx={{
                                         height: 100,
+                                        width: 100,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
@@ -534,9 +535,6 @@ const AddPet = () => {
                     value={petData.birthDate}
                     onChange={handleChange}
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        max: today,
-                    }}
                 />
 
                 <Divider sx={{ my: 3, borderColor: "#f0f0f0", borderWidth: 2 }} />
@@ -670,10 +668,6 @@ const AddPet = () => {
                     onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        pattern: "^[0-9]*\.?[0-9]*$",
-                        inputMode: "decimal",
-                    }}
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
