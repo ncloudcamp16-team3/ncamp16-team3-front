@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Box, Button, InputBase, Typography } from "@mui/material";
+import { Alert, Box, Button, InputBase, Snackbar, Typography } from "@mui/material";
 import ImgSlide from "../../components/Board/ImgSlider.jsx";
 import PostTitleBar from "../../components/Board/PostTitleBar.jsx";
 import DeletePostModal from "../../components/Board/DeletePostModal.jsx";
@@ -25,7 +25,7 @@ import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/c
 
 const PostDetails = () => {
     const { postId } = useParams();
-    const { boardType, user, nc } = useContext(Context);
+    const { boardType, user, nc, showModal } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
@@ -37,6 +37,31 @@ const PostDetails = () => {
     const commentRefs = useRef({});
     const theme = useTheme();
     const navigate = useNavigate();
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success",
+    });
+
+    const handleSnackbarClose = () => {
+        setSnackbar((prev) =>
+            produce(prev, (draft) => {
+                draft.open = false;
+                draft.message = "";
+                draft.severity = "success";
+            })
+        );
+    };
+
+    const handleSnackbarOpen = (message, severity) => {
+        setSnackbar((prev) =>
+            produce(prev, (draft) => {
+                draft.open = true;
+                draft.message = message;
+                draft.severity = severity;
+            })
+        );
+    };
 
     const scrollToComment = (commentId) => {
         const el = commentRefs.current[commentId];
@@ -162,10 +187,14 @@ const PostDetails = () => {
         addComment(message, postId, user.id, replyingTo?.commentId)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
+                handleSnackbarOpen(res.message, "success");
+                setComment("");
                 window.location.reload();
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
+                setComment("");
             });
     };
 
@@ -193,6 +222,9 @@ const PostDetails = () => {
                 })
                 .catch((err) => {
                     console.log("에러 발생 : " + err.message);
+                    showModal("", err.message, () => {
+                        navigate("/board");
+                    });
                 });
 
             getBookmarkedAndLiked(user.id, postId)
@@ -487,6 +519,20 @@ const PostDetails = () => {
                 setOpenUpdateModal={setOpenUpdateModal}
                 postId={postData.id}
             />
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    zIndex: 10000,
+                    mb: "130px",
+                }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: "100%" }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

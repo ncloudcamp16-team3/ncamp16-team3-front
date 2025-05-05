@@ -45,48 +45,52 @@ const ImgSlide = ({ photos }) => {
                     </SwiperSlide>
                 ))}
             </Swiper>
-            <Box
-                className="swiper-button-prev-custom"
-                component="img"
-                src={LeftArrow}
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "0",
-                    zIndex: 10,
-                    transform: "translateY(-50%)",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "40px",
-                    height: "40px",
-                    "&:hover": {
-                        transform: "translateY(-50%) scale(1.15)",
-                        filter: "brightness(1.2)",
-                    },
-                }}
-            />
-            <Box
-                className="swiper-button-next-custom"
-                component="img"
-                src={RightArrow}
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "0",
-                    zIndex: 10,
-                    transform: "translateY(-50%)",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "40px",
-                    height: "40px",
-                    "&:hover": {
-                        transform: "translateY(-50%) scale(1.15)",
-                        filter: "brightness(1.2)",
-                    },
-                }}
-            />
+            {photos?.length > 1 && (
+                <Box
+                    className="swiper-button-prev-custom"
+                    component="img"
+                    src={LeftArrow}
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "0",
+                        zIndex: 10,
+                        transform: "translateY(-50%)",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        userSelect: "none",
+                        width: "40px",
+                        height: "40px",
+                        "&:hover": {
+                            transform: "translateY(-50%) scale(1.15)",
+                            filter: "brightness(1.2)",
+                        },
+                    }}
+                />
+            )}
+            {photos?.length > 1 && (
+                <Box
+                    className="swiper-button-next-custom"
+                    component="img"
+                    src={RightArrow}
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        right: "0",
+                        zIndex: 10,
+                        transform: "translateY(-50%)",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        userSelect: "none",
+                        width: "40px",
+                        height: "40px",
+                        "&:hover": {
+                            transform: "translateY(-50%) scale(1.15)",
+                            filter: "brightness(1.2)",
+                        },
+                    }}
+                />
+            )}
         </Box>
     );
 };

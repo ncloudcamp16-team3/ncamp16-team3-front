@@ -132,13 +132,10 @@ const PostSave = () => {
                 formData.append("photos", p.file);
             });
 
-        console.log(boardData);
-
         saveBoard(formData)
             .then((res) => {
                 const data = res.data;
                 console.log("응답 결과" + res.message);
-                console.log(data);
                 navigate(`/board/${data}`);
             })
             .catch((err) => {
