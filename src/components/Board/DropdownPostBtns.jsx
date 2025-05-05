@@ -12,7 +12,8 @@ const DropdownPostBtns = ({ dropPostBtn, setDropPostBtn, setOpenDeleteModal, set
                 bgcolor: theme.brand4,
                 borderRadius: 2,
                 top: "45px",
-                right: "30px",
+                right: "0",
+                width: "150px",
                 pointerEvents: dropPostBtn ? "auto" : "none",
                 zIndex: 1000,
             }}

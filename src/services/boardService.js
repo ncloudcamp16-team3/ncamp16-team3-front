@@ -149,6 +149,21 @@ export const searchPost = async ({ boardTypeId, keyword, page }) => {
         });
 };
 
+export const getComments = async (boardId) => {
+    return await instance
+        .get(`${API_URL}/comment`, {
+            params: {
+                boardId,
+            },
+        })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};
+
 export const addComment = async (comment, boardId, userId, commentId) => {
     return await instance
         .post(`${API_URL}/comment`, {

@@ -5,9 +5,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Context } from "../../context/Context.jsx";
 import { useTheme } from "@mui/material/styles";
 import DropdownCommentBtns from "./DropdownCommentBtns.jsx";
-import { deleteComment, updateComment } from "../../services/boardService.js";
+import { deleteComment, getComments, updateComment } from "../../services/boardService.js";
 
-const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
+const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbarOpen, setPostComments, postId }) => {
     const { user } = useContext(Context);
     const timeAgo = useTimeAgo(commentItem.createdAt);
     const [dropCommentBtn, setDropCommentBtn] = useState(false);
@@ -34,11 +34,18 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
         updateComment(comment, commentItem.id, user.id)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
+                handleSnackbarOpen(res.message, "success");
+                setUpdateAble(false);
 
-                window.location.reload();
+                return getComments(postId);
+            })
+            .then((res) => {
+                console.log(res.data);
+                setPostComments(res.data);
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
             });
     };
 
@@ -46,11 +53,12 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
         deleteComment(commentItem.id, user.id)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
-
-                window.location.reload();
+                handleSnackbarOpen(res.message, "success");
+                setPostComments(res.data);
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
             });
     };
 

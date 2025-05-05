@@ -42,7 +42,7 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) 
                     fontWeight: "600",
                 }}
             >
-                {postData.price}원
+                {postData.price.toLocaleString()}원
             </Typography>
 
             <Button

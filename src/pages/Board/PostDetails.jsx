@@ -14,6 +14,7 @@ import {
     addComment,
     getBoardDetail,
     getBookmarkedAndLiked,
+    getComments,
     toggleBookmarked,
     toggleLiked,
 } from "../../services/boardService.js";
@@ -25,7 +26,7 @@ import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/c
 
 const PostDetails = () => {
     const { postId } = useParams();
-    const { boardType, user, nc } = useContext(Context);
+    const { boardType, user, nc, showModal, handleSnackbarOpen, boardTypeList, setBoardType } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
@@ -37,13 +38,7 @@ const PostDetails = () => {
     const commentRefs = useRef({});
     const theme = useTheme();
     const navigate = useNavigate();
-
-    const scrollToComment = (commentId) => {
-        const el = commentRefs.current[commentId];
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    };
+    const [postComments, setPostComments] = useState([]);
 
     const [postData, setPostData] = useState({
         id: null,
@@ -64,6 +59,13 @@ const PostDetails = () => {
         imageUrls: [],
         comments: [],
     });
+
+    const scrollToComment = (commentId) => {
+        const el = commentRefs.current[commentId];
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    };
 
     const handleTradeChat = async () => {
         if (!user || !nc || !postData.authorId || !postData.imageUrls?.[0]) return;
@@ -162,10 +164,23 @@ const PostDetails = () => {
         addComment(message, postId, user.id, replyingTo?.commentId)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
-                window.location.reload();
+                handleSnackbarOpen(res.message, "success");
+                setComment("");
+                setPostData((prev) =>
+                    produce(prev, (draft) => {
+                        draft.commentCount = draft.commentCount + 1;
+                    })
+                );
+                return getComments(postId);
+            })
+            .then((res) => {
+                console.log(res.data);
+                setPostComments(res.data);
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
+                setComment("");
             });
     };
 
@@ -189,10 +204,16 @@ const PostDetails = () => {
                     const data = res.data;
                     console.log(data);
                     setPostData(data);
+                    setPostComments(data.comments);
+
+                    setBoardType(boardTypeList.find((item) => item.id === data.boardTypeId));
                     console.log("응답 결과 : " + res.message);
                 })
                 .catch((err) => {
                     console.log("에러 발생 : " + err.message);
+                    showModal("", err.message, () => {
+                        navigate("/board");
+                    });
                 });
 
             getBookmarkedAndLiked(user.id, postId)
@@ -362,7 +383,7 @@ const PostDetails = () => {
                                 <Typography sx={{ fontSize: "18px" }}>좋아요{postData.likeCount}개</Typography>
                                 <Typography sx={{ fontSize: "18px" }}>댓글 {postData.commentCount}개</Typography>
                             </Box>
-                            {postData.comments?.map((commentItem) => {
+                            {postComments?.map((commentItem) => {
                                 return (
                                     <Box
                                         key={commentItem.id}
@@ -375,6 +396,9 @@ const PostDetails = () => {
                                             commentItem={commentItem}
                                             handleReply={handleReply}
                                             scrollToComment={scrollToComment}
+                                            handleSnackbarOpen={handleSnackbarOpen}
+                                            setPostComments={setPostComments}
+                                            postId={postId}
                                         />
                                         {commentItem.children?.map((child) => {
                                             return (
@@ -389,6 +413,9 @@ const PostDetails = () => {
                                                         commentItem={child}
                                                         handleReply={handleReply}
                                                         scrollToComment={scrollToComment}
+                                                        handleSnackbarOpen={handleSnackbarOpen}
+                                                        setPostComments={setPostComments}
+                                                        postId={postId}
                                                     />
                                                 </Box>
                                             );
