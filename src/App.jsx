@@ -16,7 +16,6 @@ import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
 import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
-// import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
 
 // Lazy-loaded Pages
 const Main = lazy(() => import("./pages/PetMeeting/Main.jsx"));

@@ -7,7 +7,7 @@ import { useTheme } from "@mui/material/styles";
 import DropdownCommentBtns from "./DropdownCommentBtns.jsx";
 import { deleteComment, updateComment } from "../../services/boardService.js";
 
-const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
+const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbarOpen, setPostComments }) => {
     const { user } = useContext(Context);
     const timeAgo = useTimeAgo(commentItem.createdAt);
     const [dropCommentBtn, setDropCommentBtn] = useState(false);
@@ -34,11 +34,13 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
         updateComment(comment, commentItem.id, user.id)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
-
-                window.location.reload();
+                handleSnackbarOpen(res.message, "success");
+                setPostComments(res.data);
+                setUpdateAble(false);
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
             });
     };
 
@@ -46,11 +48,12 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment }) => {
         deleteComment(commentItem.id, user.id)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
-
-                window.location.reload();
+                handleSnackbarOpen(res.message, "success");
+                setPostComments(res.data);
             })
             .catch((err) => {
                 console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
             });
     };
 
