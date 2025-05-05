@@ -2,25 +2,10 @@ import React from "react";
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
 import sitter from "/src/assets/images/User/petsit_req.svg";
 
-/**
- * 펫시터 섹션 컴포넌트
- * @param {Object} props
- * @param {Object} props.sitterInfo - 펫시터 정보 객체
- * @param {Function} props.onEditClick - 펫시터 정보 수정 핸들러
- * @param {Function} props.onQuitClick - 펫시터 그만두기 핸들러
- * @param {Function} props.onApplyClick - 펫시터 신청 핸들러
- */
 const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }) => {
-    // sitterInfo가 있으면서 status가 APPROVE인 경우 승인된 펫시터
     const isApproved = sitterInfo?.status === "APPROVE";
-
-    // sitterInfo가 있으면서 status가 NONE인 경우 대기 중인 펫시터
     const isPending = sitterInfo?.status === "NONE";
-
-    // sitterInfo가 있으면서 status가 PENDING인 경우 보류된 펫시터
     const isHold = sitterInfo?.status === "PENDING";
-
-    // sitterInfo가 있으면서 status가 DELETE인 경우 정지된 펫시터
     const isDeleted = sitterInfo?.status === "DELETE";
 
     return (
@@ -128,8 +113,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                     mb: 3,
                                     mx: "auto",
                                     display: "block",
-                                    opacity: 0.5, // 정지 상태를 더 강조하기 위해 투명도 낮춤
-                                    filter: "grayscale(100%)", // 흑백 처리로 비활성화 느낌 강조
+                                    opacity: 0.5,
+                                    filter: "grayscale(100%)",
                                 }}
                             />
                             <Box

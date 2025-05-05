@@ -5,7 +5,6 @@ import {
     TextField,
     Button,
     IconButton,
-    Stack,
     Divider,
     Chip,
     Alert,
@@ -55,7 +54,7 @@ const EditPet = () => {
     const today = new Date().toISOString().split("T")[0];
 
     // 반려동물 종류 옵션
-    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
+    const petTypes = ["강아지", "고양이", "햄스터", "새", "물고기", "기타"];
 
     // 데이터 로드
     useEffect(() => {
@@ -587,7 +586,7 @@ const EditPet = () => {
                                         image={preview}
                                         alt={`펫 사진 ${index + 1}`}
                                         sx={{
-                                            width: "100%",
+                                            width: 100,
                                             height: 100,
                                             objectFit: "cover",
                                         }}
@@ -620,6 +619,7 @@ const EditPet = () => {
                                 <Card
                                     component="label"
                                     sx={{
+                                        width: 100,
                                         height: 100,
                                         display: "flex",
                                         alignItems: "center",
@@ -804,10 +804,7 @@ const EditPet = () => {
                     onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        pattern: "^[0-9]*\.?[0-9]*$",
-                        inputMode: "decimal",
-                    }}
+
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
