@@ -16,7 +16,7 @@ import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
 import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
-import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
+// import PetDetails from "./pages/PetMeeting/PetDetails.jsx";
 
 // Lazy-loaded Pages
 const Main = lazy(() => import("./pages/PetMeeting/Main.jsx"));
@@ -49,7 +49,7 @@ const FollowersTab = lazy(() => import("./pages/PetSta/FollowersTab.jsx"));
 const UserLayout = lazy(() => import("./components/PetSta/UserLayout.jsx"));
 const ChatList = lazy(() => import("./components/Chat/ChatList.jsx"));
 const ChatRoom = lazy(() => import("./components/Chat/ChatRoom.jsx"));
-// const PetDetails = lazy(() => import("./pages/PetMeeting/PetDetails.jsx"));
+const PetDetails = lazy(() => import("./pages/PetMeeting/PetDetails.jsx"));
 const OAuth2Success = lazy(() => import("./components/User/OAuth2Success.jsx"));
 const Announce = lazy(() => import("./pages/Board/Announce.jsx"));
 const PostDetails = lazy(() => import("./pages/Board/PostDetails.jsx"));
