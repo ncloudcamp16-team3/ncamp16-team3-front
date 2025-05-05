@@ -46,7 +46,7 @@ const Step4 = () => {
                         birth: pet.petBirth,
                         weight: pet.petWeight,
                         info: pet.petInfo,
-                        neutered: pet.petNeutered,
+                        neutered: pet.petNeutered === "" ? null : pet.petNeutered, // 중성화 여부 선택하지 않으면 null로 처리
                         activityStatus: "NONE",
 
                         photos: petPhotos.map((photo, index) => ({
@@ -134,7 +134,11 @@ const Step4 = () => {
                                         <Typography variant="h6">{pet.petName}</Typography>
                                         <Typography variant="body2">
                                             {pet.petGender === "남아" ? "수컷" : "암컷"} •{" "}
-                                            {pet.petNeutered === "Y" ? "중성화 완료" : "중성화 미완료"}
+                                            {pet.petNeutered === null
+                                                ? "중성화 여부 미선택"
+                                                : pet.petNeutered === true
+                                                  ? "중성화 완료"
+                                                  : "중성화 미완료"}
                                         </Typography>
                                         {pet.petBirth && (
                                             <Typography variant="body2">

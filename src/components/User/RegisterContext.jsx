@@ -10,7 +10,7 @@ const initialPetData = {
     petBirth: "",
     petWeight: "",
     petInfo: "",
-    petNeutered: "N",
+    petNeutered: null,
     petPhotos: [],
 };
 

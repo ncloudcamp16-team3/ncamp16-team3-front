@@ -39,21 +39,21 @@ const Step3 = () => {
         const newErrors = {
             petPhotos: !formData.petPhotos || formData.petPhotos.length === 0,
             petInfo: !formData.petInfo || formData.petInfo.trim().length === 0,
-            petNeutered: !formData.petNeutered,
+            petNeutered: formData.petNeutered == null,
         };
         setErrors(newErrors);
 
         // 에러 메시지 처리
+        if (newErrors.petNeutered) {
+            showSnackbar("중성화 여부를 선택해 주세요.");
+            return;
+        }
         if (newErrors.petPhotos) {
             showSnackbar("사진을 한 장 이상 등록해 주세요.");
             return;
         }
         if (newErrors.petInfo) {
             showSnackbar("소개글을 입력해 주세요.");
-            return;
-        }
-        if (newErrors.petNeutered) {
-            showSnackbar("중성화 여부를 선택해 주세요.");
             return;
         }
 
@@ -125,11 +125,11 @@ const Step3 = () => {
                         <Grid item size={6}>
                             <Button
                                 fullWidth
-                                variant={formData.petNeutered === "Y" ? "contained" : "outlined"}
-                                onClick={() => handleChange({ target: { name: "petNeutered", value: "Y" } })}
+                                variant={formData.petNeutered === true ? "contained" : "outlined"}
+                                onClick={() => handleChange({ target: { name: "petNeutered", value: true } })}
                                 sx={{
-                                    backgroundColor: formData.petNeutered === "Y" ? "#E9A260" : "inherit",
-                                    color: formData.petNeutered === "Y" ? "#fff" : "inherit",
+                                    backgroundColor: formData.petNeutered === true ? "#E9A260" : "inherit",
+                                    color: formData.petNeutered === true ? "#fff" : "inherit",
                                     borderColor: "#E9A260",
                                     "&:hover": {
                                         backgroundColor: "#e08a3a",
@@ -143,11 +143,11 @@ const Step3 = () => {
                         <Grid item size={6}>
                             <Button
                                 fullWidth
-                                variant={formData.petNeutered === "N" ? "contained" : "outlined"}
-                                onClick={() => handleChange({ target: { name: "petNeutered", value: "N" } })}
+                                variant={formData.petNeutered === false ? "contained" : "outlined"}
+                                onClick={() => handleChange({ target: { name: "petNeutered", value: false } })}
                                 sx={{
-                                    backgroundColor: formData.petNeutered === "N" ? "#E9A260" : "inherit",
-                                    color: formData.petNeutered === "N" ? "#fff" : "inherit",
+                                    backgroundColor: formData.petNeutered === false ? "#E9A260" : "inherit",
+                                    color: formData.petNeutered === false ? "#fff" : "inherit",
                                     borderColor: "#E9A260",
                                     "&:hover": {
                                         backgroundColor: "#e08a3a",
