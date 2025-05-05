@@ -74,29 +74,42 @@ const ProtectedRoute = () => {
     }, [user?.id]);
 
     // 🔧 FCM 설정 함수 분리
-    const setupFCM = async (userId) => {
-        try {
-            registerSW();
+    const setupFCM = async (userId, maxRetries = 3) => {
+        let attempts = 0;
 
-            const mobile = /Mobi|Android/i.test(navigator.userAgent);
-            // 개발 환경인지 체크하는 로직 (예: dev 서버일 때만 true)
-            const dev = import.meta.env.MODE === "development"; // ✅ Vite 환경용
+        const mobile = /Mobi|Android/i.test(navigator.userAgent);
+        const dev = import.meta.env.MODE === "development";
 
-            const permission = await Notification.requestPermission();
-            if (permission !== "granted") return;
+        const trySetup = async () => {
+            try {
+                registerSW();
 
-            const currentToken = await getToken(messaging, {
-                vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
-            });
+                const permission = await Notification.requestPermission();
+                if (permission !== "granted") return;
 
-            if (!currentToken) return;
+                const currentToken = await getToken(messaging, {
+                    vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
+                });
 
-            console.log("Current FCM Token:", currentToken);
-            await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
-            console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
-        } catch (error) {
-            console.error("FCM 설정 에러:", error);
-        }
+                if (!currentToken) throw new Error("FCM 토큰을 가져오지 못했습니다.");
+
+                console.log("Current FCM Token:", currentToken);
+                await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
+                console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
+            } catch (error) {
+                attempts++;
+                console.warn(`FCM 설정 시도 실패 (${attempts}/${maxRetries}):`, error);
+
+                if (attempts < maxRetries) {
+                    // 1초 후 재시도
+                    setTimeout(trySetup, 1000);
+                } else {
+                    console.error("FCM 설정 실패: 최대 재시도 횟수 초과");
+                }
+            }
+        };
+
+        await trySetup();
     };
 
     const parseMessage = (msg) => {
@@ -168,7 +181,7 @@ const ProtectedRoute = () => {
             const unsubscribe = onMessage(messaging, (payload) => {
                 console.log("Foreground message received:", payload);
 
-                const notificationData = payload?.notification;
+                const notificationData = payload?.data;
                 if (notificationData) {
                     const newNotification = {
                         id: Date.now(),
