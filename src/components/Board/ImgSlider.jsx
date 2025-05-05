@@ -116,7 +116,7 @@ const ImgSlide = ({ photos }) => {
                             justifyContent: "center",
                             alignItems: "center",
                             overflow: "hidden",
-                            textAlign: "center", // inline 요소 대응
+                            textAlign: "center",
                         }}
                     >
                         <Box
@@ -124,13 +124,11 @@ const ImgSlide = ({ photos }) => {
                             src={path}
                             alt={`slide-${idx}`}
                             sx={{
-                                maxHeight: "100%",
-                                maxWidth: "100%",
-                                width: "auto",
-                                height: "auto",
+                                width: "100%",
+                                height: "100%",
                                 objectFit: "contain",
-                                display: "block", // inline 제거
-                                margin: "0 auto", // 가운데 정렬
+                                display: "block",
+                                margin: "0 auto",
                             }}
                         />
                     </Box>

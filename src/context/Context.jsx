@@ -4,6 +4,7 @@ import { produce } from "immer";
 import { getUserInfo } from "../services/authService.js";
 import { getBoardTypeList } from "../services/boardService.js";
 import { useLocation } from "react-router-dom";
+import GlobalSnackbar from "../components/Global/GlobalSnackbar.jsx";
 
 export const Context = createContext();
 
@@ -81,6 +82,12 @@ export function Provider({ children }) {
         photos: [],
     });
 
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success",
+    });
+
     const [isLogin, setLogin] = useState(false);
 
     const [boardTypeList, setBoardTypeList] = useState([]);
@@ -107,6 +114,26 @@ export function Provider({ children }) {
             });
         });
     }, []);
+
+    const handleSnackbarClose = () => {
+        setSnackbar((prev) =>
+            produce(prev, (draft) => {
+                draft.open = false;
+                draft.message = "";
+                draft.severity = "success";
+            })
+        );
+    };
+
+    const handleSnackbarOpen = (message, severity) => {
+        setSnackbar((prev) =>
+            produce(prev, (draft) => {
+                draft.open = true;
+                draft.message = message;
+                draft.severity = severity;
+            })
+        );
+    };
 
     const location = useLocation();
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -150,6 +177,7 @@ export function Provider({ children }) {
                 setIsChatOpen,
                 isChatRoomOpen,
                 setIsChatRoomOpen,
+                handleSnackbarOpen,
             }}
         >
             {children}
@@ -158,6 +186,12 @@ export function Provider({ children }) {
                 title={InfoModalState.title}
                 message={InfoModalState.message}
                 onClose={closeModal}
+            />
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
             />
         </Context.Provider>
     );

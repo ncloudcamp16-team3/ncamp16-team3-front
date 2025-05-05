@@ -24,11 +24,28 @@ const PetDetails = () => {
     const getAge = (birthDateString) => {
         const birthDate = new Date(birthDateString);
         const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        const dayDiff = today.getDate() - birthDate.getDate();
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
-        return age;
+
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let months = today.getMonth() - birthDate.getMonth();
+        let days = today.getDate() - birthDate.getDate();
+
+        if (days < 0) months--;
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        const totalMonths =
+            (today.getFullYear() - birthDate.getFullYear()) * 12 + today.getMonth() - birthDate.getMonth();
+
+        if (years <= 0) {
+            if (totalMonths <= 0) {
+                return "1개월 미만";
+            }
+            return `${totalMonths}개월`;
+        }
+
+        return `${years}세`;
     };
 
     const handleChat = async () => {
@@ -166,7 +183,7 @@ const PetDetails = () => {
                                 margin: "0 2%",
                             }}
                         >
-                            {getAge(currentPet?.birthDate)}세
+                            {getAge(currentPet?.birthDate)}
                         </Typography>
                         <Typography
                             sx={{

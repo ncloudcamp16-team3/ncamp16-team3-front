@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Alert, Box, Button, InputBase, Snackbar, Typography } from "@mui/material";
+import { Box, Button, InputBase, Typography } from "@mui/material";
 import ImgSlide from "../../components/Board/ImgSlider.jsx";
 import PostTitleBar from "../../components/Board/PostTitleBar.jsx";
 import DeletePostModal from "../../components/Board/DeletePostModal.jsx";
@@ -26,7 +26,7 @@ import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/c
 
 const PostDetails = () => {
     const { postId } = useParams();
-    const { boardType, user, nc, showModal } = useContext(Context);
+    const { boardType, user, nc, showModal, handleSnackbarOpen } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
@@ -39,11 +39,6 @@ const PostDetails = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     const [postComments, setPostComments] = useState([]);
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: "",
-        severity: "success",
-    });
 
     const [postData, setPostData] = useState({
         id: null,
@@ -64,26 +59,6 @@ const PostDetails = () => {
         imageUrls: [],
         comments: [],
     });
-
-    const handleSnackbarClose = () => {
-        setSnackbar((prev) =>
-            produce(prev, (draft) => {
-                draft.open = false;
-                draft.message = "";
-                draft.severity = "success";
-            })
-        );
-    };
-
-    const handleSnackbarOpen = (message, severity) => {
-        setSnackbar((prev) =>
-            produce(prev, (draft) => {
-                draft.open = true;
-                draft.message = message;
-                draft.severity = severity;
-            })
-        );
-    };
 
     const scrollToComment = (commentId) => {
         const el = commentRefs.current[commentId];
@@ -537,20 +512,6 @@ const PostDetails = () => {
                 setOpenUpdateModal={setOpenUpdateModal}
                 postId={postData.id}
             />
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                sx={{
-                    zIndex: 10000,
-                    mb: "130px",
-                }}
-            >
-                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: "100%" }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
         </Box>
     );
 };

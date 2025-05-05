@@ -11,13 +11,40 @@ import Loading from "../../components/Global/Loading.jsx";
 import { getBoardDetail, saveBoard } from "../../services/boardService.js";
 
 const PostSave = () => {
-    const { boardType, user, showModal } = useContext(Context);
+    const { boardType, user, showModal, handleSnackbarOpen } = useContext(Context);
     const { postId } = useParams();
     const isEdit = !!postId;
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const deleteFileIds = useRef([]);
 
+    const formatNumber = (num) => {
+        return num.toLocaleString(); // 3자리마다 콤마 추가
+    };
+
+    const handleChange = (e) => {
+        const input = e.target.value.replace(/,/g, ""); // 콤마를 제거한 값을 사용
+        const value = Number(input);
+
+        // 빈 문자열이면 0으로 처리
+        if (input === "") {
+            setPostData((prev) =>
+                produce(prev, (draft) => {
+                    draft.price = 0;
+                })
+            );
+            return;
+        }
+
+        // 값이 0 이상일 때만 처리
+        if (value >= 0) {
+            setPostData((prev) =>
+                produce(prev, (draft) => {
+                    draft.price = value;
+                })
+            );
+        }
+    };
     const [postData, setPostData] = useState({
         id: null,
         boardTypeId: null,
@@ -104,7 +131,7 @@ const PostSave = () => {
                 );
                 fileCount++;
             } else {
-                showModal(null, "최대 5개까지 파일을 추가할 수 있습니다.");
+                handleSnackbarOpen("파일은 최대 5개까지 입력 가능합니다", "warning");
                 break;
             }
         }
@@ -139,6 +166,7 @@ const PostSave = () => {
                 navigate(`/board/${data}`);
             })
             .catch((err) => {
+                handleSnackbarOpen(err.message, "warning");
                 console.log("에러 발생" + err.message);
             });
     };
@@ -248,16 +276,10 @@ const PostSave = () => {
                                 </Box>
                                 <InputBase
                                     readOnly={!postData.sell}
-                                    type="number"
-                                    value={postData.price}
-                                    onChange={(e) =>
-                                        setPostData((prev) =>
-                                            produce(prev, (draft) => {
-                                                draft.price = e.target.value;
-                                            })
-                                        )
-                                    }
-                                    placeholder={"가격을 입력해주세요."}
+                                    type="text" // "number" 대신 "text"로 변경하여 콤마 처리 가능
+                                    value={postData.price === 0 ? "" : formatNumber(postData.price)} // 천 단위로 콤마 추가
+                                    onChange={handleChange}
+                                    placeholder={postData?.sell ? "가격을 입력해주세요." : "0"}
                                     startAdornment={<InputAdornment position="start">₩</InputAdornment>}
                                     sx={{
                                         width: "100%",
