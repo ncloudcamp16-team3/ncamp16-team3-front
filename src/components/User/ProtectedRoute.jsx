@@ -78,6 +78,10 @@ const ProtectedRoute = () => {
         try {
             registerSW();
 
+            const mobile = /Mobi|Android/i.test(navigator.userAgent);
+            // 개발 환경인지 체크하는 로직 (예: dev 서버일 때만 true)
+            const dev = import.meta.env.MODE === "development"; // ✅ Vite 환경용
+
             const permission = await Notification.requestPermission();
             if (permission !== "granted") return;
 
@@ -88,7 +92,7 @@ const ProtectedRoute = () => {
             if (!currentToken) return;
 
             console.log("Current FCM Token:", currentToken);
-            await saveOrUpdateFcmToken({ userId, fcmToken: currentToken });
+            await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
             console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
         } catch (error) {
             console.error("FCM 설정 에러:", error);
