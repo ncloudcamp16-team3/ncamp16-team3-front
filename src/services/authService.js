@@ -57,14 +57,15 @@ export const checkNickname = async (nickname) => {
     }
 };
 
-export const saveOrUpdateFcmToken = async ({ userId, fcmToken }) => {
-    console.log("📦 FCM Token to be sent:", fcmToken);
+export const saveOrUpdateFcmToken = async ({ userId, fcmToken, mobile, dev }) => {
     try {
         const response = await instance.post(`${API_URL}/fcm`, {
             userId,
             fcmToken,
+            mobile, // 모바일 여부 추가
+            dev, // 개발 환경 여부 추가
         });
-        console.log("✅ FCM 토큰 등록 성공:", response.data);
+        console.log("✅ FCM 토큰 등록 성공:", response);
         return true;
     } catch (error) {
         console.error("❌ FCM 토큰 등록 실패:", error);
