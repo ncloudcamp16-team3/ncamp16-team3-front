@@ -343,8 +343,8 @@ const PetSitterFinder = () => {
                         variant="contained"
                         sx={{
                             position: "fixed",
-                            bottom: "97px",
-                            right: "32%",
+                            bottom: "9%",
+                            right: "41%",
                             borderRadius: "50%",
                             minWidth: "56px",
                             width: "56px",
