@@ -3,7 +3,6 @@ import { Box, Typography, Card, CardContent, Button } from "@mui/material";
 import sitter from "/src/assets/images/User/petsit_req.svg";
 
 const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }) => {
-
     const isApproved = sitterInfo?.status === "APPROVE";
     const isPending = sitterInfo?.status === "NONE";
     const isHold = sitterInfo?.status === "PENDING";

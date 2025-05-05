@@ -5,7 +5,6 @@ import {
     TextField,
     Button,
     IconButton,
-    Stack,
     Divider,
     Chip,
     Alert,
@@ -805,10 +804,7 @@ const EditPet = () => {
                     onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        pattern: "^[0-9]*\.?[0-9]*$",
-                        inputMode: "decimal",
-                    }}
+
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>

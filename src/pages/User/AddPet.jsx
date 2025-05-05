@@ -535,9 +535,6 @@ const AddPet = () => {
                     value={petData.birthDate}
                     onChange={handleChange}
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        max: today,
-                    }}
                 />
 
                 <Divider sx={{ my: 3, borderColor: "#f0f0f0", borderWidth: 2 }} />
@@ -671,10 +668,6 @@ const AddPet = () => {
                     onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        pattern: "^[0-9]*\.?[0-9]*$",
-                        inputMode: "decimal",
-                    }}
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>

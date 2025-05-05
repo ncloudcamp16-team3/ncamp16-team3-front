@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 
-
 const CompletionStep = ({ imagePreview, formData, onComplete }) => {
     const { selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText } = formData;
 

@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Typography, FormGroup } from "@mui/material";
 import OptionCheckboxGroup from "../common/OptionCheckboxGroup";
 
-
 const PetOwnershipStep = ({ hasPet, onChange }) => {
     return (
         <Box

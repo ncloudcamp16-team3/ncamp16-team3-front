@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import penIcon from "/src/assets/images/User/pen_2.svg";
 
-
 const ProfileUploadStep = ({ imagePreview, onImageUpload }) => {
     const fileInputRef = useRef(null);
 
