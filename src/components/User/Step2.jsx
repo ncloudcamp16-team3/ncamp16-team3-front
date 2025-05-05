@@ -188,6 +188,7 @@ const Step2 = () => {
                         <MobileDatePicker
                             value={formData.petBirth ? dayjs(formData.petBirth) : null}
                             onChange={handleDateChange}
+                            maxDate={dayjs()} // ✅ 오늘 날짜 이후 선택 제한
                         />
                     </FormControl>
                 </LocalizationProvider>
