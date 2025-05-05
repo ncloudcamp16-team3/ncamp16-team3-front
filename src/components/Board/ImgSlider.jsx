@@ -1,4 +1,3 @@
-import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Box } from "@mui/material";
@@ -22,6 +21,14 @@ const ImgSlide = ({ photos }) => {
             }}
         >
             <Swiper
+                onSwiper={(swiper) => {
+                    setTimeout(() => {
+                        swiper.update();
+                        if (swiper.navigation) {
+                            swiper.navigation.update();
+                        }
+                    }, 100); // 또는 requestAnimationFrame
+                }}
                 modules={[Pagination, Navigation]}
                 spaceBetween={20}
                 slidesPerView={1}
@@ -32,16 +39,27 @@ const ImgSlide = ({ photos }) => {
             >
                 {photos?.map((path, idx) => (
                     <SwiperSlide key={idx}>
-                        <img
-                            src={path}
-                            alt={`slide-${idx}`}
+                        <div
                             style={{
                                 width: "100%",
                                 height: "100%",
-                                objectFit: "contain",
-                                display: "block",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                overflow: "hidden",
                             }}
-                        />
+                        >
+                            <img
+                                src={path}
+                                alt={`slide-${idx}`}
+                                style={{
+                                    width: "auto",
+                                    height: "100%",
+                                    maxWidth: "100%",
+                                    objectFit: "contain",
+                                }}
+                            />
+                        </div>
                     </SwiperSlide>
                 ))}
             </Swiper>
