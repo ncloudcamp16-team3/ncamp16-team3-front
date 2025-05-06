@@ -25,11 +25,7 @@ const HousingTypeStep = ({ houseType, onChange }) => {
             </Typography>
 
             <FormGroup sx={{ width: "100%" }}>
-                <OptionCheckboxGroup
-                    options={houseType}
-                    onChange={onChange}
-                    multiSelect={false}
-                />
+                <OptionCheckboxGroup options={houseType} onChange={onChange} multiSelect={false} />
             </FormGroup>
         </Box>
     );
