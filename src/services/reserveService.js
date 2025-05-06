@@ -84,3 +84,8 @@ export const addTempReserve = async (reserveData) => {
 export const fetchMyReserveList = async () => {
     return await instance.get(`${API_URL}/my`);
 };
+
+// services/reserveService.js
+export const getReserveDetail = async (id) => {
+    return await instance.get(`${API_URL}/${id}`);
+};
