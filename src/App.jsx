@@ -3,8 +3,10 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme.js";
 import { Provider } from "./context/Context.jsx";
+import { ReserveProvider } from "./context/ReserveContext.jsx";
 import { Suspense, lazy } from "react";
 import WithdrawalCompletePage from "./pages/User/WithdrawalCompletePage";
+import { Outlet } from "react-router-dom";
 
 // Global Layouts
 import Layout0 from "./components/Global/Layout0.jsx";
@@ -111,16 +113,25 @@ function App() {
                                     <Route path="/board/:postId" element={<PostDetails />} />
                                     <Route path="/board/update/:postId" element={<PostSave />} />
                                     <Route path="/board/add" element={<PostSave />} />
-                                    <Route path="/reserve" element={<Reserve />} />
                                     <Route path="/bookmark" element={<Bookmark />} />
                                     <Route path="/bookmarks/petsta" element={<PetstaBookmarks />} />
                                     <Route path="/bookmarks/posts" element={<PostBookmarks />} />
                                     <Route path="/my-posts" element={<MyPosts />} />
-                                    <Route path="/reserve/:id" element={<ReserveDetail />} />
-                                    <Route path="/reserve/list" element={<ReservationList />} />
-                                    <Route path="/reserve/success/:id" element={<Reservation />} />
-                                    <Route path="/reserve/detail/:id" element={<ReservationDetail />} />
-                                    <Route path="/reserve/review/:id" element={<Review />} />
+                                    <Route
+                                        path="/reserve"
+                                        element={
+                                            <ReserveProvider>
+                                                <Outlet />
+                                            </ReserveProvider>
+                                        }
+                                    >
+                                        <Route index element={<Reserve />} />
+                                        <Route path=":id" element={<ReserveDetail />} />
+                                        <Route path="list" element={<ReservationList />} />
+                                        <Route path="success" element={<Reservation />} />
+                                        <Route path="detail/:id" element={<ReservationDetail />} />
+                                        <Route path="review/:id" element={<Review />} />
+                                    </Route>
                                     <Route path="/petsitter" element={<PetSitter />} />
                                     <Route path="/petsitter/:sitterId" element={<PetSitterDetail />} />
                                     <Route path="/calendar" element={<Cal />} />

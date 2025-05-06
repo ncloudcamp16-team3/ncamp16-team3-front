@@ -1,15 +1,20 @@
 import React, { useRef, useState } from "react";
-import { Box, TextareaAutosize } from "@mui/material";
+import { Box, TextareaAutosize, Modal, Backdrop, CircularProgress } from "@mui/material";
 import TitleBar from "../../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { addVideo } from "../../../services/petstaService.js";
+import GlobalModal from "../../Global/GlobalModal.jsx";
+
 const AddVideoDetail = ({ videoData, onBack }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(true);
-    const [content, setContent] = useState(""); // ← 내용 저장
+    const [content, setContent] = useState("");
+    const [uploading, setUploading] = useState(false);
+    const [successModalOpen, setSuccessModalOpen] = useState(false);
+    const [errorModalOpen, setErrorModalOpen] = useState(false);
     const theme = useTheme();
-    const navigate = useNavigate(); // ← 이동용
+    const navigate = useNavigate();
 
     const handleVideoClick = () => {
         const video = videoRef.current;
@@ -19,7 +24,6 @@ const AddVideoDetail = ({ videoData, onBack }) => {
             video.pause();
             setIsPlaying(false);
         } else {
-            // trimEnd에 도달해 있는 상태라면 trimStart부터 다시 시작
             if (video.currentTime >= videoData.trimEnd) {
                 video.currentTime = videoData.trimStart;
             }
@@ -29,20 +33,22 @@ const AddVideoDetail = ({ videoData, onBack }) => {
     };
 
     const handleShare = async () => {
+        setUploading(true);
         try {
             const formData = new FormData();
             formData.append("content", content);
-            formData.append("video", videoData.file); // videoData에 file 있어야 함
+            formData.append("video", videoData.file);
             formData.append("trimStart", videoData.trimStart);
             formData.append("trimEnd", videoData.trimEnd);
 
             await addVideo(formData);
 
-            alert("동영상이 업로드되었습니다!");
-            navigate("/petsta");
+            setSuccessModalOpen(true); // ✅ 성공 모달
         } catch (error) {
             console.error(error);
-            alert("업로드 실패!");
+            setErrorModalOpen(true); // ✅ 실패 모달
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -110,6 +116,7 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                     }}
                 />
             </Box>
+
             <Box
                 display="flex"
                 justifyContent="center"
@@ -123,10 +130,53 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                 fontSize="18px"
                 fontWeight="bold"
                 onClick={handleShare}
-                sx={{ cursor: "pointer" }}
+                sx={{ cursor: uploading ? "not-allowed" : "pointer", opacity: uploading ? 0.6 : 1 }}
             >
                 공유
             </Box>
+
+            {/* ✅ 업로드 중 스피너 */}
+            <Modal
+                open={uploading}
+                closeAfterTransition
+                slots={{ backdrop: Backdrop }}
+                slotProps={{
+                    backdrop: {
+                        timeout: 500,
+                        sx: { backgroundColor: "rgba(0, 0, 0, 0.4)" },
+                    },
+                }}
+            >
+                <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                    <CircularProgress size={60} />
+                </Box>
+            </Modal>
+
+            {/* ✅ 업로드 성공 모달 */}
+            <GlobalModal
+                open={successModalOpen}
+                onClose={() => {
+                    setSuccessModalOpen(false);
+                    navigate("/petsta");
+                }}
+                message={{
+                    title: "업로드 완료",
+                    text: "동영상이 성공적으로 업로드되었습니다.",
+                    confirmText: "확인",
+                    redirectUrl: "/petsta",
+                }}
+            />
+
+            {/* ✅ 업로드 실패 모달 */}
+            <GlobalModal
+                open={errorModalOpen}
+                onClose={() => setErrorModalOpen(false)}
+                message={{
+                    title: "업로드 실패",
+                    text: "동영상 업로드 중 문제가 발생했습니다.\n다시 시도해 주세요.",
+                    confirmText: "확인",
+                }}
+            />
         </Box>
     );
 };

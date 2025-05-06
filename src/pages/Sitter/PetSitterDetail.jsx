@@ -28,14 +28,22 @@ const PetSitterDetail = () => {
                 }
             } catch (err) {
                 console.error("펫시터 상세 정보 로드 실패:", err);
-                setError(err.response?.data?.message || "펫시터 정보를 불러오는 중 오류가 발생했습니다.");
+
+                if (err.response && err.response.status === 401) {
+                    setError("로그인이 필요합니다.");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 2000);
+                } else {
+                    setError("펫시터 정보를 불러오는데 실패했습니다.");
+                }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPetSitterDetails();
-    }, [sitterId]);
+    }, [sitterId, navigate]);
 
     const handleChat = async () => {
         if (!sitter || !user || !nc) return;
@@ -73,30 +81,43 @@ const PetSitterDetail = () => {
                 await nc.subscribe(channelId);
             }
 
-            // 메시지 전송 (PostDetails와 같은 패턴)
-            const payload = {
-                customType: "PETSITTER",
-                content: {
-                    sitterName: sitter.nickname,
-                    image: sitter.imagePath,
-                    sitterId: sitter.id,
-                    age: sitter.age,
-                    hasPet: sitter.grown,
-                    petInfo: `${sitter.petType?.name || "없음"} ${sitter.petCount || "0"}마리`, // 반려동물 정보
-                    experience: sitter.sitterExp,
-                },
-            };
+            const messageFilter = { channel_id: channelId };
+            const messages = await nc.getMessages(messageFilter, {}, { per_page: 1 });
 
-            await nc.sendMessage(channelId, {
-                type: "text",
-                message: JSON.stringify(payload),
-            });
+            if (!messages.edges || messages.edges.length === 0) {
+                const payload = {
+                    customType: "PETSITTER",
+                    content: {
+                        sitterName: sitter.nickname,
+                        image: sitter.imagePath,
+                        sitterId: sitter.id,
+                        age: sitter.age,
+                        hasPet: sitter.grown,
+                        petInfo: formatPetInfo(sitter),
+                        experience: sitter.sitterExp,
+                    },
+                    visibleTo: `ncid${myId}`,
+                };
+
+                await nc.sendMessage(channelId, {
+                    type: "text",
+                    message: JSON.stringify(payload),
+                });
+            }
 
             navigate(`/chat/room/${channelId}`);
         } catch (e) {
             console.error("❌ 펫시터 채팅 생성 실패:", e);
         }
     };
+
+    const formatPetInfo = (sitterData) => {
+        if (sitterData && sitterData.petTypesFormatted) {
+            return sitterData.petTypesFormatted;
+        }
+        return "정보 없음";
+    };
+
     const handleCancel = () => {
         navigate(-1);
     };
@@ -151,10 +172,20 @@ const PetSitterDetail = () => {
                 {/* 기본 정보 테이블 */}
                 <Box sx={{ mb: 4 }}>
                     <InfoItem label="연령대" value={sitter.age} />
-                    <InfoItem
-                        label="반려동물"
-                        value={`${sitter.petType?.name || "없음"} ${sitter.petCount || "0"}마리`}
-                    />
+
+                    {/* 반려동물 정보는 grown이 true인 경우에만 표시 */}
+                    {sitter.grown ? (
+                        <>
+                            {/* 반려동물 타입 */}
+                            <InfoItem label="반려동물" value={sitter.petTypesFormatted || "정보 없음"} />
+
+                            {/* 키우는 수 별도 표시 */}
+                            <InfoItem label="키우는 수" value={sitter.petCount || "정보 없음"} />
+                        </>
+                    ) : (
+                        <InfoItem label="반려동물" value="키우고 있지 않음" />
+                    )}
+
                     <InfoItem label="임시보호 경험" value={sitter.sitterExp ? "있음" : "없음"} />
                     <InfoItem label="주거 형태" value={sitter.houseType} />
                     <Box

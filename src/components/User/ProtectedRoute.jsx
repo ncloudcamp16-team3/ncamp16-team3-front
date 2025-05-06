@@ -181,7 +181,11 @@ const ProtectedRoute = () => {
             const unsubscribe = onMessage(messaging, (payload) => {
                 console.log("Foreground message received:", payload);
 
-                const notificationData = payload?.data;
+                const notificationData = {
+                    ...payload?.data,
+                    ...payload?.notification,
+                };
+
                 if (notificationData) {
                     const newNotification = {
                         id: Date.now(),
@@ -189,19 +193,35 @@ const ProtectedRoute = () => {
                         body: notificationData.body || "",
                         image: notificationData.image || "",
                         createdAt: new Date().toISOString(),
+                        url: notificationData.url || null,
                     };
 
                     // 브라우저 알림
-                    if (Notification.permission === "granted") {
-                        new Notification(newNotification.title, {
-                            body: newNotification.body,
-                            icon: newNotification.image,
+                    if (Notification.permission === "granted" && navigator.serviceWorker?.getRegistration) {
+                        navigator.serviceWorker.getRegistration().then((registration) => {
+                            if (registration) {
+                                const notificationOptions = {
+                                    body: newNotification.body,
+                                    icon: newNotification.image,
+                                    data: newNotification,
+                                };
+
+                                registration.showNotification(newNotification.title, notificationOptions);
+
+                                // 클릭 시 새 창으로 이동 (필요시)
+                                registration.addEventListener("notificationclick", (event) => {
+                                    if (newNotification.url) {
+                                        event.notification.close(); // 알림을 닫고
+                                        window.open(newNotification.url, "_blank"); // 새 창으로 이동
+                                    }
+                                });
+                            }
                         });
                     }
 
                     setNotifications((prev) => [...prev, newNotification]);
 
-                    // 3초 후 알림 제거
+                    // 5초 후 알림 제거
                     setTimeout(() => {
                         setNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
                     }, 5000);
