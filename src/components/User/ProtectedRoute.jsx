@@ -93,9 +93,7 @@ const ProtectedRoute = () => {
 
                 if (!currentToken) throw new Error("FCM 토큰을 가져오지 못했습니다.");
 
-                console.log("Current FCM Token:", currentToken);
                 await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
-                console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
             } catch (error) {
                 attempts++;
                 console.warn(`FCM 설정 시도 실패 (${attempts}/${maxRetries}):`, error);
@@ -179,8 +177,6 @@ const ProtectedRoute = () => {
 
         useEffect(() => {
             const unsubscribe = onMessage(messaging, (payload) => {
-                console.log("Foreground message received:", payload);
-
                 const notificationData = {
                     ...payload?.data,
                     ...payload?.notification,

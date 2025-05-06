@@ -23,9 +23,6 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
     // 반려동물 정보
     const petInfo = formatPetInfo();
 
-    console.log("펫시터 정보:", sitterInfo);
-    console.log("반려동물 정보:", petInfo);
-
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>

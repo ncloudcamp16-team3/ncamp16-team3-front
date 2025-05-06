@@ -65,7 +65,6 @@ const PostDetail = () => {
                 const data = await fetchBoardDetail(id);
                 setBoard(data);
             } catch (error) {
-                console.log("게시글 로딩 중 오류: " + error);
                 setError("게시글 불러오기 실패");
             } finally {
                 setLoading(false);

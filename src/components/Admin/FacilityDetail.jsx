@@ -109,7 +109,6 @@ const FacilityDetail = () => {
                 const data = await fetchFacilityDetail(id);
                 setFacility(data);
             } catch (error) {
-                console.log("업체 로딩 중 오류: ", error);
                 setError("업체 불러오기 오류");
             } finally {
                 setLoading(false);

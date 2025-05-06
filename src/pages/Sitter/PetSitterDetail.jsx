@@ -111,6 +111,7 @@ const PetSitterDetail = () => {
         }
     };
 
+
     const formatPetInfo = (sitterData) => {
         if (sitterData && sitterData.petTypesFormatted) {
             return sitterData.petTypesFormatted;

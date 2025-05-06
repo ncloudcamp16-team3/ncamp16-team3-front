@@ -24,7 +24,7 @@ const DateTimeSelector = ({
     const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
 
-    const isHotel = facilityType === "호텔";
+    const isHotel = facilityType === "HOTEL";
     const startDateLabel = isHotel ? "시작일자" : "예약일자";
     const startTimeLabel = isHotel ? "시작시간" : "예약시간";
 

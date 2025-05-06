@@ -62,13 +62,9 @@ function DashBoard() {
             setLoading(true);
             setError(null);
 
-            // console.log("데이터 로딩 시작 - 페이지:", page, "필터:", currentFilter);
-
             const boardTypeId = boardTypeMapping[currentCategory];
             const apiPage = Math.max(0, currentPage - 1);
             const response = await fetchBoards(apiPage, 10, boardTypeId, searchTerm, searchField);
-
-            // console.log("API Response: " + response);
 
             //데이터가 있는지 확인
             if (!response || !response.content) {

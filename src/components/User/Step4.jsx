@@ -77,7 +77,6 @@ const Step4 = () => {
                 throw new Error("회원가입 처리 중 오류가 발생했습니다.");
             }
 
-            console.log("회원가입 성공:", result);
             navigate("/");
         } catch (error) {
             console.error("회원가입 오류:", error);

@@ -9,14 +9,13 @@ import { getReserveDetail } from "../../services/reserveService.js"; // ✅ API 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
-    const [address, setAddress] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         getReserveDetail(id)
             .then((res) => {
                 setReservation(res.data);
-                setAddress(res.data.address);
+                console.log(res.data);
             })
             .catch((err) => {
                 console.error("예약 상세 조회 실패:", err);
@@ -54,9 +53,7 @@ const ReservationDetail = () => {
                         {reservation.name}
                     </Typography>
                 </Box>
-
-                <ReserveMap address={address} setAddress={setAddress} />
-
+                <ReserveMap lat={reservation.latitude} lng={reservation.longitude} />
                 <List>
                     <ListItem>
                         <Box display="flex" flexDirection="column" gap={1} width="100%">
