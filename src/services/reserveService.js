@@ -71,3 +71,11 @@ export const getReserveDetailById = ({ uid, rid }) => {
             throw error; // 에러를 다시 던져서 호출한 곳에서 처리
         });
 };
+
+export const addTempReserve = async (reserveData) => {
+    return await instance.post(`${API_URL}/temp`, reserveData, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};
