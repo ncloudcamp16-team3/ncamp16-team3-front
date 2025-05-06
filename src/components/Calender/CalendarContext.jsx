@@ -30,6 +30,8 @@ export const CalendarProvider = ({ children }) => {
     });
     const [address, setAddress] = useState("");
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [message, setMessage] = useState("");
+
     const { user, fcmToken } = useContext(Context);
 
     const getTypeColor = (type) => {
@@ -55,14 +57,15 @@ export const CalendarProvider = ({ children }) => {
         if (type === "reserve") {
             return (
                 <>
-                    {format(parseISO(item.entry_time), "yy-MM-dd hh:mm")}~{" "}
-                    {format(parseISO(item.exit_time), "yy-MM-dd hh:mm")}
+                    {format(parseISO(item.entry_time), "yy-MM-dd HH:mm")} ~{" "}
+                    {format(parseISO(item.exit_time), "yy-MM-dd HH:mm")}
                 </>
             );
         }
         return (
             <>
-                {format(parseISO(item.startDate), "yy-MM-dd hh:mm")}~ {format(parseISO(item.endDate), "yy-MM-dd hh:mm")}
+                {format(parseISO(item.startDate), "yy-MM-dd HH:mm")} ~{" "}
+                {format(parseISO(item.endDate), "yy-MM-dd HH:mm")}
             </>
         );
     };
@@ -115,10 +118,31 @@ export const CalendarProvider = ({ children }) => {
         const start = dayjs(formData.startDate);
         const end = dayjs(formData.endDate);
 
-        // 시작일이 종료일보다 이후라면 추가 중단
-        if (start.isAfter(end)) {
-            setSnackbarOpen(true); // 스낵바 열기
-            return;
+        // 누락된 필드 체크
+        const fieldsToCheck = {
+            title: formData.title,
+            address: formData.address,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            content: formData.content,
+        };
+
+        const missingFields = Object.entries(fieldsToCheck)
+            .filter(([, value]) => !value) // 값이 없으면 필터링
+            .map(([key]) => key); // 키(항목명)만 추출
+
+        if (missingFields.length > 0) {
+            const fieldLabels = {
+                title: "제목",
+                address: "장소",
+                latitude: "위도",
+                longitude: "경도",
+                content: "내용",
+            };
+            const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
+            setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
+            setSnackbarOpen(true); // Snackbar 열기
+            return; // 필드 누락 시 진행되지 않도록 리턴
         }
 
         try {
@@ -167,6 +191,7 @@ export const CalendarProvider = ({ children }) => {
             // 수정 폼 및 선택 항목 초기화
             setModifyForm(false);
             setSelectedItem(null);
+            setOpenItem({ id: null, type: null }); // 상세보기 닫기
         } catch (error) {
             alert("일정 삭제에 실패했습니다.");
             console.error("일정 삭제 에러:", error);
@@ -177,10 +202,31 @@ export const CalendarProvider = ({ children }) => {
         const start = dayjs(formData.startDate);
         const end = dayjs(formData.endDate);
 
-        // 시작일이 종료일보다 이후라면 추가 중단
-        if (start.isAfter(end)) {
-            setSnackbarOpen(true); // 스낵바 열기
-            return;
+        // 누락된 필드 체크
+        const fieldsToCheck = {
+            title: formData.title,
+            address: formData.address,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            content: formData.content,
+        };
+
+        const missingFields = Object.entries(fieldsToCheck)
+            .filter(([, value]) => !value) // 값이 없으면 필터링
+            .map(([key]) => key); // 키(항목명)만 추출
+
+        if (missingFields.length > 0) {
+            const fieldLabels = {
+                title: "제목",
+                address: "장소",
+                latitude: "위도",
+                longitude: "경도",
+                content: "내용",
+            };
+            const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
+            setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
+            setSnackbarOpen(true); // Snackbar 열기
+            return; // 필드 누락 시 진행되지 않도록 리턴
         }
 
         try {
@@ -270,6 +316,8 @@ export const CalendarProvider = ({ children }) => {
                 addSchedule,
                 snackbarOpen,
                 setSnackbarOpen,
+                message,
+                setMessage,
             }}
         >
             {children}

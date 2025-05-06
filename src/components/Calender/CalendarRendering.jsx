@@ -44,6 +44,8 @@ const CalendarRendering = () => {
         addSchedule,
         snackbarOpen,
         setSnackbarOpen,
+        message,
+        setMessage,
     } = useContext(CalendarContext);
     const getInitialRightPosition = () => {
         if (typeof window !== "undefined") {
@@ -349,8 +351,8 @@ const CalendarRendering = () => {
                 onClose={() => setSnackbarOpen(false)}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
-                <Alert severity="error" onClose={() => setSnackbarOpen(false)} variant="filled">
-                    시작일은 종료일보다 이후일 수 없습니다.
+                <Alert severity="warning" onClose={() => setSnackbarOpen(false)} variant="filled">
+                    {message}
                 </Alert>
             </Snackbar>
         </>

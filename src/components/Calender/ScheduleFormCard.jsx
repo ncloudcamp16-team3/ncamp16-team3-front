@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Box, Button, Card, FormControl, FormHelperText, Input, InputLabel, Modal } from "@mui/material";
-import { MobileDateTimePicker } from "@mui/x-date-pickers";
+import { Box, Button, Card, FormControl, Grid, Input, InputLabel, Modal, TextField } from "@mui/material";
 import DaumPost2 from "./DaumPost2.jsx";
 import DaumPost from "./DaumPost.jsx";
+import dayjs from "dayjs";
 
 const ScheduleFormCard = ({
     formData,
@@ -56,24 +54,6 @@ const ScheduleFormCard = ({
                         </Box>
                     </FormControl>
 
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <FormHelperText sx={{ mb: 0.5 }}>일정</FormHelperText>
-                        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>
-                            <MobileDateTimePicker
-                                label="시작일"
-                                value={formData.startDate}
-                                onChange={(val) => onDateChange("startDate", val)}
-                                slotProps={{ textField: { fullWidth: true, size: "small" } }}
-                            />
-                            <MobileDateTimePicker
-                                label="종료일"
-                                value={formData.endDate}
-                                onChange={(val) => onDateChange("endDate", val)}
-                                slotProps={{ textField: { fullWidth: true, size: "small" } }}
-                            />
-                        </Box>
-                    </LocalizationProvider>
-
                     {/*<FormControl variant="standard" fullWidth sx={{ mt: 1, mb: 0.5 }}>*/}
                     {/*    <InputLabel>장소</InputLabel>*/}
                     {/*    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>*/}
@@ -88,6 +68,37 @@ const ScheduleFormCard = ({
                     {/*    </Box>*/}
                     {/*</FormControl>*/}
 
+                    <Grid container spacing={2}>
+                        <Grid item size={6}>
+                            <TextField
+                                label="시작일시"
+                                type="datetime-local"
+                                size="small"
+                                fullWidth
+                                value={dayjs(formData.startDate).format("YYYY-MM-DDTHH:mm")}
+                                onChange={(e) => onDateChange("startDate", dayjs(e.target.value))}
+                                InputLabelProps={{ shrink: true }}
+                                InputProps={{
+                                    sx: { fontSize: "0.8rem" }, // 텍스트 크기 조절
+                                }}
+                            />
+                        </Grid>
+                        <Grid item size={6}>
+                            <TextField
+                                label="종료일시"
+                                type="datetime-local"
+                                size="small"
+                                fullWidth
+                                value={dayjs(formData.endDate).format("YYYY-MM-DDTHH:mm")}
+                                onChange={(e) => onDateChange("endDate", dayjs(e.target.value))}
+                                InputLabelProps={{ shrink: true }}
+                                InputProps={{
+                                    sx: { fontSize: "0.8rem" }, // 텍스트 크기 조절
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+
                     <FormControl variant="standard" fullWidth sx={{ mt: 1, mb: 0.5 }}>
                         <InputLabel>장소</InputLabel>
                         <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>
@@ -100,7 +111,15 @@ const ScheduleFormCard = ({
                                 sx={{ height: 36 }}
                             />
                             <DaumPost setAddressObj={setAddressObj} />
-                            <Button variant="outlined" onClick={() => setOpenMapModal(true)}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => setOpenMapModal(true)}
+                                size="small"
+                                sx={{
+                                    mt: 1,
+                                    borderRadius: "8px",
+                                }}
+                            >
                                 지도
                             </Button>
                         </Box>

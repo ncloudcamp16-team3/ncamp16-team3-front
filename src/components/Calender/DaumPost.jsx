@@ -66,7 +66,7 @@ const DaumPost = ({ setAddressObj }) => {
                 },
             }}
         >
-            찾기
+            주소
         </Button>
     );
 };
