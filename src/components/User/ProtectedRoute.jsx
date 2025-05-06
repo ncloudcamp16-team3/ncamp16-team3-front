@@ -179,6 +179,10 @@ const ProtectedRoute = () => {
 
         useEffect(() => {
             const unsubscribe = onMessage(messaging, (payload) => {
+                if (payload.notification) {
+                    return;
+                }
+
                 console.log("Foreground message received:", payload);
 
                 const notificationData = payload?.data || {};
