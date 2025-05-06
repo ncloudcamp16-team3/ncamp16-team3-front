@@ -29,18 +29,23 @@ import DateTimeSelector from "./DateTimeSelector.jsx";
 import { addTempReserve, getFacilityToReserveById } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx";
 
-const transformScoreToChartData = (ratingDistribution) => {
-    if (!ratingDistribution) return [];
+const transformScoreToChartData = (score) => {
+    if (!score) return [];
 
-    const total = Object.values(ratingDistribution).reduce((sum, count) => sum + count, 0);
+    const mapped = [
+        { name: "★5", value: score["5Stars"] || 0 },
+        { name: "★4", value: score["4Stars"] || 0 },
+        { name: "★3", value: score["3Stars"] || 0 },
+        { name: "★2", value: score["2Stars"] || 0 },
+        { name: "★1", value: score["1Star"] || 0 },
+    ];
 
-    return Object.entries(ratingDistribution)
-        .sort(([a], [b]) => b - a)
-        .map(([key, value]) => ({
-            name: `★${key}`,
-            value,
-            percentage: total > 0 ? Math.round((value / total) * 100) : 0,
-        }));
+    const total = mapped.reduce((acc, cur) => acc + cur.value, 0);
+
+    return mapped.map((entry) => ({
+        ...entry,
+        percentage: total > 0 ? Math.round((entry.value / total) * 100) : 0,
+    }));
 };
 
 const ReserveDetail = () => {
@@ -61,6 +66,15 @@ const ReserveDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [chartData, setChartData] = useState(
+        transformScoreToChartData({
+            "5Stars": 5,
+            "4Stars": 4,
+            "3Stars": 2,
+            "2Stars": 1,
+            "1Star": 0,
+        })
+    );
     // NaverPay
     const naverPayRef = useRef(null);
 
@@ -94,7 +108,7 @@ const ReserveDetail = () => {
 
                 console.log(data);
 
-                setFacilityData(data.facility);
+                setFacilityData(data.data.facility);
                 setReviews(data.reviews || []);
             } catch (err) {
                 console.error("시설 정보를 불러오는데 실패했습니다:", err);
@@ -180,8 +194,7 @@ const ReserveDetail = () => {
         );
     }
 
-    // const chartData = transformScoreToChartData(ratingDistribution);
-    // const filledStars = avgRating === 5 ? 5 : Math.round(avgRating);
+    const filledStars = facilityData.starPoint;
     const facilityType = facilityData.facilityType || "호텔";
 
     // 현재 요일의 영업 시간 정보
@@ -381,7 +394,23 @@ const ReserveDetail = () => {
                                                 axisLine={false}
                                                 tickLine={false}
                                             />
-                                            <Tooltip formatter={(value) => `${value}명`} />
+                                            <Tooltip
+                                                content={({ payload }) => {
+                                                    if (!payload || payload.length === 0) return null;
+                                                    return (
+                                                        <Box
+                                                            sx={{
+                                                                backgroundColor: "white",
+                                                                p: 1,
+                                                                border: "1px solid #ccc",
+                                                                borderRadius: 1,
+                                                            }}
+                                                        >
+                                                            <Typography fontSize={13}>{payload[0].value}명</Typography>
+                                                        </Box>
+                                                    );
+                                                }}
+                                            />
                                             <Bar
                                                 dataKey="value"
                                                 fill="#1976d2"
