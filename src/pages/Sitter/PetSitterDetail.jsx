@@ -81,38 +81,35 @@ const PetSitterDetail = () => {
                 await nc.subscribe(channelId);
             }
 
-            console.log("채팅을 위한 펫시터 정보:", {
-                nickname: sitter.nickname,
-                grown: sitter.grown,
-                petTypesFormatted: sitter.petTypesFormatted
-            });
+            const messageFilter = { channel_id: channelId };
+            const messages = await nc.getMessages(messageFilter, {}, { per_page: 1 });
 
-            // 메시지 전송
-            const petInfo = formatPetInfo(sitter);
-            const payload = {
-                customType: "PETSITTER",
-                content: {
-                    sitterName: sitter.nickname,
-                    image: sitter.imagePath,
-                    sitterId: sitter.id,
-                    age: sitter.age,
-                    hasPet: true,
-                    petInfo: petInfo,
-                    experience: sitter.sitterExp,
-                },
-            };
+            if (!messages.edges || messages.edges.length === 0) {
+                const payload = {
+                    customType: "PETSITTER",
+                    content: {
+                        sitterName: sitter.nickname,
+                        image: sitter.imagePath,
+                        sitterId: sitter.id,
+                        age: sitter.age,
+                        hasPet: sitter.grown,
+                        petInfo: formatPetInfo(sitter),
+                        experience: sitter.sitterExp,
+                    },
+                    visibleTo: `ncid${myId}`
+                };
 
-            await nc.sendMessage(channelId, {
-                type: "text",
-                message: JSON.stringify(payload),
-            });
+                await nc.sendMessage(channelId, {
+                    type: "text",
+                    message: JSON.stringify(payload),
+                });
+            }
 
             navigate(`/chat/room/${channelId}`);
         } catch (e) {
             console.error("❌ 펫시터 채팅 생성 실패:", e);
         }
     };
-
 
     const formatPetInfo = (sitterData) => {
         if (sitterData && sitterData.petTypesFormatted) {
