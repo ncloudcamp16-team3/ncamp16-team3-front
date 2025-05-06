@@ -31,18 +31,14 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
             return getSittersFromResponse(allPetsitters);
         }
 
-        // 그렇지 않다면 필터링된 목록
         if (!filteredPetsitters) return [];
         return getSittersFromResponse(filteredPetsitters);
     };
 
-    // 서버 응답에서 펫시터 배열 추출
     const getSittersFromResponse = (response) => {
         if (response.content) {
-            // Page 객체인 경우
             return response.content;
         } else if (Array.isArray(response)) {
-            // 이미 배열인 경우
             return response;
         } else {
             console.error("예상치 못한 데이터 구조:", response);
@@ -50,13 +46,48 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
         }
     };
 
+    // 반려동물 정보 포맷팅 (개선된 버전)
+    const formatPetInfo = (sitter) => {
+        // 반려동물 타입 (여러 소스에서 확인)
+        let petTypeDisplay = "";
+
+        // 1. petTypesFormatted 필드 사용 (쉼표로 구분된 문자열)
+        if (sitter.petTypesFormatted) {
+            petTypeDisplay = sitter.petTypesFormatted;
+        }
+        // 2. petTypes 배열 사용 (문자열 배열)
+        else if (Array.isArray(sitter.petTypes) && sitter.petTypes.length > 0) {
+            petTypeDisplay = sitter.petTypes.join(", ");
+        }
+        // 3. 단일 petType 객체 사용
+        else if (sitter.petType && sitter.petType.name) {
+            petTypeDisplay = sitter.petType.name;
+        }
+        // 4. 단일 petType 문자열 사용
+        else if (typeof sitter.petType === "string") {
+            petTypeDisplay = sitter.petType;
+        }
+        // 5. 기본값
+        else {
+            petTypeDisplay = "반려동물";
+        }
+
+        // 반려동물 수
+        let petCountDisplay = sitter.petCount || "1마리";
+
+        return {
+            types: petTypeDisplay,
+            count: petCountDisplay,
+        };
+    };
+
     const handleViewAllPetsitters = async () => {
         setIsLoading(true);
         setLoadAllError(null);
 
         try {
-          const response = await getAllApprovedPetSitters();
-          console.log("모든 펫시터 목록 응답:", response);
+            const response = await getAllApprovedPetSitters();
+            console.log("모든 펫시터 목록 응답:", response);
 
             if (response && response.data) {
                 setAllPetsitters(response.data);
@@ -73,7 +104,6 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
 
     const sittersList = getSittersList();
 
-    // 결과가 없는 경우 메시지 표시
     if (error || loadAllError) {
         return (
             <Box sx={{ p: 2 }}>
@@ -132,76 +162,89 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
                     : `조건에 맞는 펫시터가 ${sittersList.length}명 검색되었습니다.`}
             </Typography>
 
-            {sittersList.map((sitter) => (
-                <Card
-                    key={sitter.id}
-                    sx={{
-                        mb: 3,
-                        borderRadius: "12px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                        cursor: "pointer",
-                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                        "&:hover": {
-                            transform: "translateY(-4px)",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                        },
-                    }}
-                    onClick={() => handleSitterClick(sitter.id)}
-                >
-                    <Box sx={{ display: "flex", p: 2 }}>
-                        <CardMedia
-                            component="img"
-                            sx={{
-                                width: 80,
-                                height: 80,
-                                borderRadius: "8px",
-                                objectFit: "cover",
-                            }}
-                            image={sitter.imagePath || "/src/assets/images/User/profile-pic.jpg"}
-                            alt={sitter.nickname || "펫시터 이미지"}
-                        />
-                        <CardContent sx={{ flex: 1, p: 1, pl: 2 }}>
-                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
-                                    {sitter.nickname || "펫시터"}
+            {sittersList.map((sitter) => {
+                const petInfo = formatPetInfo(sitter);
+
+                return (
+                    <Card
+                        key={sitter.id}
+                        sx={{
+                            mb: 3,
+                            borderRadius: "12px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                            cursor: "pointer",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                            "&:hover": {
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                            },
+                        }}
+                        onClick={() => handleSitterClick(sitter.id)}
+                    >
+                        <Box sx={{ display: "flex", p: 2 }}>
+                            <CardMedia
+                                component="img"
+                                sx={{
+                                    width: 80,
+                                    height: 80,
+                                    borderRadius: "8px",
+                                    objectFit: "cover",
+                                }}
+                                image={sitter.imagePath || "/src/assets/images/User/profile-pic.jpg"}
+                                alt={sitter.nickname || "펫시터 이미지"}
+                            />
+                            <CardContent sx={{ flex: 1, p: 1, pl: 2 }}>
+                                <Box
+                                    sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}
+                                >
+                                    <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
+                                        {sitter.nickname || "펫시터"}
+                                    </Typography>
+                                    <Chip
+                                        label={sitter.age || "20대"}
+                                        size="small"
+                                        sx={{ bgcolor: "#F2DFCE", color: "#E9A260", fontWeight: "medium" }}
+                                    />
+                                </Box>
+
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1, mb: 1.5 }}>
+                                    {/* 반려동물 정보 - 다중 타입 처리 */}
+                                    <Chip
+                                        label={petInfo.types}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ fontSize: "12px" }}
+                                    />
+                                    <Chip
+                                        label={petInfo.count}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ fontSize: "12px" }}
+                                    />
+                                    <Chip
+                                        label={sitter.sitterExp ? "임시보호 경험 있음" : "임시보호 경험 없음"}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ fontSize: "12px" }}
+                                    />
+                                    <Chip
+                                        label={sitter.houseType || "주거 정보 없음"}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ fontSize: "12px" }}
+                                    />
+                                </Box>
+
+                                <Divider sx={{ my: 1 }} />
+
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: "13px" }}>
+                                    {sitter.comment || "자기소개가 없습니다."}
                                 </Typography>
-                                <Chip
-                                    label={sitter.age || "20대"}
-                                    size="small"
-                                    sx={{ bgcolor: "#F2DFCE", color: "#E9A260", fontWeight: "medium" }}
-                                />
-                            </Box>
-
-                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1, mb: 1.5 }}>
-                                <Chip
-                                    label={`${sitter.petCount || "-"} 마리`}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{ fontSize: "12px" }}
-                                />
-                                <Chip
-                                    label={sitter.sitterExp ? "임시보호 경험 있음" : "임시보호 경험 없음"}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{ fontSize: "12px" }}
-                                />
-                                <Chip
-                                    label={sitter.houseType || "주거 정보 없음"}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{ fontSize: "12px" }}
-                                />
-                            </Box>
-
-                            <Divider sx={{ my: 1 }} />
-
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: "13px" }}>
-                                {sitter.comment || "자기소개가 없습니다."}
-                            </Typography>
-                        </CardContent>
-                    </Box>
-                </Card>
-            ))}
+                            </CardContent>
+                        </Box>
+                    </Card>
+                );
+            })}
 
             {!allPetsitters && (
                 <Button

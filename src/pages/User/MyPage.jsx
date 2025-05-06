@@ -134,6 +134,7 @@ const MyPage = () => {
                             status: response.data.petSitterStatus,
                             age: response.data.petSitterInfo?.age,
                             petType: response.data.petSitterInfo?.petType,
+                            petTypesFormatted: response.data.petSitterInfo?.petTypesFormatted,
                             petCount: response.data.petSitterInfo?.petCount,
                             houseType: response.data.petSitterInfo?.houseType,
                             experience: response.data.petSitterInfo?.sitterExp,
