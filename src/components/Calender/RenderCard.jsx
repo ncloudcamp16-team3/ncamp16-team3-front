@@ -3,11 +3,13 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 import { CalendarContext } from "./CalendarContext.jsx";
 import RenderMapAddress from "./RenderMapAddress.jsx";
 import RenderButtonGroup from "./RenderButtonGroup.jsx";
+import { useNavigate } from "react-router-dom";
 
 const RenderCard = ({ item, type }) => {
     const { openItem, getTypeColor, handleToggle, getTitle, getPeriod, handleBack, handleModifyClick } =
         useContext(CalendarContext);
     const isOpen = openItem.id === item.id && openItem.type === type;
+    const navigate = useNavigate(); // navigate 훅 사용
 
     const renderDateField = (label, value) => {
         return (
@@ -18,6 +20,11 @@ const RenderCard = ({ item, type }) => {
                 </Typography>
             )
         );
+    };
+
+    const handleReserveDetailClick = (id) => {
+        // 예약 상세 페이지로 이동
+        navigate(`/reserve/detail/${id}`);
     };
 
     const renderDetails = (item, type) => {
@@ -64,7 +71,11 @@ const RenderCard = ({ item, type }) => {
                         {item.amount && renderDateField("결제 금액", `${item.amount.toLocaleString()}원`)}
                         <RenderButtonGroup
                             buttons={[
-                                { label: "예약상세", color: "#2F80ED", onClick: handleBack },
+                                {
+                                    label: "예약상세",
+                                    color: "#2F80ED",
+                                    onClick: () => handleReserveDetailClick(item.id),
+                                },
                                 { label: "확인", color: "#E9A260", onClick: handleBack },
                             ]}
                         />
