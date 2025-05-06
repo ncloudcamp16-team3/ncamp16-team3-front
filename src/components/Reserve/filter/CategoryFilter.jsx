@@ -1,12 +1,15 @@
 import React from "react";
 import { Tabs, Tab } from "@mui/material";
-import { useFacilityListContext } from "../../../context/ReserveContext.jsx";
+import { useReserveContext } from "../../../context/ReserveContext.jsx";
 
 const CategoryFilter = () => {
-    const { category, setCategory } = useFacilityListContext();
+    const { category, setCategory, setPage, setNoData, setLast } = useReserveContext();
 
     const handleChange = (event, newValue) => {
         setCategory(newValue);
+        setPage(0); // 페이지 초기화
+        setNoData(false); // 데이터 초기화
+        setLast(false); // 마지막 페이지 여부 초기화
     };
 
     return (

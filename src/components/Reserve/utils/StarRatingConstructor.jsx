@@ -3,7 +3,7 @@ import { Rating, Typography, Box, Stack } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 
-const StarRatingConstructor = ({ starPoint, setStarPoint }) => {
+const StarRatingConstructor = ({ starRating, setStarRating }) => {
     const [value, setValue] = useState(0);
     const [hover, setHover] = useState(-1);
 
@@ -21,10 +21,10 @@ const StarRatingConstructor = ({ starPoint, setStarPoint }) => {
     };
 
     useEffect(() => {
-        if (setStarPoint) {
-            setStarPoint(value);
+        if (setStarRating) {
+            setStarRating(value);
         }
-    }, [value, setStarPoint]);
+    }, [value, setStarRating]);
 
     return (
         <Box
