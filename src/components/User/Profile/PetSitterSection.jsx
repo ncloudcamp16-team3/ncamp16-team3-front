@@ -2,26 +2,29 @@ import React from "react";
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
 import sitter from "/src/assets/images/User/petsit_req.svg";
 
-/**
- * 펫시터 섹션 컴포넌트
- * @param {Object} props
- * @param {Object} props.sitterInfo - 펫시터 정보 객체
- * @param {Function} props.onEditClick - 펫시터 정보 수정 핸들러
- * @param {Function} props.onQuitClick - 펫시터 그만두기 핸들러
- * @param {Function} props.onApplyClick - 펫시터 신청 핸들러
- */
 const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }) => {
-    // sitterInfo가 있으면서 status가 APPROVE인 경우 승인된 펫시터
     const isApproved = sitterInfo?.status === "APPROVE";
-
-    // sitterInfo가 있으면서 status가 NONE인 경우 대기 중인 펫시터
     const isPending = sitterInfo?.status === "NONE";
-
-    // sitterInfo가 있으면서 status가 PENDING인 경우 보류된 펫시터
     const isHold = sitterInfo?.status === "PENDING";
-
-    // sitterInfo가 있으면서 status가 DELETE인 경우 정지된 펫시터
     const isDeleted = sitterInfo?.status === "DELETE";
+
+    const formatPetInfo = () => {
+        if (!sitterInfo) return { types: "정보 없음", count: "정보 없음" };
+
+        let petTypeDisplay = sitterInfo.petTypesFormatted || "정보 없음";
+        let petCountDisplay = sitterInfo.petCount || "1마리";
+
+        return {
+            types: petTypeDisplay,
+            count: petCountDisplay,
+        };
+    };
+
+    // 반려동물 정보
+    const petInfo = formatPetInfo();
+
+    console.log("펫시터 정보:", sitterInfo);
+    console.log("반려동물 정보:", petInfo);
 
     return (
         <Box sx={{ mt: 4 }}>
@@ -66,10 +69,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                 }}
                             >
                                 <InfoRow label="연령대" value={sitterInfo.age || "40대"} />
-                                <InfoRow
-                                    label="반려동물"
-                                    value={`${sitterInfo.petType || "강아지"} ${sitterInfo.petCount || "1마리"}`}
-                                />
+                                <InfoRow label="반려동물" value={petInfo.types} />
+                                <InfoRow label="키우는 수" value={petInfo.count} />
                                 <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
                                 <InfoRow label="주거 형태" value={sitterInfo.houseType || "오피스텔"} />
                                 <InfoRow
@@ -80,21 +81,6 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                             </Box>
 
                             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                <Button
-                                    variant="contained"
-                                    onClick={onEditClick}
-                                    sx={{
-                                        width: "100%",
-                                        bgcolor: "#E9A260",
-                                        "&:hover": { bgcolor: "#d0905a" },
-                                        borderRadius: "4px",
-                                        py: 0.7,
-                                        fontSize: "0.9rem",
-                                        boxShadow: "none",
-                                    }}
-                                >
-                                    펫시터 정보 수정
-                                </Button>
                                 <Button
                                     variant="contained"
                                     onClick={onQuitClick}
@@ -128,8 +114,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                     mb: 3,
                                     mx: "auto",
                                     display: "block",
-                                    opacity: 0.5, // 정지 상태를 더 강조하기 위해 투명도 낮춤
-                                    filter: "grayscale(100%)", // 흑백 처리로 비활성화 느낌 강조
+                                    opacity: 0.5,
+                                    filter: "grayscale(100%)",
                                 }}
                             />
                             <Box
@@ -204,10 +190,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                 }}
                             >
                                 <InfoRow label="연령대" value={sitterInfo.age || "40대"} />
-                                <InfoRow
-                                    label="반려동물"
-                                    value={`${sitterInfo.petType || "강아지"} ${sitterInfo.petCount || "1마리"}`}
-                                />
+                                <InfoRow label="반려동물" value={petInfo.types} />
+                                <InfoRow label="키우는 수" value={petInfo.count} />
                                 <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
                             </Box>
                         </>
@@ -311,7 +295,6 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
     );
 };
 
-// 정보 행 컴포넌트
 const InfoRow = ({ label, value, isComment = false }) => (
     <Box
         sx={{

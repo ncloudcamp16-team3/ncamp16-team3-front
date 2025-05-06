@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 const getTimeAgoString = (dateString) => {
     const targetDate = new Date(dateString);
     const currentDate = new Date();
-    const timeDifference = currentDate - targetDate;
+    let timeDifference = currentDate - targetDate;
+
+    if (timeDifference < 0) timeDifference = 0;
 
     const seconds = Math.floor(timeDifference / 1000);
-    if (seconds < 60) return `${seconds}초 전`;
+    if (seconds < 60) return `방금 전`;
 
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}분 전`;

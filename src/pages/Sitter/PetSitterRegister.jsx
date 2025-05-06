@@ -3,7 +3,6 @@ import { Box, Typography, IconButton, CircularProgress, Snackbar, Alert } from "
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import instance from "../../services/axiosInstance.js";
-
 // 공통 컴포넌트
 import StepProgress from "../../components/Sitter/common/StepProgress";
 import StepButtons from "../../components/Sitter/common/StepButtons";
@@ -75,19 +74,16 @@ const PetSitterRegister = () => {
         기타: false,
     });
 
-    // 로컬 스토리지에서 기존 등록 정보 확인
     useEffect(() => {
         const checkExistingRegistration = async () => {
             const isRegistrationAttempt = localStorage.getItem("petSitterRegistrationCompleted");
 
             if (isRegistrationAttempt === "true") {
                 try {
-                    // 서버에 실제 등록 여부 확인 (instance 사용)
                     const statusResponse = await instance.get("/petsitter/status");
 
                     if (statusResponse.status === 200) {
                         console.log("펫시터 정보가 이미 서버에 있습니다. 수정 모드로 전환합니다.");
-                        // 서버에서 받은 데이터로 폼 초기화
                         const sitterData = statusResponse.data.data;
                         if (sitterData) {
                             initializeFormFromServer(sitterData);
@@ -182,8 +178,15 @@ const PetSitterRegister = () => {
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
-        else navigate(-1);
+        if (step > 1) {
+            if (step === 6) {
+                setStep(3);
+            } else {
+                setStep(step - 1);
+            }
+        } else {
+            navigate(-1);
+        }
     };
 
     const handleNext = () => {
@@ -238,7 +241,6 @@ const PetSitterRegister = () => {
                     errorMessage = "주거 형태를 선택해주세요.";
                 }
                 break;
-            // 8단계(한마디)는 필수가 아니므로 검증 생략
         }
 
         if (!isValid) {
@@ -250,7 +252,11 @@ const PetSitterRegister = () => {
             return;
         }
 
-        setStep((prev) => Math.min(prev + 1, 9));
+        if (step === 3 && hasPet["키우고 있지 않습니다"]) {
+            setStep(6);
+        } else {
+            setStep((prev) => Math.min(prev + 1, 9));
+        }
     };
 
     const [commentText, setCommentText] = useState("");
@@ -405,6 +411,19 @@ const PetSitterRegister = () => {
                 }
             }
 
+            const selectedPetTypes = Object.keys(petTypes).filter((type) => petTypes[type]);
+            const selectedPetTypesStr = selectedPetTypes.join(", ");
+
+            const selectedPetTypeIds = selectedPetTypes
+                .map((type) => {
+                    return getPetTypeId(type);
+                })
+                .filter((id) => id !== null);
+
+            console.log("선택된 반려동물 타입:", selectedPetTypes);
+            console.log("선택된 반려동물 타입 문자열:", selectedPetTypesStr);
+            console.log("선택된 반려동물 타입 ID 목록:", selectedPetTypeIds);
+
             // 펫시터 데이터 생성
             const petSitterData = {
                 age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
@@ -413,22 +432,23 @@ const PetSitterRegister = () => {
                 grown: hasPet["네, 키우고 있습니다"],
                 petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "1마리"),
                 sitterExp: sitterExperience["네, 해본적 있습니다"],
-                petTypeId: getPetTypeId(Object.keys(petTypes).find((key) => petTypes[key]) || null),
+
+                petTypeId: selectedPetTypes.length > 0 ? getPetTypeId(selectedPetTypes[0]) : null,
+
+                petTypesFormatted: selectedPetTypesStr,
+                petTypeIds: selectedPetTypeIds,
             };
 
             console.log("펫시터 데이터:", petSitterData);
 
-            // FormData 객체 생성
             const formData = new FormData();
 
-            // JSON 데이터를 문자열로 직접 전달
             formData.append("data", JSON.stringify(petSitterData));
 
             // 이미지 파일 추가
             if (imageFile) {
                 formData.append("image", imageFile);
             } else if (imagePreview && !imagePreview.startsWith("http")) {
-                // 데이터 URL을 Blob으로 변환 (서버 URL이 아닐 경우에만)
                 try {
                     const response = await fetch(imagePreview);
                     const imageBlob = await response.blob();
@@ -458,13 +478,14 @@ const PetSitterRegister = () => {
             if (res.status === 200 || res.status === 201) {
                 console.log("API 요청 성공");
 
-                // 로컬 스토리지에 저장할 정보
                 const sitterInfo = {
                     registered: false,
                     isPending: true,
                     status: "NONE",
                     age: petSitterData.age,
-                    petType: Object.keys(petTypes).find((key) => petTypes[key]) || "강아지",
+                    petType: selectedPetTypes[0] || "강아지",
+                    petTypes: selectedPetTypes,
+                    petTypesFormatted: selectedPetTypesStr,
                     petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
                     houseType: petSitterData.houseType,
                     comment: petSitterData.comment,
@@ -533,8 +554,6 @@ const PetSitterRegister = () => {
             setIsSubmitting(false);
         }
     };
-
-    // 현재 단계에 맞는 컴포넌트 렌더링
     const renderStep = () => {
         switch (step) {
             case 1:
@@ -678,6 +697,10 @@ const PetSitterRegister = () => {
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    bottom: "150px",
+                    zIndex: 100000,
+                }}
             >
                 <Alert
                     onClose={handleCloseSnackbar}

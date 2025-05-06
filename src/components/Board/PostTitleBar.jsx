@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { Context } from "../../context/Context.jsx";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -7,11 +7,23 @@ import Arrow from "../../assets/images/Global/left-arrow-brand.svg";
 import { useNavigate } from "react-router-dom";
 import DropdownPostBtns from "./DropdownPostBtns.jsx";
 
-const PostTitleBar = ({ writer, setOpenDeleteModal, setOpenUpdateModal }) => {
+const PostTitleBar = ({ postData, setOpenDeleteModal, setOpenUpdateModal }) => {
     const { boardType, user } = useContext(Context);
     const [dropPostBtn, setDropPostBtn] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropPostBtn && dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropPostBtn(false); // 🔹 외부 클릭 시 닫기
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropPostBtn]);
 
     return (
         <Box
@@ -24,7 +36,7 @@ const PostTitleBar = ({ writer, setOpenDeleteModal, setOpenUpdateModal }) => {
                 justifyContent: "center",
             }}
         >
-            <Box position="absolute" left={10} onClick={() => navigate(-1)} sx={{ cursor: "pointer" }}>
+            <Box position="absolute" left={10} onClick={() => navigate("/board")} sx={{ cursor: "pointer" }}>
                 <img src={Arrow} width="26px" height="26px" alt="back" />
             </Box>
             <Box>
@@ -32,24 +44,30 @@ const PostTitleBar = ({ writer, setOpenDeleteModal, setOpenUpdateModal }) => {
                     {boardType.name}
                 </Typography>
             </Box>
-            {user.id === writer.id && (
-                <MoreVertIcon
-                    onClick={() => setDropPostBtn(!dropPostBtn)}
+            {user.id === postData.authorId && (
+                <Box
+                    ref={dropdownRef}
                     sx={{
                         position: "absolute",
                         right: "20px",
-                        cursor: "pointer",
-                        color: theme.brand3,
-                        fontSize: "28px",
                     }}
-                />
+                >
+                    <MoreVertIcon
+                        onClick={() => setDropPostBtn(!dropPostBtn)}
+                        sx={{
+                            cursor: "pointer",
+                            color: theme.brand3,
+                            fontSize: "28px",
+                        }}
+                    />
+                    <DropdownPostBtns
+                        dropPostBtn={dropPostBtn}
+                        setDropPostBtn={setDropPostBtn}
+                        setOpenDeleteModal={setOpenDeleteModal}
+                        setOpenUpdateModal={setOpenUpdateModal}
+                    />
+                </Box>
             )}
-            <DropdownPostBtns
-                dropPostBtn={dropPostBtn}
-                setDropPostBtn={setDropPostBtn}
-                setOpenDeleteModal={setOpenDeleteModal}
-                setOpenUpdateModal={setOpenUpdateModal}
-            />
         </Box>
     );
 };

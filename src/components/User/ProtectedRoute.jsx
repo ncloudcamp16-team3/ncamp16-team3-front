@@ -1,18 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { checkFcmTokenExists, checkLogin, getFcmToken, getUserInfo } from "../../services/authService.js";
+import { checkLogin, getUserInfo, saveOrUpdateFcmToken } from "../../services/authService.js";
 import { Context } from "../../context/Context.jsx";
 
 import * as ncloudchat from "ncloudchat";
 import { registerSW } from "../../../public/firebase-messaging-sw-register.js";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
+import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
+import { sendChatNotification } from "../../services/notificationService.js";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
     const hasRun = useRef(false);
 
-    const { isLogin, setLogin, setUser, nc, setNc, user } = useContext(Context);
+    const { isLogin, setLogin, setUser, nc, setNc, user, isChatOpen, isChatRoomOpen } = useContext(Context);
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -60,64 +62,228 @@ const ProtectedRoute = () => {
         })();
     }, []);
 
+    // ✅ FCM 설정은 로그인/유저 정보 세팅 완료 후 지연 실행
     useEffect(() => {
-        // 서비스 워커 등록
-        registerSW();
+        if (!user?.id) return;
 
-        // 알림 권한 요청
-        Notification.requestPermission().then(async (permission) => {
-            console.log("Notification permission:", permission); // 알림 권한 상태 확인
+        const timer = setTimeout(() => {
+            setupFCM(user.id);
+        }, 1500); // 로그인 후 1.5초 뒤에 실행
 
-            if (permission !== "granted") return;
+        return () => clearTimeout(timer);
+    }, [user?.id]);
 
+    // 🔧 FCM 설정 함수 분리
+    const setupFCM = async (userId, maxRetries = 3) => {
+        let attempts = 0;
+
+        const mobile = /Mobi|Android/i.test(navigator.userAgent);
+        const dev = import.meta.env.MODE === "development";
+
+        const trySetup = async () => {
             try {
-                // FCM 토큰 가져오기
+                registerSW();
+
+                const permission = await Notification.requestPermission();
+                if (permission !== "granted") return;
+
                 const currentToken = await getToken(messaging, {
                     vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
                 });
 
-                if (currentToken) {
-                    console.log("FCM Token:", currentToken);
+                if (!currentToken) throw new Error("FCM 토큰을 가져오지 못했습니다.");
 
-                    // 로그인한 유저 정보에서 userId 가져오기
-                    const userId = user?.id; // user 객체가 존재할 때만 userId 가져오기
-                    console.log("User ID:", userId); // userId 로그로 확인
-
-                    if (userId) {
-                        const exists = await checkFcmTokenExists({ userId });
-
-                        console.log("FCM Token Exists:", exists); // FCM 토큰 존재 여부 확인
-
-                        if (!exists) {
-                            // FCM 토큰 등록
-                            await getFcmToken({ userId, fcmToken: currentToken });
-                            console.log("FCM 토큰 최초 등록 완료");
-                        } else {
-                            console.log("이미 등록된 FCM 토큰입니다");
-                        }
-                    } else {
-                        console.log("User ID is not available");
-                    }
-                } else {
-                    console.log("No FCM token available");
-                }
+                console.log("Current FCM Token:", currentToken);
+                await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
+                console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
             } catch (error) {
-                console.error("FCM 처리 에러:", error);
-            }
-        });
+                attempts++;
+                console.warn(`FCM 설정 시도 실패 (${attempts}/${maxRetries}):`, error);
 
-        // 포그라운드 푸시 알림 수신
-        onMessage(messaging, (payload) => {
-            console.log("Foreground message received:", payload);
-            // 알림 UI 처리 코드 추가 가능
-        });
-    }, []); // user가 변경될 때마다 실행되도록 의존성 배열에 user 추가
+                if (attempts < maxRetries) {
+                    // 1초 후 재시도
+                    setTimeout(trySetup, 1000);
+                } else {
+                    console.error("FCM 설정 실패: 최대 재시도 횟수 초과");
+                }
+            }
+        };
+
+        await trySetup();
+    };
+
+    const parseMessage = (msg) => {
+        let parsed;
+        try {
+            parsed = JSON.parse(msg.content);
+        } catch {
+            parsed = { customType: "TEXT", content: msg.content };
+        }
+
+        let typeId = 1;
+        if (parsed.customType === "MATCH") typeId = 2;
+        else if (parsed.customType === "TRADE") typeId = 3;
+        else if (parsed.customType === "PETSITTER") typeId = 4;
+
+        return {
+            id: msg.message_id,
+            senderId: msg.sender?.id,
+            text: parsed.content,
+            type_id: typeId,
+            metadata: parsed,
+            photo: msg.sender?.profile,
+            parsed,
+        };
+    };
+
+    useEffect(() => {
+        if (!nc || !user?.id) return;
+
+        const backgroundHandler = async (channel, msg) => {
+            if (!msg || !msg.sender?.id) return;
+
+            const { parsed } = parseMessage(msg);
+            const isMine = msg.sender.id === `ncid${user.id}`;
+            if (isMine) return; // 내 메시지는 무시
+
+            const numericSenderId = msg.sender.id.replace(/\D/g, "");
+
+            const payload = {
+                userId: user.id,
+                channelId: msg.channel_id,
+                senderId: numericSenderId,
+                message: parsed.content,
+                type: parsed.customType,
+                createdAt: new Date().toISOString(),
+            };
+
+            try {
+                await sendChatNotification(payload);
+            } catch (err) {
+                console.error("알림 전송 실패:", err);
+            }
+        };
+
+        if (!isChatOpen && !isChatRoomOpen) {
+            nc.bind("onMessageReceived", backgroundHandler);
+        }
+
+        return () => {
+            nc.unbind("onMessageReceived", backgroundHandler);
+        };
+    }, [nc, user.id, isChatOpen, isChatRoomOpen]);
+
+    // Notification List component
+    const NotificationList = () => {
+        const [notifications, setNotifications] = useState([]);
+
+        useEffect(() => {
+            const unsubscribe = onMessage(messaging, (payload) => {
+                console.log("Foreground message received:", payload);
+
+                const notificationData = {
+                    ...payload?.data,
+                    ...payload?.notification,
+                };
+
+                if (notificationData) {
+                    const newNotification = {
+                        id: Date.now(),
+                        title: notificationData.title || "알림",
+                        body: notificationData.body || "",
+                        image: notificationData.image || "",
+                        createdAt: new Date().toISOString(),
+                        url: notificationData.url || null,
+                    };
+
+                    // 브라우저 알림
+                    if (Notification.permission === "granted" && navigator.serviceWorker?.getRegistration) {
+                        navigator.serviceWorker.getRegistration().then((registration) => {
+                            if (registration) {
+                                const notificationOptions = {
+                                    body: newNotification.body,
+                                    icon: newNotification.image,
+                                    data: newNotification,
+                                };
+
+                                registration.showNotification(newNotification.title, notificationOptions);
+
+                                // 클릭 시 새 창으로 이동 (필요시)
+                                registration.addEventListener("notificationclick", (event) => {
+                                    if (newNotification.url) {
+                                        event.notification.close(); // 알림을 닫고
+                                        window.open(newNotification.url, "_blank"); // 새 창으로 이동
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    setNotifications((prev) => [...prev, newNotification]);
+
+                    // 5초 후 알림 제거
+                    setTimeout(() => {
+                        setNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
+                    }, 5000);
+                }
+            });
+
+            return () => unsubscribe();
+        }, []);
+
+        return (
+            <>
+                {notifications.map((notification) => (
+                    <Snackbar
+                        key={notification.id}
+                        open={true}
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        sx={{
+                            top: "80px", // 알림이 좀 더 아래에서 나오도록 위치 조정
+                            zIndex: 20000,
+                        }}
+                    >
+                        <Alert
+                            severity="info"
+                            variant="filled"
+                            icon={false}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                backgroundColor: "#fff5e5",
+                                color: "#333",
+                                boxShadow: 3,
+                                borderRadius: 2,
+                                minWidth: 300,
+                                maxWidth: 500,
+                            }}
+                        >
+                            <Stack direction="row" spacing={2} alignItems="center">
+                                {notification.image && (
+                                    <Avatar alt="알림 이미지" src={notification.image} sx={{ width: 40, height: 40 }} />
+                                )}
+                                <div>
+                                    <div style={{ fontWeight: "bold" }}>{notification.title}</div>
+                                    <div>{notification.body}</div>
+                                </div>
+                            </Stack>
+                        </Alert>
+                    </Snackbar>
+                ))}
+            </>
+        );
+    };
 
     if (loading) return <div>로그인 상태 확인 중...</div>;
 
     if (!isLogin) return <Navigate to="/login" replace />;
 
-    return <Outlet />;
+    return (
+        <>
+            <NotificationList />
+            <Outlet />
+        </>
+    );
 };
 
 export default ProtectedRoute;

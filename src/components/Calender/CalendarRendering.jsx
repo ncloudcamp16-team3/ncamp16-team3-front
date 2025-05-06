@@ -43,7 +43,22 @@ const CalendarRendering = () => {
         removeSchedule,
         addSchedule,
     } = useContext(CalendarContext);
-    const [rightPosition, setRightPosition] = useState();
+    const getInitialRightPosition = () => {
+        if (typeof window !== "undefined") {
+            const windowWidth = window.innerWidth;
+            const layoutWidth = 500;
+
+            if (windowWidth <= layoutWidth) {
+                return "10px";
+            } else {
+                const sideGap = (windowWidth - layoutWidth) / 2 + 10;
+                return `${sideGap}px`;
+            }
+        }
+        return "10px"; // SSR일 경우 안전한 기본값
+    };
+
+    const [rightPosition, setRightPosition] = useState(getInitialRightPosition);
 
     useEffect(() => {
         const updatePosition = () => {
@@ -305,12 +320,14 @@ const CalendarRendering = () => {
                         right: rightPosition,
                         zIndex: 10,
                         borderRadius: "100%",
+                        transform: "translateZ(0)",
                     }}
                 >
                     <Button
                         sx={{
                             backgroundColor: "#E9A260",
                             borderRadius: "50px",
+                            transform: "translateZ(0)",
                         }}
                         onClick={() => setShowForm(true)}
                         variant="contained"

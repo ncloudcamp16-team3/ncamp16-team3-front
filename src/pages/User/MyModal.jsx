@@ -1,47 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, Modal, TextField } from "@mui/material";
+import { Box, Typography, Button, TextField } from "@mui/material";
+import ModalWrapper from "/src/components/Global/DarkModal.jsx";
 
 const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawal }) => {
-    useEffect(() => {
-        if (!open) return;
-
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("id", "modal-overlay-styles");
-
-        styleElement.textContent = `
-            .header {
-                opacity: 1 !important;
-                filter: brightness(0.5);
-                pointer-events: none !important;
-            }
-            .footer {
-                opacity: 1 !important;
-                filter: brightness(0.5);
-                pointer-events: none !important;
-            }
-        `;
-
-        document.head.appendChild(styleElement);
-
-        return () => {
-            const existingStyle = document.getElementById("modal-overlay-styles");
-            if (existingStyle) {
-                document.head.removeChild(existingStyle);
-            }
-        };
-    }, [open]);
-
     return (
-        <Modal
-            open={open}
-            onClose={onClose}
-            disableScrollLock={true}
-            BackdropProps={{
-                style: {
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                },
-            }}
-        >
+        <ModalWrapper open={open} onClose={onClose}>
             <Box
                 sx={{
                     position: "absolute",
@@ -114,56 +77,42 @@ const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawa
                     </Button>
                 </Box>
             </Box>
-        </Modal>
+        </ModalWrapper>
     );
 };
-
 const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
     const [nickname, setNickname] = useState(currentNickname);
+    const [error, setError] = useState("");
 
+    // 모달이 열릴 때 현재 닉네임으로 초기화
     useEffect(() => {
-        if (!open) return;
-
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("id", "modal-overlay-styles");
-
-        styleElement.textContent = `
-        .header, .footer {
-            opacity: 1 !important;
-                filter: brightness(0.5);
-                pointer-events: none !important;
+        if (open) {
+            setNickname(currentNickname);
+            setError("");
         }
-    `;
-
-        document.head.appendChild(styleElement);
-
-        return () => {
-            const existingStyle = document.getElementById("modal-overlay-styles");
-            if (existingStyle) {
-                document.head.removeChild(existingStyle);
-            }
-        };
-    }, [open]);
+    }, [open, currentNickname]);
 
     const handleSave = () => {
         const trimmedNickname = nickname.trim();
-        if (trimmedNickname) {
-            onSave(trimmedNickname);
-            onClose();
+
+        // 유효성 검사
+        if (!trimmedNickname) {
+            setError("닉네임을 입력해주세요.");
+            return;
         }
+
+        if (trimmedNickname.length < 2 || trimmedNickname.length > 20) {
+            setError("닉네임은 2~20자 사이로 입력해주세요.");
+            return;
+        }
+
+        // 닉네임이 유효하면 저장
+        onSave(trimmedNickname);
+        onClose();
     };
 
     return (
-        <Modal
-            open={open}
-            onClose={onClose}
-            disableScrollLock={true}
-            BackdropProps={{
-                style: {
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                },
-            }}
-        >
+        <ModalWrapper open={open} onClose={onClose}>
             <Box
                 sx={{
                     position: "absolute",
@@ -185,7 +134,7 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
                 <Typography variant="body2" sx={{ mb: 2 }}>
                     변경할 닉네임을 입력해주세요.
                     <br />
-                    (8-20 글자 입력)
+                    (2~20 글자 입력)
                 </Typography>
                 <TextField
                     fullWidth
@@ -193,6 +142,8 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                     placeholder="새로운 닉네임 입력"
+                    error={Boolean(error)}
+                    helperText={error}
                     sx={{
                         mb: 2,
                         bgcolor: "white",
@@ -236,7 +187,8 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
                     </Button>
                 </Box>
             </Box>
-        </Modal>
+        </ModalWrapper>
     );
 };
+
 export { WithdrawalModal, NicknameEditModal };

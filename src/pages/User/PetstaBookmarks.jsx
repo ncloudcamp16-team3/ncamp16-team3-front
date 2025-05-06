@@ -1,38 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-
-const mockPetstaBookmarks = [
-    {
-        id: 1,
-        thumbnail: "/mock/PetMeeting/images/pet5.jpg",
-        fileType: "photo",
-    },
-    {
-        id: 2,
-        thumbnail: "/mock/Global/images/windows_bg.jpg",
-        fileType: "photo",
-    },
-    {
-        id: 3,
-        thumbnail: "/mock/PetMeeting/images/pet2.jpg",
-        fileType: "video",
-    },
-    {
-        id: 4,
-        thumbnail: "/mock/Global/images/cat.jpg",
-        fileType: "photo",
-    },
-];
+import { getPetstaBookmarks } from "../../services/bookmarkService.js";
 
 const PetstaBookmarks = () => {
     const [bookmarks, setBookmarks] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Mock 데이터 사용
-        setBookmarks(mockPetstaBookmarks);
+        const fetchBookmarks = async () => {
+            try {
+                setLoading(true);
+                const data = await getPetstaBookmarks();
+                setBookmarks(data);
+            } catch (error) {
+                console.error("북마크를 불러오는 중 오류 발생:", error);
+                setBookmarks([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBookmarks();
     }, []);
 
     const handlePostClick = (postId) => {
@@ -43,28 +34,37 @@ const PetstaBookmarks = () => {
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
             <TitleBar name="펫스타 북마크" />
 
-            {/* 이미지 */}
+            {/* 이미지 그리드 */}
             <Box sx={{ p: 2 }}>
-                <Grid container spacing={1.5}>
-                    {bookmarks.map((item) => (
-                        <Grid item xs={6} key={item.id}>
+                {loading ? (
+                    <Box display="flex" justifyContent="center" alignItems="center" height="300px">
+                        <CircularProgress size={40} />
+                    </Box>
+                ) : bookmarks.length > 0 ? (
+                    <Box
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(2, 1fr)",
+                            gap: 1.5,
+                        }}
+                    >
+                        {bookmarks.map((item) => (
                             <Box
-                                onClick={() => handlePostClick(item.id)}
+                                key={item.id}
+                                onClick={() => handlePostClick(item.postId)}
                                 sx={{
                                     position: "relative",
                                     width: "100%",
-                                    paddingTop: "100%", // 1:1 비율로 유지
+                                    paddingTop: "100%",
                                     borderRadius: 2,
                                     overflow: "hidden",
                                     cursor: "pointer",
-                                    mb: 1.5,
                                 }}
                             >
-                                <Box
-                                    component="img"
-                                    src={item.thumbnail}
+                                <img
+                                    src={item.fileName}
                                     alt="펫스타 이미지"
-                                    sx={{
+                                    style={{
                                         position: "absolute",
                                         top: 0,
                                         left: 0,
@@ -73,7 +73,7 @@ const PetstaBookmarks = () => {
                                         objectFit: "cover",
                                     }}
                                 />
-                                {item.fileType === "video" && (
+                                {item.fileType === "VIDEO" && (
                                     <Box
                                         sx={{
                                             position: "absolute",
@@ -89,7 +89,6 @@ const PetstaBookmarks = () => {
                                             justifyContent: "center",
                                         }}
                                     >
-                                        {/* 플레이 버튼 아이콘 */}
                                         <Box
                                             sx={{
                                                 width: 0,
@@ -103,9 +102,26 @@ const PetstaBookmarks = () => {
                                     </Box>
                                 )}
                             </Box>
-                        </Grid>
-                    ))}
-                </Grid>
+                        ))}
+                    </Box>
+                ) : (
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "calc(100vh - 200px)",
+                        }}
+                    >
+                        <Typography variant="subtitle1" color="text.secondary">
+                            북마크한 펫스타가 없습니다.
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            펫스타에서 북마크를 추가해보세요!
+                        </Typography>
+                    </Box>
+                )}
             </Box>
         </Box>
     );

@@ -130,18 +130,18 @@ const FacilityAdd = () => {
             return new Promise((resolve) => {
                 const script = document.querySelector("script[src*='daum.postcode']");
                 if (script) {
-                    console.log("우편번호 스크립트 이미 로드됨");
+                    // console.log("우편번호 스크립트 이미 로드됨");
                     setScriptLoaded(true);
                     resolve();
                     return;
                 }
 
-                console.log("우편번호 스크립트 로드 시작");
+                // console.log("우편번호 스크립트 로드 시작");
                 const postcodeScript = document.createElement("script");
                 postcodeScript.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
                 postcodeScript.async = true;
                 postcodeScript.onload = () => {
-                    console.log("우편번호 스크립트 로드 완료");
+                    // console.log("우편번호 스크립트 로드 완료");
                     setScriptLoaded(true);
                     resolve();
                 };
@@ -154,21 +154,21 @@ const FacilityAdd = () => {
         // 직접 autoload=true로 변경하여 카카오맵 스크립트 로드
         const loadKakaoMapScript = () => {
             return new Promise((resolve) => {
-                console.log("카카오맵 스크립트 로드 시작");
+                // console.log("카카오맵 스크립트 로드 시작");
 
                 // 이미 로드된 스크립트가 있는지 확인
                 const existingScript = document.querySelector("script[src*='kakao.maps.api']");
                 if (existingScript) {
-                    console.log("카카오맵 스크립트 이미 로드됨");
+                    // console.log("카카오맵 스크립트 이미 로드됨");
                     if (window.kakao && window.kakao.maps) {
-                        console.log("카카오맵 객체 이미 초기화됨");
+                        // console.log("카카오맵 객체 이미 초기화됨");
                         setMapScriptLoaded(true);
                         resolve();
                     } else {
-                        console.log("카카오맵 객체 초기화 대기중...");
+                        // console.log("카카오맵 객체 초기화 대기중...");
                         const checkKakaoInterval = setInterval(() => {
                             if (window.kakao && window.kakao.maps) {
-                                console.log("카카오맵 객체 초기화 확인됨");
+                                // console.log("카카오맵 객체 초기화 확인됨");
                                 clearInterval(checkKakaoInterval);
                                 setMapScriptLoaded(true);
                                 resolve();
@@ -187,12 +187,12 @@ const FacilityAdd = () => {
                 kakaoScript.async = true;
 
                 kakaoScript.onload = () => {
-                    console.log("카카오맵 스크립트 로드 완료");
+                    // console.log("카카오맵 스크립트 로드 완료");
 
                     // kakao 객체가 초기화될 때까지 대기
                     const checkKakaoInterval = setInterval(() => {
                         if (window.kakao && window.kakao.maps) {
-                            console.log("카카오맵 객체 초기화 완료");
+                            // console.log("카카오맵 객체 초기화 완료");
                             clearInterval(checkKakaoInterval);
                             setMapScriptLoaded(true);
                             resolve();
@@ -207,11 +207,11 @@ const FacilityAdd = () => {
         // 순차적으로 스크립트 로드
         loadPostcodeScript()
             .then(() => {
-                console.log("우편번호 스크립트 로드 완료, 카카오맵 스크립트 로드 시작");
+                // console.log("우편번호 스크립트 로드 완료, 카카오맵 스크립트 로드 시작");
                 return loadKakaoMapScript();
             })
             .then(() => {
-                console.log("모든 스크립트 로드 완료");
+                // console.log("모든 스크립트 로드 완료");
             })
             .catch((err) => {
                 console.error("스크립트 로드 오류:", err);
@@ -221,22 +221,22 @@ const FacilityAdd = () => {
     // 주소를 좌표로 변환
     const convertAddressToCoords = (address) => {
         return new Promise((resolve) => {
-            console.log("convertAddressToCoords 호출됨");
-            console.log("mapScriptLoaded:", mapScriptLoaded);
-            console.log("address:", address);
+            // console.log("convertAddressToCoords 호출됨");
+            // console.log("mapScriptLoaded:", mapScriptLoaded);
+            // console.log("address:", address);
 
             if (!address) {
-                console.log("주소가 없음");
+                // console.log("주소가 없음");
                 resolve(false);
                 return;
             }
 
             // 지도 스크립트가 로드될 때까지 대기
             const waitForMapScript = () => {
-                console.log("카카오맵 스크립트 로드 대기 중...");
+                // console.log("카카오맵 스크립트 로드 대기 중...");
 
                 if (window.kakao && window.kakao.maps) {
-                    console.log("카카오맵 객체 확인됨");
+                    // console.log("카카오맵 객체 확인됨");
                     setMapScriptLoaded(true);
                     return true;
                 }
@@ -250,7 +250,7 @@ const FacilityAdd = () => {
                 const tryGeocode = () => {
                     if (attempts >= 20) {
                         // 최대 20번 시도 (2초)
-                        console.log("좌표 변환 시도 횟수 초과");
+                        // console.log("좌표 변환 시도 횟수 초과");
                         setSnackbarMessage("주소 좌표 변환에 실패했습니다. 다시 시도해주세요.");
                         setSnackbarSeverity("error");
                         setOpenSnackbar(true);
@@ -261,32 +261,32 @@ const FacilityAdd = () => {
                     attempts++;
 
                     if (!waitForMapScript()) {
-                        console.log(`좌표 변환 대기 중... (${attempts}/20)`);
+                        // console.log(`좌표 변환 대기 중... (${attempts}/20)`);
                         setTimeout(tryGeocode, 100);
                         return;
                     }
 
                     try {
-                        console.log("Geocoder 초기화 시도");
+                        // console.log("Geocoder 초기화 시도");
                         const geocoder = new window.kakao.maps.services.Geocoder();
-                        console.log("Geocoder 초기화 성공");
+                        // console.log("Geocoder 초기화 성공");
 
                         geocoder.addressSearch(address, (result, status) => {
-                            console.log("Geocoder 결과:", result);
-                            console.log("Geocoder 상태:", status);
+                            // console.log("Geocoder 결과:", result);
+                            // console.log("Geocoder 상태:", status);
 
                             if (status === window.kakao.maps.services.Status.OK) {
                                 const lat = result[0].y;
                                 const lng = result[0].x;
 
-                                console.log(`주소 변환 성공: 위도=${lat}, 경도=${lng}`);
+                                // console.log(`주소 변환 성공: 위도=${lat}, 경도=${lng}`);
 
                                 setLatitude(lat);
                                 setLongitude(lng);
 
                                 // 추가 확인을 위한 타임아웃
                                 setTimeout(() => {
-                                    console.log("상태 업데이트 후 위도/경도:", latitude, longitude);
+                                    // console.log("상태 업데이트 후 위도/경도:", latitude, longitude);
                                 }, 100);
 
                                 resolve(true);
@@ -347,14 +347,14 @@ const FacilityAdd = () => {
                 setIsZipCodeFound(true);
 
                 // 주소를 좌표로 변환
-                console.log("좌표 변환 시작...");
+                // console.log("좌표 변환 시작...");
                 const success = await convertAddressToCoords(roadAddr);
-                console.log("좌표 변환 결과:", success);
+                // console.log("좌표 변환 결과:", success);
 
                 if (success) {
-                    console.log("좌표 변환 성공!");
+                    // console.log("좌표 변환 성공!");
                 } else {
-                    console.log("좌표 변환 실패 또는 타임아웃");
+                    // console.log("좌표 변환 실패 또는 타임아웃");
                 }
             },
         }).open();
@@ -471,7 +471,7 @@ const FacilityAdd = () => {
 
         // 위도/경도 확인
         if (!latitude || !longitude) {
-            console.log("위도/경도 누락:", { latitude, longitude, address });
+            // console.log("위도/경도 누락:", { latitude, longitude, address });
 
             // 주소가 있으면 좌표 변환 재시도
             if (address) {
@@ -557,19 +557,19 @@ const FacilityAdd = () => {
             formData.append("images", file);
         });
 
-        console.log("Form submitted", {
-            name,
-            facilityTypeId,
-            tel,
-            address,
-            detailAddress,
-            comment,
-            latitude,
-            longitude,
-            openTime,
-            closeTime,
-            openDays,
-        });
+        // console.log("Form submitted", {
+        //     name,
+        //     facilityTypeId,
+        //     tel,
+        //     address,
+        //     detailAddress,
+        //     comment,
+        //     latitude,
+        //     longitude,
+        //     openTime,
+        //     closeTime,
+        //     openDays,
+        // });
 
         try {
             const response = await adminAxios.post("/api/admin/facility/add", formData);
@@ -712,7 +712,7 @@ const FacilityAdd = () => {
                         <Box sx={{ float: "left", width: "100%" }}>
                             <Grid container spacing={2}>
                                 {/* 첫 번째 열: 업종 */}
-                                <Grid item xs={12} sm={6} sx={{ width: "20%" }}>
+                                <Grid item xs={12} sm={6} sx={{ width: "10%" }}>
                                     <FormControl size="medium" fullWidth>
                                         <InputLabel>업종</InputLabel>
                                         <Select
@@ -727,15 +727,24 @@ const FacilityAdd = () => {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={12} sm={6} sx={{ width: "40%" }}>
+                                <Grid item xs={12} sm={6} sx={{ width: "20%" }}>
                                     <TextField
                                         fullWidth
                                         label="업체 전화번호"
-                                        placeholder="업체 전화번호"
+                                        placeholder="01012341234"
                                         value={tel}
-                                        onChange={(e) => setTel(e.target.value)}
+                                        onChange={(e) => {
+                                            const onlyNums = e.target.value.replace(/\D/g, ""); // 숫자만 필터
+                                            if (onlyNums.length <= 11) {
+                                                setTel(onlyNums);
+                                            }
+                                        }}
                                         variant="outlined"
                                         size="medium"
+                                        inputProps={{
+                                            inputMode: "numeric",
+                                            maxLength: 11,
+                                        }}
                                     />
                                 </Grid>
 
@@ -957,8 +966,8 @@ const FacilityAdd = () => {
                         )}
                     </Box>
 
-                    <Grid container spacing={2} sx={{ height: "60px" }}>
-                        <Grid item xs={12} sm={4} sx={{ width: "20%" }}>
+                    <Grid container spacing={2} sx={{ height: "auto", flexWrap: "wrap" }}>
+                        <Grid item xs={12} sm={2}>
                             {!isZipCodeFound ? (
                                 <Button
                                     variant="contained"
@@ -978,16 +987,6 @@ const FacilityAdd = () => {
                                 </Button>
                             ) : (
                                 <Box sx={{ display: "flex", gap: 1 }}>
-                                    <TextField
-                                        fullWidth
-                                        label="우편번호"
-                                        value={zipCode}
-                                        variant="outlined"
-                                        size="medium"
-                                        InputProps={{
-                                            readOnly: true,
-                                        }}
-                                    />
                                     <Button
                                         variant="outlined"
                                         onClick={() => {
@@ -1009,10 +1008,20 @@ const FacilityAdd = () => {
                                     >
                                         <CloseIcon />
                                     </Button>
+                                    <Box sx={{ width: "100px" }}>
+                                        <TextField
+                                            fullWidth
+                                            label="우편번호"
+                                            value={zipCode}
+                                            variant="outlined"
+                                            size="medium"
+                                            InputProps={{ readOnly: true }}
+                                        />
+                                    </Box>
                                 </Box>
                             )}
                         </Grid>
-                        <Grid item xs={12} sm={4} sx={{ width: "30%" }}>
+                        <Grid item xs={12} md={3}>
                             <TextField
                                 fullWidth
                                 label="기본주소"
@@ -1026,7 +1035,7 @@ const FacilityAdd = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={4} sx={{ width: "47.8%" }}>
+                        <Grid item xs={12} md={7}>
                             <TextField
                                 fullWidth
                                 label="상세주소"
@@ -1035,6 +1044,7 @@ const FacilityAdd = () => {
                                 onChange={(e) => setDetailAddress(e.target.value)}
                                 variant="outlined"
                                 size="medium"
+                                sx={{ width: "400px" }}
                             />
                         </Grid>
                     </Grid>

@@ -11,6 +11,7 @@ const PetSitterSurvey = ({
     hasSitterExperience,
     setHasSitterExperience,
     handleNext,
+    handleBack,
 }) => {
     // 체크박스 선택 핸들러
     const handleCheckboxChange = (option, setter, currentState) => {
@@ -186,26 +187,28 @@ const PetSitterSurvey = ({
                             {renderCheckboxOptions(selectedAges, selectedAges, setSelectedAges)}
                         </Box>
 
-                        {/* 다음 버튼 */}
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleNext}
-                            sx={{
-                                bgcolor: "#E9A260",
-                                color: "white",
-                                "&:hover": {
-                                    bgcolor: "#d0905a",
-                                },
-                                padding: "12px",
-                                borderRadius: "8px",
-                                textTransform: "none",
-                                fontWeight: "normal",
-                                fontSize: "16px",
-                            }}
-                        >
-                            다음
-                        </Button>
+                        {/* 버튼 그룹 */}
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleNext}
+                                sx={{
+                                    bgcolor: "#E9A260",
+                                    color: "white",
+                                    "&:hover": {
+                                        bgcolor: "#d0905a",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                다음
+                            </Button>
+                        </Box>
                     </Box>
                 );
             case 2:
@@ -223,26 +226,47 @@ const PetSitterSurvey = ({
                             {renderCheckboxOptions(hasPet, hasPet, setHasPet)}
                         </Box>
 
-                        {/* 다음 버튼 */}
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleNext}
-                            sx={{
-                                bgcolor: "#E9A260",
-                                color: "white",
-                                "&:hover": {
-                                    bgcolor: "#d0905a",
-                                },
-                                padding: "12px",
-                                borderRadius: "8px",
-                                textTransform: "none",
-                                fontWeight: "normal",
-                                fontSize: "16px",
-                            }}
-                        >
-                            다음
-                        </Button>
+                        {/* 버튼 그룹 */}
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleBack}
+                                sx={{
+                                    bgcolor: "#FDF1E5",
+                                    color: "#E9A260",
+                                    "&:hover": {
+                                        bgcolor: "#F2DFCE",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                이전
+                            </Button>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleNext}
+                                sx={{
+                                    bgcolor: "#E9A260",
+                                    color: "white",
+                                    "&:hover": {
+                                        bgcolor: "#d0905a",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                다음
+                            </Button>
+                        </Box>
                     </Box>
                 );
             case 3:
@@ -260,26 +284,47 @@ const PetSitterSurvey = ({
                             {renderCheckboxOptions(hasSitterExperience, hasSitterExperience, setHasSitterExperience)}
                         </Box>
 
-                        {/* 다음 버튼 */}
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleNext}
-                            sx={{
-                                bgcolor: "#E9A260",
-                                color: "white",
-                                "&:hover": {
-                                    bgcolor: "#d0905a",
-                                },
-                                padding: "12px",
-                                borderRadius: "8px",
-                                textTransform: "none",
-                                fontWeight: "normal",
-                                fontSize: "16px",
-                            }}
-                        >
-                            다음
-                        </Button>
+                        {/* 버튼 그룹 */}
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleBack}
+                                sx={{
+                                    bgcolor: "#FDF1E5",
+                                    color: "#E9A260",
+                                    "&:hover": {
+                                        bgcolor: "#F2DFCE",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                이전
+                            </Button>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleNext}
+                                sx={{
+                                    bgcolor: "#E9A260",
+                                    color: "white",
+                                    "&:hover": {
+                                        bgcolor: "#d0905a",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                다음
+                            </Button>
+                        </Box>
                     </Box>
                 );
             case 4:
@@ -308,26 +353,47 @@ const PetSitterSurvey = ({
                             ))}
                         </Box>
 
-                        {/* 완료 버튼 */}
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleNext}
-                            sx={{
-                                bgcolor: "#E9A260",
-                                color: "white",
-                                "&:hover": {
-                                    bgcolor: "#d0905a",
-                                },
-                                padding: "12px",
-                                borderRadius: "8px",
-                                textTransform: "none",
-                                fontWeight: "normal",
-                                fontSize: "16px",
-                            }}
-                        >
-                            완료
-                        </Button>
+                        {/* 버튼 그룹 */}
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleBack}
+                                sx={{
+                                    bgcolor: "#FDF1E5",
+                                    color: "#E9A260",
+                                    "&:hover": {
+                                        bgcolor: "#F2DFCE",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                이전
+                            </Button>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleNext}
+                                sx={{
+                                    bgcolor: "#E9A260",
+                                    color: "white",
+                                    "&:hover": {
+                                        bgcolor: "#d0905a",
+                                    },
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    textTransform: "none",
+                                    fontWeight: "normal",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                완료
+                            </Button>
+                        </Box>
                     </Box>
                 );
             default:

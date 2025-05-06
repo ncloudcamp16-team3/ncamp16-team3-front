@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Typography, TextField, IconButton, CircularProgress } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
 import SendIcon from "@mui/icons-material/Send";
 import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
 import ChatMessageLeft from "./ChatMessageLeft";
@@ -8,57 +9,127 @@ import TradeStart from "./TradeStart.jsx";
 import MatchStart from "./MatchStart.jsx";
 import { Context } from "../../context/Context";
 import { useNavigate, useParams } from "react-router-dom";
+import { sendChatNotification } from "../../services/notificationService.js";
+
+const PetSitterStart = ({ sitter }) => {
+    console.log("PetSitterStart에서 받은 sitter 정보:", sitter);
+
+    const renderPetInfo = () => {
+        if (sitter.petInfo && sitter.petInfo !== "정보 없음") {
+            return `반려동물: ${sitter.petInfo}`;
+        }
+        return "반려동물 없음";
+    };
+
+    return (
+      <Box textAlign="center" py={2}>
+          <Box display="flex" justifyContent="center" gap={2} mb={1}>
+              <Box textAlign="center">
+                  <Avatar
+                    src={sitter.image}
+                    alt={sitter.sitterName}
+                    sx={{ width: 60, height: 60, margin: "0 auto" }}
+                  />
+                  <Typography variant="body2">
+                      {sitter.sitterName} ({sitter.age})
+                  </Typography>
+              </Box>
+          </Box>
+          <Typography fontWeight="bold">펫시터 {sitter.sitterName}님과 채팅을 시작합니다.</Typography>
+          <Typography variant="body2" color="text.secondary">
+              {renderPetInfo()} / {sitter.experience ? "펫시터 경험 있음" : "펫시터 경험 없음"}
+          </Typography>
+      </Box>
+    );
+};
 
 const ChatRoom = () => {
-    const { user, nc } = useContext(Context);
+    const { user, nc, isChatOpen, isChatRoomOpen } = useContext(Context);
     const { channelId } = useParams();
     const navigate = useNavigate();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [rightPosition, setRightPosition] = useState("20px");
     const [isLoading, setIsLoading] = useState(true);
-    const messagesEndRef = useRef(null); // 이제 사실상 필요없지만 남겨둠
+    const messagesEndRef = useRef(null);
+
+    const parseMessage = (msg) => {
+        let parsed;
+        try {
+            parsed = JSON.parse(msg.content);
+        } catch {
+            parsed = { customType: "TEXT", content: msg.content };
+        }
+
+        let typeId = 1;
+        if (parsed.customType === "MATCH") typeId = 2;
+        else if (parsed.customType === "TRADE") typeId = 3;
+        else if (parsed.customType === "PETSITTER") typeId = 4;
+
+        return {
+            id: msg.message_id,
+            senderId: msg.sender?.id,
+            text: parsed.content,
+            type_id: typeId,
+            metadata: parsed,
+            photo: msg.sender?.profile,
+            parsed,
+        };
+    };
 
     useEffect(() => {
         if (!nc || !channelId) return;
 
-        const handleReceiveMessage = (channel, msg) => {
+        const handleReceiveMessage = async (channel, msg) => {
             if (msg.channel_id !== channelId) return;
 
-            let parsed = null;
-            try {
-                parsed = JSON.parse(msg.content);
-            } catch {
-                parsed = { customType: "TEXT", content: msg.content };
-            }
-
-            let typeId = 1;
-            if (parsed.customType === "MATCH") typeId = 2;
-            else if (parsed.customType === "TRADE") typeId = 3;
-
-            const newMessage = {
-                id: msg.message_id,
-                senderId: msg.sender?.id,
-                text: parsed.content,
-                type_id: typeId,
-                metadata: parsed,
-                photo: msg.sender?.profile,
-            };
+            const { parsed, ...newMessage } = parseMessage(msg);
 
             setMessages((prev) => [...prev, newMessage]);
-        };
 
+            if (msg.sender?.id !== `ncid${user.id}`) {
+                const rawSenderId = msg.sender?.id; // "ncid25"
+                const numericSenderId = rawSenderId?.replace(/\D/g, ""); // 숫자만 추출
+
+                const payload = {
+                    userId: user.id,
+                    channelId: msg.channel_id,
+                    senderId: numericSenderId,
+                    message: parsed.content,
+                    type: parsed.customType,
+                    createdAt: new Date().toISOString(),
+                };
+                console.log("전송할 알림 내용:", payload);
+                try {
+                    await sendChatNotification(payload);
+                } catch (err) {
+                    console.error("알림 전송 실패:", err);
+                }
+
+                // 2. 읽음 처리
+                try {
+                    await nc.markRead(channelId, {
+                        user_id: msg.sender.id,
+                        message_id: msg.message_id,
+                        sort_id: msg.sort_id,
+                    });
+                } catch (err) {
+                    console.warn("내 메시지 markRead 실패:", err);
+                }
+            }
+        };
         const init = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 const filter = { channel_id: channelId };
                 const sort = { created_at: 1 };
                 const option = { per_page: 100 };
-
                 const result = await nc.getMessages(filter, sort, option);
+
                 const loadedMessages = (result.edges || []).map((edge) => {
                     const msg = edge.node;
-                    let parsed = null;
+                    let parsed;
                     try {
                         parsed = JSON.parse(msg.content);
                     } catch {
@@ -68,6 +139,7 @@ const ChatRoom = () => {
                     let typeId = 1;
                     if (parsed.customType === "MATCH") typeId = 2;
                     else if (parsed.customType === "TRADE") typeId = 3;
+                    else if (parsed.customType === "PETSITTER") typeId = 4;
 
                     return {
                         id: msg.message_id,
@@ -80,6 +152,17 @@ const ChatRoom = () => {
                 });
 
                 setMessages(loadedMessages);
+
+                // ✅ 마지막 메시지 기준으로 읽음 처리
+                const lastNode = result.edges?.[result.edges.length - 1]?.node;
+                if (lastNode) {
+                    await nc.markRead(channelId, {
+                        user_id: lastNode.sender?.id,
+                        message_id: lastNode.message_id,
+                        sort_id: lastNode.sort_id,
+                    });
+                }
+
                 await nc.subscribe(channelId);
             } catch (e) {
                 console.error("메시지 초기 불러오기 실패", e);
@@ -89,19 +172,21 @@ const ChatRoom = () => {
         };
 
         init();
-        nc.bind("onMessageReceived", handleReceiveMessage);
+        if (!isChatOpen && isChatRoomOpen) {
+            nc.bind("onMessageReceived", handleReceiveMessage);
+        }
 
         return () => {
             nc.unbind("onMessageReceived", handleReceiveMessage);
         };
-    }, [nc, channelId]);
+    }, [nc, channelId, user.id, isChatOpen, isChatRoomOpen]);
 
     useEffect(() => {
         const updateRight = () => {
             const width = window.innerWidth;
             const layoutWidth = 500;
             if (width <= layoutWidth) {
-                setRightPosition("20px");
+                setRightPosition("0px");
             } else {
                 const sideGap = (width - layoutWidth) / 2 - 8;
                 setRightPosition(`${sideGap}px`);
@@ -126,6 +211,7 @@ const ChatRoom = () => {
                 type: "text",
                 message: JSON.stringify(payload),
             });
+
             setInput("");
         } catch (e) {
             console.error("메시지 전송 실패:", e);
@@ -134,7 +220,6 @@ const ChatRoom = () => {
 
     return (
         <>
-            {/* 🔝 상단 고정 헤더 */}
             <Box
                 display="flex"
                 alignItems="center"
@@ -157,7 +242,6 @@ const ChatRoom = () => {
                 </Typography>
             </Box>
 
-            {/* 💬 메시지 영역 */}
             <Box
                 mt="50px"
                 mb="70px"
@@ -165,7 +249,7 @@ const ChatRoom = () => {
                 overflow="auto"
                 height="calc(100vh - 250px)"
                 display="flex"
-                flexDirection="column-reverse" // ✅ 여기 변경
+                flexDirection="column-reverse"
                 gap={1}
             >
                 {isLoading ? (
@@ -180,6 +264,8 @@ const ChatRoom = () => {
                             .map((msg) => {
                                 if (msg.type_id === 2) return <MatchStart key={msg.id} {...msg.metadata.content} />;
                                 if (msg.type_id === 3) return <TradeStart key={msg.id} {...msg.metadata.content} />;
+                                if (msg.type_id === 4)
+                                    return <PetSitterStart key={msg.id} sitter={msg.metadata.content} />;
                                 return msg.senderId === `ncid${user.id}` ? (
                                     <ChatMessageRight key={msg.id} text={msg.text} />
                                 ) : (
@@ -191,7 +277,6 @@ const ChatRoom = () => {
                 )}
             </Box>
 
-            {/* ⌨️ 하단 입력창 */}
             {!isLoading && (
                 <Box
                     display="flex"

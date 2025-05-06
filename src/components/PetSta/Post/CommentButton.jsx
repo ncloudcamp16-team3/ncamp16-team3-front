@@ -7,7 +7,7 @@ const CommentButton = ({ postId, commentCount }) => {
     const navigate = useNavigate();
     return (
         <Box
-            sx={{ padding: 1, display: "flex", alignItems: "center" }}
+            sx={{ padding: 1, display: "flex", alignItems: "center", cursor: "pointer" }}
             onClick={() => navigate(`/petsta/post/comment/${postId}`)}
         >
             <img src={PetStaComment} alt="Comment Icon" />

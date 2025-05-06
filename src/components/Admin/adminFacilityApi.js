@@ -40,7 +40,7 @@ export const fetchFacilityDetail = async (id) => {
         if (response.status != 200) {
             throw new Error(response.data.message || "업체 정보를 가져오는데 실패했습니다");
         }
-        // console.log(data);
+        console.log(response.data);
 
         return response.data;
     } catch (error) {

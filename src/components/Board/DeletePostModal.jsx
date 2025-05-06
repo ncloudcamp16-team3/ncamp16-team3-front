@@ -2,14 +2,20 @@ import React from "react";
 import { Modal, Box, Button, Fade, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { deleteBoard } from "../../services/boardService.js";
 
 const DeletePostModal = ({ openDeleteModal, setOpenDeleteModal, postId }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const requestPostDelete = () => {
-        alert(postId + "번 게시글 삭제 요청");
-        setOpenDeleteModal(false);
-        navigate(-1);
+        deleteBoard(postId)
+            .then((res) => {
+                console.log("응답 결과: " + res.message);
+                navigate("/board");
+            })
+            .catch((err) => {
+                console.log("에러 발생: " + err.message);
+            });
     };
 
     return (

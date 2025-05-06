@@ -1,7 +1,7 @@
 import * as React from "react";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, FormHelperText, Grid, InputLabel, Typography } from "@mui/material";
+import { Alert, Box, Button, FormHelperText, Grid, InputLabel, Snackbar, Typography } from "@mui/material";
 import ReqUi from "./ReqUi.jsx";
 import { useRegister } from "./RegisterContext.jsx";
 import { useEffect, useState } from "react";
@@ -15,6 +15,8 @@ import { koKR } from "@mui/x-date-pickers/locales";
 
 const Step2 = () => {
     const { nextStep, handleChange, formData, prevStep } = useRegister();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -29,27 +31,52 @@ const Step2 = () => {
         { id: 6, label: "기타", value: "6" },
     ];
 
-    const [errors, setErrors] = useState({
-        petName: false,
-        petRegistration: false,
-        petGender: false,
-        petBirth: false,
-        petWeight: false,
-    });
+    const showSnackbar = (message) => {
+        setSnackbarMessage(message);
+        setSnackbarOpen(true);
+    };
+
+    const [errors, setErrors] = useState({});
 
     const handleNext = () => {
+        const today = new Date();
+        const birthDate = formData.petBirth ? new Date(formData.petBirth) : null;
+
         const newErrors = {
             petName: !formData.petName || formData.petName.trim().length < 1 || formData.petName.trim().length > 16,
-            petTypeId: !formData.petTypeId || formData.petTypeId.trim().length < 1,
+            petTypeId: !formData.petTypeId,
             petGender: !formData.petGender,
-            petBirth: !formData.petBirth,
-            petWeight: !formData.petWeight || formData.petWeight.trim().length === 0,
+            petBirth: !birthDate || birthDate > today,
+            petWeight: !formData.petWeight || isNaN(Number(formData.petWeight)) || Number(formData.petWeight) <= 0,
         };
 
         setErrors(newErrors);
 
-        const hasError = Object.values(newErrors).some((val) => val === true);
-        if (hasError) return;
+        // 에러 메시지 처리
+        if (newErrors.petName) {
+            showSnackbar("반려동물 이름은 1~16자 이내로 입력해주세요.");
+            return;
+        }
+        if (newErrors.petTypeId) {
+            showSnackbar("반려동물 종류를 선택해주세요.");
+            return;
+        }
+        if (newErrors.petGender) {
+            showSnackbar("반려동물 성별을 선택해주세요.");
+            return;
+        }
+        if (!birthDate) {
+            showSnackbar("반려동물 생일을 선택해주세요.");
+            return;
+        }
+        if (birthDate > today) {
+            showSnackbar("반려동물 생일은 오늘보다 미래일 수 없습니다.");
+            return;
+        }
+        if (!formData.petWeight || isNaN(Number(formData.petWeight)) || Number(formData.petWeight) <= 0) {
+            showSnackbar("반려동물 몸무게는 0보다 큰 숫자로 입력해주세요.");
+            return;
+        }
 
         nextStep();
     };
@@ -79,7 +106,7 @@ const Step2 = () => {
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petName}>
                     <InputLabel htmlFor="petName">
                         <>
-                            이름 <ReqUi /> {errors.petName && ` (반려동물 이름은 1~16자 이내로 입력해주세요.)`}
+                            이름 <ReqUi />
                         </>
                     </InputLabel>
                     <Input required id="petName" name="petName" value={formData.petName} onChange={handleChange} />
@@ -88,7 +115,7 @@ const Step2 = () => {
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petTypeId}>
                     <FormHelperText sx={{ mb: 1 }}>
                         <>
-                            반려동물을 등록해주세요 <ReqUi /> {errors.petTypeId && `(반려동물 종류를 선택해주세요.)`}
+                            반려동물을 등록해주세요 <ReqUi />
                         </>
                     </FormHelperText>
                     <Grid container spacing={1}>
@@ -119,7 +146,7 @@ const Step2 = () => {
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petGender}>
                     <FormHelperText sx={{ mb: 1 }}>
                         <>
-                            아이의 성별을 선택해주세요 <ReqUi /> {errors.petGender && `(성별을 선택해주세요.)`}
+                            아이의 성별을 선택해주세요 <ReqUi />
                         </>
                     </FormHelperText>
                     <Grid container spacing={1}>
@@ -155,13 +182,13 @@ const Step2 = () => {
                     <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petBirth}>
                         <FormHelperText sx={{ mb: 1 }}>
                             <>
-                                아이의 생일은 언제인가요? <ReqUi />{" "}
-                                {errors.petBirth && `(반려동물의 생일을 선택해주세요.)`}
+                                아이의 생일은 언제인가요? <ReqUi />
                             </>
                         </FormHelperText>
                         <MobileDatePicker
                             value={formData.petBirth ? dayjs(formData.petBirth) : null}
                             onChange={handleDateChange}
+                            maxDate={dayjs()} // ✅ 오늘 날짜 이후 선택 제한
                         />
                     </FormControl>
                 </LocalizationProvider>
@@ -169,11 +196,12 @@ const Step2 = () => {
                 <FormControl variant="standard" fullWidth sx={{ mb: 2 }} error={errors.petWeight}>
                     <InputLabel htmlFor="petWeight" sx={{ mb: 4 }}>
                         <>
-                            몸무게를 입력해 주세요(kg) <ReqUi /> {errors.petWeight && `(몸무게를 입력해주세요.)`}
+                            몸무게를 입력해 주세요(kg) <ReqUi />
                         </>
                     </InputLabel>
                     <Input
                         required
+                        type="number"
                         id="petWeight"
                         name="petWeight"
                         placeholder="몸무게를 입력해 주세요(kg)"
@@ -219,6 +247,18 @@ const Step2 = () => {
                     </Grid>
                 </Grid>
             </Box>
+
+            {/* Snackbar 컴포넌트 추가 */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert onClose={() => setSnackbarOpen(false)} severity="error">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

@@ -2,14 +2,6 @@ import React from "react";
 import { Box, Typography, FormGroup, TextField } from "@mui/material";
 import OptionCheckboxGroup from "../common/OptionCheckboxGroup";
 
-/**
- * 반려동물 종류 선택 단계 컴포넌트
- * @param {Object} props
- * @param {Object} props.petTypes 반려동물 종류 객체
- * @param {Function} props.onChange 선택 변경 핸들러
- * @param {string} props.otherPetText 기타 반려동물 텍스트
- * @param {Function} props.onOtherPetTextChange 기타 반려동물 텍스트 변경 핸들러
- */
 const PetTypeStep = ({ petTypes, onChange, otherPetText, onOtherPetTextChange }) => {
     return (
         <Box

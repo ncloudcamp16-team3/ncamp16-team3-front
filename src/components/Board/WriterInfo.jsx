@@ -13,7 +13,7 @@ const WriterInfo = ({ postData }) => {
         >
             <Box
                 component="img"
-                src={postData.user.photo.url}
+                src={postData.authorProfileImg}
                 sx={{
                     borderRadius: "50%",
                     width: "50px",
@@ -32,7 +32,7 @@ const WriterInfo = ({ postData }) => {
                         fontSize: "18px",
                     }}
                 >
-                    {postData.user.nickname}
+                    {postData.authorNickname}
                 </Typography>
                 <Typography
                     sx={{
@@ -40,7 +40,7 @@ const WriterInfo = ({ postData }) => {
                         color: "rgba(0, 0, 0, 0.4)",
                     }}
                 >
-                    {postData.user.address}
+                    {postData.authorAddress}
                 </Typography>
             </Box>
         </Box>
