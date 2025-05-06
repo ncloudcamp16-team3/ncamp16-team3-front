@@ -64,6 +64,11 @@ const ChatRoom = () => {
         else if (parsed.customType === "TRADE") typeId = 3;
         else if (parsed.customType === "PETSITTER") typeId = 4;
 
+        let isVisible = true;
+        if (parsed.customType === "PETSITTER" && parsed.visibleTo) {
+            isVisible = parsed.visibleTo === `ncid${user.id}`;
+        }
+
         return {
             id: msg.message_id,
             senderId: msg.sender?.id,
@@ -72,6 +77,7 @@ const ChatRoom = () => {
             metadata: parsed,
             photo: msg.sender?.profile,
             parsed,
+            isVisible: isVisible,
         };
     };
 
@@ -147,8 +153,14 @@ const ChatRoom = () => {
                         photo: msg.sender?.profile,
                     };
                 });
+                const filteredMessages = loadedMessages.filter(msg => {
+                    if (msg.type_id === 4 && msg.metadata.visibleTo) {
+                        return msg.metadata.visibleTo === `ncid${user.id}`;
+                    }
+                    return true;
+                });
 
-                setMessages(loadedMessages);
+                setMessages(filteredMessages);
 
                 // ✅ 마지막 메시지 기준으로 읽음 처리
                 const lastNode = result.edges?.[result.edges.length - 1]?.node;
@@ -258,6 +270,12 @@ const ChatRoom = () => {
                         {messages
                             .slice()
                             .reverse()
+                            .filter(msg => {
+                                if (msg.type_id === 4 && msg.metadata.visibleTo) {
+                                    return msg.metadata.visibleTo === `ncid${user.id}`;
+                                }
+                                return true;
+                            })
                             .map((msg) => {
                                 if (msg.type_id === 2) return <MatchStart key={msg.id} {...msg.metadata.content} />;
                                 if (msg.type_id === 3) return <TradeStart key={msg.id} {...msg.metadata.content} />;

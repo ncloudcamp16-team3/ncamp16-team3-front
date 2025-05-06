@@ -57,7 +57,7 @@ const PetSitterRegister = () => {
     const [otherPetText, setOtherPetText] = useState("");
 
     const [petCount, setPetCount] = useState({
-        "1마리": true,
+        "1마리": false,
         "2마리": false,
         "3마리 이상": false,
     });
@@ -105,7 +105,6 @@ const PetSitterRegister = () => {
 
     // 서버 데이터로 폼 초기화
     const initializeFormFromServer = (data) => {
-        // 연령대 설정
         if (data.age) {
             const newAges = { ...selectedAges };
             Object.keys(newAges).forEach((key) => {
@@ -139,7 +138,7 @@ const PetSitterRegister = () => {
                 TWO: "2마리",
                 THREE_PLUS: "3마리 이상",
             };
-            const countStr = countMap[data.petCount] || "1마리";
+            const countStr = countMap[data.petCount] || "0마리";
             const newPetCount = { ...petCount };
             Object.keys(newPetCount).forEach((key) => {
                 newPetCount[key] = key === countStr;
@@ -188,7 +187,6 @@ const PetSitterRegister = () => {
     };
 
     const handleNext = () => {
-        // 현재 단계에서 필요한 유효성 검증
         let isValid = true;
         let errorMessage = "";
 
@@ -419,11 +417,11 @@ const PetSitterRegister = () => {
 
             // 펫시터 데이터 생성
             const petSitterData = {
-                age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
-                houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
+                age: Object.keys(selectedAges).find((key) => selectedAges[key]),
+                houseType: Object.keys(houseType).find((key) => houseType[key]),
                 comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
                 grown: hasPet["네, 키우고 있습니다"],
-                petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "1마리"),
+                petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "0마리"),
                 sitterExp: sitterExperience["네, 해본적 있습니다"],
 
                 petTypeId: selectedPetTypes.length > 0 ? getPetTypeId(selectedPetTypes[0]) : null,
@@ -470,7 +468,7 @@ const PetSitterRegister = () => {
                     petType: selectedPetTypes[0] || "강아지",
                     petTypes: selectedPetTypes,
                     petTypesFormatted: selectedPetTypesStr,
-                    petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
+                    petCount: Object.keys(petCount).find((key) => petCount[key]) || "0마리",
                     houseType: petSitterData.houseType,
                     comment: petSitterData.comment,
                     image: imagePreview,

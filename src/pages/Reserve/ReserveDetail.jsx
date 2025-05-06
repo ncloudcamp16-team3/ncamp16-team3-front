@@ -24,10 +24,9 @@ import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import axios from "axios";
 import useInTimeRange from "../../hook/Reserve/useInTimeRange.js";
 import DateTimeSelector from "./DateTimeSelector.jsx";
-import { addTempReserve } from "../../services/reserveService.js";
+import { addTempReserve, getFacilityToReserveById } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx";
 
 const transformScoreToChartData = (ratingDistribution) => {
@@ -44,21 +43,25 @@ const transformScoreToChartData = (ratingDistribution) => {
         }));
 };
 
-const timeOptions = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`);
-
 const ReserveDetail = () => {
     const { id } = useParams();
-    const [detail, setDetail] = useState(null);
-    const [address, setAddress] = useState(null);
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [userWantReserve, setUserWantReserve] = useState(false);
     const { user } = useContext(Context);
 
+    // 예약 시간과 날짜
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
 
+    // Facility data
+    const [facilityData, setFacilityData] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // NaverPay
     const naverPayRef = useRef(null);
 
     useEffect(() => {
@@ -74,15 +77,7 @@ const ReserveDetail = () => {
         document.body.appendChild(script);
     }, []);
 
-    const [facilityData, setFacilityData] = useState(null);
-    const [reviews, setReviews] = useState([]);
-    const [ratingDistribution, setRatingDistribution] = useState({});
-    const [avgRating, setAvgRating] = useState(0);
-    const [reviewCount, setReviewCount] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const inRange = useInTimeRange(facilityData.openingHours?.MON?.openTime || "");
+    const inRange = useInTimeRange(facilityData?.openingHours?.MON?.openTime || "");
 
     // 요일 정보
     const today = dayjs().format("ddd").toUpperCase();
@@ -94,15 +89,13 @@ const ReserveDetail = () => {
                 setLoading(true);
                 setError(null);
 
-                const response = await axios.get(`/api/facility/${id}/detail`);
-                const data = response.data.data;
+                const response = await getFacilityToReserveById(id);
+                const data = response.data;
+
+                console.log(data);
 
                 setFacilityData(data.facility);
                 setReviews(data.reviews || []);
-                setRatingDistribution(data.ratingDistribution || {});
-                setAvgRating(data.avgRating || 0);
-                setReviewCount(data.reviewCount || 0);
-                setAddress(data.facility.address);
             } catch (err) {
                 console.error("시설 정보를 불러오는데 실패했습니다:", err);
                 setError("시설 정보를 불러오는데 실패했습니다. 다시 시도해주세요.");
@@ -115,6 +108,50 @@ const ReserveDetail = () => {
             fetchFacilityDetail();
         }
     }, [id]);
+
+    const handlePaymentClick = async () => {
+        if (!naverPayRef.current) {
+            alert("결제 모듈을 불러오지 못했습니다.");
+            return;
+        }
+
+        if (!startDate || !startTime) {
+            alert("예약 날짜 및 시간을 선택해주세요");
+            return;
+        }
+
+        // Format dates for API
+        const entryTime = dayjs(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`).toISOString();
+
+        const exitTime =
+            endDate && endTime ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toISOString() : null;
+
+        try {
+            const response = await addTempReserve({
+                userId: user.id,
+                facilityId: id,
+                entryTime,
+                exitTime,
+                amount: 240000,
+            });
+
+            const merchantPayKey = response.data.reserveId;
+
+            // Open NaverPay window
+            naverPayRef.current.open({
+                merchantPayKey,
+                productName: facilityData.name,
+                productCount: "1",
+                totalPayAmount: "240000",
+                taxScopeAmount: "240000",
+                taxExScopeAmount: "0",
+                returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
+            });
+        } catch (err) {
+            console.error("예약 생성 실패:", err);
+            alert("예약 생성 중 오류가 발생했습니다.");
+        }
+    };
 
     // 로딩 중이면 로딩 인디케이터 표시
     if (loading) {
@@ -143,8 +180,8 @@ const ReserveDetail = () => {
         );
     }
 
-    const chartData = transformScoreToChartData(ratingDistribution);
-    const filledStars = avgRating === 5 ? 5 : Math.round(avgRating);
+    // const chartData = transformScoreToChartData(ratingDistribution);
+    // const filledStars = avgRating === 5 ? 5 : Math.round(avgRating);
     const facilityType = facilityData.facilityType || "호텔";
 
     // 현재 요일의 영업 시간 정보
@@ -182,10 +219,11 @@ const ReserveDetail = () => {
                                 sx={{ color: "#fff" }}
                             />
                             <Typography sx={{ fontWeight: "bold" }}>
-                                {facilityData.openingHours?.MON?.openTime} - {facilityData.openingHours?.MON?.closeTime}
+                                {openTime} - {closeTime}
                             </Typography>
                         </Box>
                     </Box>
+
                     {/* 기본 정보 */}
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography variant="body1" color="text.secondary" gutterBottom>
@@ -224,8 +262,16 @@ const ReserveDetail = () => {
                         <Divider />
                         <Box sx={{ mb: 2 }}>
                             <DateTimeSelector
-                                openHours={`${facilityData.openingHours?.MON?.openTime} - ${facilityData.openingHours?.MON?.closeTime}`}
+                                openHours={`${openTime} - ${closeTime}`}
                                 facilityType={facilityType}
+                                startDate={startDate}
+                                setStartDate={setStartDate}
+                                endDate={endDate}
+                                setEndDate={setEndDate}
+                                startTime={startTime}
+                                setStartTime={setStartTime}
+                                endTime={endTime}
+                                setEndTime={setEndTime}
                             />
                         </Box>
                         <Divider />
@@ -251,43 +297,7 @@ const ReserveDetail = () => {
                             sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
                             size="large"
                             fullWidth
-                            onClick={async () => {
-                                if (!naverPayRef.current) return alert("결제 모듈을 불러오지 못했습니다.");
-                                if (!startDate || !startTime) return alert("예약 날짜 및 시간을 선택해주세요");
-
-                                const entryTime = dayjs(
-                                    `${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`
-                                ).toISOString();
-                                const exitTime =
-                                    endDate && endTime
-                                        ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toISOString()
-                                        : null;
-
-                                try {
-                                    const response = await addTempReserve({
-                                        userId: user.id,
-                                        facilityId: detail.id,
-                                        entryTime,
-                                        exitTime,
-                                        amount: 240000,
-                                    });
-
-                                    const merchantPayKey = response.data.reserveId;
-
-                                    naverPayRef.current.open({
-                                        merchantPayKey,
-                                        productName: detail.name,
-                                        productCount: "1",
-                                        totalPayAmount: "240000",
-                                        taxScopeAmount: "240000",
-                                        taxExScopeAmount: "0",
-                                        returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
-                                    });
-                                } catch (err) {
-                                    console.error("예약 생성 실패:", err);
-                                    alert("예약 생성 중 오류가 발생했습니다.");
-                                }
-                            }}
+                            onClick={handlePaymentClick}
                         >
                             결제하기
                         </Button>
@@ -305,7 +315,6 @@ const ReserveDetail = () => {
                                     size="large"
                                     fullWidth
                                     onClick={() => setUserWantReserve(true)}
-                                    onBack={() => setUserWantReserve(false)}
                                 >
                                     <CalendarTodayIcon /> 예약하기
                                 </Button>
@@ -333,7 +342,7 @@ const ReserveDetail = () => {
                                     variant="h6"
                                     sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
                                 >
-                                    {avgRating.toFixed(1)}/5.0
+                                    {facilityData.starPoint.toFixed(1)}/5.0
                                 </Typography>
                                 <Box sx={{ mb: 1, ml: 3 }}>
                                     {Array.from({ length: 5 }).map((_, index) => (
@@ -345,7 +354,7 @@ const ReserveDetail = () => {
                                     ))}
                                 </Box>
                                 <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
-                                    {reviewCount}명 참여
+                                    {facilityData.reviewCount}명 참여
                                 </Typography>
                             </Box>
 
