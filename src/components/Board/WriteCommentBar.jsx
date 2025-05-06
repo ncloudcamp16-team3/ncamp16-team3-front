@@ -48,10 +48,13 @@ const WriteCommentBar = ({
                 sx={{
                     backgroundColor: "white",
                     borderRadius: "10px",
+                    fontWeight: "bold",
+                    fontSize: "15px",
                     flex: 1,
                     height: "calc(100% - 10px)",
                     mr: "50px",
                     pl: "10px",
+                    pr: "35px",
                 }}
             />
 
