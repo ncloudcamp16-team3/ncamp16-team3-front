@@ -197,18 +197,26 @@ const ProtectedRoute = () => {
                     };
 
                     // 브라우저 알림
-                    if (Notification.permission === "granted") {
-                        const browserNotification = new Notification(newNotification.title, {
-                            body: newNotification.body,
-                            icon: newNotification.image,
-                        });
+                    if (Notification.permission === "granted" && navigator.serviceWorker?.getRegistration) {
+                        navigator.serviceWorker.getRegistration().then((registration) => {
+                            if (registration) {
+                                const notificationOptions = {
+                                    body: newNotification.body,
+                                    icon: newNotification.image,
+                                    data: newNotification,
+                                };
 
-                        // 클릭 시 새 창으로 이동 (필요시)
-                        if (newNotification.url) {
-                            browserNotification.onclick = () => {
-                                window.open(newNotification.url, "_blank");
-                            };
-                        }
+                                registration.showNotification(newNotification.title, notificationOptions);
+
+                                // 클릭 시 새 창으로 이동 (필요시)
+                                registration.addEventListener("notificationclick", (event) => {
+                                    if (newNotification.url) {
+                                        event.notification.close(); // 알림을 닫고
+                                        window.open(newNotification.url, "_blank"); // 새 창으로 이동
+                                    }
+                                });
+                            }
+                        });
                     }
 
                     setNotifications((prev) => [...prev, newNotification]);
