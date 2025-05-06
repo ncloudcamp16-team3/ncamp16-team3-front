@@ -93,7 +93,9 @@ const ProtectedRoute = () => {
 
                 if (!currentToken) throw new Error("FCM 토큰을 가져오지 못했습니다.");
 
+                console.log("Current FCM Token:", currentToken);
                 await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
+                console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
             } catch (error) {
                 attempts++;
                 console.warn(`FCM 설정 시도 실패 (${attempts}/${maxRetries}):`, error);
@@ -177,51 +179,39 @@ const ProtectedRoute = () => {
 
         useEffect(() => {
             const unsubscribe = onMessage(messaging, (payload) => {
-                const notificationData = {
-                    ...payload?.data,
-                    ...payload?.notification,
+                console.log("Foreground message received:", payload);
+
+                const notificationData = payload?.data || {};
+
+                const newNotification = {
+                    id: Date.now(),
+                    title: notificationData.title || "알림",
+                    body: notificationData.body || "",
+                    image: notificationData.icon || "/default-icon.png",
+                    createdAt: new Date().toISOString(),
                 };
 
-                if (notificationData) {
-                    const newNotification = {
-                        id: Date.now(),
-                        title: notificationData.title || "알림",
-                        body: notificationData.body || "",
-                        image: notificationData.image || "",
-                        createdAt: new Date().toISOString(),
-                        url: notificationData.url || null,
-                    };
+                // 브라우저 알림
+                if (Notification.permission === "granted" && navigator.serviceWorker?.getRegistration) {
+                    navigator.serviceWorker.getRegistration().then((registration) => {
+                        if (registration) {
+                            const notificationOptions = {
+                                body: newNotification.body,
+                                icon: newNotification.image,
+                                data: newNotification,
+                            };
 
-                    // 브라우저 알림
-                    if (Notification.permission === "granted" && navigator.serviceWorker?.getRegistration) {
-                        navigator.serviceWorker.getRegistration().then((registration) => {
-                            if (registration) {
-                                const notificationOptions = {
-                                    body: newNotification.body,
-                                    icon: newNotification.image,
-                                    data: newNotification,
-                                };
-
-                                registration.showNotification(newNotification.title, notificationOptions);
-
-                                // 클릭 시 새 창으로 이동 (필요시)
-                                registration.addEventListener("notificationclick", (event) => {
-                                    if (newNotification.url) {
-                                        event.notification.close(); // 알림을 닫고
-                                        window.open(newNotification.url, "_blank"); // 새 창으로 이동
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    setNotifications((prev) => [...prev, newNotification]);
-
-                    // 5초 후 알림 제거
-                    setTimeout(() => {
-                        setNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
-                    }, 5000);
+                            registration.showNotification(newNotification.title, notificationOptions);
+                        }
+                    });
                 }
+
+                setNotifications((prev) => [...prev, newNotification]);
+
+                // 5초 후 알림 제거
+                setTimeout(() => {
+                    setNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
+                }, 5000);
             });
 
             return () => unsubscribe();
