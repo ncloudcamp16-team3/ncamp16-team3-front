@@ -50,15 +50,15 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const getTitle = (item, type) => {
-        return type === "reserve" ? item.facility_name : item.title;
+        return item.title;
     };
 
     const getPeriod = (item, type) => {
         if (type === "reserve") {
             return (
                 <>
-                    {format(parseISO(item.entry_time), "yy-MM-dd HH:mm")} ~{" "}
-                    {format(parseISO(item.exit_time), "yy-MM-dd HH:mm")}
+                    {format(parseISO(item.entryTime), "yy-MM-dd HH:mm")} ~{" "}
+                    {format(parseISO(item.exitTime), "yy-MM-dd HH:mm")}
                 </>
             );
         }
@@ -76,14 +76,14 @@ export const CalendarProvider = ({ children }) => {
 
     const selectedSchedules = schedules.filter((s) => s.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
     const selectedEvents = events.filter((e) => isSameDate(parseISO(e.startDate), selectedDate));
-    const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entry_time), selectedDate));
+    const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entryTime), selectedDate));
 
     const checkHasScheduleOrEvent = (date) => {
         const dateStr = format(date, "yyyy-MM-dd");
         return {
             hasSchedule: schedules.some((s) => s.dateList?.includes(dateStr)),
             hasEvent: events.some((e) => isSameDate(parseISO(e.startDate), date)),
-            hasReserve: reserves.some((r) => isSameDate(parseISO(r.entry_time), date)),
+            hasReserve: reserves.some((r) => isSameDate(parseISO(r.entryTime), date)),
         };
     };
 
@@ -272,6 +272,20 @@ export const CalendarProvider = ({ children }) => {
         }
     };
 
+    const [reserveId, setReserveId] = useState(null); // 예약 ID를 관리하는 상태 추가
+    const [selectedReserve, setSelectedReserve] = useState(null); // 선택된 예약 정보
+
+    const handleReserveId = (id) => {
+        // 선택된 예약 ID를 설정
+        setReserveId(id);
+
+        // 선택된 예약 정보 찾기 (예시로 reserves 상태에서 id에 해당하는 예약을 찾는 방식)
+        const selectedReserve = reserves.find((reserve) => reserve.id === id);
+        setSelectedReserve(selectedReserve);
+
+        console.log("선택된 예약 정보:", selectedReserve);
+    };
+
     return (
         <CalendarContext.Provider
             value={{
@@ -318,6 +332,10 @@ export const CalendarProvider = ({ children }) => {
                 setSnackbarOpen,
                 message,
                 setMessage,
+                reserveId,
+                setReserveId,
+                selectedReserve,
+                setSelectedReserve,
             }}
         >
             {children}

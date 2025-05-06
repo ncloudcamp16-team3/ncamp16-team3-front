@@ -5,7 +5,7 @@ import "/src/css/calendar/cal.css";
 import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
-import { getScheduleAll, getEventAll } from "../../services/calendarService.js";
+import { getScheduleAll, getEventAll, getReserveAll } from "../../services/calendarService.js";
 import { Context } from "../../context/Context.jsx";
 import { CalendarContext } from "./CalendarContext.jsx";
 import RenderCard from "./RenderCard.jsx";
@@ -19,7 +19,6 @@ const CalendarRendering = () => {
         setCurrentViewMonth,
         setSchedules,
         setEvents,
-        setReserves,
         openItem,
         setOpenItem,
         showForm,
@@ -46,6 +45,8 @@ const CalendarRendering = () => {
         setSnackbarOpen,
         message,
         setMessage,
+        reserves,
+        setReserves,
     } = useContext(CalendarContext);
     const getInitialRightPosition = () => {
         if (typeof window !== "undefined") {
@@ -129,7 +130,7 @@ const CalendarRendering = () => {
 
                 console.log("Fetching reserves..."); // 디버깅: 예약 데이터 로딩 시작
                 // fetch로 예약 데이터 가져오기
-                const reserveData = await fetch("src/mock/Calendar/reserves.json").then((res) => res.json());
+                const reserveData = await getReserveAll(user.id);
                 console.log("Reserves data fetched:", reserveData); // 디버깅: 예약 데이터 확인
                 setReserves(reserveData);
             } catch (err) {
