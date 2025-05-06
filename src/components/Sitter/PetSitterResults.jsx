@@ -46,12 +46,11 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
         }
     };
 
-    // 반려동물 정보 포맷팅 (개선된 버전)
     const formatPetInfo = (sitter) => {
-        // 반려동물 타입 (여러 소스에서 확인)
+        // 반려동물 타입
         let petTypeDisplay = "";
 
-        // 1. petTypesFormatted 필드 사용 (쉼표로 구분된 문자열)
+        // 1. petTypesFormatted 필드 사용
         if (sitter.petTypesFormatted) {
             petTypeDisplay = sitter.petTypesFormatted;
         }
