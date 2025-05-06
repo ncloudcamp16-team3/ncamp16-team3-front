@@ -31,7 +31,6 @@ const Admin = () => {
             await login(email, password);
             navigate("/admin/board/list");
         } catch (error) {
-            console.log(error);
             const errorMessage = error.response?.data?.message || "로그인에 실패했습니다";
             setError(errorMessage);
             setOpenDialog(true);

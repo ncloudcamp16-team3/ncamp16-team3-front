@@ -147,8 +147,23 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                     },
                 }}
             >
-                <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                    <CircularProgress size={60} />
+                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100vh">
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        p={4}
+                        bgcolor="white"
+                        borderRadius={2}
+                        boxShadow={4}
+                        minWidth={280}
+                    >
+                        <CircularProgress size={48} />
+                        <Box mt={2} fontSize="16px" fontWeight="medium" color="#333">
+                            동영상을 업로드 중입니다...
+                        </Box>
+                    </Box>
                 </Box>
             </Modal>
 

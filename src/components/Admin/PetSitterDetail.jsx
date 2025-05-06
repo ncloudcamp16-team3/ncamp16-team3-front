@@ -65,7 +65,6 @@ const PetSitterDetail = () => {
                 const data = await fetchPetSitterDetail(id);
                 setPetSitter(data);
             } catch (error) {
-                console.log("펫시터 로딩 중 오류: " + error);
                 setError("펫시터 불러오기 오류");
             } finally {
                 setLoading(false);

@@ -7,7 +7,6 @@ export const getApprovedPetSitters = (params) => {
     return instance
         .get(`${API_URL}/approved`, { params })
         .then((response) => {
-            console.log("API 응답:", response);
             // { message: "조회 성공", data: {...} }
             return response.data;
         })

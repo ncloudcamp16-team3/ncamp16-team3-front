@@ -12,8 +12,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { sendChatNotification } from "../../services/notificationService.js";
 
 const PetSitterStart = ({ sitter }) => {
-    console.log("PetSitterStart에서 받은 sitter 정보:", sitter);
-
     const renderPetInfo = () => {
         if (sitter.petInfo && sitter.petInfo !== "정보 없음") {
             return `반려동물: ${sitter.petInfo}`;
@@ -105,7 +103,6 @@ const ChatRoom = () => {
                     type: parsed.customType,
                     createdAt: new Date().toISOString(),
                 };
-                console.log("전송할 알림 내용:", payload);
                 try {
                     await sendChatNotification(payload);
                 } catch (err) {

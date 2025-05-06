@@ -43,8 +43,6 @@ const PostCommentPage = () => {
                 setRightPosition("0px");
             } else {
                 const sideGap = (windowWidth - layoutWidth) / 2 - 8;
-                console.log(windowWidth);
-                console.log(layoutWidth);
                 setRightPosition(`${sideGap}px`);
             }
         };
@@ -286,6 +284,7 @@ const PostCommentPage = () => {
                                     fontSize: "15px",
                                     flex: 1,
                                     mr: 2,
+                                    pr: "10px",
                                 }}
                             />
                         </Box>

@@ -173,6 +173,7 @@ const ProtectedRoute = () => {
         };
     }, [nc, user.id, isChatOpen, isChatRoomOpen]);
 
+    // Notification List component
     const NotificationList = () => {
         const [notifications, setNotifications] = useState([]);
 

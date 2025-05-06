@@ -203,11 +203,8 @@ const PetSitterFinder = () => {
                 params.sitterExp = false;
             }
 
-            console.log("API 요청 파라미터:", params);
-
             // API 호출
             const response = await getApprovedPetSitters(params);
-            console.log("서버 응답:", response);
 
             // 서버 응답에서 데이터 추출
             if (response && response.data) {

@@ -21,35 +21,12 @@ const Board = () => {
     const isInitialMount = useRef(true);
 
     useEffect(() => {
-        console.log(boardType);
         const boardInit = async () => {
             await requestAnnounce(boardType);
             await getPostList({ boardType: boardType, page: 0 });
             isInitialMount.current = false;
         };
 
-        /*const getBoardTypes = async () => {
-            try {
-                const res = await getBoardType();
-                const data = res.data;
-                console.log(data);
-                console.log("응답 성공: " + res.message);
-
-                setBoardTypeList(data);
-
-                if (data.length > 0) {
-                    const firstBoardType = data[0];
-                    setBoardType(firstBoardType);
-                    requestAnnounce(firstBoardType);
-                    await getPostList({ boardType: firstBoardType, page: 0 });
-                    isInitialMount.current = false;
-                }
-            } catch (err) {
-                console.log("에러 발생: " + err.message);
-            } finally {
-                setLoading(false);
-            }
-        };*/
         boardInit();
     }, []);
 
@@ -62,14 +39,10 @@ const Board = () => {
                 page,
             });
             const data = res.data;
-            console.log(data);
-            console.log("응답 성공: " + res.message);
             setPostList((prev) => [...prev, ...data.content]);
             setHasMore(!data.last);
         } catch (err) {
-            console.log("에러 발생: " + err.message);
         } finally {
-            console.log(page);
             setLoading(false); // 성공이든 실패든 무조건 false
         }
     };
@@ -121,11 +94,8 @@ const Board = () => {
     const requestAnnounce = async (boardType) => {
         try {
             const announcesRes = await getAnnounces(boardType);
-            console.log(announcesRes.message);
             setAnnounceData(announcesRes.data);
-        } catch (err) {
-            console.log(err.message);
-        }
+        } catch (err) {}
     };
 
     return (

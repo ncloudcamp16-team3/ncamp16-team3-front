@@ -177,12 +177,6 @@ const Notice = () => {
             formData.append("images", file);
         });
 
-        console.log("Form submitted", {
-            boardTypeId,
-            title,
-            content,
-        });
-
         try {
             const response = await adminAxios.post("/api/admin/announce/post", formData);
 

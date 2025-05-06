@@ -42,16 +42,12 @@ export function Provider({ children }) {
         getBoardTypeList()
             .then((res) => {
                 const data = res.data;
-                console.log(data);
-                console.log("응답 성공: " + res.message);
                 if (data.length > 0) {
                     setBoardTypeList(data);
                     setBoardType(data[0]);
                 }
             })
-            .catch((err) => {
-                console.log("에러 발생" + err.message);
-            });
+            .catch((err) => {});
 
         fetchUserInfo();
     }, []);
@@ -141,13 +137,11 @@ export function Provider({ children }) {
 
     useEffect(() => {
         const isChat = location.pathname === "/chat"; // 완전 일치
-        console.log("Path changed:", location.pathname, "→ setIsChatOpen:", isChat);
         setIsChatOpen(isChat);
     }, [location.pathname]);
 
     useEffect(() => {
         const isChatRoom = location.pathname.startsWith("/chat/room"); // /chat/room 경로로 시작
-        console.log("Path changed:", location.pathname, "→ setIsChatRoomOpen:", isChatRoom);
         setIsChatRoomOpen(isChatRoom);
     }, [location.pathname]);
 
