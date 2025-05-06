@@ -79,3 +79,8 @@ export const addTempReserve = async (reserveData) => {
         },
     });
 };
+
+// ✅ 예약 목록을 불러오는 요청 함수
+export const fetchMyReserveList = async () => {
+    return await instance.get(`${API_URL}/my`);
+};
