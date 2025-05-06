@@ -46,30 +46,10 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
         }
     };
 
+    // 반려동물 정보 포맷팅
     const formatPetInfo = (sitter) => {
         // 반려동물 타입
-        let petTypeDisplay = "";
-
-        // 1. petTypesFormatted 필드 사용
-        if (sitter.petTypesFormatted) {
-            petTypeDisplay = sitter.petTypesFormatted;
-        }
-        // 2. petTypes 배열 사용 (문자열 배열)
-        else if (Array.isArray(sitter.petTypes) && sitter.petTypes.length > 0) {
-            petTypeDisplay = sitter.petTypes.join(", ");
-        }
-        // 3. 단일 petType 객체 사용
-        else if (sitter.petType && sitter.petType.name) {
-            petTypeDisplay = sitter.petType.name;
-        }
-        // 4. 단일 petType 문자열 사용
-        else if (typeof sitter.petType === "string") {
-            petTypeDisplay = sitter.petType;
-        }
-        // 5. 기본값
-        else {
-            petTypeDisplay = "반려동물";
-        }
+        let petTypeDisplay = sitter.petTypesFormatted || "정보 없음";
 
         // 반려동물 수
         let petCountDisplay = sitter.petCount || "1마리";
@@ -207,15 +187,8 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
                                 </Box>
 
                                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1, mb: 1.5 }}>
-                                    {/* 반려동물 정보 - 다중 타입 처리 */}
                                     <Chip
-                                        label={petInfo.types}
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{ fontSize: "12px" }}
-                                    />
-                                    <Chip
-                                        label={petInfo.count}
+                                        label={`반려동물: ${petInfo.types}`}
                                         size="small"
                                         variant="outlined"
                                         sx={{ fontSize: "12px" }}
