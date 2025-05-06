@@ -81,7 +81,14 @@ const PetSitterDetail = () => {
                 await nc.subscribe(channelId);
             }
 
+            console.log("채팅을 위한 펫시터 정보:", {
+                nickname: sitter.nickname,
+                grown: sitter.grown,
+                petTypesFormatted: sitter.petTypesFormatted
+            });
+
             // 메시지 전송
+            const petInfo = formatPetInfo(sitter);
             const payload = {
                 customType: "PETSITTER",
                 content: {
@@ -89,8 +96,8 @@ const PetSitterDetail = () => {
                     image: sitter.imagePath,
                     sitterId: sitter.id,
                     age: sitter.age,
-                    hasPet: sitter.grown,
-                    petInfo: formatPetInfo(sitter),
+                    hasPet: true,
+                    petInfo: petInfo,
                     experience: sitter.sitterExp,
                 },
             };
@@ -108,10 +115,10 @@ const PetSitterDetail = () => {
 
 
     const formatPetInfo = (sitterData) => {
-        if (!sitterData) return "정보 없음";
-
-        const petTypes = sitterData.petTypesFormatted || "정보 없음";
-        return petTypes;
+        if (sitterData && sitterData.petTypesFormatted) {
+            return sitterData.petTypesFormatted;
+        }
+        return "정보 없음";
     };
 
     const handleCancel = () => {
