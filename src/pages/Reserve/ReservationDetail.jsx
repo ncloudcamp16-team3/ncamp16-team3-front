@@ -9,14 +9,12 @@ import { getReserveDetail } from "../../services/reserveService.js"; // ✅ API 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
-    const [address, setAddress] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         getReserveDetail(id)
             .then((res) => {
                 setReservation(res.data);
-                setAddress(res.data.address);
                 console.log(res.data);
             })
             .catch((err) => {
