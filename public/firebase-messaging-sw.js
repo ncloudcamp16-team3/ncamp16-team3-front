@@ -17,6 +17,10 @@ const messaging = firebase.messaging();
 
 // 백그라운드에서 푸시 알림 수신 처리
 messaging.onBackgroundMessage(function (payload) {
+    if (payload.notification) {
+        console.log("브라우저가 자동으로 알림을 띄우므로, 수동 알림 생략");
+        return; // 중복 방지
+    }
     console.log("[firebase-messaging-sw.js] Background Message received.", payload);
 
     const notificationTitle = payload.notification?.title || "알림";
