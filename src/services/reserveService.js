@@ -71,3 +71,23 @@ export const getReserveDetailById = ({ uid, rid }) => {
             throw error; // 에러를 다시 던져서 호출한 곳에서 처리
         });
 };
+
+export const putReview = async ({ id, formData }) => {
+    return await instance
+        .put(`${API_URL}/reserve/facility/${id}/review`, formData) // 그대로 formData 전달
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("리뷰 업로드에 실패했습니다.", error);
+            throw error;
+        });
+};
+
+export const getFacilityNameAndThumbnail = async ({ id }) => {
+    return await instance
+        .get(`${API_URL}/reserve/facility/review${id}`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("예약 정보를 불러오는 데 실패했습니다.", error);
+            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
+        });
+};

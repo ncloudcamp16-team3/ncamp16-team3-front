@@ -1,33 +1,83 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container, Box, Typography, TextField, Button, Divider } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import reserveList from "../../mock/Reserve/reserveList.json";
 import FileUploader from "../../components/Reserve/utils/FileUploader.jsx";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
+import { getFacilityNameAndThumbnail, putReview } from "../../services/reserveService.js";
+import Loading from "../../components/Global/Loading.jsx";
 
 const Review = () => {
     const { id } = useParams();
     const [facilityInfo, setFacilityInfo] = useState();
     const text = useRef();
-    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [image, setImage] = useState(null);
     const [starRating, setStarRating] = useState();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const found = reserveList.find((r) => r.id === parseInt(id));
+        const fetchData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const result = await getFacilityNameAndThumbnail(id);
+                setFacilityInfo(result.data);
+            } catch (err) {
+                setError("시설 정보를 불러오는 중 오류 발생: " + err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        if (found) {
-            setFacilityInfo(found);
-        }
+        fetchData();
     }, [id]);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const comment = text.current.value;
-        const rating = starRating;
-        console.log(rating);
-        console.log(comment);
-        console.log(uploadedFiles);
+
+        if (!starRating || !comment || !image) {
+            alert("내용, 별점, 이미지를 모두 입력해주세요.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("comment", comment);
+        formData.append("rating", starRating);
+        formData.append("file", image); // 단일 파일
+
+        try {
+            const response = await putReview({ id, formData });
+
+            if (!response.ok) {
+                throw new Error("리뷰 업로드 실패");
+            }
+
+            alert("리뷰가 성공적으로 등록되었습니다.");
+            // 필요 시, 리뷰 상세 페이지로 이동
+            navigate(`/reserve/facility/detail/${id}`);
+        } catch (error) {
+            console.error(error);
+            alert("오류가 발생했습니다.");
+        }
     };
+
+    if (loading) {
+        return (
+            <Container>
+                <Loading />
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container>
+                <Typography>{error}</Typography>
+            </Container>
+        );
+    }
 
     return (
         <Container>
@@ -48,7 +98,7 @@ const Review = () => {
                     sx={{ borderRadius: 3 }}
                     fullWidth
                 />
-                <FileUploader />
+                <FileUploader onFileChange={(file) => setImage(file)} />
                 <Button
                     variant="contained"
                     sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
