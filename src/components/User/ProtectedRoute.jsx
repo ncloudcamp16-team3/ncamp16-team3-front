@@ -180,12 +180,6 @@ const ProtectedRoute = () => {
             const unsubscribe = onMessage(messaging, (payload) => {
                 console.log("Foreground message received:", payload);
 
-                // 백엔드에서 setNotification()으로 보낸 경우는 프론트에서 무시 (중복 방지)
-                if (payload?.notification) {
-                    console.log("알림은 브라우저에서 자동으로 띄워졌기 때문에 React에서는 무시");
-                    return;
-                }
-
                 const notificationData = payload?.data || {};
 
                 const newNotification = {
