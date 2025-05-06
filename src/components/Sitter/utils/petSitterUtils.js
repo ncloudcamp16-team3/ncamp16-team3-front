@@ -30,35 +30,54 @@ export const getPetTypeId = (petTypeStr) => {
     }
 };
 
+// 선택된 반려동물 타입 목록 가져오기
+export const getSelectedPetTypes = (petTypes) => {
+    return Object.keys(petTypes).filter((type) => petTypes[type]);
+};
+
+// 반려동물 타입 목록을 문자열로 변환
+export const formatPetTypes = (petTypes) => {
+    const selectedTypes = getSelectedPetTypes(petTypes);
+    return selectedTypes.join(", ");
+};
+
+// 선택된 반려동물 타입들의 ID 목록 가져오기
+export const getSelectedPetTypeIds = (petTypes) => {
+    const selectedTypes = getSelectedPetTypes(petTypes);
+    return selectedTypes.map((type) => getPetTypeId(type)).filter((id) => id !== null);
+};
+
 export const createPetSitterRequestData = (formData) => {
     const { selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText } = formData;
 
+    // 선택된 모든 반려동물 타입들 가져오기
+    const selectedPetTypes = getSelectedPetTypes(petTypes);
+    const selectedPetTypesStr = formatPetTypes(petTypes);
+    const selectedPetTypeIds = getSelectedPetTypeIds(petTypes);
+
     return {
-        // 필수 필드
         userId: null,
         age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
         houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
         comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
         grown: hasPet["네, 키우고 있습니다"] ? true : false,
 
-        // 백엔드 enum 값으로 변환
         petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key])),
 
-        // 경험 boolean 값
         sitterExp: sitterExperience["네, 해본적 있습니다"] ? true : false,
 
-        // 반려동물 유형 ID
-        petTypeId: getPetTypeId(Object.keys(petTypes).find((key) => petTypes[key])),
+        petTypeId: selectedPetTypes.length > 0 ? getPetTypeId(selectedPetTypes[0]) : null,
+
+        petTypesFormatted: selectedPetTypesStr,
+        petTypeIds: selectedPetTypeIds,
     };
 };
 
 export const createFormData = (petSitterData, imageBlob) => {
     const formData = new FormData();
 
-    // JSON 데이터를 Blob으로 변환하여 추가
     formData.append("data", new Blob([JSON.stringify(petSitterData)], { type: "application/json" }));
 
-    // 이미지가 있으면 추가
     if (imageBlob) {
         formData.append("image", imageBlob, "profile.jpg");
     }
