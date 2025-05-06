@@ -30,7 +30,6 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
 
         return response.data;
     } catch (error) {
-        console.log("게시판 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };
@@ -43,7 +42,6 @@ export const fetchBoardDetail = async (boardId) => {
             throw new Error(response.data.message || "게시글 정보를 가져오는데 실패했습니다");
         }
 
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error("게시글 상세정보 API 호출 중 오류 발생: " + error);

@@ -71,12 +71,9 @@ const PostSave = () => {
                 try {
                     const res = await getBoardDetail(postId);
                     const data = res.data;
-                    console.log(data);
-                    console.log("응답 성공: " + res.message);
 
                     setPostData(data);
                 } catch (err) {
-                    console.log("에러 발생: " + err.message);
                 } finally {
                     setLoading(false); // 성공이든 실패든 무조건 false
                 }
@@ -162,12 +159,10 @@ const PostSave = () => {
         saveBoard(formData)
             .then((res) => {
                 const data = res.data;
-                console.log("응답 결과" + res.message);
                 navigate(`/board/${data}`);
             })
             .catch((err) => {
                 handleSnackbarOpen(err.message, "warning");
-                console.log("에러 발생" + err.message);
             });
     };
 

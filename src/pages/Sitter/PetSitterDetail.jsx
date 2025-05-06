@@ -81,12 +81,6 @@ const PetSitterDetail = () => {
                 await nc.subscribe(channelId);
             }
 
-            console.log("채팅을 위한 펫시터 정보:", {
-                nickname: sitter.nickname,
-                grown: sitter.grown,
-                petTypesFormatted: sitter.petTypesFormatted
-            });
-
             // 메시지 전송
             const petInfo = formatPetInfo(sitter);
             const payload = {
@@ -112,7 +106,6 @@ const PetSitterDetail = () => {
             console.error("❌ 펫시터 채팅 생성 실패:", e);
         }
     };
-
 
     const formatPetInfo = (sitterData) => {
         if (sitterData && sitterData.petTypesFormatted) {

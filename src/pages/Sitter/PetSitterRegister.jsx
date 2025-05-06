@@ -83,7 +83,6 @@ const PetSitterRegister = () => {
                     const statusResponse = await instance.get("/petsitter/status");
 
                     if (statusResponse.status === 200) {
-                        console.log("펫시터 정보가 이미 서버에 있습니다. 수정 모드로 전환합니다.");
                         const sitterData = statusResponse.data.data;
                         if (sitterData) {
                             initializeFormFromServer(sitterData);
@@ -91,7 +90,6 @@ const PetSitterRegister = () => {
                     }
                 } catch (err) {
                     if (err.response?.status === 404) {
-                        console.log("서버에 펫시터 정보가 없습니다. 신규 등록 모드로 진행합니다.");
                         // 로컬 스토리지에서 정보 초기화
                         localStorage.removeItem("petSitterRegistrationCompleted");
                         localStorage.removeItem("petSitterInfo");
@@ -401,7 +399,6 @@ const PetSitterRegister = () => {
                 const statusResponse = await instance.get("/petsitter/status");
 
                 if (statusResponse.status === 200) {
-                    console.log("기존 펫시터 정보 업데이트 모드");
                     isUpdate = true;
                 }
             } catch (err) {
@@ -420,10 +417,6 @@ const PetSitterRegister = () => {
                 })
                 .filter((id) => id !== null);
 
-            console.log("선택된 반려동물 타입:", selectedPetTypes);
-            console.log("선택된 반려동물 타입 문자열:", selectedPetTypesStr);
-            console.log("선택된 반려동물 타입 ID 목록:", selectedPetTypeIds);
-
             // 펫시터 데이터 생성
             const petSitterData = {
                 age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
@@ -438,8 +431,6 @@ const PetSitterRegister = () => {
                 petTypesFormatted: selectedPetTypesStr,
                 petTypeIds: selectedPetTypeIds,
             };
-
-            console.log("펫시터 데이터:", petSitterData);
 
             const formData = new FormData();
 
@@ -459,13 +450,10 @@ const PetSitterRegister = () => {
             }
 
             // FormData 내용 확인
-            console.log("FormData 내용:");
             for (let [key, value] of formData.entries()) {
-                console.log(`- ${key}:`, value instanceof Blob ? `Blob (${value.size} bytes)` : value);
             }
 
             // API 호출 (instance 사용)
-            console.log("API 요청 시작");
             const res = await instance.post("/petsitter/apply", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -473,11 +461,7 @@ const PetSitterRegister = () => {
                 timeout: 30000, // 30초 타임아웃
             });
 
-            console.log("API 응답:", res);
-
             if (res.status === 200 || res.status === 201) {
-                console.log("API 요청 성공");
-
                 const sitterInfo = {
                     registered: false,
                     isPending: true,

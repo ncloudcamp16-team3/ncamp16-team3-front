@@ -65,8 +65,6 @@ const EditPet = () => {
                 // API 호출로 반려동물 정보 가져오기
                 const response = await instance.get(`/pet/${petId}`);
 
-                console.log("반려동물 정보 응답:", response.data);
-
                 if (response.data && response.data.data) {
                     const petInfo = response.data.data;
 
@@ -117,12 +115,6 @@ const EditPet = () => {
                 setIsLoading(false);
             } catch (error) {
                 console.error("반려동물 정보 로드 실패:", error);
-
-                // 오류 세부 정보 로깅
-                if (error.response) {
-                    console.log("응답 상태:", error.response.status);
-                    console.log("응답 데이터:", error.response.data);
-                }
 
                 // 401 오류인 경우 로그인 페이지로 리다이렉트
                 if (error.response && error.response.status === 401) {
@@ -382,8 +374,6 @@ const EditPet = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
-            console.log("반려동물 정보 업데이트 응답:", response.data);
 
             // 성공 시 처리
             setSnackbar({
@@ -804,7 +794,6 @@ const EditPet = () => {
                     onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
-
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>

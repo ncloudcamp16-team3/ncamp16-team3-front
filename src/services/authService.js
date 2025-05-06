@@ -17,7 +17,6 @@ export const getUserInfo = async () => {
         const response = await instance.get(`${API_URL}/userinfo`);
         if (response && response.data) {
             const { message, data } = response.data; // CustomResponse에서 message와 data 분리
-            console.log("응답 메시지:", message);
             return data; // 필요한 데이터를 반환
         }
         return null; // 응답이 없으면 null 반환
@@ -32,7 +31,6 @@ export const checkLogin = async () => {
         const response = await instance.get(`${API_URL}/check`);
         if (response && response.data) {
             const { message, data } = response.data; // CustomResponse에서 message와 data 분리
-            console.log("응답 메시지:", message);
             return data; // 필요한 데이터를 반환
         }
         return null; // 응답이 없으면 null 반환
@@ -47,7 +45,6 @@ export const checkNickname = async (nickname) => {
         const response = await instance.get(`${API_URL}/check-nickname?nickname=${nickname}`);
         if (response && response.data) {
             const { message, data } = response.data; // CustomResponse에서 message와 data 분리
-            console.log("응답 메시지:", message);
             return data; // 필요한 데이터만 반환
         }
         return null; // 응답이 없으면 null 반환
@@ -65,7 +62,6 @@ export const saveOrUpdateFcmToken = async ({ userId, fcmToken, mobile, dev }) =>
             mobile, // 모바일 여부 추가
             dev, // 개발 환경 여부 추가
         });
-        console.log("✅ FCM 토큰 등록 성공:", response);
         return true;
     } catch (error) {
         console.error("❌ FCM 토큰 등록 실패:", error);

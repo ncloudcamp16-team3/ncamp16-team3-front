@@ -15,10 +15,8 @@ const Announce = () => {
         const init = async () => {
             try {
                 const res = await getAnnounceDetail(announceId);
-                console.log(res.message);
                 setAnnounceData(res.data);
             } catch (err) {
-                console.log(err.message);
             } finally {
                 setLoading(false);
             }

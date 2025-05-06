@@ -22,8 +22,6 @@ const OAuth2Success = () => {
                 return;
             }
 
-            console.log("🔍 로그인 체크 결과:", data);
-
             if (data.isNewUser) {
                 navigate("/register", { replace: true });
             } else {
@@ -52,7 +50,6 @@ const OAuth2Success = () => {
                             language: "ko",
                         });
                         setNc(chat);
-                        console.log("✅ Ncloud Chat 연결 완료");
                     }
 
                     navigate("/", { replace: true });
