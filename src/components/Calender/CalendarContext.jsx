@@ -29,6 +29,7 @@ export const CalendarProvider = ({ children }) => {
         longitude: "",
     });
     const [address, setAddress] = useState("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const { user, fcmToken } = useContext(Context);
 
     const getTypeColor = (type) => {
@@ -111,6 +112,15 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const saveModifiedSchedule = async () => {
+        const start = dayjs(formData.startDate);
+        const end = dayjs(formData.endDate);
+
+        // 시작일이 종료일보다 이후라면 추가 중단
+        if (start.isAfter(end)) {
+            setSnackbarOpen(true); // 스낵바 열기
+            return;
+        }
+
         try {
             const scheduleData = {
                 id: formData.id,
@@ -120,8 +130,8 @@ export const CalendarProvider = ({ children }) => {
                 address: formData.address,
                 latitude: formData.latitude || null,
                 longitude: formData.longitude || null,
-                startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
-                endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                startDate: start.format("YYYY-MM-DD HH:mm:ss"),
+                endDate: end.format("YYYY-MM-DD HH:mm:ss"),
             };
 
             // 수정된 일정을 API로 업데이트
@@ -164,6 +174,15 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const addSchedule = async () => {
+        const start = dayjs(formData.startDate);
+        const end = dayjs(formData.endDate);
+
+        // 시작일이 종료일보다 이후라면 추가 중단
+        if (start.isAfter(end)) {
+            setSnackbarOpen(true); // 스낵바 열기
+            return;
+        }
+
         try {
             const scheduleData = {
                 userId: user.id,
@@ -172,8 +191,8 @@ export const CalendarProvider = ({ children }) => {
                 address: formData.address,
                 latitude: formData.latitude || null,
                 longitude: formData.longitude || null,
-                startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
-                endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                startDate: start.format("YYYY-MM-DD HH:mm:ss"),
+                endDate: end.format("YYYY-MM-DD HH:mm:ss"),
                 fcmToken: fcmToken,
             };
 
@@ -249,6 +268,8 @@ export const CalendarProvider = ({ children }) => {
                 saveModifiedSchedule,
                 removeSchedule,
                 addSchedule,
+                snackbarOpen,
+                setSnackbarOpen,
             }}
         >
             {children}
