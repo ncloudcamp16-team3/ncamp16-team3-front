@@ -286,6 +286,7 @@ const PostCommentPage = () => {
                                     fontSize: "15px",
                                     flex: 1,
                                     mr: 2,
+                                    pr: "10px",
                                 }}
                             />
                         </Box>

@@ -28,28 +28,6 @@ const Board = () => {
             isInitialMount.current = false;
         };
 
-        /*const getBoardTypes = async () => {
-            try {
-                const res = await getBoardType();
-                const data = res.data;
-                console.log(data);
-                console.log("응답 성공: " + res.message);
-
-                setBoardTypeList(data);
-
-                if (data.length > 0) {
-                    const firstBoardType = data[0];
-                    setBoardType(firstBoardType);
-                    requestAnnounce(firstBoardType);
-                    await getPostList({ boardType: firstBoardType, page: 0 });
-                    isInitialMount.current = false;
-                }
-            } catch (err) {
-                console.log("에러 발생: " + err.message);
-            } finally {
-                setLoading(false);
-            }
-        };*/
         boardInit();
     }, []);
 
