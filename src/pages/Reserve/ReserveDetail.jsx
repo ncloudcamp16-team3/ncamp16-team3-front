@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import reserveDetailData from "../../mock/Reserve/reserveDetail.json";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 // MUI Components
 import {
@@ -19,33 +18,38 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    CircularProgress,
+    Alert,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import useInTimeRange from "../../hook/Reserve/useInTimeRange.js";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import axios from "axios";
+import useInTimeRange from "../../hook/Reserve/useInTimeRange.js";
 
-// 예시 데이터 변환 함수
-const transformScoreToChartData = (score) => {
-    const total = Object.values(score).reduce((sum, count) => sum + count, 0);
-    return Object.entries(score)
+const transformScoreToChartData = (ratingDistribution) => {
+    if (!ratingDistribution) return [];
+
+    const total = Object.values(ratingDistribution).reduce((sum, count) => sum + count, 0);
+
+    return Object.entries(ratingDistribution)
         .sort(([a], [b]) => b - a)
         .map(([key, value]) => ({
-            name: `★${key.replace(/Stars?/, "")}`,
+            name: `★${key}`,
             value,
-            percentage: Math.round((value / total) * 100),
+            percentage: total > 0 ? Math.round((value / total) * 100) : 0,
         }));
 };
 
 const timeOptions = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`);
 
-const DateTimeSelector = ({ openHours, facilityType }) => {
+const DateTimeSelector = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [dateDialog, setDateDialog] = useState({ open: false, target: "start" });
@@ -425,21 +429,86 @@ const DateTimeSelector = ({ openHours, facilityType }) => {
 const ReserveDetail = () => {
     const { id } = useParams();
     const [detail, setDetail] = useState(null);
-    const [address, setAddress] = useState(null);
+    const [address, setAddress] = useState("");
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [userWantReserve, setUserWantReserve] = useState(false);
 
+    const [facilityData, setFacilityData] = useState(null);
+    const [reviews, setReviews] = useState([]);
+    const [ratingDistribution, setRatingDistribution] = useState({});
+    const [avgRating, setAvgRating] = useState(0);
+    const [reviewCount, setReviewCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const inRange = useInTimeRange(facilityData.openingHours?.MON?.openTime || "");
+
+    // 요일 정보
+    const today = dayjs().format("ddd").toUpperCase();
+
+    // API에서 데이터 가져오기
     useEffect(() => {
-        const found = reserveDetailData.find((item) => item.id === Number(id));
-        if (found) setDetail(found);
+        const fetchFacilityDetail = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const response = await axios.get(`/api/facility/${id}/detail`);
+                const data = response.data.data;
+
+                setFacilityData(data.facility);
+                setReviews(data.reviews || []);
+                setRatingDistribution(data.ratingDistribution || {});
+                setAvgRating(data.avgRating || 0);
+                setReviewCount(data.reviewCount || 0);
+                setAddress(data.facility.address);
+            } catch (err) {
+                console.error("시설 정보를 불러오는데 실패했습니다:", err);
+                setError("시설 정보를 불러오는데 실패했습니다. 다시 시도해주세요.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchFacilityDetail();
+        }
     }, [id]);
-    const inRange = useInTimeRange(detail?.openHours ?? "");
 
-    if (!detail) return <Typography>Loading...</Typography>;
+    // 로딩 중이면 로딩 인디케이터 표시
+    if (loading) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
-    const chartData = transformScoreToChartData(detail.score);
-    const filledStars = detail.rating === 5 ? 5 : Math.round(detail.rating);
-    const facilityType = detail.tags || "호텔"; // 기본값은 호텔로 설정
+    // 에러가 있으면 에러 메시지 표시
+    if (error) {
+        return (
+            <Box sx={{ p: 3 }}>
+                <Alert severity="error">{error}</Alert>
+            </Box>
+        );
+    }
+
+    // 데이터가 없으면 메시지 표시
+    if (!facilityData) {
+        return (
+            <Box sx={{ p: 3 }}>
+                <Typography>시설 정보를 찾을 수 없습니다.</Typography>
+            </Box>
+        );
+    }
+
+    const chartData = transformScoreToChartData(ratingDistribution);
+    const filledStars = avgRating === 5 ? 5 : Math.round(avgRating);
+    const facilityType = facilityData.facilityType || "호텔";
+
+    // 현재 요일의 영업 시간 정보
+    const openTime = facilityData.openingHours?.[today]?.openTime || "09:00";
+    const closeTime = facilityData.openingHours?.[today]?.closeTime || "18:00";
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -453,21 +522,33 @@ const ReserveDetail = () => {
                 <Box sx={{ pl: 3, pr: 3, pb: 3 }}>
                     {/* 상단 이미지 */}
                     <Card sx={{ mb: 2, width: "100%" }}>
-                        <CardMedia component="img" height="300" image={detail.mainImage} alt={detail.name} />
+                        <CardMedia
+                            component="img"
+                            height="300"
+                            image={facilityData.imagePath || "https://via.placeholder.com/400x300"}
+                            alt={facilityData.name}
+                        />
                     </Card>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Typography variant="h4" gutterBottom>
-                            {detail.name}
+                            {facilityData.name}
                         </Typography>
                         <Box sx={{ display: "flex", pb: 2, gap: 1 }}>
-                            <Chip size="small" label={inRange ? "영업중" : "영업종료"} sx={{ color: "#fff" }} />
-                            <Typography sx={{ fontWeight: "bold" }}>{detail.openHours}</Typography>
+                            <Chip
+                                size="small"
+                                label={inRange ? "영업중" : "영업종료"}
+                                color={inRange ? "success" : "default"}
+                                sx={{ color: "#fff" }}
+                            />
+                            <Typography sx={{ fontWeight: "bold" }}>
+                                {facilityData.openingHours?.MON?.openTime} - {facilityData.openingHours?.MON?.closeTime}
+                            </Typography>
                         </Box>
                     </Box>
                     {/* 기본 정보 */}
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography variant="body1" color="text.secondary" gutterBottom>
-                            ・ {detail.address}
+                            ・ {facilityData.address}
                         </Typography>
                         <Typography
                             onClick={() => setIsMapOpen(!isMapOpen)}
@@ -494,13 +575,17 @@ const ReserveDetail = () => {
                         </Box>
                     )}
 
+                    {/* 예약 화면 */}
                     <Box sx={{ display: userWantReserve ? "block" : "none" }}>
                         <Typography sx={{ whiteSpace: "pre-wrap", mb: 2, mt: 2 }}>
                             ・요금 정보{"\n\t"}・기본요금 24시간 50,000원{"\n\t"}・추가요금 6시간 단위로 10,000원
                         </Typography>
                         <Divider />
                         <Box sx={{ mb: 2 }}>
-                            <DateTimeSelector openHours={detail.openHours} facilityType={facilityType} />
+                            <DateTimeSelector
+                                openHours={`${facilityData.openingHours?.MON?.openTime} - ${facilityData.openingHours?.MON?.closeTime}`}
+                                facilityType={facilityType}
+                            />
                         </Box>
                         <Divider />
                         <Box
@@ -529,6 +614,7 @@ const ReserveDetail = () => {
                             결제하기
                         </Button>
                     </Box>
+
                     {/* 상세 정보 */}
                     <Box sx={{ display: userWantReserve ? "none" : "block" }}>
                         <Box>
@@ -569,7 +655,7 @@ const ReserveDetail = () => {
                                     variant="h6"
                                     sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
                                 >
-                                    {detail.rating}/5.0
+                                    {avgRating.toFixed(1)}/5.0
                                 </Typography>
                                 <Box sx={{ mb: 1, ml: 3 }}>
                                     {Array.from({ length: 5 }).map((_, index) => (
@@ -581,7 +667,7 @@ const ReserveDetail = () => {
                                     ))}
                                 </Box>
                                 <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
-                                    {detail.reviewCount}명 참여
+                                    {reviewCount}명 참여
                                 </Typography>
                             </Box>
 
@@ -615,11 +701,11 @@ const ReserveDetail = () => {
                                                 barSize={8}
                                                 radius={30}
                                                 background={{ fill: "#E0E0E0", radius: 30 }}
-                                            ></Bar>
+                                            />
                                         </BarChart>
                                     </ResponsiveContainer>
 
-                                    {/* 절대 위치 텍스트 */}
+                                    {/* 퍼센트 표시 */}
                                     <Box
                                         sx={{
                                             position: "absolute",
@@ -631,7 +717,7 @@ const ReserveDetail = () => {
                                             justifyContent: "space-around",
                                             alignItems: "flex-end",
                                             pr: 2,
-                                            pointerEvents: "none", // 마우스 방해 방지
+                                            pointerEvents: "none",
                                         }}
                                     >
                                         {chartData.map((entry, idx) => (
@@ -658,31 +744,52 @@ const ReserveDetail = () => {
                             이용자 리뷰
                         </Typography>
                         <Grid container spacing={3}>
-                            {detail.reviews.map((review, idx) => (
-                                <Grid item xs={12} md={6} key={idx}>
-                                    <Card sx={{ height: "100%" }}>
-                                        <CardContent>
-                                            <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-                                                <Avatar src={review.avatar} />
-                                                <Typography variant="subtitle1">{review.user}</Typography>
-                                            </Stack>
-                                            <CardMedia
-                                                component="img"
-                                                height="180"
-                                                image={review.image}
-                                                alt="review"
-                                                sx={{ borderRadius: 1, mb: 2 }}
-                                            />
-                                            <Typography variant="body2" sx={{ mb: 1 }}>
-                                                {review.content}
-                                            </Typography>
-                                            <Typography variant="caption" color="text.secondary">
-                                                {review.date}
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
+                            {reviews.length > 0 ? (
+                                reviews.map((review, idx) => (
+                                    <Grid item xs={12} md={6} key={idx}>
+                                        <Card sx={{ height: "100%" }}>
+                                            <CardContent>
+                                                <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+                                                    <Avatar src={review.userProfileImage} />
+                                                    <Typography variant="subtitle1">{review.userName}</Typography>
+                                                </Stack>
+                                                {review.reviewImages && review.reviewImages.length > 0 && (
+                                                    <CardMedia
+                                                        component="img"
+                                                        height="180"
+                                                        image={review.reviewImages[0]}
+                                                        alt="review"
+                                                        sx={{ borderRadius: 1, mb: 2 }}
+                                                    />
+                                                )}
+                                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                                    {review.comment}
+                                                </Typography>
+                                                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                                                    {Array.from({ length: 5 }).map((_, index) => (
+                                                        <StarIcon
+                                                            key={index}
+                                                            fontSize="small"
+                                                            sx={{
+                                                                color: index < review.starPoint ? "#FFC107" : "#E0E0E0",
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </Box>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    {new Date(review.createdAt).toLocaleDateString()}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                ))
+                            ) : (
+                                <Grid item xs={12}>
+                                    <Typography align="center" color="text.secondary">
+                                        아직 리뷰가 없습니다.
+                                    </Typography>
                                 </Grid>
-                            ))}
+                            )}
                         </Grid>
                     </Box>
                 </Box>
