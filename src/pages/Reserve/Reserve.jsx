@@ -47,9 +47,7 @@ const ReserveContent = () => {
 
 const Reserve = () => (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ReserveProvider>
             <ReserveContent />
-        </ReserveProvider>
     </LocalizationProvider>
 );
 

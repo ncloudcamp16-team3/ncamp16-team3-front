@@ -71,3 +71,16 @@ export const getReserveDetailById = ({ uid, rid }) => {
             throw error; // 에러를 다시 던져서 호출한 곳에서 처리
         });
 };
+
+export const addTempReserve = async (reserveData) => {
+    return await instance.post(`${API_URL}/temp`, reserveData, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};
+
+// ✅ 예약 목록을 불러오는 요청 함수
+export const fetchMyReserveList = async () => {
+    return await instance.get(`${API_URL}/my`);
+};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 // MUI Components
@@ -22,12 +22,10 @@ import {
     Alert,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import ScheduleIcon from "@mui/icons-material/Schedule";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import axios from "axios";
@@ -35,6 +33,9 @@ import useInTimeRange from "../../hook/Reserve/useInTimeRange.js";
 
 const transformScoreToChartData = (ratingDistribution) => {
     if (!ratingDistribution) return [];
+import { addTempReserve } from "../../services/reserveService.js";
+import { Context } from "../../context/Context.jsx";
+import DateTimeSelector from "./DateTimeSelector.jsx";
 
     const total = Object.values(ratingDistribution).reduce((sum, count) => sum + count, 0);
 
@@ -49,389 +50,33 @@ const transformScoreToChartData = (ratingDistribution) => {
 
 const timeOptions = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`);
 
-const DateTimeSelector = () => {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [dateDialog, setDateDialog] = useState({ open: false, target: "start" });
-    const [startTime, setStartTime] = useState("");
-    const [endTime, setEndTime] = useState("");
-    const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
-    const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
-
-    // 시설 유형에 따라 라벨 설정
-    const isHotel = facilityType === "호텔";
-    const startDateLabel = isHotel ? "시작일자" : "예약일자";
-    const startTimeLabel = isHotel ? "시작시간" : "예약시간";
-
-    // 영업 시간에서 시간 옵션 생성
-    const generateTimeOptions = () => {
-        // 기본값으로 9시부터 20시까지 설정
-        const defaultTimes = [
-            "09:00",
-            "10:00",
-            "11:00",
-            "12:00",
-            "13:00",
-            "14:00",
-            "15:00",
-            "16:00",
-            "17:00",
-            "18:00",
-            "19:00",
-            "20:00",
-        ];
-
-        if (!openHours || typeof openHours !== "string") {
-            return defaultTimes;
-        }
-
-        try {
-            // 정규식으로 시간 추출
-            const timePattern = /(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/;
-            const matches = openHours.match(timePattern);
-
-            if (!matches || matches.length < 3) {
-                return defaultTimes;
-            }
-
-            const startTimeStr = matches[1].trim();
-            const endTimeStr = matches[2].trim();
-
-            // 시작 시간과 종료 시간 추출
-            let startHour = parseInt(startTimeStr.split(":")[0]);
-            let endHour = parseInt(endTimeStr.split(":")[0]);
-
-            // 종료 시간이 시작 시간보다 작다면 24시간 형식으로 간주
-            if (endHour < startHour) {
-                endHour += 24;
-            }
-
-            const timeOptions = [];
-            for (let hour = startHour; hour <= endHour; hour++) {
-                // 24시간을 넘어가는 경우 처리
-                const displayHour = hour % 24;
-                timeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
-            }
-
-            return timeOptions;
-        } catch (error) {
-            console.error("영업 시간 형식 파싱 오류:", error);
-            return defaultTimes;
-        }
-    };
-
-    const timeOptions = generateTimeOptions();
-
-    // === 달력 모달 ===
-    const handleOpenDateDialog = (target) => {
-        setDateDialog({ open: true, target });
-    };
-
-    const handleCloseDateDialog = () => {
-        setDateDialog({ ...dateDialog, open: false });
-    };
-
-    const handleDateSelect = (value) => {
-        if (dateDialog.target === "start") setStartDate(value);
-        else setEndDate(value);
-        handleCloseDateDialog();
-    };
-
-    const handleResetDate = () => {
-        if (dateDialog.target === "start") setStartDate(null);
-        else setEndDate(null);
-    };
-
-    // === 시간 선택 ===
-    const toggleTimeSelector = (target) => {
-        if (target === "start") {
-            setShowStartTimeSelector(!showStartTimeSelector);
-            setShowEndTimeSelector(false);
-        } else {
-            setShowEndTimeSelector(!showEndTimeSelector);
-            setShowStartTimeSelector(false);
-        }
-    };
-
-    const handleTimeSelect = (time, target) => {
-        if (target === "start") {
-            setStartTime(time);
-            setShowStartTimeSelector(false);
-        } else {
-            setEndTime(time);
-            setShowEndTimeSelector(false);
-        }
-    };
-
-    // 예약 가능한 시간 필터링 (시작 시간 이후만 선택 가능하도록)
-    const getAvailableEndTimes = () => {
-        if (!startTime) return timeOptions;
-
-        const startHourStr = startTime.split(":")[0];
-        const startHour = parseInt(startHourStr);
-
-        return timeOptions.filter((time) => {
-            const hourStr = time.split(":")[0];
-            const hour = parseInt(hourStr);
-
-            // 24시간제로 비교 (예: 23시 이후의 00시, 01시 등도 고려)
-            if (startHour >= 20 && hour < 8) {
-                return true; // 자정을 넘어가는 경우
-            }
-            return hour > startHour;
-        });
-    };
-
-    // 선택된 시간 강조 스타일
-    const getTimeButtonStyle = (time, selectedTime) => {
-        const isSelected = time === selectedTime;
-        return {
-            width: "calc(33.33% - 8px)",
-            height: 36,
-            fontSize: 14,
-            borderRadius: 20,
-            margin: "4px",
-            backgroundColor: isSelected ? "#E9A260" : "#FFFFFF",
-            color: isSelected ? "#FFFFFF" : "#000000",
-            border: `1px solid ${isSelected ? "#E9A260" : "#DDDDDD"}`,
-            fontWeight: isSelected ? "bold" : "normal",
-            "&:hover": {
-                backgroundColor: isSelected ? "#E9A260" : "#F5F5F5",
-                border: `1px solid ${isSelected ? "#E9A260" : "#CCCCCC"}`,
-            },
-        };
-    };
-
-    return (
-        <Stack spacing={2} direction="column">
-            {/* 날짜 선택 버튼 */}
-            <Box sx={{ display: "flex", gap: 3, pt: 2, justifyContent: "center" }}>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        width: isHotel ? "40%" : "80%",
-                        display: "flex",
-                        borderRadius: 2,
-                        borderColor: "#C8C8C8",
-                        bgcolor: "#FFF7EF",
-                        color: "#000",
-                        gap: 1,
-                    }}
-                    onClick={() => handleOpenDateDialog("start")}
-                >
-                    <CalendarTodayIcon sx={{}} />
-                    {startDate ? dayjs(startDate).format("YYYY-MM-DD") : startDateLabel}
-                </Button>
-                {isHotel && (
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            width: "40%",
-                            display: "flex",
-                            borderRadius: 2,
-                            borderColor: "#C8C8C8",
-                            bgcolor: "#FFF7EF",
-                            color: "#000",
-                            gap: 1,
-                        }}
-                        onClick={() => handleOpenDateDialog("end")}
-                        disabled={!startDate}
-                    >
-                        <CalendarTodayIcon />
-                        {endDate ? dayjs(endDate).format("YYYY-MM-DD") : "종료일자"}
-                    </Button>
-                )}
-            </Box>
-
-            {/* 시간 선택 버튼 */}
-            <Box sx={{ gap: 3, display: "flex", justifyContent: "center" }}>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        width: isHotel ? "40%" : "80%",
-                        display: "flex",
-                        borderRadius: 2,
-                        borderColor: "#C8C8C8",
-                        bgcolor: "#FFF7EF",
-                        color: "#000",
-                        gap: 1,
-                    }}
-                    onClick={() => toggleTimeSelector("start")}
-                >
-                    <ScheduleIcon /> {startTime || startTimeLabel}
-                </Button>
-                {isHotel && (
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            width: "40%",
-                            display: "flex",
-                            borderRadius: 2,
-                            borderColor: "#C8C8C8",
-                            bgcolor: "#FFF7EF",
-                            color: "#000",
-                            gap: 1,
-                        }}
-                        onClick={() => toggleTimeSelector("end")}
-                        disabled={!startTime}
-                    >
-                        <ScheduleIcon /> {endTime || "종료시간"}
-                    </Button>
-                )}
-            </Box>
-
-            {/* 시작 시간 선택 패널 */}
-            {showStartTimeSelector && (
-                <Card
-                    sx={{
-                        mt: 2,
-                        p: 2,
-                        borderRadius: 4,
-                        boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
-                        bgcolor: "#FFF7EF",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            borderBottom: "1px solid #EEEEEE",
-                            pb: 1,
-                            mb: 1,
-                        }}
-                    >
-                        <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-                            <ScheduleIcon sx={{ mr: 1, color: "#666666" }} />
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                                시간 선택
-                            </Typography>
-                        </Box>
-                        <Box
-                            onClick={() => setShowStartTimeSelector(false)}
-                            sx={{
-                                cursor: "pointer",
-                                fontSize: 18,
-                                color: "#666666",
-                                transform: "rotate(180deg)",
-                            }}
-                        >
-                            ▲
-                        </Box>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            justifyContent: "center",
-                            maxHeight: 200,
-                            overflow: "auto",
-                            p: 1,
-                        }}
-                    >
-                        {timeOptions.map((time) => (
-                            <Button
-                                key={time}
-                                onClick={() => handleTimeSelect(time, "start")}
-                                sx={getTimeButtonStyle(time, startTime)}
-                            >
-                                {time}
-                            </Button>
-                        ))}
-                    </Box>
-                </Card>
-            )}
-
-            {/* 종료 시간 선택 패널 (호텔 타입일 때만 표시) */}
-            {isHotel && showEndTimeSelector && (
-                <Card
-                    sx={{
-                        mt: 2,
-                        p: 2,
-                        borderRadius: 4,
-                        boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
-                        bgcolor: "#FFF7EF",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            borderBottom: "1px solid #EEEEEE",
-                            pb: 1,
-                            mb: 1,
-                        }}
-                    >
-                        <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-                            <ScheduleIcon sx={{ mr: 1, color: "#666666" }} />
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                                시간 선택
-                            </Typography>
-                        </Box>
-                        <Box
-                            onClick={() => setShowEndTimeSelector(false)}
-                            sx={{
-                                cursor: "pointer",
-                                fontSize: 18,
-                                color: "#666666",
-                                transform: "rotate(180deg)",
-                            }}
-                        >
-                            ▲
-                        </Box>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            justifyContent: "center",
-                            maxHeight: 200,
-                            overflow: "auto",
-                            p: 1,
-                        }}
-                    >
-                        {getAvailableEndTimes().map((time) => (
-                            <Button
-                                key={time}
-                                onClick={() => handleTimeSelect(time, "end")}
-                                sx={getTimeButtonStyle(time, endTime)}
-                            >
-                                {time}
-                            </Button>
-                        ))}
-                    </Box>
-                </Card>
-            )}
-
-            {/* 날짜 선택 모달 */}
-            <Dialog open={dateDialog.open} onClose={handleCloseDateDialog}>
-                <DialogTitle sx={{ bgcolor: "#FFF7EF" }}>
-                    {dateDialog.target === "start" ? (isHotel ? "시작일 선택" : "예약일 선택") : "종료일 선택"}
-                </DialogTitle>
-                <DialogContent sx={{ bgcolor: "#FFF7EF" }}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateCalendar
-                            value={dateDialog.target === "start" ? startDate : endDate}
-                            onChange={(newValue) => handleDateSelect(newValue)}
-                            minDate={dateDialog.target === "end" && startDate ? startDate : undefined}
-                        />
-                    </LocalizationProvider>
-                </DialogContent>
-                <DialogActions sx={{ bgcolor: "#FFF7EF" }}>
-                    <Button onClick={handleResetDate}>초기화</Button>
-                    <Box sx={{ flex: 1 }} />
-                    <Button onClick={handleCloseDateDialog}>취소</Button>
-                </DialogActions>
-            </Dialog>
-        </Stack>
-    );
-};
-
 const ReserveDetail = () => {
     const { id } = useParams();
     const [detail, setDetail] = useState(null);
-    const [address, setAddress] = useState("");
+    const [address, setAddress] = useState(null);
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [userWantReserve, setUserWantReserve] = useState(false);
+    const { user } = useContext(Context);
+
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
+
+    const naverPayRef = useRef(null);
+
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "https://nsp.pay.naver.com/sdk/js/naverpay.min.js";
+        script.onload = () => {
+            naverPayRef.current = window.Naver?.Pay.create({
+                mode: "development", // production 시 'production'으로 변경
+                clientId: "HN3GGCMDdTgGUfl0kFCo",
+                chainId: "N2RuTHNTcUh6cHV",
+            });
+        };
+        document.body.appendChild(script);
+    }, []);
 
     const [facilityData, setFacilityData] = useState(null);
     const [reviews, setReviews] = useState([]);
@@ -570,7 +215,7 @@ const ReserveDetail = () => {
                     {/* 지도 */}
                     {isMapOpen && (
                         <Box sx={{ my: 2 }}>
-                            <ReserveMap address={address} setAddress={setAddress} />
+                            <ReserveMap lat={latitude} lng={longitude} />
                             <Divider />
                         </Box>
                     )}
@@ -610,6 +255,43 @@ const ReserveDetail = () => {
                             sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
                             size="large"
                             fullWidth
+                            onClick={async () => {
+                                if (!naverPayRef.current) return alert("결제 모듈을 불러오지 못했습니다.");
+                                if (!startDate || !startTime) return alert("예약 날짜 및 시간을 선택해주세요");
+
+                                const entryTime = dayjs(
+                                    `${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`
+                                ).toISOString();
+                                const exitTime =
+                                    endDate && endTime
+                                        ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toISOString()
+                                        : null;
+
+                                try {
+                                    const response = await addTempReserve({
+                                        userId: user.id,
+                                        facilityId: detail.id,
+                                        entryTime,
+                                        exitTime,
+                                        amount: 240000,
+                                    });
+
+                                    const merchantPayKey = response.data.reserveId;
+
+                                    naverPayRef.current.open({
+                                        merchantPayKey,
+                                        productName: detail.name,
+                                        productCount: "1",
+                                        totalPayAmount: "240000",
+                                        taxScopeAmount: "240000",
+                                        taxExScopeAmount: "0",
+                                        returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
+                                    });
+                                } catch (err) {
+                                    console.error("예약 생성 실패:", err);
+                                    alert("예약 생성 중 오류가 발생했습니다.");
+                                }
+                            }}
                         >
                             결제하기
                         </Button>
