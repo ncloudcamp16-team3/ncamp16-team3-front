@@ -489,7 +489,7 @@ const ReserveDetail = () => {
                     {/* 지도 */}
                     {isMapOpen && (
                         <Box sx={{ my: 2 }}>
-                            <ReserveMap address={address} setAddress={setAddress} />
+                            <ReserveMap lat={latitude} lng={longitude} />
                             <Divider />
                         </Box>
                     )}
