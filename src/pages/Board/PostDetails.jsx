@@ -162,8 +162,7 @@ const PostDetails = () => {
         const message = comment.replace(/^@\S+\s*/, "");
 
         addComment(message, postId, user.id, replyingTo?.commentId)
-            .then((res) => {
-                handleSnackbarOpen(res.message, "success");
+            .then(() => {
                 setComment("");
                 setPostData((prev) =>
                     produce(prev, (draft) => {
