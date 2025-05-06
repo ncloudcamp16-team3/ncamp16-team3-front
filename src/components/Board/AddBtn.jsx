@@ -42,6 +42,7 @@ const AddBtn = () => {
                 borderRadius: "100%",
                 width: "50px",
                 height: "50px",
+                cursor: "pointer",
             }}
         >
             <AddIcon sx={{ fontSize: "35px", color: "white" }} />

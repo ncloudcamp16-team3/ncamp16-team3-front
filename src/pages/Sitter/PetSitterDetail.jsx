@@ -96,7 +96,7 @@ const PetSitterDetail = () => {
                         petInfo: formatPetInfo(sitter),
                         experience: sitter.sitterExp,
                     },
-                    visibleTo: `ncid${myId}`
+                    visibleTo: `ncid${myId}`,
                 };
 
                 await nc.sendMessage(channelId, {
@@ -173,11 +173,18 @@ const PetSitterDetail = () => {
                 <Box sx={{ mb: 4 }}>
                     <InfoItem label="연령대" value={sitter.age} />
 
-                    {/* 반려동물 타입 */}
-                    <InfoItem label="반려동물" value={sitter.petTypesFormatted || "정보 없음"} />
+                    {/* 반려동물 정보는 grown이 true인 경우에만 표시 */}
+                    {sitter.grown ? (
+                        <>
+                            {/* 반려동물 타입 */}
+                            <InfoItem label="반려동물" value={sitter.petTypesFormatted || "정보 없음"} />
 
-                    {/* 키우는 수 별도 표시 */}
-                    <InfoItem label="키우는 수" value={sitter.petCount || "정보 없음"} />
+                            {/* 키우는 수 별도 표시 */}
+                            <InfoItem label="키우는 수" value={sitter.petCount || "정보 없음"} />
+                        </>
+                    ) : (
+                        <InfoItem label="반려동물" value="키우고 있지 않음" />
+                    )}
 
                     <InfoItem label="임시보호 경험" value={sitter.sitterExp ? "있음" : "없음"} />
                     <InfoItem label="주거 형태" value={sitter.houseType} />
