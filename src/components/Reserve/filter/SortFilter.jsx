@@ -1,17 +1,12 @@
 import React from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useReserveContext } from "../../../context/ReserveContext.jsx";
+import { useFacilityListContext } from "../../../context/ReserveContext.jsx";
 
 const SortFilter = () => {
-    const { sortBy, setSortBy, setPage, setNoData, setLast } = useReserveContext();
+    const { sortBy, setSortBy } = useFacilityListContext();
 
     const handleSort = (event, newSort) => {
-        if (newSort !== null) {
-            setSortBy(newSort);
-            setPage(0); // 페이지 초기화
-            setNoData(false);
-            setLast(false);
-        }
+        setSortBy(newSort);
     };
 
     return (

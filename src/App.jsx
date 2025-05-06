@@ -91,7 +91,6 @@ function App() {
                                     <Route path="facility/list" element={<AdminFacilityList />} />
                                     <Route path="facility/list/:id" element={<AdminFacilityDetail />} />
                                     <Route path="facility/add" element={<AdminFacilityAdd />} />
-                                    <Route path="facility/:id/update" element={<AdminFacilityUpdate />} />
                                 </Route>
                             </Route>
 
