@@ -19,10 +19,15 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function (payload) {
     console.log("[firebase-messaging-sw.js] Background Message received. ", payload);
 
-    const notificationTitle = payload.data.title;
+    // payload.notification과 payload.data에서 알림 내용 처리
+    const notificationTitle = payload.notification.title || "알림"; // notification에서 제목 가져오기
+    const notificationBody = payload.notification.body || "새로운 알림이 도착했습니다."; // notification에서 본문 가져오기
+    const notificationIcon = payload.notification.image || "/default-icon.png"; // notification에서 이미지 가져오기
+
     const notificationOptions = {
-        body: payload.data.body,
-        icon: payload.data.image,
+        body: notificationBody,
+        icon: notificationIcon,
+        data: payload.data, // payload.data에서 추가적인 데이터 가져오기
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
