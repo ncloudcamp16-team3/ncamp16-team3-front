@@ -34,14 +34,14 @@ const WriterInfo = ({ postData }) => {
                 >
                     {postData.authorNickname}
                 </Typography>
-                <Typography
+                {/*<Typography
                     sx={{
                         fontSize: "14px",
                         color: "rgba(0, 0, 0, 0.4)",
                     }}
                 >
                     {postData.authorAddress}
-                </Typography>
+                </Typography>*/}
             </Box>
         </Box>
     );
