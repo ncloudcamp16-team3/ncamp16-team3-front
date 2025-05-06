@@ -211,7 +211,7 @@ const ReserveDetail = () => {
                     {/* 지도 */}
                     {isMapOpen && (
                         <Box sx={{ my: 2 }}>
-                            <ReserveMap lat={latitude} lng={longitude} />
+                            <ReserveMap lat={facilityData.latitude} lng={facilityData.longitude} />
                             <Divider />
                         </Box>
                     )}
