@@ -8,6 +8,24 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
     const isHold = sitterInfo?.status === "PENDING";
     const isDeleted = sitterInfo?.status === "DELETE";
 
+    const formatPetInfo = () => {
+        if (!sitterInfo) return { types: "정보 없음", count: "정보 없음" };
+
+        let petTypeDisplay = sitterInfo.petTypesFormatted || "정보 없음";
+        let petCountDisplay = sitterInfo.petCount || "1마리";
+
+        return {
+            types: petTypeDisplay,
+            count: petCountDisplay,
+        };
+    };
+
+    // 반려동물 정보
+    const petInfo = formatPetInfo();
+
+    console.log("펫시터 정보:", sitterInfo);
+    console.log("반려동물 정보:", petInfo);
+
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
@@ -51,10 +69,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                 }}
                             >
                                 <InfoRow label="연령대" value={sitterInfo.age || "40대"} />
-                                <InfoRow
-                                    label="반려동물"
-                                    value={`${sitterInfo.petType || "강아지"} ${sitterInfo.petCount || "1마리"}`}
-                                />
+                                <InfoRow label="반려동물" value={petInfo.types} />
+                                <InfoRow label="키우는 수" value={petInfo.count} />
                                 <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
                                 <InfoRow label="주거 형태" value={sitterInfo.houseType || "오피스텔"} />
                                 <InfoRow
@@ -65,21 +81,6 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                             </Box>
 
                             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                <Button
-                                    variant="contained"
-                                    onClick={onEditClick}
-                                    sx={{
-                                        width: "100%",
-                                        bgcolor: "#E9A260",
-                                        "&:hover": { bgcolor: "#d0905a" },
-                                        borderRadius: "4px",
-                                        py: 0.7,
-                                        fontSize: "0.9rem",
-                                        boxShadow: "none",
-                                    }}
-                                >
-                                    펫시터 정보 수정
-                                </Button>
                                 <Button
                                     variant="contained"
                                     onClick={onQuitClick}
@@ -189,10 +190,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                 }}
                             >
                                 <InfoRow label="연령대" value={sitterInfo.age || "40대"} />
-                                <InfoRow
-                                    label="반려동물"
-                                    value={`${sitterInfo.petType || "강아지"} ${sitterInfo.petCount || "1마리"}`}
-                                />
+                                <InfoRow label="반려동물" value={petInfo.types} />
+                                <InfoRow label="키우는 수" value={petInfo.count} />
                                 <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
                             </Box>
                         </>
@@ -296,7 +295,6 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
     );
 };
 
-// 정보 행 컴포넌트
 const InfoRow = ({ label, value, isComment = false }) => (
     <Box
         sx={{
