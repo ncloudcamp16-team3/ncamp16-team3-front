@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useFacilityListContext } from "../../context/ReserveContext.jsx";
+import { useReserveContext } from "../../context/ReserveContext.jsx";
 import { useLocation } from "react-router-dom";
 
 const useScrollRestore = () => {
     const { pathname } = useLocation();
-    const { setScrollY, getScrollY } = useFacilityListContext();
+    const { setScrollY, getScrollY } = useReserveContext();
 
     useEffect(() => {
         // 페이지 진입 시 스크롤 위치 복원

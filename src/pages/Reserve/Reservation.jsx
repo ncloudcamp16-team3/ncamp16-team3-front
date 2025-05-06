@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { Card, CardMedia, Container, ListItem, Typography, Box, List, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import reserveList from "../../../mock/Reserve/reserveList.json";
-import { Box, Button, Card, CardMedia, Container, List, ListItem, Typography } from "@mui/material";
-import success from "../../../assets/images/Reserve/payment-success.svg";
-import CustomizedDot from "../utils/CustomizedDot.jsx";
+import success from "../../assets/images/Reserve/payment-success.svg";
+import reserveList from "../../mock/Reserve/reserveList.json";
+import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 
-const ReserveResultView = () => {
+const Reservation = () => {
     const { id } = useParams();
     const [facility, setFacility] = useState(null);
     const navigate = useNavigate();
@@ -77,4 +77,4 @@ const ReserveResultView = () => {
     );
 };
 
-export default ReserveResultView;
+export default Reservation;

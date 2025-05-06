@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Box, Typography, TextField, Button, Divider } from "@mui/material";
-import FileUploader from "../utils/FileUploader.jsx";
-import StarRatingConstructor from "../utils/StarRatingConstructor.jsx";
+import TitleBar from "../../components/Global/TitleBar.jsx";
+import reserveList from "../../mock/Reserve/reserveList.json";
+import FileUploader from "../../components/Reserve/utils/FileUploader.jsx";
+import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
 
-const ReviewInputFormView = () => {
+const Review = () => {
     const { id } = useParams();
     const [facilityInfo, setFacilityInfo] = useState();
     const text = useRef();
@@ -29,6 +31,7 @@ const ReviewInputFormView = () => {
 
     return (
         <Container>
+            <TitleBar name="리뷰 작성" />
             <Divider />
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
                 <Typography sx={{ fontWeight: "bold", fontSize: 24 }}>{facilityInfo?.name}</Typography>
@@ -60,4 +63,4 @@ const ReviewInputFormView = () => {
     );
 };
 
-export default ReviewInputFormView;
+export default Review;
