@@ -521,9 +521,7 @@ const AddPet = () => {
                     onChange={handleChange}
                     placeholder="반려동물 이름을 입력하세요"
                     sx={{ mb: 2 }}
-                    inputProps={{
-                        max: today,
-                    }}
+
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>
@@ -537,6 +535,9 @@ const AddPet = () => {
                     value={petData.birthDate}
                     onChange={handleChange}
                     sx={{ mb: 2 }}
+                    inputProps={{
+                        max: today,
+                    }}
                 />
 
                 <Divider sx={{ my: 3, borderColor: "#f0f0f0", borderWidth: 2 }} />
