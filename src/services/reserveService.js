@@ -45,7 +45,7 @@ export const getFacilityToReserveById = ({ id }) => {
 
 export const getReserveListById = ({ id }) => {
     return instance
-        .get(`${API_URL}/Reserve`, {
+        .get(`${API_URL}/lists`, {
             params: {
                 id,
             },
@@ -59,7 +59,7 @@ export const getReserveListById = ({ id }) => {
 
 export const getReserveDetailById = ({ uid, rid }) => {
     return instance
-        .get(`${API_URL}/reserve/detail`, {
+        .get(`${API_URL}/detail`, {
             params: {
                 uid,
                 rid,
@@ -72,19 +72,24 @@ export const getReserveDetailById = ({ uid, rid }) => {
         });
 };
 
-export const putReview = async ({ id, formData }) => {
+export const putReview = async (id, formData) => {
     return await instance
-        .put(`${API_URL}/reserve/facility/${id}/review`, formData) // 그대로 formData 전달
-        .then((response) => response.data)
+        .put(`${API_URL}/facility/${id}/review`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((response) => response)
         .catch((error) => {
             console.error("리뷰 업로드에 실패했습니다.", error);
             throw error;
         });
 };
 
-export const getFacilityNameAndThumbnail = async ({ id }) => {
+export const getFacilityNameAndThumbnail = async (id) => {
+    if (!id) return;
     return await instance
-        .get(`${API_URL}/reserve/facility/review${id}`)
+        .get(`${API_URL}/facility/${id}/review`)
         .then((response) => response.data)
         .catch((error) => {
             console.error("예약 정보를 불러오는 데 실패했습니다.", error);
