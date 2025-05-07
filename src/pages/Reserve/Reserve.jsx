@@ -6,7 +6,6 @@ import { Box, Button, Container, Divider } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useNavigate } from "react-router-dom";
-import { ReserveProvider } from "../../context/ReserveContext";
 
 const ReserveContent = () => {
     const navigate = useNavigate();
@@ -32,7 +31,26 @@ const ReserveContent = () => {
                 }}
             >
                 <CategoryFilter />
-                <Box my={2} sx={{ display: "flex", justifyContent: "row", pl: 2, pr: 2, gap: 31, mb: 0 }}>
+                <Box
+                    my={2}
+                    sx={{
+                        display: "flex",
+                        justifyContent: "row",
+                        pl: 2,
+                        pr: 2,
+                        gap: 31,
+                        mb: 0,
+                        "@media (max-width: 375px) and (max-height: 667px)": {
+                            /* 아이폰 SE 비율 */ gap: 15,
+                        },
+                        "@media (max-width: 414px) and (max-height: 896px)": {
+                            /* 아이폰 12/13 Pro Max 비율 */ gap: 20,
+                        },
+                        "@media (max-width: 390px) and (max-height: 844px)": {
+                            /* 아이폰 12/13 비율 */ gap: 25,
+                        },
+                    }}
+                >
                     <SortFilter />
                     <Button sx={{ bgcolor: "#FFF", borderRadius: 2 }} onClick={() => navigate("/reserve/list")}>
                         내 예약 목록
@@ -47,7 +65,7 @@ const ReserveContent = () => {
 
 const Reserve = () => (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ReserveContent />
+        <ReserveContent />
     </LocalizationProvider>
 );
 
