@@ -8,6 +8,7 @@ import { getFacilityNameAndThumbnail, putReview } from "../../services/reserveSe
 import Loading from "../../components/Global/Loading.jsx";
 import { Context } from "../../context/Context.jsx";
 import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx";
+import { useReserveContext } from "../../context/ReserveContext.jsx";
 
 const Review = () => {
     const { id } = useParams(); // useParams 훅 사용
@@ -43,6 +44,20 @@ const Review = () => {
         fetchData();
     }, [id]);
 
+    const handleClick = async () => {
+        setGlobalConfirmModal({
+            open: true,
+            onClose: () => setGlobalConfirmModal({ ...globalConfirmModal, open: false }),
+            onConfirm: () => {
+                handleSubmit;
+            },
+            title: "리뷰 등록",
+            description: "리뷰를 등록하시겠습니까?",
+            confirmText: "확인",
+            cancelText: "취소",
+        });
+    };
+
     const handleSubmit = async () => {
         const comment = text.current.value;
 
@@ -66,7 +81,7 @@ const Review = () => {
         }
     };
 
-    if (loading) {
+    if (loading || !facilityInfo) {
         return (
             <Container>
                 <Loading />
@@ -139,13 +154,21 @@ const Review = () => {
                     variant="contained"
                     sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
                     size="large"
-                    onClick={handleSubmit}
+                    onClick={handleClick}
                     fullWidth
                 >
                     등 록
                 </Button>
             </Box>
-            <GlobalConfirmModal open={} onClose={} onConfirm={} onCancel={} title ={} description ={} confirmText = {} cancelText={} />
+            <GlobalConfirmModal
+                open={globalConfirmModal.open}
+                onClose={globalConfirmModal.onClose}
+                onConfirm={globalConfirmModal.onConfirm}
+                title={globalConfirmModal.title}
+                description={globalConfirmModal.description}
+                confirmText={globalConfirmModal.confirmText}
+                cancelText={globalConfirmModal.cancelText}
+            />
         </Container>
     );
 };

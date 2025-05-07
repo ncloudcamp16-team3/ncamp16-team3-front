@@ -21,9 +21,9 @@ export const ReserveProvider = ({ children }) => {
         redirectUrl: "",
     });
     const [globalConfirmModal, setGlobalConfirmModal] = useState({
-        open: "",
-        onClose: "",
-        onConfirm: "",
+        open: false,
+        onClose: () => {},
+        onConfirm: () => {},
         title: "",
         description: "",
         confirmText: "",
