@@ -153,9 +153,15 @@ const ChatRoom = () => {
                         photo: msg.sender?.profile,
                     };
                 });
+
+                const filteredMessages = loadedMessages.filter(msg => {
+                    if (msg.type_id === 4) {
+                        return true;
+
                 const filteredMessages = loadedMessages.filter((msg) => {
                     if (msg.type_id === 4 && msg.metadata.visibleTo) {
                         return msg.metadata.visibleTo === `ncid${user.id}`;
+
                     }
                     return true;
                 });
