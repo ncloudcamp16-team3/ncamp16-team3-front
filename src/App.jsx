@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/User/ProtectedRoute.jsx";
 import ProtectedAdminRoute from "./components/Admin/ProtectedAdminRoute.jsx";
 import EditVideoDetail from "./pages/PetSta/EditVideoDetail.jsx";
 import EditPhotoDetail from "./pages/PetSta/EditPhotoDetail.jsx";
+import AdminNoticeList from "./pages/Admin/AdminNoticeList.jsx";
 
 // Lazy-loaded Pages
 const Main = lazy(() => import("./pages/PetMeeting/Main.jsx"));
@@ -86,6 +87,7 @@ function App() {
                                     <Route path="board/list" element={<AdminDashboard />} />
                                     <Route path="board/:id" element={<AdminPostDetail />} />
                                     <Route path="board/post" element={<AdminNotice />} />
+                                    <Route path="board/notice/list" element={<AdminNoticeList />} />
                                     <Route path="petsitter/list" element={<AdminPetsitterList />} />
                                     <Route path="petsitter/:id" element={<AdminPetsitterDetail />} />
                                     <Route path="petsitter/pending" element={<AdminPetSitterApplyList />} />

@@ -185,7 +185,7 @@ const ReserveDetail = () => {
                 totalPayAmount: "30000",
                 taxScopeAmount: "30000",
                 taxExScopeAmount: "0",
-                returnUrl: `https://tailfriends.kro.kr/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
+                returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
             });
         } catch (err) {
             console.error("예약 생성 실패:", err);
@@ -224,8 +224,16 @@ const ReserveDetail = () => {
     const facilityType = facilityData.facilityType || "호텔";
 
     // 현재 요일의 영업 시간 정보
-    const openTime = facilityData.openingHours?.[today]?.openTime.substring(0, 5) || "09:00";
-    const closeTime = facilityData.openingHours?.[today]?.closeTime.substring(0, 5) || "18:00";
+    let openTime;
+    let closeTime;
+
+    if (facilityData.openingHours?.[today]?.openTime == null || facilityData.openingHours?.[today]?.closeTime == null) {
+        openTime = "";
+        closeTime = "";
+    } else {
+        openTime = facilityData.openingHours[today].openTime.substring(0, 5);
+        closeTime = facilityData.openingHours[today].closeTime.substring(0, 5);
+    }
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -257,9 +265,11 @@ const ReserveDetail = () => {
                                 color={inRange ? "success" : "default"}
                                 sx={{ color: "#fff" }}
                             />
-                            <Typography sx={{ fontWeight: "bold" }}>
-                                {openTime} - {closeTime}
-                            </Typography>
+                            {openTime && closeTime && (
+                                <Typography sx={{ fontWeight: "bold" }}>
+                                    {openTime} - {closeTime}
+                                </Typography>
+                            )}
                         </Box>
                     </Box>
 

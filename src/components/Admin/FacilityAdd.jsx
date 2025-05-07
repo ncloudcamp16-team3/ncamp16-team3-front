@@ -673,7 +673,7 @@ const FacilityAdd = () => {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={12} sm={6} sx={{ width: "20%" }}>
+                                <Grid item xs={12} sm={6} sx={{ width: "40%" }}>
                                     <TextField
                                         fullWidth
                                         label="업체 전화번호"

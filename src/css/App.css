@@ -71,7 +71,7 @@ body.modal-open {
     transform: translateZ(0);
     font-size: 10px;
     height: 65px;
-    z-index: 900;
+    z-index: 1000;
 }
 
 .bottom-button{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Box, List, ListItem, Typography, Button, Divider } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
@@ -7,12 +7,27 @@ import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 import { getReserveDetail } from "../../services/reserveService.js";
 import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
+import { cancelReserve, getReserveDetail } from "../../services/reserveService.js";
+import { Context } from "../../context/Context.jsx"; // ✅ API 호출 함수
 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
+    const { showModal, handleSnackbarOpen } = useContext(Context);
+
+    const requestCancelReserve = () => {
+        cancelReserve(id)
+            .then(() => {
+                showModal("", "예약 취소 성공", () => {
+                    navigate("/reserve/list");
+                });
+            })
+            .catch((err) => {
+                handleSnackbarOpen(err.message, "error");
+            });
+    };
 
     useEffect(() => {
         getReserveDetail(id)
@@ -112,6 +127,7 @@ const ReservationDetail = () => {
                         sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
                         size="large"
                         fullWidth
+                        onClick={requestCancelReserve}
                     >
                         예약취소
                     </Button>

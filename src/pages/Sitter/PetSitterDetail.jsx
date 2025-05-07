@@ -81,10 +81,27 @@ const PetSitterDetail = () => {
                 await nc.subscribe(channelId);
             }
 
+            // 펫시터 타입 메시지가 있는지 확인
             const messageFilter = { channel_id: channelId };
-            const messages = await nc.getMessages(messageFilter, {}, { per_page: 1 });
+            const messages = await nc.getMessages(messageFilter, {}, { per_page: 100 });
 
-            if (!messages.edges || messages.edges.length === 0) {
+            let hasPetSitterMessage = false;
+            if (messages.edges && messages.edges.length > 0) {
+                for (const edge of messages.edges) {
+                    try {
+                        const content = JSON.parse(edge.node.content);
+                        if (content.customType === "PETSITTER" && content.content.sitterId === sitter.id) {
+                            hasPetSitterMessage = true;
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+            }
+
+            // 이 펫시터에 대한 메시지가 없으면 항상 펫시터 정보 메시지 전송
+            if (!hasPetSitterMessage) {
                 const payload = {
                     customType: "PETSITTER",
                     content: {
@@ -96,7 +113,6 @@ const PetSitterDetail = () => {
                         petInfo: formatPetInfo(sitter),
                         experience: sitter.sitterExp,
                     },
-                    visibleTo: `ncid${myId}`,
                 };
 
                 await nc.sendMessage(channelId, {
@@ -110,7 +126,6 @@ const PetSitterDetail = () => {
             console.error("❌ 펫시터 채팅 생성 실패:", e);
         }
     };
-
 
     const formatPetInfo = (sitterData) => {
         if (sitterData && sitterData.petTypesFormatted) {
