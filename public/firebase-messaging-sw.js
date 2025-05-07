@@ -1,5 +1,5 @@
-importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js");
 
 // Firebase 앱 초기화
 firebase.initializeApp({
@@ -16,14 +16,34 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 // 백그라운드에서 푸시 알림 수신 처리
-messaging.onBackgroundMessage(function (payload) {
-    console.log("[firebase-messaging-sw.js] Background Message received. ", payload);
+// messaging.onBackgroundMessage(function (payload) {
+//     if (payload.notification) {
+//         console.log("브라우저가 자동으로 알림을 띄우므로, 수동 알림 생략");
+//         return; // 중복 방지
+//     }
+//     console.log("[firebase-messaging-sw.js] Background Message received.", payload);
+//
+//     const notificationTitle = payload.notification?.title || "알림";
+//     const notificationBody = payload.notification?.body || "새로운 알림이 도착했습니다.";
+//
+//     // 아이콘은 notification.image 또는 data.icon 중 하나에서 가져옴
+//     const notificationIcon = payload.notification?.image || payload.data?.icon || "/default-icon.png";
+//
+//     const notificationOptions = {
+//         body: notificationBody,
+//         icon: notificationIcon,
+//         data: payload.data,
+//     };
+//
+//     self.registration.showNotification(notificationTitle, notificationOptions);
+// });
 
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: "/firebase-logo.png", // 아이콘 경로 수정 가능
+messaging.onBackgroundMessage((payload) => {
+    const title = payload.data?.title;
+    const options = {
+        body: payload.data?.body,
+        icon: payload.data?.icon,
+        data: payload.data,
     };
-
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    self.registration.showNotification(title, options);
 });

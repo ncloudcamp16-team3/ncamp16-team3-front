@@ -10,7 +10,7 @@ const initialPetData = {
     petBirth: "",
     petWeight: "",
     petInfo: "",
-    petNeutered: "N",
+    petNeutered: null,
     petPhotos: [],
 };
 
@@ -82,7 +82,6 @@ export const RegisterProvider = ({ children }) => {
                 setSnsTypeId(data.snsTypeId);
                 goToStep1();
             } else {
-                console.log("기존 사용자 정보:", data);
             }
         })();
     }, []);

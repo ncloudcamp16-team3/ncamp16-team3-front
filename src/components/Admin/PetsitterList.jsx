@@ -67,8 +67,6 @@ const PetsitterList = () => {
             const apiPage = Math.max(0, currentPage - 1);
             const response = await fetchPetSitter(apiPage, 10, searchTerm, searchField);
 
-            // console.log("API Response: " + response);
-
             //데이터가 있는지 확인
             if (!response || !response.content) {
                 console.warn("API 응답에 데이터가 없습니다: " + response);
@@ -96,7 +94,6 @@ const PetsitterList = () => {
             setFilteredRows(transformedData);
             setTotalPage(response.totalPages || 0);
         } catch (error) {
-            console.log("펫시터 목록 불러오는중 오류 발생: " + error);
             setError("펫시터 목록을 불러오는중 오류가 발생했습니다");
         } finally {
             setLoading(false);
@@ -110,13 +107,11 @@ const PetsitterList = () => {
     // 필터에 따라 다른 필드를 검색하는 핸들러
     const handleSearch = (term, field) => {
         // 컨텍스트의 executeSearch
-        // console.log(`'${field}'에서 '${term}' 검색 요청됨`);
     };
 
     // 필터 핸들러
     const handleFilterChange = (category) => {
         // 컨텍스트의 setCurrentCategory
-        // console.log(`카테고리 필터 변경: ${category}`);
     };
 
     const handlePageChange = (newPage) => {
@@ -193,8 +188,8 @@ const PetsitterList = () => {
                                                     <Box
                                                         component="img"
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 100,
+                                                            width: 100,
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}

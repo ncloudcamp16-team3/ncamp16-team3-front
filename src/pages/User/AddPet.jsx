@@ -1,13 +1,24 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, IconButton, Stack, Divider, Chip, Alert, Snackbar } from "@mui/material";
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    IconButton,
+    Divider,
+    Chip,
+    Alert,
+    Snackbar,
+    Grid,
+    Card,
+    CardMedia,
+} from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate } from "react-router-dom";
-import petEx from "/src/assets/images/User/pet_ex.svg";
+import petEx from "/src/assets/images/User/profile.png";
 import instance from "../../services/axiosInstance.js";
 
 const AddPet = () => {
@@ -23,10 +34,11 @@ const AddPet = () => {
         introduction: "",
     });
 
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [images, setImages] = useState([null, null, null, null, null, null]);
-    const [imagePreviews, setImagePreviews] = useState([null, null, null, null, null, null]);
-    const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
+    // 이미지 상태를 동적 배열로 관리
+    const [images, setImages] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
+    const [mainPhotoIndex, setMainPhotoIndex] = useState(0); // 대표 이미지 인덱스
+    const [selectedImageIndex, setSelectedImageIndex] = useState(-1); // 선택된 이미지 인덱스
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -34,12 +46,30 @@ const AddPet = () => {
         severity: "info",
     });
 
+    // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
+    const today = new Date().toISOString().split("T")[0];
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPetData({
             ...petData,
             [name]: value,
         });
+    };
+
+    // 몸무게 입력 처리 함수 추가
+    const handleWeightChange = (e) => {
+        const value = e.target.value;
+
+        // 숫자와 소수점만 허용
+        const regex = /^[0-9]*\.?[0-9]*$/;
+
+        if (value === "" || regex.test(value)) {
+            setPetData({
+                ...petData,
+                weight: value,
+            });
+        }
     };
 
     const handleImageUpload = (e) => {
@@ -66,191 +96,177 @@ const AddPet = () => {
             return;
         }
 
-        const newImages = [...images];
-        newImages[currentImageIndex] = file;
+        // 최대 6개 제한
+        if (images.length >= 6) {
+            setSnackbar({
+                open: true,
+                message: "최대 6개의 이미지만 등록할 수 있습니다.",
+                severity: "warning",
+            });
+            return;
+        }
+
+        // 새 이미지 추가
+        const newImages = [...images, file];
         setImages(newImages);
 
+        // 이미지 미리보기 생성
         const reader = new FileReader();
         reader.onloadend = () => {
-            const newPreviews = [...imagePreviews];
-            newPreviews[currentImageIndex] = reader.result;
-            setImagePreviews(newPreviews);
-        };
-        reader.readAsDataURL(file);
-
-        // 첫 이미지라면 자동으로 메인 이미지로 설정
-        if (!imagePreviews.some((preview) => preview !== null)) {
-            setMainPhotoIndex(currentImageIndex);
-        }
-    };
-
-    const handleRemoveImage = () => {
-        // 현재 선택된 이미지 삭제
-        if (imagePreviews[currentImageIndex]) {
-            const newImages = [...images];
-            const newPreviews = [...imagePreviews];
-
-            newImages[currentImageIndex] = null;
-            newPreviews[currentImageIndex] = null;
-
-            setImages(newImages);
+            const newPreviews = [...imagePreviews, reader.result];
             setImagePreviews(newPreviews);
 
-            // 메인 이미지가 삭제된 경우 새 메인 이미지 설정
-            if (mainPhotoIndex === currentImageIndex) {
-                // 다음으로 유효한 이미지 찾기
-                const nextValidIndex = newPreviews.findIndex((preview) => preview !== null);
-                if (nextValidIndex !== -1) {
-                    setMainPhotoIndex(nextValidIndex);
-                }
+            // 새로 추가된 이미지 선택
+            setSelectedImageIndex(newPreviews.length - 1);
+
+            // 첫 이미지라면 자동으로 메인 이미지로 설정 (중요)
+            if (newPreviews.length === 1) {
+                setMainPhotoIndex(0);
             }
-
-            // 다음 이미지로 이동
-            const nextIndex = findNextValidImageIndex(newPreviews, currentImageIndex);
-            setCurrentImageIndex(nextIndex);
 
             setSnackbar({
                 open: true,
-                message: "이미지가 삭제되었습니다.",
-                severity: "info",
+                message: "이미지가 추가되었습니다.",
+                severity: "success",
             });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemoveImage = (index) => {
+        if (imagePreviews.length === 0 || index >= imagePreviews.length) {
+            return;
         }
-    };
 
-    // 다음으로 유효한 이미지 인덱스 찾기 (원형 탐색)
-    const findNextValidImageIndex = (previews, currentIndex) => {
-        // 먼저 현재 인덱스 이후부터 탐색
-        for (let i = 0; i < previews.length; i++) {
-            const index = (currentIndex + i) % previews.length;
-            if (previews[index] !== null) {
-                return index;
-            }
+        // 선택된 이미지 삭제
+        const newImages = [...images];
+        const newPreviews = [...imagePreviews];
+
+        newImages.splice(index, 1);
+        newPreviews.splice(index, 1);
+
+        setImages(newImages);
+        setImagePreviews(newPreviews);
+
+        // 메인 이미지가 삭제된 경우 첫 번째 이미지를 메인으로 설정
+        if (mainPhotoIndex === index) {
+            setMainPhotoIndex(newPreviews.length > 0 ? 0 : 0);
+        } else if (mainPhotoIndex > index) {
+            setMainPhotoIndex(mainPhotoIndex - 1);
         }
-        return 0; // 모든 이미지가 null이면 첫 번째 슬롯으로
+
+        if (selectedImageIndex === index) {
+            setSelectedImageIndex(newPreviews.length > 0 ? 0 : -1);
+        } else if (selectedImageIndex > index) {
+            setSelectedImageIndex(selectedImageIndex - 1);
+        }
+
+        setSnackbar({
+            open: true,
+            message: "이미지가 삭제되었습니다.",
+            severity: "info",
+        });
     };
 
-    const handleImageNavigation = (index) => {
-        setCurrentImageIndex(index);
+    const handleSelectImage = (index) => {
+        setSelectedImageIndex(index);
     };
 
-    const handleSetMainPhoto = () => {
-        if (imagePreviews[currentImageIndex]) {
-            setMainPhotoIndex(currentImageIndex);
+    const handleSetMainPhoto = (index) => {
+        if (imagePreviews.length > 0) {
+            setMainPhotoIndex(index);
             setSnackbar({
                 open: true,
                 message: "대표 사진으로 설정되었습니다",
                 severity: "success",
             });
-        } else {
-            setSnackbar({
-                open: true,
-                message: "이 슬롯에는 이미지가 없습니다",
-                severity: "warning",
-            });
         }
-    };
-
-    const handlePrevImage = () => {
-        // 이전 이미지로 이동 (순환)
-        setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? imagePreviews.length - 1 : prevIndex - 1));
-    };
-
-    const handleNextImage = () => {
-        // 다음 이미지로 이동 (순환)
-        setCurrentImageIndex((prevIndex) => (prevIndex === imagePreviews.length - 1 ? 0 : prevIndex + 1));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // 필수 입력값 검증
-        if (
-            !petData.name ||
-            !petData.birthDate ||
-            !petData.type ||
-            !petData.gender ||
-            petData.weight === "" ||
-            !petData.introduction
-        ) {
+        // 상세한 필수 입력값 검증
+        let errorMessages = [];
+
+        if (!petData.name || !petData.name.trim()) {
+            errorMessages.push("반려동물 이름을 입력해주세요.");
+        }
+
+        if (!petData.birthDate) {
+            errorMessages.push("반려동물의 생일을 선택해주세요.");
+        }
+
+        if (!petData.type) {
+            errorMessages.push("반려동물 종류를 선택해주세요.");
+        }
+
+        if (!petData.gender) {
+            errorMessages.push("반려동물의 성별을 선택해주세요.");
+        }
+
+        if (!petData.weight || !petData.weight.trim()) {
+            errorMessages.push("반려동물의 몸무게를 입력해주세요.");
+        } else if (Number(petData.weight) <= 0) {
+            errorMessages.push("몸무게는 0보다 커야 합니다.");
+        }
+
+        if (!petData.introduction || !petData.introduction.trim()) {
+            errorMessages.push("반려동물 소개를 입력해주세요.");
+        }
+
+        if (images.length === 0) {
+            errorMessages.push("반려동물 사진을 최소 1장 이상 등록해주세요.");
+        }
+
+        // 에러 메시지가 있으면 첫 번째 메시지를 표시
+        if (errorMessages.length > 0) {
             setSnackbar({
                 open: true,
-                message: "모든 필수 항목을 입력해주세요.",
+                message: errorMessages[0],
                 severity: "error",
             });
             setIsSubmitting(false);
             return;
-        }
-
-        // 적어도 하나의 이미지가 필요
-        const hasImages = images.some((img) => img !== null);
-        if (!hasImages) {
-            setSnackbar({
-                open: true,
-                message: "최소 한 장의 사진이 필요합니다.",
-                severity: "error",
-            });
-            setIsSubmitting(false);
-            return;
-        }
-
-        // FormData 객체 생성
-        const formData = new FormData();
-
-        // 반려동물 데이터 JSON 변환 및 추가 - 메인 사진 인덱스 포함
-        const petDataJson = JSON.stringify({
-            name: petData.name,
-            type: petData.type,
-            birthDate: petData.birthDate,
-            gender: petData.gender,
-            isNeutered: petData.isNeutered,
-            weight: parseFloat(petData.weight),
-            introduction: petData.introduction,
-            mainPhotoIndex: getAdjustedMainPhotoIndex(),
-        });
-
-        formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
-
-        // 유효한 이미지만 추출
-        const validImages = [];
-        const validIndices = [];
-
-        images.forEach((image, index) => {
-            if (image !== null) {
-                validImages.push(image);
-                validIndices.push(index);
-            }
-        });
-
-        // 이미지들 FormData에 추가 - 메인 이미지가 첫 번째로 오도록
-        const mainImageIndex = validIndices.indexOf(mainPhotoIndex);
-
-        if (mainImageIndex !== -1) {
-            // 먼저 메인 이미지 추가
-            formData.append("images", validImages[mainImageIndex]);
-
-            // 나머지 이미지 추가
-            validImages.forEach((image, idx) => {
-                if (idx !== mainImageIndex) {
-                    formData.append("images", image);
-                }
-            });
-        } else {
-            // 메인 이미지가 없는 경우 모든 이미지 추가
-            validImages.forEach((image) => {
-                formData.append("images", image);
-            });
         }
 
         try {
+            // FormData 객체 생성
+            const formData = new FormData();
+
+            // 반려동물 데이터 JSON 변환 및 추가
+            const petDataJson = JSON.stringify({
+                name: petData.name,
+                type: petData.type,
+                birthDate: petData.birthDate,
+                gender: petData.gender,
+                isNeutered: petData.isNeutered,
+                weight: parseFloat(petData.weight),
+                introduction: petData.introduction,
+            });
+
+            formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
+
+            // 이미지 추가 - 중요: 대표 이미지를 먼저 추가
+            if (images.length > 0) {
+                // 먼저 메인 이미지 (썸네일)을 추가
+                formData.append("images", images[mainPhotoIndex]);
+
+                // 그 다음 나머지 이미지들 추가
+                images.forEach((image, idx) => {
+                    if (idx !== mainPhotoIndex) {
+                        formData.append("images", image);
+                    }
+                });
+            }
+
             // API 호출
             const response = await instance.post("/pet/add", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
-            console.log("반려동물 등록 응답:", response.data);
 
             // 성공 시 처리
             setSnackbar({
@@ -286,30 +302,25 @@ const AddPet = () => {
         }
     };
 
-    // 유효한 이미지들 중 메인 이미지의 인덱스를 구함
-    const getAdjustedMainPhotoIndex = () => {
-        const validIndices = [];
-
-        images.forEach((image, index) => {
-            if (image !== null) {
-                validIndices.push(index);
-            }
-        });
-
-        const mainIndexPosition = validIndices.indexOf(mainPhotoIndex);
-        return mainIndexPosition !== -1 ? mainIndexPosition : 0;
-    };
-
     const handleGoBack = () => {
         navigate(-1);
     };
 
-    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
+    const petTypes = ["강아지", "고양이", "햄스터", "새", "물고기", "기타"];
+
+    // 현재 보여줄 이미지 (선택된 이미지 또는 첫 번째 이미지)
+    const currentDisplayImage =
+        selectedImageIndex >= 0 && selectedImageIndex < imagePreviews.length
+            ? imagePreviews[selectedImageIndex]
+            : imagePreviews.length > 0
+              ? imagePreviews[0]
+              : null;
 
     return (
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
             <TitleBar name="반려동물 정보추가" onBack={handleGoBack} />
 
+            {/* 선택된 이미지 표시 영역 */}
             <Box
                 sx={{
                     position: "relative",
@@ -318,18 +329,19 @@ const AddPet = () => {
                     width: "calc(100% - 32px)",
                     height: 240,
                     borderRadius: 4,
-                    bgcolor: imagePreviews[currentImageIndex] ? "transparent" : "#FFC0CB",
+                    bgcolor: "transparent",
                     overflow: "hidden",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    border: currentDisplayImage ? "none" : "1px dashed #ccc",
                 }}
             >
-                {imagePreviews[currentImageIndex] ? (
+                {currentDisplayImage ? (
                     <Box
                         component="img"
-                        src={imagePreviews[currentImageIndex]}
-                        alt="반려동물 사진"
+                        src={currentDisplayImage}
+                        alt="선택된 반려동물 사진"
                         sx={{
                             width: "100%",
                             height: "100%",
@@ -341,50 +353,35 @@ const AddPet = () => {
                     <Box
                         component="img"
                         src={petEx}
-                        alt="반려동물 사진"
+                        alt="기본 프로필"
                         sx={{
                             width: "auto",
                             height: "80%",
                             objectFit: "contain",
+                            opacity: 0.7,
                         }}
                     />
                 )}
 
-                {/* 좌측 화살표 */}
-                <IconButton
-                    onClick={handlePrevImage}
-                    sx={{
-                        position: "absolute",
-                        left: 8,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "white",
-                        bgcolor: "rgba(0,0,0,0.3)",
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.5)" },
-                        zIndex: 2,
-                    }}
-                >
-                    <ArrowBackIosNewIcon fontSize="small" />
-                </IconButton>
+                {/* 대표 이미지 설정 버튼 (선택된 이미지가 있을 때만) */}
+                {selectedImageIndex >= 0 && (
+                    <IconButton
+                        onClick={() => handleSetMainPhoto(selectedImageIndex)}
+                        sx={{
+                            position: "absolute",
+                            top: 16,
+                            right: 16,
+                            color: selectedImageIndex === mainPhotoIndex ? "#FFD700" : "white",
+                            bgcolor: "rgba(0,0,0,0.3)",
+                            "&:hover": { bgcolor: "rgba(0,0,0,0.5)" },
+                            zIndex: 2,
+                        }}
+                    >
+                        <StarIcon />
+                    </IconButton>
+                )}
 
-                {/* 우측 화살표 */}
-                <IconButton
-                    onClick={handleNextImage}
-                    sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "white",
-                        bgcolor: "rgba(0,0,0,0.3)",
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.5)" },
-                        zIndex: 2,
-                    }}
-                >
-                    <ArrowForwardIosIcon fontSize="small" />
-                </IconButton>
-
-                {/* 파일 추가 버튼 */}
+                {/* 이미지 업로드 버튼 */}
                 <IconButton
                     component="label"
                     sx={{
@@ -401,10 +398,10 @@ const AddPet = () => {
                     <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
                 </IconButton>
 
-                {/* 현재 이미지가 있을 때만 삭제 버튼 표시 */}
-                {imagePreviews[currentImageIndex] && (
+                {/* 선택된 이미지가 있을 때만 삭제 버튼 표시 */}
+                {selectedImageIndex >= 0 && (
                     <IconButton
-                        onClick={handleRemoveImage}
+                        onClick={() => handleRemoveImage(selectedImageIndex)}
                         sx={{
                             position: "absolute",
                             bottom: 16,
@@ -418,60 +415,86 @@ const AddPet = () => {
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 )}
-
-                {/* 대표 이미지 설정 버튼 */}
-                <IconButton
-                    onClick={handleSetMainPhoto}
-                    sx={{
-                        position: "absolute",
-                        top: 16,
-                        right: 16,
-                        color: currentImageIndex === mainPhotoIndex ? "#FFD700" : "white",
-                        bgcolor: "rgba(0,0,0,0.3)",
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.5)" },
-                        zIndex: 2,
-                    }}
-                >
-                    <StarIcon />
-                </IconButton>
-
-                {/* 이미지 슬라이더 인디케이터 */}
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                        position: "absolute",
-                        bottom: 16,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        display: "flex",
-                        alignItems: "center",
-                        zIndex: 2,
-                    }}
-                >
-                    {imagePreviews.map((preview, index) => (
-                        <Box
-                            key={index}
-                            onClick={() => handleImageNavigation(index)}
-                            sx={{
-                                width: index === currentImageIndex ? 24 : 8,
-                                height: 8,
-                                borderRadius: 4,
-                                bgcolor:
-                                    index === currentImageIndex
-                                        ? "white"
-                                        : index === mainPhotoIndex && preview
-                                          ? "rgba(255, 215, 0, 0.8)"
-                                          : preview
-                                            ? "rgba(255, 255, 255, 0.5)"
-                                            : "rgba(255, 255, 255, 0.2)",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                            }}
-                        />
-                    ))}
-                </Stack>
             </Box>
+
+            {/* 이미지 카드 목록 - 이미지가 1개 이상 있을 때만 표시 */}
+            {imagePreviews.length > 0 && (
+                <Box sx={{ px: 2, mb: 3 }}>
+                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                        등록된 사진 ({imagePreviews.length}/6)
+                    </Typography>
+                    <Grid container spacing={1}>
+                        {imagePreviews.map((preview, index) => (
+                            <Grid item xs={4} key={index}>
+                                <Card
+                                    sx={{
+                                        position: "relative",
+                                        cursor: "pointer",
+                                        border: selectedImageIndex === index ? "2px solid #E9A260" : "none",
+                                        borderRadius: 2,
+                                        overflow: "hidden",
+                                        boxShadow:
+                                            selectedImageIndex === index ? "0 0 8px rgba(233, 162, 96, 0.6)" : "none",
+                                    }}
+                                    onClick={() => handleSelectImage(index)}
+                                >
+                                    <CardMedia
+                                        component="img"
+                                        image={preview}
+                                        alt={`펫 사진 ${index + 1}`}
+                                        sx={{
+                                            width: 100,
+                                            height: 100,
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                    {/* 대표 이미지 표시 */}
+                                    {index === mainPhotoIndex && (
+                                        <Box
+                                            sx={{
+                                                position: "absolute",
+                                                top: 5,
+                                                right: 5,
+                                                bgcolor: "rgba(0,0,0,0.5)",
+                                                borderRadius: "50%",
+                                                width: 20,
+                                                height: 20,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <StarIcon sx={{ color: "#FFD700", fontSize: 16 }} />
+                                        </Box>
+                                    )}
+                                </Card>
+                            </Grid>
+                        ))}
+                        {/* 추가 버튼 카드 (6개 미만일 때만 표시) */}
+                        {imagePreviews.length < 6 && (
+                            <Grid item xs={4}>
+                                <Card
+                                    component="label"
+                                    sx={{
+                                        height: 100,
+                                        width: 100,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                        bgcolor: "#f5f5f5",
+                                        border: "1px dashed #ccc",
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    <AddIcon sx={{ fontSize: 40, color: "#aaa" }} />
+                                    <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                                </Card>
+                            </Grid>
+                        )}
+                    </Grid>
+                </Box>
+            )}
 
             <Box component="form" onSubmit={handleSubmit} sx={{ px: 2 }}>
                 <Typography variant="h6" sx={{ my: 2, fontWeight: "bold" }}>
@@ -502,6 +525,9 @@ const AddPet = () => {
                     value={petData.birthDate}
                     onChange={handleChange}
                     sx={{ mb: 2 }}
+                    inputProps={{
+                        max: today,
+                    }}
                 />
 
                 <Divider sx={{ my: 3, borderColor: "#f0f0f0", borderWidth: 2 }} />
@@ -630,9 +656,9 @@ const AddPet = () => {
                     fullWidth
                     size="small"
                     name="weight"
-                    type="number"
+                    type="text"
                     value={petData.weight}
-                    onChange={handleChange}
+                    onChange={handleWeightChange}
                     placeholder="몸무게(kg)"
                     sx={{ mb: 2 }}
                 />
@@ -673,14 +699,22 @@ const AddPet = () => {
             {/* 스낵바 알림 */}
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={4000}
+                autoHideDuration={6000}
                 onClose={() => setSnackbar({ ...snackbar, open: false })}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    "& .SnackbarContent-root": {
+                        bottom: 80,
+                    },
+                }}
             >
                 <Alert
                     onClose={() => setSnackbar({ ...snackbar, open: false })}
                     severity={snackbar.severity}
-                    sx={{ width: "100%" }}
+                    sx={{
+                        width: "100%",
+                        mb: 8,
+                    }}
                 >
                     {snackbar.message}
                 </Alert>

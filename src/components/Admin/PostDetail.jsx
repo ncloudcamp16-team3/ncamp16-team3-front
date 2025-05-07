@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Card, Button, CardMedia, Paper, Stack, Grid, CircularProgress, Alert } from "@mui/material";
+import { Box, Typography, Card, Button, Paper, Stack, Grid, CircularProgress, Alert } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AdminHeader from "./AdminHeader.jsx";
 import { fetchBoardDetail } from "./adminBoardApi.js";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAdmin } from "./AdminContext.jsx";
 import adminAxios from "./adminAxios.js";
+import ImageSlider from "./ImageSlider.jsx";
 
 // 커스텀 스타일 컴포넌트 생성
 const PostHeader = styled(Box)(({ theme }) => ({
@@ -64,7 +65,6 @@ const PostDetail = () => {
                 const data = await fetchBoardDetail(id);
                 setBoard(data);
             } catch (error) {
-                console.log("게시글 로딩 중 오류: " + error);
                 setError("게시글 불러오기 실패");
             } finally {
                 setLoading(false);
@@ -138,22 +138,36 @@ const PostDetail = () => {
                             <Typography variant="body2">작성자 : {board.authorNickname || board.author}</Typography>
                             <Typography variant="body2">댓글 갯수 : {board.commentCount || 0}개</Typography>
                         </PostInfo>
+                        {board.sell != null && board.price != null && (
+                            <PostInfo>
+                                <Typography variant="body1" color="text.primary">
+                                    가격: {board.price}원
+                                </Typography>
+                                <Typography variant="body1" color="text.primary">
+                                    {board.sell === true ? "판매중" : "판매 완료"}
+                                </Typography>
+                            </PostInfo>
+                        )}
 
                         {/* 게시글 내용 */}
                         <PostContent>
                             {/* 게시글 이미지 - 이미지가 있는 경우에만 표시 */}
                             {board.imageUrls && board.imageUrls.length > 0 && (
-                                <CardMedia
-                                    component="img"
-                                    sx={{ width: 300, height: 200, mb: 2, objectFit: "cover" }}
-                                    image={board.imageUrls[0].url}
-                                    alt="게시글 이미지"
-                                />
+                                <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+                                    <ImageSlider images={board.imageUrls || []} />
+                                </Box>
                             )}
 
                             <Typography variant="body1" color="text.primary" paragraph>
                                 {board.content}
                             </Typography>
+                            {board.authorAddress != null && (
+                                <PostInfo>
+                                    <Typography variant="body1" color="text.primary">
+                                        거래장소: {board.authorAddress}
+                                    </Typography>
+                                </PostInfo>
+                            )}
                         </PostContent>
 
                         {/* 작업 버튼 영역 */}

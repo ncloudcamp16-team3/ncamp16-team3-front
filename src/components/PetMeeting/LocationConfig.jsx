@@ -26,10 +26,6 @@ const LocationConfig = () => {
         }
     }, []);
 
-    const setBack = () => {
-        setView("petMeeting");
-    };
-
     const saveLocation = async () => {
         if (address && dongName && distance) {
             const updatedUser = {
@@ -46,7 +42,7 @@ const LocationConfig = () => {
             saveUserData(updatedUser)
                 .then((res) => {
                     console.log("응답 성공:", res.message);
-                    showModal(null, "위치 저장 완료", setBack);
+                    showModal(null, "위치 저장 완료", () => setView("petMeeting"));
                 })
                 .catch((err) => {
                     console.error("에러 발생:", err.message);
@@ -59,7 +55,7 @@ const LocationConfig = () => {
 
     return (
         <Box>
-            <TitleBar name={"내 위치정보 설정"} onBack={setBack} />
+            <TitleBar name={"내 위치정보 설정"} onBack={() => setView("petMeeting")} />
 
             <KakaoMap
                 address={address}

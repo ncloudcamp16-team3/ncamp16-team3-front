@@ -1,13 +1,6 @@
 import React from "react";
 import { Box, FormControlLabel, Checkbox, FormGroup } from "@mui/material";
 
-/**
- * 옵션 체크박스 그룹 컴포넌트
- * @param {Object} props
- * @param {Object} props.options 옵션 객체
- * @param {Function} props.onChange 선택 변경 핸들러
- * @param {boolean} [props.multiSelect=false] 다중 선택 여부 (true: 다중 선택, false: 단일 선택)
- */
 const OptionCheckboxGroup = ({ options = {}, onChange, multiSelect = false }) => {
     if (!options || typeof options !== "object") return null;
 

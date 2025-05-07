@@ -10,6 +10,7 @@ const BottomButton = ({ icon, label, onClick }) => {
             alignItems="center"
             className="bottom-button"
             onClick={onClick}
+            sx={{ cursor: "pointer" }}
         >
             <img src={icon} width="40px" />
             <span>{label}</span>

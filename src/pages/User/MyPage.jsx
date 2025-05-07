@@ -54,7 +54,6 @@ const MyPage = () => {
             try {
                 // 사용자 정보 API 호출
                 const response = await instance.get("/user/mypage");
-                console.log("마이페이지 응답 데이터:", response.data);
 
                 // API에서 받아온 데이터로 상태 업데이트
                 if (response.data) {
@@ -68,11 +67,7 @@ const MyPage = () => {
 
                     // 반려동물 정보 처리 - 주요 수정 부분
                     if (response.data.pets && Array.isArray(response.data.pets)) {
-                        console.log("원본 반려동물 데이터:", response.data.pets);
-
                         const petsWithProfiles = response.data.pets.map((pet) => {
-                            console.log(`반려동물 ID ${pet.id} 원본 데이터:`, pet);
-
                             // 프로필 이미지 URL 찾기 로직 개선
                             let profileImageUrl = null;
 
@@ -83,17 +78,14 @@ const MyPage = () => {
 
                                 if (thumbnailPhoto) {
                                     profileImageUrl = thumbnailPhoto.path;
-                                    console.log(`ID ${pet.id} - 썸네일 이미지 발견:`, thumbnailPhoto.path);
                                 } else {
                                     // 썸네일이 없으면 첫 번째 사진 사용
                                     profileImageUrl = pet.photos[0].path;
-                                    console.log(`ID ${pet.id} - 썸네일 없음, 첫 번째 이미지 사용:`, pet.photos[0].path);
                                 }
                             }
                             // 2. profileImageUrl 필드가 직접 제공되는 경우
                             else if (pet.profileImageUrl) {
                                 profileImageUrl = pet.profileImageUrl;
-                                console.log(`ID ${pet.id} - profileImageUrl 직접 사용:`, pet.profileImageUrl);
                             }
                             // 3. petPhotoUrls 배열이 제공되는 경우
                             else if (
@@ -102,7 +94,6 @@ const MyPage = () => {
                                 pet.petPhotoUrls.length > 0
                             ) {
                                 profileImageUrl = pet.petPhotoUrls[0];
-                                console.log(`ID ${pet.id} - petPhotoUrls 배열에서 사용:`, pet.petPhotoUrls[0]);
                             }
 
                             return {
@@ -118,10 +109,8 @@ const MyPage = () => {
                             };
                         });
 
-                        console.log("변환된 반려동물 데이터:", petsWithProfiles);
                         setPets(petsWithProfiles);
                     } else {
-                        console.log("반려동물 데이터가 없거나 배열이 아님");
                         setPets([]);
                     }
 
@@ -134,6 +123,7 @@ const MyPage = () => {
                             status: response.data.petSitterStatus,
                             age: response.data.petSitterInfo?.age,
                             petType: response.data.petSitterInfo?.petType,
+                            petTypesFormatted: response.data.petSitterInfo?.petTypesFormatted,
                             petCount: response.data.petSitterInfo?.petCount,
                             houseType: response.data.petSitterInfo?.houseType,
                             experience: response.data.petSitterInfo?.sitterExp,
@@ -255,18 +245,17 @@ const MyPage = () => {
                 setPets([]);
                 setSitterStatus({});
                 localStorage.clear();
-                document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                sessionStorage.clear();
 
-                setSnackbar({
-                    open: true,
-                    message: "회원 탈퇴가 완료되었습니다.",
-                    severity: "success",
+                // 쿠키 삭제
+                document.cookie.split(";").forEach(function (c) {
+                    document.cookie = c
+                        .replace(/^ +/, "")
+                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                 });
 
-                // 잠시 후 로그인 페이지로 이동
-                setTimeout(() => {
-                    window.location.href = "/login"; // 강제 리로드
-                }, 1500);
+                // 회원탈퇴 완료 페이지로 이동
+                navigate("/withdrawal-complete");
             } catch (err) {
                 console.error("회원 탈퇴 처리 실패:", err);
 
@@ -487,7 +476,7 @@ const MyPage = () => {
                         onClose={handleCloseWithdrawalModal}
                         inputValue={withdrawalInput}
                         onInputChange={handleWithdrawalInputChange}
-                        onWithdraw={handleWithdrawal}
+                        onWithdrawal={handleWithdrawal}
                     />
 
                     <NicknameEditModal

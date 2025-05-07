@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button, Avatar, Divider, Paper, Grid } from "@mui/material";
+import { Box, Typography, Button, Avatar, Divider, Paper, Grid, Alert, Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useRegister } from "./RegisterContext.jsx";
 import dayjs from "dayjs";
@@ -10,7 +10,9 @@ dayjs.locale("ko"); // ✅ 한글 설정
 const Step4 = () => {
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState(null);
+
+    const [showSnackbar, setShowSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -22,7 +24,7 @@ const Step4 = () => {
         if (isSubmitting) return;
 
         setIsSubmitting(true);
-        setSubmitError(null);
+        setShowSnackbar(false);
 
         try {
             const snsTypeIdNum = snsTypeId ? Number(snsTypeId) : null;
@@ -38,13 +40,13 @@ const Step4 = () => {
                     const mainIndex = pet.mainPhotoIndex ?? 0; // 대표 사진 인덱스 지정 (없으면 0번)
 
                     return {
-                        petTypeId: pet.petTypeId || 1,
+                        petTypeId: pet.petTypeId,
                         name: pet.petName,
                         gender: pet.petGender,
                         birth: pet.petBirth,
                         weight: pet.petWeight,
                         info: pet.petInfo,
-                        neutered: pet.petNeutered === "Y",
+                        neutered: pet.petNeutered === "" ? null : pet.petNeutered, // 중성화 여부 선택하지 않으면 null로 처리
                         activityStatus: "NONE",
 
                         photos: petPhotos.map((photo, index) => ({
@@ -75,11 +77,11 @@ const Step4 = () => {
                 throw new Error("회원가입 처리 중 오류가 발생했습니다.");
             }
 
-            console.log("회원가입 성공:", result);
             navigate("/");
         } catch (error) {
             console.error("회원가입 오류:", error);
-            setSubmitError(error.message);
+            setSnackbarMessage(error.message || "알 수 없는 오류가 발생했습니다.");
+            setShowSnackbar(true);
         } finally {
             setIsSubmitting(false);
         }
@@ -131,7 +133,11 @@ const Step4 = () => {
                                         <Typography variant="h6">{pet.petName}</Typography>
                                         <Typography variant="body2">
                                             {pet.petGender === "남아" ? "수컷" : "암컷"} •{" "}
-                                            {pet.petNeutered === "Y" ? "중성화 완료" : "중성화 미완료"}
+                                            {pet.petNeutered === null
+                                                ? "중성화 여부 미선택"
+                                                : pet.petNeutered === true
+                                                  ? "중성화 완료"
+                                                  : "중성화 미완료"}
                                         </Typography>
                                         {pet.petBirth && (
                                             <Typography variant="body2">
@@ -153,11 +159,17 @@ const Step4 = () => {
                         );
                     })
                 )}
-                {submitError && (
-                    <Typography color="error" sx={{ mt: 2 }}>
-                        {submitError}
-                    </Typography>
-                )}
+                {/* ✅ Snackbar 알림 */}
+                <Snackbar
+                    open={showSnackbar}
+                    autoHideDuration={4000}
+                    onClose={() => setShowSnackbar(false)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                >
+                    <Alert severity="error" onClose={() => setShowSnackbar(false)}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </Box>
 
             <Box

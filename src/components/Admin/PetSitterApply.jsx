@@ -66,7 +66,6 @@ const PetSitterApply = () => {
                 const data = await fetchPendingPetSitterDetail(id);
                 setPetSitter(data);
             } catch (error) {
-                console.log("펫시터 로딩 중 오류: " + error);
                 setError("펫시터 풀러오기 오류");
             } finally {
                 setLoading(false);

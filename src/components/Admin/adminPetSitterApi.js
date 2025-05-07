@@ -24,7 +24,6 @@ export const fetchPetSitter = async (page = 0, size = 10, searchTerm = "", searc
 
         return response.data;
     } catch (error) {
-        console.log("펫시터 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };
@@ -36,11 +35,9 @@ export const fetchPetSitterDetail = async (id) => {
         if (response.status != 200) {
             throw new Error(response.data.message || "펫시터 정보를 가져오는데 실패했습니다");
         }
-        // console.log(data);
 
         return response.data;
     } catch (error) {
-        console.log("펫시터 상세보기 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };
@@ -57,7 +54,6 @@ export const fetchPendingPetSitter = async (page = 0, size = 10) => {
 
         return response.data;
     } catch (error) {
-        console.log("펫시터 신청 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };
@@ -69,11 +65,9 @@ export const fetchPendingPetSitterDetail = async (id) => {
         if (response.status != 200) {
             throw new Error(response.data.message || "펫시터 정보를 가져오는데 실패했습니다");
         }
-        // console.log(data);
 
         return response.data;
     } catch (error) {
-        console.log("펫시터 상세보기 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };

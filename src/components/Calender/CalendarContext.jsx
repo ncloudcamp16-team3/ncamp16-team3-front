@@ -29,6 +29,9 @@ export const CalendarProvider = ({ children }) => {
         longitude: "",
     });
     const [address, setAddress] = useState("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [message, setMessage] = useState("");
+
     const { user, fcmToken } = useContext(Context);
 
     const getTypeColor = (type) => {
@@ -47,21 +50,22 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const getTitle = (item, type) => {
-        return type === "reserve" ? item.facility_name : item.title;
+        return item.title;
     };
 
     const getPeriod = (item, type) => {
         if (type === "reserve") {
             return (
                 <>
-                    {format(parseISO(item.entry_time), "yy-MM-dd hh:mm")}~{" "}
-                    {format(parseISO(item.exit_time), "yy-MM-dd hh:mm")}
+                    {format(parseISO(item.entryTime), "yy-MM-dd HH:mm")} ~{" "}
+                    {format(parseISO(item.exitTime), "yy-MM-dd HH:mm")}
                 </>
             );
         }
         return (
             <>
-                {format(parseISO(item.startDate), "yy-MM-dd hh:mm")}~ {format(parseISO(item.endDate), "yy-MM-dd hh:mm")}
+                {format(parseISO(item.startDate), "yy-MM-dd HH:mm")} ~{" "}
+                {format(parseISO(item.endDate), "yy-MM-dd HH:mm")}
             </>
         );
     };
@@ -72,14 +76,14 @@ export const CalendarProvider = ({ children }) => {
 
     const selectedSchedules = schedules.filter((s) => s.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
     const selectedEvents = events.filter((e) => isSameDate(parseISO(e.startDate), selectedDate));
-    const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entry_time), selectedDate));
+    const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entryTime), selectedDate));
 
     const checkHasScheduleOrEvent = (date) => {
         const dateStr = format(date, "yyyy-MM-dd");
         return {
             hasSchedule: schedules.some((s) => s.dateList?.includes(dateStr)),
             hasEvent: events.some((e) => isSameDate(parseISO(e.startDate), date)),
-            hasReserve: reserves.some((r) => isSameDate(parseISO(r.entry_time), date)),
+            hasReserve: reserves.some((r) => isSameDate(parseISO(r.entryTime), date)),
         };
     };
 
@@ -111,6 +115,36 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const saveModifiedSchedule = async () => {
+        const start = dayjs(formData.startDate);
+        const end = dayjs(formData.endDate);
+
+        // 누락된 필드 체크
+        const fieldsToCheck = {
+            title: formData.title,
+            address: formData.address,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            content: formData.content,
+        };
+
+        const missingFields = Object.entries(fieldsToCheck)
+            .filter(([, value]) => !value) // 값이 없으면 필터링
+            .map(([key]) => key); // 키(항목명)만 추출
+
+        if (missingFields.length > 0) {
+            const fieldLabels = {
+                title: "제목",
+                address: "장소",
+                latitude: "위도",
+                longitude: "경도",
+                content: "내용",
+            };
+            const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
+            setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
+            setSnackbarOpen(true); // Snackbar 열기
+            return; // 필드 누락 시 진행되지 않도록 리턴
+        }
+
         try {
             const scheduleData = {
                 id: formData.id,
@@ -120,8 +154,8 @@ export const CalendarProvider = ({ children }) => {
                 address: formData.address,
                 latitude: formData.latitude || null,
                 longitude: formData.longitude || null,
-                startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
-                endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                startDate: start.format("YYYY-MM-DD HH:mm:ss"),
+                endDate: end.format("YYYY-MM-DD HH:mm:ss"),
             };
 
             // 수정된 일정을 API로 업데이트
@@ -157,6 +191,7 @@ export const CalendarProvider = ({ children }) => {
             // 수정 폼 및 선택 항목 초기화
             setModifyForm(false);
             setSelectedItem(null);
+            setOpenItem({ id: null, type: null }); // 상세보기 닫기
         } catch (error) {
             alert("일정 삭제에 실패했습니다.");
             console.error("일정 삭제 에러:", error);
@@ -164,6 +199,36 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const addSchedule = async () => {
+        const start = dayjs(formData.startDate);
+        const end = dayjs(formData.endDate);
+
+        // 누락된 필드 체크
+        const fieldsToCheck = {
+            title: formData.title,
+            address: formData.address,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            content: formData.content,
+        };
+
+        const missingFields = Object.entries(fieldsToCheck)
+            .filter(([, value]) => !value) // 값이 없으면 필터링
+            .map(([key]) => key); // 키(항목명)만 추출
+
+        if (missingFields.length > 0) {
+            const fieldLabels = {
+                title: "제목",
+                address: "장소",
+                latitude: "위도",
+                longitude: "경도",
+                content: "내용",
+            };
+            const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
+            setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
+            setSnackbarOpen(true); // Snackbar 열기
+            return; // 필드 누락 시 진행되지 않도록 리턴
+        }
+
         try {
             const scheduleData = {
                 userId: user.id,
@@ -172,8 +237,8 @@ export const CalendarProvider = ({ children }) => {
                 address: formData.address,
                 latitude: formData.latitude || null,
                 longitude: formData.longitude || null,
-                startDate: dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
-                endDate: dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                startDate: start.format("YYYY-MM-DD HH:mm:ss"),
+                endDate: end.format("YYYY-MM-DD HH:mm:ss"),
                 fcmToken: fcmToken,
             };
 
@@ -205,6 +270,20 @@ export const CalendarProvider = ({ children }) => {
             alert("일정 등록에 실패했습니다.");
             console.error("일정 등록 에러:", error);
         }
+    };
+
+    const [reserveId, setReserveId] = useState(null); // 예약 ID를 관리하는 상태 추가
+    const [selectedReserve, setSelectedReserve] = useState(null); // 선택된 예약 정보
+
+    const handleReserveId = (id) => {
+        // 선택된 예약 ID를 설정
+        setReserveId(id);
+
+        // 선택된 예약 정보 찾기 (예시로 reserves 상태에서 id에 해당하는 예약을 찾는 방식)
+        const selectedReserve = reserves.find((reserve) => reserve.id === id);
+        setSelectedReserve(selectedReserve);
+
+        console.log("선택된 예약 정보:", selectedReserve);
     };
 
     return (
@@ -249,6 +328,14 @@ export const CalendarProvider = ({ children }) => {
                 saveModifiedSchedule,
                 removeSchedule,
                 addSchedule,
+                snackbarOpen,
+                setSnackbarOpen,
+                message,
+                setMessage,
+                reserveId,
+                setReserveId,
+                selectedReserve,
+                setSelectedReserve,
             }}
         >
             {children}

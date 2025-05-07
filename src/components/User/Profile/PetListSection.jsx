@@ -4,24 +4,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import petEx from "/src/assets/images/User/pet_ex.svg";
 import penIcon2 from "/src/assets/images/User/pen_2.svg";
+import petTypes from "/src/constants/petTypes";
 
-/**
- * 반려동물 목록 섹션 컴포넌트
- * @param {Object} props
- * @param {Array} props.pets 반려동물 목록
- * @param {Object} props.hover 호버 상태 객체
- * @param {Function} props.onEditPet 반려동물 수정 핸들러
- * @param {Function} props.onDeletePet 반려동물 삭제 핸들러
- * @param {Function} props.onAddPet 반려동물 추가 핸들러
- * @param {Function} props.onHoverEnter 호버 시작 핸들러
- * @param {Function} props.onHoverLeave 호버 종료 핸들러
- */
 const PetListSection = ({ pets, hover, onEditPet, onDeletePet, onAddPet, onHoverEnter, onHoverLeave }) => {
-    // 데이터가 존재하는지 확인
     const hasData = Array.isArray(pets) && pets.length > 0;
 
     const handleImageError = (e) => {
-        console.log("이미지 로드 실패, 기본 이미지로 대체:", e.target.src);
         e.target.src = petEx;
     };
 
@@ -83,7 +71,6 @@ const PetListSection = ({ pets, hover, onEditPet, onDeletePet, onAddPet, onHover
                 </Box>
             ) : (
                 pets.map((pet) => {
-                    console.log(`반려동물 ID ${pet.id} 렌더링:`, pet);
                     return (
                         <Card
                             key={pet.id}
@@ -141,7 +128,7 @@ const PetListSection = ({ pets, hover, onEditPet, onDeletePet, onAddPet, onHover
                                             {pet.name || "이름 없음"}
                                         </Typography>
                                         <Typography sx={{ fontSize: "12px", color: "#999" }}>
-                                            {pet.type || "기타"} · {pet.gender || "성별 없음"} ·{" "}
+                                            {petTypes[pet.type] || pet.type || "기타"} · {pet.gender || "성별 없음"} ·{" "}
                                             {pet.weight ? `${pet.weight}kg` : "체중 정보 없음"}
                                         </Typography>
                                     </Box>

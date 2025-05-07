@@ -28,7 +28,6 @@ export const fetchFacility = async (page = 0, size = 10, facilityTypeId = null, 
 
         return response.data;
     } catch (error) {
-        console.log("펫시터 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };
@@ -40,11 +39,9 @@ export const fetchFacilityDetail = async (id) => {
         if (response.status != 200) {
             throw new Error(response.data.message || "업체 정보를 가져오는데 실패했습니다");
         }
-        // console.log(data);
 
         return response.data;
     } catch (error) {
-        console.log("업체 상세보기 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };

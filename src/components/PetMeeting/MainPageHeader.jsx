@@ -31,7 +31,7 @@ const MainPageHeader = () => {
                     border: "2px solid #ccc",
                     borderRadius: 10,
                     cursor: "pointer",
-                    "&:hover": { backgroundColor: "#f0f0f0" }, // 호버 효과 추가
+                    "&:hover": { backgroundColor: "#f0f0f0" },
                     boxSizing: "border-box",
                     opacity: 0.5,
                 }}

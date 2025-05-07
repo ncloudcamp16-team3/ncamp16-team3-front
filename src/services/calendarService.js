@@ -85,3 +85,27 @@ export const getEventAll = async () => {
             throw error;
         });
 };
+
+export const getReserveAll = async (userId) => {
+    try {
+        // userId가 존재하는지 확인
+        if (!userId) {
+            throw new Error("userId가 없습니다.");
+        }
+
+        // 요청 보내기 전에 콘솔로 확인 (디버깅용)
+        console.log("Fetching reserves for userId:", userId);
+
+        const response = await instance.get(`${API_URL}/reserve`, {
+            params: { userId }, // userId를 쿼리 파라미터로 전달
+        });
+
+        // 응답 데이터 확인 (디버깅용)
+        console.log("Response Data2:", response.data);
+
+        return response.data; // JSON 배열 반환
+    } catch (error) {
+        console.error("캘린더 스케쥴 전체정보 로딩 실패", error);
+        throw error;
+    }
+};

@@ -3,6 +3,8 @@ import InfoModal from "../components/Global/InfoModal.jsx";
 import { produce } from "immer";
 import { getUserInfo } from "../services/authService.js";
 import { getBoardTypeList } from "../services/boardService.js";
+import { useLocation } from "react-router-dom";
+import GlobalSnackbar from "../components/Global/GlobalSnackbar.jsx";
 
 export const Context = createContext();
 
@@ -40,16 +42,12 @@ export function Provider({ children }) {
         getBoardTypeList()
             .then((res) => {
                 const data = res.data;
-                console.log(data);
-                console.log("응답 성공: " + res.message);
                 if (data.length > 0) {
                     setBoardTypeList(data);
                     setBoardType(data[0]);
                 }
             })
-            .catch((err) => {
-                console.log("에러 발생" + err.message);
-            });
+            .catch((err) => {});
 
         fetchUserInfo();
     }, []);
@@ -80,6 +78,12 @@ export function Provider({ children }) {
         photos: [],
     });
 
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success",
+    });
+
     const [isLogin, setLogin] = useState(false);
 
     const [boardTypeList, setBoardTypeList] = useState([]);
@@ -107,6 +111,44 @@ export function Provider({ children }) {
         });
     }, []);
 
+    const handleSnackbarClose = () => {
+        setSnackbar((prev) =>
+            produce(prev, (draft) => {
+                draft.open = false;
+                draft.message = "";
+                draft.severity = "success";
+            })
+        );
+    };
+
+    const handleSnackbarOpen = (message, severity) => {
+        setSnackbar((prev) =>
+            produce(prev, (draft) => {
+                draft.open = true;
+                draft.message = message;
+                draft.severity = severity;
+            })
+        );
+    };
+
+    const location = useLocation();
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isChatRoomOpen, setIsChatRoomOpen] = useState(false);
+
+    useEffect(() => {
+        const isChat = location.pathname === "/chat"; // 완전 일치
+        setIsChatOpen(isChat);
+    }, [location.pathname]);
+
+    useEffect(() => {
+        const isChatRoom = location.pathname.startsWith("/chat/room"); // /chat/room 경로로 시작
+        setIsChatRoomOpen(isChatRoom);
+    }, [location.pathname]);
+
+    const [notifications, setNotifications] = useState([]);
+    const [toastNotifications, setToastNotifications] = useState([]);
+    const [hasNewNotification, setHasNewNotification] = useState(false);
+
     if (isUserLoading) return null;
 
     return (
@@ -129,6 +171,15 @@ export function Provider({ children }) {
                 setBoardTypeList,
                 pet,
                 setPet,
+                isChatOpen,
+                setIsChatOpen,
+                isChatRoomOpen,
+                setIsChatRoomOpen,
+                handleSnackbarOpen,
+                hasNewNotification,
+                setHasNewNotification,
+                notifications,
+                setNotifications,
             }}
         >
             {children}
@@ -137,6 +188,12 @@ export function Provider({ children }) {
                 title={InfoModalState.title}
                 message={InfoModalState.message}
                 onClose={closeModal}
+            />
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
             />
         </Context.Provider>
     );

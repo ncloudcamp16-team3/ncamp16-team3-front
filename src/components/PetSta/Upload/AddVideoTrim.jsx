@@ -87,7 +87,16 @@ const AddVideoTrim = ({ videoPreview, onBack, onNext }) => {
     };
 
     return (
-        <Box position="fixed" top={0} width="500px" height="100vh" zIndex={99999} bgcolor="black" m="0 auto">
+        <Box
+            position="fixed"
+            top={0}
+            maxWidth="500px"
+            width="100%"
+            height="100vh"
+            zIndex={99999}
+            bgcolor="black"
+            m="0 auto"
+        >
             <Box bgcolor="black" color="white">
                 <TitleBar name="동영상 업로드" onBack={onBack} />
             </Box>

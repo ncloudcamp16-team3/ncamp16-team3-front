@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField } from "@mui/material";
-import ModalWrapper from "/src/components/Global/darkModal.jsx";
+import ModalWrapper from "/src/components/Global/DarkModal.jsx";
 
 const WithdrawalModal = ({ open, onClose, inputValue, onInputChange, onWithdrawal }) => {
     return (
@@ -85,7 +85,6 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
     const [nickname, setNickname] = useState(currentNickname);
     const [error, setError] = useState("");
 
-    // 모달이 열릴 때 현재 닉네임으로 초기화
     useEffect(() => {
         if (open) {
             setNickname(currentNickname);
@@ -96,7 +95,6 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
     const handleSave = () => {
         const trimmedNickname = nickname.trim();
 
-        // 유효성 검사
         if (!trimmedNickname) {
             setError("닉네임을 입력해주세요.");
             return;
@@ -107,7 +105,6 @@ const NicknameEditModal = ({ open, onClose, currentNickname, onSave }) => {
             return;
         }
 
-        // 닉네임이 유효하면 저장
         onSave(trimmedNickname);
         onClose();
     };

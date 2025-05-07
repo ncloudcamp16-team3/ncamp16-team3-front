@@ -1,12 +1,7 @@
 import React from "react";
 import { Box, Typography, TextField } from "@mui/material";
 
-/**
- * 한마디 작성 단계 컴포넌트
- * @param {Object} props
- * @param {string} props.commentText 한마디 텍스트
- * @param {Function} props.onChange 텍스트 변경 핸들러
- */
+
 const CommentStep = ({ commentText, onChange }) => {
     return (
         <Box

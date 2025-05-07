@@ -1,15 +1,11 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
+import { getSelectedPetTypes } from "../utils/petSitterUtils";
 
-/**
- * 등록 완료 단계 컴포넌트
- * @param {Object} props
- * @param {string|null} props.imagePreview 이미지 미리보기 URL
- * @param {Object} props.formData 폼 데이터 객체
- * @param {Function} props.onComplete 완료 처리 핸들러
- */
 const CompletionStep = ({ imagePreview, formData, onComplete }) => {
     const { selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText } = formData;
+    const selectedPetTypesStr = getSelectedPetTypes(petTypes).join(", ");
+    const selectedPetCountStr = Object.keys(petCount).find((key) => petCount[key]) || "1마리";
 
     return (
         <Box
@@ -66,16 +62,14 @@ const CompletionStep = ({ imagePreview, formData, onComplete }) => {
             >
                 <InfoRow label="연령대" value={Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대"} />
 
-                <InfoRow
-                    label="반려동물"
-                    value={
-                        hasPet["네, 키우고 있습니다"]
-                            ? `${Object.keys(petTypes).find((key) => petTypes[key]) || "강아지"} ${
-                                  Object.keys(petCount).find((key) => petCount[key]) || "1마리"
-                              }`
-                            : "없음"
-                    }
-                />
+                {hasPet["네, 키우고 있습니다"] ? (
+                    <>
+                        <InfoRow label="반려동물" value={selectedPetTypesStr} />
+                        <InfoRow label="키우는 수" value={selectedPetCountStr} />
+                    </>
+                ) : (
+                    <InfoRow label="반려동물" value="없음" />
+                )}
 
                 <InfoRow label="펫시터 경험" value={sitterExperience["네, 해본적 있습니다"] ? "있음" : "없음"} />
 
@@ -106,7 +100,6 @@ const CompletionStep = ({ imagePreview, formData, onComplete }) => {
     );
 };
 
-// 정보 행 컴포넌트
 const InfoRow = ({ label, value }) => (
     <Box
         sx={{

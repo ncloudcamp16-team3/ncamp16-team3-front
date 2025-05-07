@@ -24,11 +24,28 @@ const PetDetails = () => {
     const getAge = (birthDateString) => {
         const birthDate = new Date(birthDateString);
         const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        const dayDiff = today.getDate() - birthDate.getDate();
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
-        return age;
+
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let months = today.getMonth() - birthDate.getMonth();
+        let days = today.getDate() - birthDate.getDate();
+
+        if (days < 0) months--;
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        const totalMonths =
+            (today.getFullYear() - birthDate.getFullYear()) * 12 + today.getMonth() - birthDate.getMonth();
+
+        if (years <= 0) {
+            if (totalMonths <= 0) {
+                return "1개월 미만";
+            }
+            return `${totalMonths}개월`;
+        }
+
+        return `${years}세`;
     };
 
     const handleChat = async () => {
@@ -67,12 +84,10 @@ const PetDetails = () => {
 
             if (!isSubscribed) {
                 await nc.subscribe(realChannelId);
-                console.log("✅ 사용자 구독 완료");
             }
 
             // ✅ 채팅 버튼 누를 때 매칭 체크
             const matched = await postMatchCheck(pet.id, currentPet.id);
-            console.log(matched);
 
             if (!matched.data) {
                 // 매칭이 안 되어있으면 매칭 생성
@@ -85,12 +100,12 @@ const PetDetails = () => {
                         participants: [
                             {
                                 name: pet?.name || "",
-                                age: pet?.birthDate ? `${getAge(pet.birthDate)}살` : "",
-                                photo: pet?.photos?.[0]?.path || "",
+                                age: pet?.birthDate ? `${getAge(pet.birthDate)}` : "",
+                                photo: pet?.photos?.find((p) => p.thumbnail)?.path || "",
                             },
                             {
                                 name: currentPet?.name || "",
-                                age: currentPet?.birthDate ? `${getAge(currentPet.birthDate)}살` : "",
+                                age: currentPet?.birthDate ? `${getAge(currentPet.birthDate)}` : "",
                                 photo: currentPet?.photos?.[0]?.path || "",
                             },
                         ],
@@ -102,8 +117,6 @@ const PetDetails = () => {
                     type: "text",
                     message: JSON.stringify(messagePayload),
                 });
-
-                console.log("✅ 매칭 메시지 전송 완료");
             }
 
             navigate(`/chat/room/${realChannelId}`);
@@ -117,11 +130,11 @@ const PetDetails = () => {
             try {
                 const res = await getPet({ id: petId });
                 setCurrentPet(res.data);
-
                 setLoading(false);
             } catch (err) {
-                console.log("에러 발생: " + err.message);
-                setLoading(false);
+                showModal(null, "친구를 찾지 못했습니다", () => {
+                    navigate(`/`);
+                });
             }
         };
         fetchPet();
@@ -134,7 +147,7 @@ const PetDetails = () => {
                 <Loading />
             ) : (
                 <Box sx={{ width: "100% - 20px", margin: "0 10px 75px 10px", pb: "0" }}>
-                    <PetImgSlide photos={currentPet.photos} />
+                    {currentPet?.photos?.length > 0 && <PetImgSlide photos={currentPet.photos} />}
                     <Typography sx={{ mt: "0", fontSize: "25px", display: "inline", verticalAlign: "middle" }}>
                         {currentPet?.name}
                     </Typography>
@@ -164,7 +177,7 @@ const PetDetails = () => {
                                 margin: "0 2%",
                             }}
                         >
-                            {getAge(currentPet?.birthDate)}세
+                            {getAge(currentPet?.birthDate)}
                         </Typography>
                         <Typography
                             sx={{

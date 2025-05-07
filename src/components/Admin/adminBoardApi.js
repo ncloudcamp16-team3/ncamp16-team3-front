@@ -30,7 +30,6 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
 
         return response.data;
     } catch (error) {
-        console.log("게시판 API 호출 중 오류 발생: " + error);
         throw error;
     }
 };

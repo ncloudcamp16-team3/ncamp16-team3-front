@@ -4,12 +4,10 @@ import { useTheme } from "@mui/material/styles";
 import BookMarkBtn from "./BookMarkBtn.jsx";
 import { useNavigate } from "react-router-dom";
 
-const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick }) => {
+const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const requestChat = () => {
-        navigate("/chat/room/undefined");
-    };
+
     return (
         <Box
             sx={{
@@ -44,11 +42,11 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick }) => {
                     fontWeight: "600",
                 }}
             >
-                {postData.price}원
+                {postData.price.toLocaleString()}원
             </Typography>
 
             <Button
-                onClick={requestChat}
+                onClick={onClickChat}
                 variant="contained"
                 sx={{
                     position: "absolute",

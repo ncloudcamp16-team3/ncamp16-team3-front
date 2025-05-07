@@ -29,23 +29,16 @@ export const getFacilityListsToReserve = ({
         });
 };
 
-export const getFacilityToReserveById = ({ id }) => {
-    return instance
-        .get(`${API_URL}/facility/detail`, {
-            params: {
-                id,
-            },
-        })
-        .then((response) => response.data)
-        .catch((error) => {
-            console.error("시설 정보를 불러오는 데 실패했습니다.", error);
-            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
-        });
+export const getFacilityToReserveById = (id) => {
+    return instance.get(`/facility/${id}/detail`).catch((error) => {
+        console.error("시설 정보를 불러오는 데 실패했습니다.", error);
+        throw error;
+    });
 };
 
 export const getReserveListById = ({ id }) => {
     return instance
-        .get(`${API_URL}/Reserve`, {
+        .get(`${API_URL}/lists`, {
             params: {
                 id,
             },
@@ -59,7 +52,7 @@ export const getReserveListById = ({ id }) => {
 
 export const getReserveDetailById = ({ uid, rid }) => {
     return instance
-        .get(`${API_URL}/reserve/detail`, {
+        .get(`${API_URL}/detail`, {
             params: {
                 uid,
                 rid,
@@ -70,4 +63,47 @@ export const getReserveDetailById = ({ uid, rid }) => {
             console.error("예약 정보를 불러오는 데 실패했습니다.", error);
             throw error; // 에러를 다시 던져서 호출한 곳에서 처리
         });
+};
+
+export const putReview = async (id, formData) => {
+    return await instance
+        .put(`${API_URL}/facility/${id}/review`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((response) => response)
+        .catch((error) => {
+            console.error("리뷰 업로드에 실패했습니다.", error);
+            throw error;
+        });
+};
+
+export const getFacilityNameAndThumbnail = async (id) => {
+    if (!id) return;
+    return await instance
+        .get(`${API_URL}/facility/${id}/review`)
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("예약 정보를 불러오는 데 실패했습니다.", error);
+            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
+        });
+};
+
+export const addTempReserve = async (reserveData) => {
+    return await instance.post(`${API_URL}/temp`, reserveData, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+};
+
+// ✅ 예약 목록을 불러오는 요청 함수
+export const fetchMyReserveList = async () => {
+    return await instance.get(`${API_URL}/my`);
+};
+
+// services/reserveService.js
+export const getReserveDetail = async (id) => {
+    return await instance.get(`${API_URL}/${id}`);
 };

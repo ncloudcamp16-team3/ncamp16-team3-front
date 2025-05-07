@@ -3,7 +3,6 @@ import { Box, Typography, IconButton, CircularProgress, Snackbar, Alert } from "
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import instance from "../../services/axiosInstance.js";
-
 // 공통 컴포넌트
 import StepProgress from "../../components/Sitter/common/StepProgress";
 import StepButtons from "../../components/Sitter/common/StepButtons";
@@ -58,7 +57,7 @@ const PetSitterRegister = () => {
     const [otherPetText, setOtherPetText] = useState("");
 
     const [petCount, setPetCount] = useState({
-        "1마리": true,
+        "1마리": false,
         "2마리": false,
         "3마리 이상": false,
     });
@@ -75,19 +74,15 @@ const PetSitterRegister = () => {
         기타: false,
     });
 
-    // 로컬 스토리지에서 기존 등록 정보 확인
     useEffect(() => {
         const checkExistingRegistration = async () => {
             const isRegistrationAttempt = localStorage.getItem("petSitterRegistrationCompleted");
 
             if (isRegistrationAttempt === "true") {
                 try {
-                    // 서버에 실제 등록 여부 확인 (instance 사용)
                     const statusResponse = await instance.get("/petsitter/status");
 
                     if (statusResponse.status === 200) {
-                        console.log("펫시터 정보가 이미 서버에 있습니다. 수정 모드로 전환합니다.");
-                        // 서버에서 받은 데이터로 폼 초기화
                         const sitterData = statusResponse.data.data;
                         if (sitterData) {
                             initializeFormFromServer(sitterData);
@@ -95,7 +90,6 @@ const PetSitterRegister = () => {
                     }
                 } catch (err) {
                     if (err.response?.status === 404) {
-                        console.log("서버에 펫시터 정보가 없습니다. 신규 등록 모드로 진행합니다.");
                         // 로컬 스토리지에서 정보 초기화
                         localStorage.removeItem("petSitterRegistrationCompleted");
                         localStorage.removeItem("petSitterInfo");
@@ -111,7 +105,6 @@ const PetSitterRegister = () => {
 
     // 서버 데이터로 폼 초기화
     const initializeFormFromServer = (data) => {
-        // 연령대 설정
         if (data.age) {
             const newAges = { ...selectedAges };
             Object.keys(newAges).forEach((key) => {
@@ -145,7 +138,7 @@ const PetSitterRegister = () => {
                 TWO: "2마리",
                 THREE_PLUS: "3마리 이상",
             };
-            const countStr = countMap[data.petCount] || "1마리";
+            const countStr = countMap[data.petCount] || "0마리";
             const newPetCount = { ...petCount };
             Object.keys(newPetCount).forEach((key) => {
                 newPetCount[key] = key === countStr;
@@ -182,12 +175,18 @@ const PetSitterRegister = () => {
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
-        else navigate(-1);
+        if (step > 1) {
+            if (step === 6) {
+                setStep(3);
+            } else {
+                setStep(step - 1);
+            }
+        } else {
+            navigate(-1);
+        }
     };
 
     const handleNext = () => {
-        // 현재 단계에서 필요한 유효성 검증
         let isValid = true;
         let errorMessage = "";
 
@@ -238,7 +237,6 @@ const PetSitterRegister = () => {
                     errorMessage = "주거 형태를 선택해주세요.";
                 }
                 break;
-            // 8단계(한마디)는 필수가 아니므로 검증 생략
         }
 
         if (!isValid) {
@@ -250,7 +248,11 @@ const PetSitterRegister = () => {
             return;
         }
 
-        setStep((prev) => Math.min(prev + 1, 9));
+        if (step === 3 && hasPet["키우고 있지 않습니다"]) {
+            setStep(6);
+        } else {
+            setStep((prev) => Math.min(prev + 1, 9));
+        }
     };
 
     const [commentText, setCommentText] = useState("");
@@ -395,7 +397,6 @@ const PetSitterRegister = () => {
                 const statusResponse = await instance.get("/petsitter/status");
 
                 if (statusResponse.status === 200) {
-                    console.log("기존 펫시터 정보 업데이트 모드");
                     isUpdate = true;
                 }
             } catch (err) {
@@ -405,30 +406,38 @@ const PetSitterRegister = () => {
                 }
             }
 
+            const selectedPetTypes = Object.keys(petTypes).filter((type) => petTypes[type]);
+            const selectedPetTypesStr = selectedPetTypes.join(", ");
+
+            const selectedPetTypeIds = selectedPetTypes
+                .map((type) => {
+                    return getPetTypeId(type);
+                })
+                .filter((id) => id !== null);
+
             // 펫시터 데이터 생성
             const petSitterData = {
-                age: Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
-                houseType: Object.keys(houseType).find((key) => houseType[key]) || "아파트",
+                age: Object.keys(selectedAges).find((key) => selectedAges[key]),
+                houseType: Object.keys(houseType).find((key) => houseType[key]),
                 comment: commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
                 grown: hasPet["네, 키우고 있습니다"],
-                petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "1마리"),
+                petCount: getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "0마리"),
                 sitterExp: sitterExperience["네, 해본적 있습니다"],
-                petTypeId: getPetTypeId(Object.keys(petTypes).find((key) => petTypes[key]) || null),
+
+                petTypeId: selectedPetTypes.length > 0 ? getPetTypeId(selectedPetTypes[0]) : null,
+
+                petTypesFormatted: selectedPetTypesStr,
+                petTypeIds: selectedPetTypeIds,
             };
 
-            console.log("펫시터 데이터:", petSitterData);
-
-            // FormData 객체 생성
             const formData = new FormData();
 
-            // JSON 데이터를 문자열로 직접 전달
             formData.append("data", JSON.stringify(petSitterData));
 
             // 이미지 파일 추가
             if (imageFile) {
                 formData.append("image", imageFile);
             } else if (imagePreview && !imagePreview.startsWith("http")) {
-                // 데이터 URL을 Blob으로 변환 (서버 URL이 아닐 경우에만)
                 try {
                     const response = await fetch(imagePreview);
                     const imageBlob = await response.blob();
@@ -439,13 +448,10 @@ const PetSitterRegister = () => {
             }
 
             // FormData 내용 확인
-            console.log("FormData 내용:");
             for (let [key, value] of formData.entries()) {
-                console.log(`- ${key}:`, value instanceof Blob ? `Blob (${value.size} bytes)` : value);
             }
 
             // API 호출 (instance 사용)
-            console.log("API 요청 시작");
             const res = await instance.post("/petsitter/apply", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -453,19 +459,16 @@ const PetSitterRegister = () => {
                 timeout: 30000, // 30초 타임아웃
             });
 
-            console.log("API 응답:", res);
-
             if (res.status === 200 || res.status === 201) {
-                console.log("API 요청 성공");
-
-                // 로컬 스토리지에 저장할 정보
                 const sitterInfo = {
                     registered: false,
                     isPending: true,
                     status: "NONE",
                     age: petSitterData.age,
-                    petType: Object.keys(petTypes).find((key) => petTypes[key]) || "강아지",
-                    petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
+                    petType: selectedPetTypes[0] || "강아지",
+                    petTypes: selectedPetTypes,
+                    petTypesFormatted: selectedPetTypesStr,
+                    petCount: Object.keys(petCount).find((key) => petCount[key]) || "0마리",
                     houseType: petSitterData.houseType,
                     comment: petSitterData.comment,
                     image: imagePreview,
@@ -533,8 +536,6 @@ const PetSitterRegister = () => {
             setIsSubmitting(false);
         }
     };
-
-    // 현재 단계에 맞는 컴포넌트 렌더링
     const renderStep = () => {
         switch (step) {
             case 1:
@@ -678,6 +679,10 @@ const PetSitterRegister = () => {
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    bottom: "150px",
+                    zIndex: 100000,
+                }}
             >
                 <Alert
                     onClose={handleCloseSnackbar}

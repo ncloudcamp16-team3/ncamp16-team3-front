@@ -82,7 +82,6 @@ export const AdminProvider = ({ children }) => {
                         throw new Error("유효하지 않은 토큰");
                     }
                 } catch (error) {
-                    console.log("인증 확인 오류: " + error);
                     localStorage.removeItem("adminToken");
                     localStorage.removeItem("adminEmail");
                     setIsAuthenticated(false);

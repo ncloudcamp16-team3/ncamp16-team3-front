@@ -9,11 +9,12 @@ import WriteCommentBar from "../../components/Board/WriteCommentBar.jsx";
 import { Context } from "../../context/Context.jsx";
 import UsedMarketBar from "../../components/Board/UsedMarketBar.jsx";
 import PostCenterBtns from "../../components/Board/PostCenterBtns.jsx";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     addComment,
     getBoardDetail,
     getBookmarkedAndLiked,
+    getComments,
     toggleBookmarked,
     toggleLiked,
 } from "../../services/boardService.js";
@@ -21,10 +22,11 @@ import { produce } from "immer";
 import CommentCard from "../../components/Board/CommentCard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
+import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/chatService.js";
 
 const PostDetails = () => {
     const { postId } = useParams();
-    const { boardType, user } = useContext(Context);
+    const { boardType, user, nc, showModal, handleSnackbarOpen, boardTypeList, setBoardType } = useContext(Context);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [comment, setComment] = useState("");
@@ -35,13 +37,8 @@ const PostDetails = () => {
     const commentInputRef = useRef(null);
     const commentRefs = useRef({});
     const theme = useTheme();
-
-    const scrollToComment = (commentId) => {
-        const el = commentRefs.current[commentId];
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    };
+    const navigate = useNavigate();
+    const [postComments, setPostComments] = useState([]);
 
     const [postData, setPostData] = useState({
         id: null,
@@ -62,6 +59,77 @@ const PostDetails = () => {
         imageUrls: [],
         comments: [],
     });
+
+    const scrollToComment = (commentId) => {
+        const el = commentRefs.current[commentId];
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    };
+
+    const handleTradeChat = async () => {
+        if (!user || !nc || !postData.authorId || !postData.imageUrls?.[0]) return;
+
+        try {
+            const targetUserId = postData.authorId;
+            const myId = user.id;
+            const uniqueId = await createChatRoom(targetUserId);
+
+            // 채널 조회
+            const filter = { name: uniqueId };
+            const channels = await nc.getChannels(filter, {}, { per_page: 1 });
+            const edge = (channels.edges || [])[0];
+            let channelId;
+
+            if (edge) {
+                channelId = edge.node.id;
+            } else {
+                // 채널 없으면 생성
+                const newChannel = await nc.createChannel({
+                    type: "PRIVATE",
+                    name: uniqueId,
+                });
+                channelId = newChannel.id;
+                await nc.addUsers(channelId, [`ncid${myId}`, `ncid${targetUserId}`]);
+            }
+
+            // 구독 여부 확인 후 구독
+            const subFilter = {
+                channel_id: channelId,
+                user_id: `ncid${myId}`,
+            };
+            const subs = await nc.getSubscriptions(subFilter, {}, { per_page: 1 });
+            if (!subs.length) {
+                await nc.subscribe(channelId);
+            }
+
+            // 매칭 여부 확인 및 없으면 매칭 등록
+            const matched = await postTradeCheck(postData.id);
+            if (!matched.data) {
+                await postTradeStart(postData.id);
+
+                // 메시지 전송
+                const payload = {
+                    customType: "TRADE",
+                    content: {
+                        title: postData.title,
+                        price: postData.price,
+                        image: postData.imageUrls?.[0],
+                        postId: postData.id,
+                    },
+                };
+
+                await nc.sendMessage(channelId, {
+                    type: "text",
+                    message: JSON.stringify(payload),
+                });
+            }
+
+            navigate(`/chat/room/${channelId}`);
+        } catch (e) {
+            console.error("❌ 중고거래 채팅 생성 실패:", e);
+        }
+    };
 
     const handleReply = (commentId, authorNickname) => {
         const mentionMarkup = `@${authorNickname} `;
@@ -94,12 +162,21 @@ const PostDetails = () => {
         const message = comment.replace(/^@\S+\s*/, "");
 
         addComment(message, postId, user.id, replyingTo?.commentId)
+            .then(() => {
+                setComment("");
+                setPostData((prev) =>
+                    produce(prev, (draft) => {
+                        draft.commentCount = draft.commentCount + 1;
+                    })
+                );
+                return getComments(postId);
+            })
             .then((res) => {
-                console.log("응답 결과: " + res.message);
-                window.location.reload();
+                setPostComments(res.data);
             })
             .catch((err) => {
-                console.log("에러 발생: " + err.message);
+                handleSnackbarOpen(err.message, "error");
+                setComment("");
             });
     };
 
@@ -121,25 +198,24 @@ const PostDetails = () => {
             getBoardDetail(postId)
                 .then((res) => {
                     const data = res.data;
-                    console.log(data);
                     setPostData(data);
-                    console.log("응답 결과 : " + res.message);
+                    setPostComments(data.comments);
+
+                    setBoardType(boardTypeList.find((item) => item.id === data.boardTypeId));
                 })
                 .catch((err) => {
-                    console.log("에러 발생 : " + err.message);
+                    showModal("", err.message, () => {
+                        navigate("/board");
+                    });
                 });
 
             getBookmarkedAndLiked(user.id, postId)
                 .then((res) => {
                     const data = res.data;
-                    console.log("응답 결과" + res.message);
-                    console.log(data);
                     setLiked(data.liked);
                     setBookMarked(data.bookmarked);
                 })
-                .catch((err) => {
-                    console.log("에러 발생" + err.message);
-                });
+                .catch((err) => {});
         };
 
         initPostDetailPage();
@@ -162,22 +238,16 @@ const PostDetails = () => {
                         })
                     );
                 }
-                console.log("응답 결과: " + res.message);
             })
-            .catch((err) => {
-                console.log("에러 발생: " + err.message);
-            });
+            .catch((err) => {});
     };
 
     const bookMarkBtnClick = () => {
         toggleBookmarked(user.id, postId, bookMarked)
             .then((res) => {
                 setBookMarked(!bookMarked);
-                console.log("응답 결과: " + res.message);
             })
-            .catch((err) => {
-                console.log("에러 발생: " + err.message);
-            });
+            .catch((err) => {});
     };
 
     const handleCancelReply = () => {
@@ -296,7 +366,7 @@ const PostDetails = () => {
                                 <Typography sx={{ fontSize: "18px" }}>좋아요{postData.likeCount}개</Typography>
                                 <Typography sx={{ fontSize: "18px" }}>댓글 {postData.commentCount}개</Typography>
                             </Box>
-                            {postData.comments?.map((commentItem) => {
+                            {postComments?.map((commentItem) => {
                                 return (
                                     <Box
                                         key={commentItem.id}
@@ -309,6 +379,9 @@ const PostDetails = () => {
                                             commentItem={commentItem}
                                             handleReply={handleReply}
                                             scrollToComment={scrollToComment}
+                                            handleSnackbarOpen={handleSnackbarOpen}
+                                            setPostComments={setPostComments}
+                                            postId={postId}
                                         />
                                         {commentItem.children?.map((child) => {
                                             return (
@@ -323,6 +396,9 @@ const PostDetails = () => {
                                                         commentItem={child}
                                                         handleReply={handleReply}
                                                         scrollToComment={scrollToComment}
+                                                        handleSnackbarOpen={handleSnackbarOpen}
+                                                        setPostComments={setPostComments}
+                                                        postId={postId}
                                                     />
                                                 </Box>
                                             );
@@ -350,7 +426,12 @@ const PostDetails = () => {
             />
 
             {boardType.id === 2 ? (
-                <UsedMarketBar postData={postData} bookMarked={bookMarked} bookMarkBtnClick={bookMarkBtnClick} />
+                <UsedMarketBar
+                    postData={postData}
+                    bookMarked={bookMarked}
+                    bookMarkBtnClick={bookMarkBtnClick}
+                    onClickChat={handleTradeChat}
+                />
             ) : (
                 <Box
                     sx={{
