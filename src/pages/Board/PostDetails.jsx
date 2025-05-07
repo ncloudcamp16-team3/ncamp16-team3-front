@@ -68,7 +68,7 @@ const PostDetails = () => {
     };
 
     const handleTradeChat = async () => {
-        if (!user || !nc || !postData.authorId || !postData.imageUrls?.[0]) return;
+        if (!user || !nc || !postData.authorId) return;
 
         try {
             const targetUserId = postData.authorId;
@@ -114,7 +114,9 @@ const PostDetails = () => {
                     content: {
                         title: postData.title,
                         price: postData.price,
-                        image: postData.imageUrls?.[0],
+                        image: postData.imageUrls?.[0]
+                            ? postData.imageUrls[0]
+                            : "https://kr.object.ncloudstorage.com/tailfriends-buck/uploads/board/join-logo.png",
                         postId: postData.id,
                     },
                 };
