@@ -892,7 +892,7 @@ const FacilityUpdate = () => {
                         <Box sx={{ float: "left", width: "100%" }}>
                             <Grid container spacing={2}>
                                 {/* 첫 번째 열: 업종 */}
-                                <Grid item xs={12} sm={6} sx={{ width: "20%" }}>
+                                <Grid item xs={12} sm={6} sx={{ width: "10%" }}>
                                     <FormControl size="medium" fullWidth>
                                         <InputLabel>업종</InputLabel>
                                         <Select
@@ -911,9 +911,14 @@ const FacilityUpdate = () => {
                                     <TextField
                                         fullWidth
                                         label="업체 전화번호"
-                                        placeholder="업체 전화번호"
+                                        placeholder="01012341234"
                                         value={tel}
-                                        onChange={(e) => setTel(e.target.value)}
+                                        onChange={(e) => {
+                                            const onlyNums = e.target.value.replace(/\D/g, ""); // 숫자만 필터
+                                            if (onlyNums.length <= 11) {
+                                                setTel(onlyNums);
+                                            }
+                                        }}
                                         variant="outlined"
                                         size="medium"
                                     />
@@ -1137,8 +1142,8 @@ const FacilityUpdate = () => {
                         )}
                     </Box>
 
-                    <Grid container spacing={2} sx={{ height: "60px" }}>
-                        <Grid item xs={12} sm={4} sx={{ width: "20%" }}>
+                    <Grid container spacing={2} sx={{ height: "auto", flexWrap: "wrap" }}>
+                        <Grid item xs={12} sm={2}>
                             {!isZipCodeFound ? (
                                 <Button
                                     variant="contained"
@@ -1158,16 +1163,6 @@ const FacilityUpdate = () => {
                                 </Button>
                             ) : (
                                 <Box sx={{ display: "flex", gap: 1 }}>
-                                    <TextField
-                                        fullWidth
-                                        label="우편번호"
-                                        value={zipCode}
-                                        variant="outlined"
-                                        size="medium"
-                                        InputProps={{
-                                            readOnly: true,
-                                        }}
-                                    />
                                     <Button
                                         variant="outlined"
                                         onClick={() => {
@@ -1192,7 +1187,7 @@ const FacilityUpdate = () => {
                                 </Box>
                             )}
                         </Grid>
-                        <Grid item xs={12} sm={4} sx={{ width: "30%" }}>
+                        <Grid item xs={12} md={3}>
                             <TextField
                                 fullWidth
                                 label="기본주소"
@@ -1206,7 +1201,7 @@ const FacilityUpdate = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={4} sx={{ width: "47.8%" }}>
+                        <Grid item xs={12} md={7}>
                             <TextField
                                 fullWidth
                                 label="상세주소"
@@ -1215,6 +1210,7 @@ const FacilityUpdate = () => {
                                 onChange={(e) => setDetailAddress(e.target.value)}
                                 variant="outlined"
                                 size="medium"
+                                sx={{ width: "400px" }}
                             />
                         </Grid>
                     </Grid>

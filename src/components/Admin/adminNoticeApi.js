@@ -1,9 +1,9 @@
 import adminAxios from "./adminAxios.js";
 
-export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searchTerm = "", searchField = "") => {
+export const fetchNotice = async (page = 0, size = 10, boardTypeId = null, searchTerm = "", searchField = "") => {
     try {
         // 기본 URL 구성
-        let url = `/api/admin/board/list?page=${page}&size=${size}`;
+        let url = `/api/admin/announce/list?page=${page}&size=${size}`;
 
         // boardTypeId가 있는 경우 URL에 추가
         if (boardTypeId) {
@@ -24,8 +24,6 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
 
         const response = await adminAxios.get(url);
 
-        console.log(response);
-
         if (response.status != 200) {
             throw new Error(response.data.message || "게시판 목록을 가져오는데 실패했습니다");
         }
@@ -36,7 +34,7 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
     }
 };
 
-export const fetchBoardDetail = async (boardId) => {
+export const fetchNoticeDetail = async (boardId) => {
     try {
         const response = await adminAxios.get(`api/admin/board/${boardId}`);
 

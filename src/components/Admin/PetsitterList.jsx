@@ -28,13 +28,13 @@ const PetsitterList = () => {
 
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
-        id: { width: 80, minWidth: 80, maxWidth: 80 },
-        image: { width: 150, minWidth: 150, maxWidth: 150 },
+        id: { width: 50, minWidth: 50, maxWidth: 50 },
+        image: { width: 80, minWidth: 80, maxWidth: 80 },
         sitterExp: { width: 100, minWidth: 100, maxWidth: 100 },
         nickname: { width: 150, minWidth: 150, maxWidth: 150 },
         age: { width: 100, minWidth: 100, maxWidth: 100 },
-        grown: { width: 150, minWidth: 150, maxWidth: 150 },
-        houseType: { width: 150, minWidth: 150, maxWidth: 150 },
+        grown: { width: 180, minWidth: 180, maxWidth: 180 },
+        houseType: { width: 120, minWidth: 120, maxWidth: 120 },
         comment: { width: 350, minWidth: 350, maxWidth: 350 },
         date: { width: 200, minWidth: 200, maxWidth: 200 },
     };
@@ -188,8 +188,8 @@ const PetsitterList = () => {
                                                     <Box
                                                         component="img"
                                                         sx={{
-                                                            height: 100,
-                                                            width: 100,
+                                                            height: 80,
+                                                            width: 80,
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
@@ -199,8 +199,8 @@ const PetsitterList = () => {
                                                 ) : (
                                                     <Box
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 80,
+                                                            width: 80,
                                                             display: "flex",
                                                             alignItems: "center",
                                                             justifyContent: "center",

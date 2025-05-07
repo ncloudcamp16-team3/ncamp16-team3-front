@@ -192,15 +192,15 @@ function FacilityList() {
                                                 {getFacilityType(row.facilityType)}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.starPoint, ...commonCellStyle }}>
-                                                {row.starPoint}
+                                                {Math.round(row.starPoint).toFixed(1)}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
                                                 {row.image ? (
                                                     <Box
                                                         component="img"
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 80,
+                                                            width: 80,
                                                             objectFit: "cover",
                                                             borderRadius: "4px",
                                                         }}
@@ -210,8 +210,8 @@ function FacilityList() {
                                                 ) : (
                                                     <Box
                                                         sx={{
-                                                            height: 50,
-                                                            width: 60,
+                                                            height: 80,
+                                                            width: 80,
                                                             display: "flex",
                                                             alignItems: "center",
                                                             justifyContent: "center",
