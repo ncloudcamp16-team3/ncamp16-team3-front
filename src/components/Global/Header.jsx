@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../css/App.css";
 import icon from "../../assets/images/Global/icon1.svg";
-import notification from "../../assets/images/Global/notification2.svg";
 import { useNavigate } from "react-router-dom";
 import { Box, MenuItem, Menu } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -12,13 +11,32 @@ import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
 import { logout } from "../../services/authService.js";
 import { Context } from "../../context/Context.jsx";
+import alert_noti from "../../assets/images/Global/active_bell.gif";
+import noti from "../../assets/images/Global/bell.png";
+import { checkNotification } from "../../services/notificationService.js";
 
 const Header = () => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const { user, isLogin, setLogin } = useContext(Context);
+    const { user, isLogin, setLogin, hasNewNotification, setHasNewNotification } = useContext(Context);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
+    // ✅ Header 마운트 시 알림 읽음 여부 확인
+    useEffect(() => {
+        const fetchNotificationStatus = async () => {
+            try {
+                if (user?.id) {
+                    const result = await checkNotification(user.id);
+                    setHasNewNotification(result.exists); // true/false
+                }
+            } catch (error) {
+                console.error("알림 읽음 여부 확인 실패:", error);
+            }
+        };
+
+        fetchNotificationStatus();
+    }, [user?.id]);
 
     const handleLogout = async () => {
         try {
@@ -58,6 +76,7 @@ const Header = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     position: "relative",
+                    cursor: "pointer",
                 }}
                 onClick={toggleMenu}
             >
@@ -186,18 +205,30 @@ const Header = () => {
                     꼬리친구들
                 </Box>
             </Box>
-            <div onClick={() => navigate("/notification")}>
+            <Box
+                onClick={() => {
+                    navigate("/notification");
+                }}
+                sx={{
+                    width: "40px",
+                    height: "40px",
+                    display: "flex", // 추가
+                    alignItems: "center", // 수직 가운데 정렬
+                    justifyContent: "center", // 수평 가운데 정렬
+                }}
+            >
                 <Box
                     component="img"
-                    src={notification}
+                    src={hasNewNotification ? alert_noti : noti}
                     alt="종"
                     sx={{
                         objectFit: "contain",
-                        width: "40px",
-                        height: "40px",
+                        cursor: "pointer",
+                        width: "30px",
+                        height: "30px",
                     }}
                 />
-            </div>
+            </Box>
         </Box>
     );
 };

@@ -4,6 +4,7 @@ import RightArrow from "../../assets/images/PetMeeting/right-arrow.svg";
 import LeftArrow from "../../assets/images/PetMeeting/left-arrow.svg";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "../../css/board/ImgSlider.css";
 
 const PrevArrow = ({ onClick }) => (
     <Box
@@ -55,7 +56,6 @@ const NextArrow = ({ onClick }) => (
 
 const ImgSlide = ({ photos }) => {
     const settings = {
-        dots: true,
         infinite: true,
         speed: 500,
         slidesToShow: 1,
@@ -63,31 +63,8 @@ const ImgSlide = ({ photos }) => {
         arrows: photos?.length > 1,
         prevArrow: <PrevArrow />,
         nextArrow: <NextArrow />,
-        appendDots: (dots) => (
-            <Box
-                sx={{
-                    position: "absolute",
-                    bottom: "10px",
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    zIndex: 10,
-                }}
-            >
-                <ul style={{ margin: 0, padding: 0, display: "flex" }}>
-                    {dots.map((dot, index) => (
-                        <li
-                            key={index}
-                            style={{
-                                margin: "0",
-                            }}
-                        >
-                            {dot}
-                        </li>
-                    ))}
-                </ul>
-            </Box>
-        ),
+        dotsClass: "slick-dots custom-dots",
+        dots: true,
     };
 
     return (
@@ -99,10 +76,10 @@ const ImgSlide = ({ photos }) => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                overflow: "hidden",
                 position: "relative",
                 borderRadius: "20px",
                 mb: "10px",
+                overflow: "hidden",
             }}
         >
             <Slider {...settings} style={{ width: "100%", height: "100%" }}>

@@ -8,13 +8,27 @@ import { registerSW } from "../../../public/firebase-messaging-sw-register.js";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
 import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
-import { sendChatNotification } from "../../services/notificationService.js";
+import { getNotificationsByUserId, sendChatNotification } from "../../services/notificationService.js";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
     const hasRun = useRef(false);
 
-    const { isLogin, setLogin, setUser, nc, setNc, user, isChatOpen, isChatRoomOpen } = useContext(Context);
+    const {
+        isLogin,
+        setLogin,
+        setUser,
+        nc,
+        setNc,
+        user,
+        isChatOpen,
+        isChatRoomOpen,
+        setHasNewNotification,
+        notifications,
+        setNotifications,
+    } = useContext(Context);
+
+    const [toastNotifications, setToastNotifications] = useState([]);
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -175,10 +189,8 @@ const ProtectedRoute = () => {
 
     // Notification List component
     const NotificationList = () => {
-        const [notifications, setNotifications] = useState([]);
-
         useEffect(() => {
-            const unsubscribe = onMessage(messaging, (payload) => {
+            const unsubscribe = onMessage(messaging, async (payload) => {
                 if (payload.notification) {
                     return;
                 }
@@ -210,20 +222,31 @@ const ProtectedRoute = () => {
                     });
                 }
 
-                setNotifications((prev) => [...prev, newNotification]);
+                // setNotifications((prev) => [...prev, newNotification]);
+                setToastNotifications((prev) => [...prev, newNotification]);
+                setHasNewNotification(true);
 
-                // 5초 후 알림 제거
+                // 새 알림 목록 가져오기
+                if (user?.id) {
+                    try {
+                        const data = await getNotificationsByUserId(user.id);
+                        setNotifications(data);
+                    } catch (err) {
+                        console.error("Error refreshing notifications after FCM:", err);
+                    }
+                }
+
                 setTimeout(() => {
-                    setNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
+                    setToastNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
                 }, 5000);
             });
 
             return () => unsubscribe();
-        }, []);
+        }, [user, messaging, setNotifications, setHasNewNotification]);
 
         return (
             <>
-                {notifications.map((notification) => (
+                {toastNotifications.map((notification) => (
                     <Snackbar
                         key={notification.id}
                         open={true}

@@ -10,7 +10,7 @@ const GlobalSnackbar = ({ open, message, severity, handleSnackbarClose }) => {
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             sx={{
                 zIndex: 10000,
-                mb: "130px",
+                mb: "135px",
             }}
         >
             <Alert onClose={handleSnackbarClose} severity={severity} sx={{ width: "100%" }}>

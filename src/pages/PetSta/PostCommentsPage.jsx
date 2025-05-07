@@ -19,9 +19,10 @@ const PostCommentPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const inputRef = useRef(null);
     const { postId } = useParams();
-    const { user } = useContext(Context);
+    const { user, showModal } = useContext(Context);
     const theme = useTheme();
     const navigate = useNavigate();
+    const [errorModalOpen, setErrorModalOpen] = useState(false);
 
     const fetchComments = async () => {
         try {
@@ -29,7 +30,7 @@ const PostCommentPage = () => {
             const data = await getParentComments(postId);
             setComments(data);
         } catch (error) {
-            console.error("댓글을 불러오는 데 실패했습니다.", error);
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
@@ -87,7 +88,7 @@ const PostCommentPage = () => {
 
     const handleAddComment = async () => {
         if (!commentContent.trim()) {
-            alert("댓글을 작성해 주세요!");
+            showModal("", "댓글을 작성해 주세요!");
             return;
         }
 
