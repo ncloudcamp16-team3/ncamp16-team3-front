@@ -49,7 +49,7 @@ const NoticeDetail = () => {
 
         executeSearch(term, field);
 
-        navigate("/admin/board/announce/list");
+        navigate("/admin/board/notice/list");
     };
 
     // 필터 핸들러
@@ -87,7 +87,7 @@ const NoticeDetail = () => {
                 // 삭제 성공 시 처리
                 alert("공지가 삭제되었습니다");
                 // 게시글 목록 페이지로 이동
-                navigate("/admin/board/announce/list");
+                navigate("/admin/board/notice/list");
             } catch (error) {
                 console.error("공지 삭제 중 오류 발생:", error);
                 alert(`공지 삭제 실패: ${error.message}`);
