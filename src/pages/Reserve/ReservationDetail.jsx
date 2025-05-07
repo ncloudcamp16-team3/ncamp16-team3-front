@@ -43,6 +43,9 @@ const ReservationDetail = () => {
             minute: "2-digit",
         });
     };
+    const now = new Date();
+    const canCancel = reservation.entryTime && new Date(reservation.entryTime) > now;
+    const canReview = reservation.exitTime && new Date(reservation.exitTime) < now;
 
     return (
         <Container>
@@ -83,18 +86,28 @@ const ReservationDetail = () => {
                     </ListItem>
                 </List>
                 <Divider />
-                <Button
-                    variant="contained"
-                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
-                    size="large"
-                    onClick={() => navigate(`/reserve/review/${reservation.id}`)}
-                    fullWidth
-                >
-                    리뷰작성
-                </Button>
-                <Button variant="contained" sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }} size="large" fullWidth>
-                    예약취소
-                </Button>
+                <Divider />
+                {canReview && (
+                    <Button
+                        variant="contained"
+                        sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
+                        size="large"
+                        onClick={() => navigate(`/reserve/review/${reservation.id}`)}
+                        fullWidth
+                    >
+                        리뷰작성
+                    </Button>
+                )}
+                {canCancel && (
+                    <Button
+                        variant="contained"
+                        sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
+                        size="large"
+                        fullWidth
+                    >
+                        예약취소
+                    </Button>
+                )}
             </Box>
         </Container>
     );

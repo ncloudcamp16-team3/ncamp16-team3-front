@@ -170,15 +170,12 @@ const AddVideoDetail = ({ videoData, onBack }) => {
             {/* ✅ 업로드 성공 모달 */}
             <GlobalModal
                 open={successModalOpen}
-                onClose={() => {
-                    setSuccessModalOpen(false);
-                    navigate("/petsta");
-                }}
+                onClose={() => setSuccessModalOpen(false)}
                 message={{
                     title: "업로드 완료",
                     text: "동영상이 성공적으로 업로드되었습니다.",
                     confirmText: "확인",
-                    redirectUrl: "/petsta",
+                    onConfirm: () => navigate("/petsta"), // ✅ redirectUrl 대신 직접 실행
                 }}
             />
 
@@ -189,7 +186,7 @@ const AddVideoDetail = ({ videoData, onBack }) => {
                 message={{
                     title: "업로드 실패",
                     text: "동영상 업로드 중 문제가 발생했습니다.\n다시 시도해 주세요.",
-                    confirmText: "확인",
+                    confirmText: "확인", // ✅ 확인만 있음
                 }}
             />
         </Box>

@@ -19,8 +19,17 @@ const GlobalModal = ({ open, onClose, message }) => {
     const navigate = useNavigate();
 
     const handleConfirm = () => {
-        if (message?.redirectUrl) {
-            navigate(message.redirectUrl);
+        if (message?.onConfirm) {
+            message.onConfirm(); // ✅ 직접 함수 실행
+        } else if (message?.redirectUrl) {
+            navigate(message.redirectUrl); // ✅ 이동
+        }
+        onClose(); // 항상 닫음
+    };
+
+    const handleCancel = () => {
+        if (message?.onCancel) {
+            message.onCancel(); // ✅ 커스텀 취소 로직
         }
         onClose();
     };
@@ -32,17 +41,19 @@ const GlobalModal = ({ open, onClose, message }) => {
                     {message?.title || "알림"}
                 </Typography>
 
-                <Typography sx={{ mt: 2 }}>{message?.text || "내용 없음"}</Typography>
+                <Typography sx={{ mt: 2, whiteSpace: "pre-line" }}>{message?.text || "내용 없음"}</Typography>
 
                 <Box mt={4} display="flex" justifyContent="center" gap={2}>
-                    <Button variant="outlined" onClick={onClose}>
-                        {message?.cancelText || "닫기"}
-                    </Button>
-                    {message?.redirectUrl && (
-                        <Button variant="contained" onClick={handleConfirm}>
-                            {message?.confirmText || "이동"}
+                    {/* ✅ 3. Yes/No 용도 */}
+                    {message?.showCancel && (
+                        <Button variant="outlined" onClick={handleCancel}>
+                            {message?.cancelText || "아니요"}
                         </Button>
                     )}
+
+                    <Button variant="contained" onClick={handleConfirm}>
+                        {message?.confirmText || "확인"}
+                    </Button>
                 </Box>
             </Box>
         </Modal>
