@@ -145,6 +145,10 @@ export function Provider({ children }) {
         setIsChatRoomOpen(isChatRoom);
     }, [location.pathname]);
 
+    const [notifications, setNotifications] = useState([]);
+    const [toastNotifications, setToastNotifications] = useState([]);
+    const [hasNewNotification, setHasNewNotification] = useState(false);
+
     if (isUserLoading) return null;
 
     return (
@@ -172,6 +176,10 @@ export function Provider({ children }) {
                 isChatRoomOpen,
                 setIsChatRoomOpen,
                 handleSnackbarOpen,
+                hasNewNotification,
+                setHasNewNotification,
+                notifications,
+                setNotifications,
             }}
         >
             {children}
