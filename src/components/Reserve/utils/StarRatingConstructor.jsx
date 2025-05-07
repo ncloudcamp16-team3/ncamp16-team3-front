@@ -56,9 +56,11 @@ const StarRatingConstructor = ({ starRating, setStarRating }) => {
                     icon={<StarIcon fontSize="large" sx={{ color: "#faaf00" }} />}
                     emptyIcon={<StarBorderIcon fontSize="large" sx={{ color: "#ccc" }} />}
                 />
-                <Typography sx={{ ml: 1, display: "flex", justifyContent: "center" }}>
-                    {value !== null && <Box sx={{ fontWeight: "medium" }}>{labels[hover !== -1 ? hover : value]}</Box>}
-                </Typography>
+                <Box sx={{ ml: 1, display: "flex", justifyContent: "center" }}>
+                    {value !== null && (
+                        <Typography sx={{ fontWeight: "medium" }}>{labels[hover !== -1 ? hover : value]}</Typography>
+                    )}
+                </Box>
             </Stack>
         </Box>
     );

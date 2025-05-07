@@ -22,13 +22,6 @@ const UploadBox = styled(Box)(({ theme }) => ({
     width: "100%",
 }));
 
-const PreviewContainer = styled(Box)(({ theme }) => ({
-    display: "flex",
-    flexWrap: "wrap",
-    gap: theme.spacing(1),
-    marginTop: theme.spacing(2),
-}));
-
 const PreviewImage = styled("img")({
     width: 100,
     height: 100,
@@ -36,72 +29,60 @@ const PreviewImage = styled("img")({
     borderRadius: 4,
 });
 
-const FileUploader = () => {
-    const [files, setFiles] = useState([]);
-    const [previews, setPreviews] = useState([]);
+const FileUploader = ({ onFileChange }) => {
+    const [preview, setPreview] = useState(null);
+    const [file, setFile] = useState(null);
 
     const handleFileChange = (event) => {
-        const selectedFiles = Array.from(event.target.files);
-        setFiles((prev) => [...prev, ...selectedFiles]);
+        const selectedFile = event.target.files[0];
+        if (!selectedFile) return;
 
-        // 파일 미리보기 생성
-        selectedFiles.forEach((file) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setPreviews((prev) => [...prev, e.target.result]);
-            };
-            reader.readAsDataURL(file);
-        });
+        setFile(selectedFile);
+        onFileChange(selectedFile); // 상위로 전달
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setPreview(e.target.result);
+        };
+        reader.readAsDataURL(selectedFile);
     };
 
-    const removeFile = (index) => {
-        setFiles(files.filter((_, i) => i !== index));
-        setPreviews(previews.filter((_, i) => i !== index));
+    const removeFile = () => {
+        setFile(null);
+        setPreview(null);
+        onFileChange(null); // 상위에도 초기화 전달
     };
 
     return (
-        <Box sx={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center" }}>
-            {previews.length > 0 && (
-                <PreviewContainer>
-                    {previews.map((preview, index) => (
-                        <Box key={index} position="relative">
-                            <PreviewImage src={preview} alt={`preview-${index}`} />
-                            <IconButton
-                                size="small"
-                                onClick={() => removeFile(index)}
-                                sx={{
-                                    position: "absolute",
-                                    top: -10,
-                                    right: -10,
-                                    bgcolor: "white",
-                                    boxShadow: 1,
-                                    "&:hover": { bgcolor: "grey.100" },
-                                }}
-                            >
-                                <DeleteIcon fontSize="small" />
-                            </IconButton>
-                        </Box>
-                    ))}
-                </PreviewContainer>
+        <Box sx={{ width: "100%", mt: 2 }}>
+            {preview && (
+                <Box mb={2} position="relative" display="inline-block">
+                    <PreviewImage src={preview} alt="preview" />
+                    <IconButton
+                        size="small"
+                        onClick={removeFile}
+                        sx={{
+                            position: "absolute",
+                            top: -10,
+                            right: -10,
+                            bgcolor: "white",
+                            boxShadow: 1,
+                            "&:hover": { bgcolor: "grey.100" },
+                        }}
+                    >
+                        <DeleteIcon fontSize="small" />
+                    </IconButton>
+                </Box>
             )}
             <input
                 type="file"
                 accept="image/*"
-                multiple
                 onChange={handleFileChange}
                 style={{ display: "none" }}
                 id="file-upload"
             />
-            <label htmlFor="file-upload" style={{ cursor: "pointer", width: "100%", height: 100 }}>
-                <UploadBox
-                    sx={{
-                        width: "100%",
-                        height: 100,
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "3%",
-                    }}
-                >
+            <label htmlFor="file-upload">
+                <UploadBox>
                     <CloudUploadIcon fontSize="large" color="action" />
                     <Typography variant="h6" color="textSecondary">
                         사진 첨부하기
