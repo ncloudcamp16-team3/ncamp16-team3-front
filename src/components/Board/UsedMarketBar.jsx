@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import BookMarkBtn from "./BookMarkBtn.jsx";
-import { useNavigate } from "react-router-dom";
+import { Context } from "../../context/Context.jsx";
 
 const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) => {
-    const navigate = useNavigate();
     const theme = useTheme();
+    const { user } = useContext(Context);
 
     return (
         <Box
@@ -45,25 +45,27 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) 
                 {postData.price.toLocaleString()}원
             </Typography>
 
-            <Button
-                onClick={onClickChat}
-                variant="contained"
-                sx={{
-                    position: "absolute",
-                    right: "15px",
-                    borderRadius: "25px",
-                    height: "38px",
-                    width: "100px",
-                    backgroundColor: theme.brand3,
-                    boxShadow: "none",
-                    "&:hover": {
-                        backgroundColor: "#d88e4f",
+            {postData.authorId !== user.id && (
+                <Button
+                    onClick={onClickChat}
+                    variant="contained"
+                    sx={{
+                        position: "absolute",
+                        right: "15px",
+                        borderRadius: "25px",
+                        height: "38px",
+                        width: "100px",
+                        backgroundColor: theme.brand3,
                         boxShadow: "none",
-                    },
-                }}
-            >
-                채팅하기
-            </Button>
+                        "&:hover": {
+                            backgroundColor: "#d88e4f",
+                            boxShadow: "none",
+                        },
+                    }}
+                >
+                    채팅하기
+                </Button>
+            )}
         </Box>
     );
 };
