@@ -7,6 +7,7 @@ import { Context } from "../../../context/Context.jsx";
 import { deletePetstaPost } from "../../../services/petstaService.js";
 import { useNavigate } from "react-router-dom";
 import MyPostCenterMenu from "./MyPostCenterMenu.jsx";
+import GlobalModal from "../../Global/GlobalModal.jsx";
 // ★ 추가
 
 const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = false, postId, onRemove, fileType }) => {
@@ -15,6 +16,7 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
     const isFollow = followMap[userId] || false;
     const [centerMenuOpen, setCenterMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const userInfo = {
         userName,
         userId,
@@ -22,11 +24,17 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
         isVisited,
     };
 
+    const handleDeleteClick = () => {
+        setCenterMenuOpen(false); // 기존 메뉴 닫고
+        setConfirmDeleteOpen(true); // 모달 열기
+    };
+
     const handleDeletePost = async () => {
         try {
             await deletePetstaPost(postId);
+            setConfirmDeleteOpen(false);
             if (onRemove) {
-                onRemove(postId); // 🔥 삭제 후 UI에서 제거
+                onRemove(postId);
             } else {
                 navigate(-1);
             }
@@ -60,7 +68,7 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
                 position: isAbsolute ? "absolute" : "static",
                 top: isAbsolute ? 5 : "auto",
                 left: isAbsolute ? 0 : "auto",
-                zIndex: isAbsolute ? 1 : "auto",
+                zIndex: isAbsolute ? 9999 : "auto",
                 width: "100%",
             }}
         >
@@ -105,11 +113,23 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
                     <MyPostCenterMenu
                         open={centerMenuOpen}
                         onClose={() => setCenterMenuOpen(false)}
-                        onDelete={handleDeletePost}
+                        onDelete={handleDeleteClick}
                         onEdit={handleEdit}
                     />
                 </Box>
             )}
+            <GlobalModal
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                message={{
+                    title: "게시글 삭제",
+                    text: "정말 이 게시글을 삭제하시겠습니까?",
+                    confirmText: "삭제",
+                    cancelText: "취소",
+                    showCancel: true,
+                    onConfirm: handleDeletePost,
+                }}
+            />
         </Box>
     );
 };
