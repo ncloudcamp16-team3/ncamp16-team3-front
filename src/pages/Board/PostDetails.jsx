@@ -127,19 +127,19 @@ const PostDetails = () => {
                 });
             }
 
-            // 메시지 전송
-            const payload2 = {
-                customType: "USER_SUBSCRIBED",
-                content: {
-                    userId: postData.authorId,
-                    channelId: channelId,
-                },
-            };
-
-            await nc.sendMessage(channelId, {
-                type: "text",
-                message: JSON.stringify(payload2),
-            });
+            // // 메시지 전송
+            // const payload2 = {
+            //     customType: "USER_SUBSCRIBED",
+            //     content: {
+            //         userId: postData.authorId,
+            //         channelId: channelId,
+            //     },
+            // };
+            //
+            // await nc.sendMessage(channelId, {
+            //     type: "text",
+            //     message: JSON.stringify(payload2),
+            // });
 
             navigate(`/chat/room/${channelId}`);
         } catch (e) {

@@ -65,14 +65,14 @@ const UserProfile = ({ userInfo }) => {
                 console.log("✅ 사용자 구독 완료");
             }
 
-            await nc.sendMessage(realChannelId, {
-                type: "text",
-                customType: "USER_SUBSCRIBED",
-                content: {
-                    userId: userInfo.id,
-                    channelId: realChannelId,
-                },
-            });
+            // await nc.sendMessage(realChannelId, {
+            //     type: "text",
+            //     customType: "USER_SUBSCRIBED",
+            //     content: {
+            //         userId: userInfo.id,
+            //         channelId: realChannelId,
+            //     },
+            // });
 
             // 7️⃣ 채팅방 이동
             navigate(`/chat/room/${realChannelId}`);
