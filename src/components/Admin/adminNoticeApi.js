@@ -34,9 +34,9 @@ export const fetchNotice = async (page = 0, size = 10, boardTypeId = null, searc
     }
 };
 
-export const fetchNoticeDetail = async (boardId) => {
+export const fetchNoticeDetail = async (id) => {
     try {
-        const response = await adminAxios.get(`api/admin/board/${boardId}`);
+        const response = await adminAxios.get(`api/admin/announce/${id}`);
 
         if (response.status != 200) {
             throw new Error(response.data.message || "게시글 정보를 가져오는데 실패했습니다");
