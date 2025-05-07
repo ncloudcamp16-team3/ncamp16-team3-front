@@ -14,7 +14,7 @@ dayjs.locale("ko"); // ✅ 한글 설정
 import { koKR } from "@mui/x-date-pickers/locales";
 
 const Step2 = () => {
-    const { nextStep, handleChange, formData, prevStep } = useRegister();
+    const { nextStep, handleChange, formData, prevStep, handleWeightChange } = useRegister();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -201,12 +201,12 @@ const Step2 = () => {
                     </InputLabel>
                     <Input
                         required
-                        type="number"
+                        type="text"
                         id="petWeight"
                         name="petWeight"
                         placeholder="몸무게를 입력해 주세요(kg)"
                         value={formData.petWeight}
-                        onChange={handleChange}
+                        onChange={handleWeightChange}
                     />
                 </FormControl>
             </Box>

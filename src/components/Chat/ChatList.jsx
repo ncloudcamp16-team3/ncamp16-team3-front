@@ -8,8 +8,7 @@ import { getMyChatRooms } from "../../services/chatService.js";
 import { sendChatNotification } from "../../services/notificationService.js";
 
 const ChatList = () => {
-    const { user, nc, isChatOpen, isChatRoomOpen } = useContext(Context);
-    const [chatList, setChatList] = useState([]);
+    const { user, nc, isChatOpen, isChatRoomOpen, chatList, setChatList } = useContext(Context);
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState("");
 

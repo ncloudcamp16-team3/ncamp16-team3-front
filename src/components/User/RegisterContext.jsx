@@ -65,6 +65,18 @@ export const RegisterProvider = ({ children }) => {
         setMainPhotoIndex(index);
     };
 
+    // 몸무게 입력 처리 함수 추가
+    const handleWeightChange = (e) => {
+        const { name, value } = e.target;
+
+        // 숫자와 소수점만 허용
+        const regex = /^[0-9]*\.?[0-9]*$/;
+
+        if (value === "" || regex.test(value)) {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
+    };
+
     useEffect(() => {
         if (hasRun.current) return;
         hasRun.current = true;
@@ -131,6 +143,7 @@ export const RegisterProvider = ({ children }) => {
                 setMainPhotoIndex,
                 removePhoto,
                 selectMainPhoto,
+                handleWeightChange,
             }}
         >
             {children}
