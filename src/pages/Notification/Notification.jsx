@@ -50,6 +50,10 @@ const Notification = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []); // 화면 이동시 스크롤 맨 위로
+
+    useEffect(() => {
         if (!user?.id) return;
 
         const fetchNotifications = async () => {

@@ -222,7 +222,6 @@ const Header = () => {
                     alt="종"
                     sx={{
                         objectFit: "contain",
-                        justifyContent: "center",
                         width: "30px",
                         height: "30px",
                     }}
