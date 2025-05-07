@@ -365,45 +365,43 @@ const MyPage = () => {
     };
 
     const handleQuitPetsitter = async () => {
-        if (window.confirm("정말로 펫시터를 그만두시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
-            try {
-                const response = await instance.post("/petsitter/quit", {});
+        try {
+            const response = await instance.post("/petsitter/quit", {});
 
-                if (response.status === 200) {
-                    setSnackbar({
-                        open: true,
-                        message: "펫시터 탈퇴가 완료되었습니다.",
-                        severity: "success",
-                    });
-
-                    setSitterStatus({
-                        registered: false,
-                        isPending: false,
-                        status: "NOT_REGISTERED",
-                    });
-                    localStorage.removeItem("petSitterRegistrationCompleted");
-                    localStorage.removeItem("petSitterInfo");
-                    handleCloseQuitPetsitterModal();
-                }
-            } catch (err) {
-                console.error("펫시터 탈퇴 오류:", err);
-
-                if (err.response && err.response.status === 401) {
-                    setSnackbar({
-                        open: true,
-                        message: "인증이 만료되었습니다. 다시 로그인해주세요.",
-                        severity: "error",
-                    });
-                    setTimeout(() => navigate("/login"), 2000);
-                    return;
-                }
-
+            if (response.status === 200) {
                 setSnackbar({
                     open: true,
-                    message: err.response?.data?.message || "펫시터 탈퇴 처리 중 오류가 발생했습니다.",
+                    message: "펫시터 탈퇴가 완료되었습니다.",
+                    severity: "success",
+                });
+
+                setSitterStatus({
+                    registered: false,
+                    isPending: false,
+                    status: "NOT_REGISTERED",
+                });
+                localStorage.removeItem("petSitterRegistrationCompleted");
+                localStorage.removeItem("petSitterInfo");
+                handleCloseQuitPetsitterModal();
+            }
+        } catch (err) {
+            console.error("펫시터 탈퇴 오류:", err);
+
+            if (err.response && err.response.status === 401) {
+                setSnackbar({
+                    open: true,
+                    message: "인증이 만료되었습니다. 다시 로그인해주세요.",
                     severity: "error",
                 });
+                setTimeout(() => navigate("/login"), 2000);
+                return;
             }
+
+            setSnackbar({
+                open: true,
+                message: err.response?.data?.message || "펫시터 탈퇴 처리 중 오류가 발생했습니다.",
+                severity: "error",
+            });
         }
     };
 
