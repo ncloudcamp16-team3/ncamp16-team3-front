@@ -11,10 +11,10 @@ import BookmarkButton from "./BookmarkButton.jsx";
 import LikeButton from "./LikeButton.jsx";
 import FollowButton from "./FollowButton.jsx";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import MyPostDropdown from "./MyPostDropdown.jsx";
 import { deletePetstaPost } from "../../../services/petstaService.js";
 import * as PropTypes from "prop-types";
 import MyPostCenterMenu from "./MyPostCenterMenu.jsx";
+import GlobalConfirmModal from "../../Global/GlobalConfirmModal.jsx";
 
 MyPostCenterMenu.propTypes = {
     open: PropTypes.any,
@@ -35,6 +35,11 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const [centerMenuOpen, setCenterMenuOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const handleDeleteClick = () => {
+        setCenterMenuOpen(false);
+        setConfirmDeleteOpen(true);
+    };
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -92,6 +97,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
     const handleDeletePost = async () => {
         try {
             await deletePetstaPost(post.postId);
+            setConfirmDeleteOpen(false);
             navigate(-1);
         } catch (e) {
             alert("게시글 삭제 실패");
@@ -166,7 +172,11 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                     />
                     {likeCount > 0 && <Typography>{likeCountDisplay}</Typography>}
 
-                    <Box mt={1} onClick={() => navigate(`/petsta/post/comment/${post.postId}`)}>
+                    <Box
+                        mt={1}
+                        onClick={() => navigate(`/petsta/post/comment/${post.postId}`)}
+                        sx={{ cursor: "pointer" }}
+                    >
                         <img src={PetstaComment} width="32px" height="32px" />
                     </Box>
                     {commentCount > 0 && <Typography>{commentCountDisplay}</Typography>}
@@ -180,16 +190,15 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                         />
                     </Box>
                     {user.id === post.userId && (
-                        <Box mt={1} sx={{ position: "relative"}} ref={dropdownRef}>
+                        <Box mt={1} sx={{ position: "relative" }} ref={dropdownRef}>
                             <MoreVertIcon
                                 onClick={() => setCenterMenuOpen(true)}
-                                sx={{ fontSize : "35px", cursor: "pointer" }}
-
+                                sx={{ fontSize: "35px", cursor: "pointer" }}
                             />
                             <MyPostCenterMenu
                                 open={centerMenuOpen}
                                 onClose={() => setCenterMenuOpen(false)}
-                                onDelete={handleDeletePost}
+                                onDelete={handleDeleteClick}
                                 onEdit={() => {
                                     setCenterMenuOpen(false);
                                     navigate(`/petsta/post/edit/video/${post.postId}`);
@@ -215,6 +224,17 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
             >
                 <source src={`${post.fileName}`} type="video/mp4" />
             </video>
+
+            <GlobalConfirmModal
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={handleDeletePost}
+                onCancel={() => setConfirmDeleteOpen(false)}
+                title="게시글 삭제"
+                description="정말 이 게시글을 삭제하시겠습니까?"
+                confirmText="삭제"
+                cancelText="취소"
+            />
         </Box>
     );
 };

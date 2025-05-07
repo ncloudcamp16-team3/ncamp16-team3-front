@@ -14,10 +14,10 @@ import {
     Alert,
 } from "@mui/material";
 import AdminHeader from "./AdminHeader.jsx";
-import { fetchBoards } from "./adminBoardApi.js";
 import { useAdmin } from "./AdminContext.jsx";
+import { fetchNotice } from "./adminNoticeApi.js";
 
-function DashBoard() {
+function NoticeList() {
     const adminContext = useAdmin();
     const { currentCategory, searchField, searchTerm, currentPage, setCurrentPage } = adminContext;
     const [rows, setRows] = useState([]);
@@ -47,7 +47,7 @@ function DashBoard() {
     const navigate = useNavigate();
 
     const rowHref = (id) => {
-        navigate(`/admin/board/${id}`);
+        navigate(`/admin/board/notice/${id}`);
     };
 
     const boardTypeMapping = {
@@ -64,7 +64,9 @@ function DashBoard() {
 
             const boardTypeId = boardTypeMapping[currentCategory];
             const apiPage = Math.max(0, currentPage - 1);
-            const response = await fetchBoards(apiPage, 10, boardTypeId, searchTerm, searchField);
+            const response = await fetchNotice(apiPage, 10, boardTypeId, searchTerm, searchField);
+
+            console.log(response);
 
             //데이터가 있는지 확인
             if (!response || !response.content) {
@@ -80,9 +82,7 @@ function DashBoard() {
                 id: item.id,
                 title: item.title,
                 content: item.content,
-                authorNickname: item.authorNickname,
-                image: item.firstImageUrl,
-                likeCount: item.likeCount,
+                image: item.photos[0].url,
                 date: new Date(item.createdAt).toLocaleString(),
             }));
 
@@ -148,10 +148,6 @@ function DashBoard() {
                                     <TableCell sx={{ ...cellStyles.image, ...commonCellStyle }}>사진</TableCell>
                                     <TableCell sx={{ ...cellStyles.title, ...commonCellStyle }}>제목</TableCell>
                                     <TableCell sx={{ ...cellStyles.content, ...commonCellStyle }}>내용</TableCell>
-                                    <TableCell sx={{ ...cellStyles.authorNickname, ...commonCellStyle }}>
-                                        작성자
-                                    </TableCell>
-                                    <TableCell sx={{ ...cellStyles.likeCount, ...commonCellStyle }}>좋아요</TableCell>
                                     <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>등록일자</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -215,12 +211,6 @@ function DashBoard() {
                                             <TableCell sx={{ ...cellStyles.content, ...commonCellStyle }}>
                                                 {row.content}
                                             </TableCell>
-                                            <TableCell sx={{ ...cellStyles.authorNickname, ...commonCellStyle }}>
-                                                {row.authorNickname}
-                                            </TableCell>
-                                            <TableCell sx={{ ...cellStyles.likeCount, ...commonCellStyle }}>
-                                                {row.likeCount}
-                                            </TableCell>
                                             <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>
                                                 {row.date}
                                             </TableCell>
@@ -279,4 +269,4 @@ function DashBoard() {
     );
 }
 
-export default DashBoard;
+export default NoticeList;

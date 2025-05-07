@@ -56,7 +56,7 @@ const Reservation = () => {
                     variant="contained"
                     sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 1, mb: 2 }}
                     size="large"
-                    onClick={() => navigate(`/`)} // 또는 상세 페이지 id가 있으면 detail 페이지 이동
+                    onClick={() => navigate(`/reserve/detail/${searchParams.get("id")}`)} // 또는 상세 페이지 id가 있으면 detail 페이지 이동
                     fullWidth
                 >
                     예약 상세 보기

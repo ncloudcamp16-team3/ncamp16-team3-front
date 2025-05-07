@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Box, Typography, TextField, IconButton, CircularProgress } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import SendIcon from "@mui/icons-material/Send";
@@ -50,6 +50,7 @@ const ChatRoom = () => {
     const [rightPosition, setRightPosition] = useState("20px");
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef(null);
+    const [sending, setSending] = useState(false);
 
     const parseMessage = (msg) => {
         let parsed;
@@ -80,20 +81,16 @@ const ChatRoom = () => {
             isVisible: isVisible,
         };
     };
-
-    useEffect(() => {
-        if (!nc || !channelId) return;
-
-        const handleReceiveMessage = async (channel, msg) => {
+    const handleReceiveMessage = useCallback(
+        async (channel, msg) => {
             if (msg.channel_id !== channelId) return;
 
             const { parsed, ...newMessage } = parseMessage(msg);
-
             setMessages((prev) => [...prev, newMessage]);
 
             if (msg.sender?.id !== `ncid${user.id}`) {
-                const rawSenderId = msg.sender?.id; // "ncid25"
-                const numericSenderId = rawSenderId?.replace(/\D/g, ""); // 숫자만 추출
+                const rawSenderId = msg.sender?.id;
+                const numericSenderId = rawSenderId?.replace(/\D/g, "");
 
                 const payload = {
                     userId: user.id,
@@ -103,24 +100,28 @@ const ChatRoom = () => {
                     type: parsed.customType,
                     createdAt: new Date().toISOString(),
                 };
+
                 try {
                     await sendChatNotification(payload);
                 } catch (err) {
                     console.error("알림 전송 실패:", err);
                 }
-
-                // 2. 읽음 처리
-                try {
-                    await nc.markRead(channelId, {
-                        user_id: msg.sender.id,
-                        message_id: msg.message_id,
-                        sort_id: msg.sort_id,
-                    });
-                } catch (err) {
-                    console.warn("내 메시지 markRead 실패:", err);
-                }
             }
-        };
+            try {
+                await nc.markRead(channelId, {
+                    user_id: msg.sender.id,
+                    message_id: msg.message_id,
+                    sort_id: msg.sort_id,
+                });
+            } catch (err) {
+                console.warn("❌ markRead 실패:", err);
+            }
+        },
+        [channelId, user.id, parseMessage, nc]
+    );
+    useEffect(() => {
+        if (!nc || !channelId) return;
+
         const init = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -153,9 +154,15 @@ const ChatRoom = () => {
                         photo: msg.sender?.profile,
                     };
                 });
+
                 const filteredMessages = loadedMessages.filter(msg => {
+                    if (msg.type_id === 4) {
+                        return true;
+
+                const filteredMessages = loadedMessages.filter((msg) => {
                     if (msg.type_id === 4 && msg.metadata.visibleTo) {
                         return msg.metadata.visibleTo === `ncid${user.id}`;
+
                     }
                     return true;
                 });
@@ -208,8 +215,9 @@ const ChatRoom = () => {
     }, []);
 
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || sending) return;
 
+        setSending(true);
         try {
             const payload = {
                 customType: "TEXT",
@@ -224,6 +232,8 @@ const ChatRoom = () => {
             setInput("");
         } catch (e) {
             console.error("메시지 전송 실패:", e);
+        } finally {
+            setSending(false);
         }
     };
 
@@ -270,7 +280,7 @@ const ChatRoom = () => {
                         {messages
                             .slice()
                             .reverse()
-                            .filter(msg => {
+                            .filter((msg) => {
                                 if (msg.type_id === 4 && msg.metadata.visibleTo) {
                                     return msg.metadata.visibleTo === `ncid${user.id}`;
                                 }

@@ -179,8 +179,8 @@ const ReserveDetail = () => {
                 merchantPayKey,
                 productName: facilityData.name,
                 productCount: "1",
-                totalPayAmount: "240000",
-                taxScopeAmount: "240000",
+                totalPayAmount: "50000",
+                taxScopeAmount: "50000",
                 taxExScopeAmount: "0",
                 returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
             });

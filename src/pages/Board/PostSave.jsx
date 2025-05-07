@@ -23,10 +23,9 @@ const PostSave = () => {
     };
 
     const handleChange = (e) => {
-        const input = e.target.value.replace(/,/g, ""); // 콤마를 제거한 값을 사용
+        const input = e.target.value.replace(/,/g, "");
         const value = Number(input);
 
-        // 빈 문자열이면 0으로 처리
         if (input === "") {
             setPostData((prev) =>
                 produce(prev, (draft) => {
@@ -36,15 +35,23 @@ const PostSave = () => {
             return;
         }
 
-        // 값이 0 이상일 때만 처리
         if (value >= 0) {
-            setPostData((prev) =>
-                produce(prev, (draft) => {
-                    draft.price = value;
-                })
-            );
+            if (value <= 1000000000) {
+                setPostData((prev) =>
+                    produce(prev, (draft) => {
+                        draft.price = value;
+                    })
+                );
+            } else {
+                setPostData((prev) =>
+                    produce(prev, (draft) => {
+                        draft.price = 1000000000;
+                    })
+                );
+            }
         }
     };
+
     const [postData, setPostData] = useState({
         id: null,
         boardTypeId: null,

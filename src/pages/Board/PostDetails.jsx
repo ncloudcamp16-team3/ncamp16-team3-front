@@ -33,7 +33,7 @@ const PostDetails = () => {
     const [liked, setLiked] = useState(false);
     const [bookMarked, setBookMarked] = useState(false);
     const [replyingTo, setReplyingTo] = useState(null);
-    const [isReply, setIsReply] = useState(true);
+    const [isReply, setIsReply] = useState(false);
     const commentInputRef = useRef(null);
     const commentRefs = useRef({});
     const theme = useTheme();
@@ -68,7 +68,7 @@ const PostDetails = () => {
     };
 
     const handleTradeChat = async () => {
-        if (!user || !nc || !postData.authorId || !postData.imageUrls?.[0]) return;
+        if (!user || !nc || !postData.authorId) return;
 
         try {
             const targetUserId = postData.authorId;
@@ -114,7 +114,9 @@ const PostDetails = () => {
                     content: {
                         title: postData.title,
                         price: postData.price,
-                        image: postData.imageUrls?.[0],
+                        image: postData.imageUrls?.[0]
+                            ? postData.imageUrls[0]
+                            : "https://kr.object.ncloudstorage.com/tailfriends-buck/uploads/board/join-logo.png",
                         postId: postData.id,
                     },
                 };
@@ -229,7 +231,7 @@ const PostDetails = () => {
                     setLiked(data.liked);
                     setBookMarked(data.bookmarked);
                 })
-                .catch((err) => {});
+                .catch(() => {});
         };
 
         initPostDetailPage();
@@ -237,7 +239,7 @@ const PostDetails = () => {
 
     const likeBtnClick = () => {
         toggleLiked(user.id, postId, liked)
-            .then((res) => {
+            .then(() => {
                 setLiked(!liked);
                 if (liked) {
                     setPostData(
@@ -253,15 +255,15 @@ const PostDetails = () => {
                     );
                 }
             })
-            .catch((err) => {});
+            .catch(() => {});
     };
 
     const bookMarkBtnClick = () => {
         toggleBookmarked(user.id, postId, bookMarked)
-            .then((res) => {
+            .then(() => {
                 setBookMarked(!bookMarked);
             })
-            .catch((err) => {});
+            .catch(() => {});
     };
 
     const handleCancelReply = () => {
@@ -341,6 +343,7 @@ const PostDetails = () => {
                         </Typography>
                         <InputBase
                             value={postData.address}
+                            readOnly
                             sx={{
                                 width: "100%",
                                 px: "10px",
