@@ -7,7 +7,7 @@ import { Context } from "../../../context/Context.jsx";
 import { deletePetstaPost } from "../../../services/petstaService.js";
 import { useNavigate } from "react-router-dom";
 import MyPostCenterMenu from "./MyPostCenterMenu.jsx";
-import GlobalModal from "../../Global/GlobalModal.jsx";
+import GlobalConfirmModal from "../../Global/GlobalConfirmModal.jsx";
 // ★ 추가
 
 const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = false, postId, onRemove, fileType }) => {
@@ -68,7 +68,7 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
                 position: isAbsolute ? "absolute" : "static",
                 top: isAbsolute ? 5 : "auto",
                 left: isAbsolute ? 0 : "auto",
-                zIndex: isAbsolute ? 9999 : "auto",
+                zIndex: isAbsolute ? 1000 : "auto",
                 width: "100%",
             }}
         >
@@ -110,25 +110,23 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
                     >
                         ⋯
                     </Typography>
-                    <MyPostCenterMenu
-                        open={centerMenuOpen}
-                        onClose={() => setCenterMenuOpen(false)}
-                        onDelete={handleDeleteClick}
-                        onEdit={handleEdit}
-                    />
                 </Box>
             )}
-            <GlobalModal
+            <GlobalConfirmModal
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
-                message={{
-                    title: "게시글 삭제",
-                    text: "정말 이 게시글을 삭제하시겠습니까?",
-                    confirmText: "삭제",
-                    cancelText: "취소",
-                    showCancel: true,
-                    onConfirm: handleDeletePost,
-                }}
+                onConfirm={handleDeletePost}
+                title="게시글 삭제"
+                description="정말 이 게시글을 삭제하시겠습니까?"
+                confirmText="삭제"
+                cancelText="취소"
+            />
+
+            <MyPostCenterMenu
+                open={centerMenuOpen}
+                onClose={() => setCenterMenuOpen(false)}
+                onDelete={handleDeleteClick}
+                onEdit={handleEdit}
             />
         </Box>
     );

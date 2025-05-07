@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Box, TextareaAutosize, Modal, Backdrop, CircularProgress } from "@mui/material";
 import TitleBar from "../../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { addVideo } from "../../../services/petstaService.js";
-import GlobalModal from "../../Global/GlobalModal.jsx";
+import GlobalModal from "../../Global/GlobalConfirmModal.jsx";
+import { Context } from "../../../context/Context.jsx";
 
 const AddVideoDetail = ({ videoData, onBack }) => {
     const videoRef = useRef(null);
@@ -15,6 +16,7 @@ const AddVideoDetail = ({ videoData, onBack }) => {
     const [errorModalOpen, setErrorModalOpen] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
+    const { showModal } = useContext(Context);
 
     const handleVideoClick = () => {
         const video = videoRef.current;
@@ -43,10 +45,10 @@ const AddVideoDetail = ({ videoData, onBack }) => {
 
             await addVideo(formData);
 
-            setSuccessModalOpen(true); // ✅ 성공 모달
+            showModal("업로드 완료", "동영상이 성공적으로 업로드되었습니다.", () => navigate("/petsta"));
         } catch (error) {
             console.error(error);
-            setErrorModalOpen(true); // ✅ 실패 모달
+            showModal("업로드 실패", "동영상 업로드 중 문제가 발생했습니다.\n다시 시도해 주세요.");
         } finally {
             setUploading(false);
         }
