@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, TextareaAutosize } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPostById, updatePost } from "../../services/petstaService.js";
 import TitleBar from "../../components/Global/TitleBar.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const EditPhotoDetail = () => {
     const { postId } = useParams();
@@ -11,6 +12,7 @@ const EditPhotoDetail = () => {
     const [imageUrl, setImageUrl] = useState("");
     const theme = useTheme();
     const navigate = useNavigate();
+    const { showModal } = useContext(Context);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -30,10 +32,10 @@ const EditPhotoDetail = () => {
     const handleUpdate = async () => {
         try {
             await updatePost(postId, { content });
-            alert("수정 완료!");
+            showModal("", "수정 완료!", () => navigate("/petsta"));
             navigate(`/petsta/post/${postId}`);
         } catch (error) {
-            alert("수정 실패!");
+            showModal("", "수정이 실패했습니다.");
         }
     };
 
