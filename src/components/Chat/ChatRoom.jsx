@@ -154,8 +154,8 @@ const ChatRoom = () => {
                     };
                 });
                 const filteredMessages = loadedMessages.filter(msg => {
-                    if (msg.type_id === 4 && msg.metadata.visibleTo) {
-                        return msg.metadata.visibleTo === `ncid${user.id}`;
+                    if (msg.type_id === 4) {
+                        return true;
                     }
                     return true;
                 });
