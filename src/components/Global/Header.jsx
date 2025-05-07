@@ -204,9 +204,16 @@ const Header = () => {
                     꼬리친구들
                 </Box>
             </Box>
-            <div
+            <Box
                 onClick={() => {
                     navigate("/notification");
+                }}
+                sx={{
+                    width: "40px",
+                    height: "40px",
+                    display: "flex", // 추가
+                    alignItems: "center", // 수직 가운데 정렬
+                    justifyContent: "center", // 수평 가운데 정렬
                 }}
             >
                 <Box
@@ -215,11 +222,11 @@ const Header = () => {
                     alt="종"
                     sx={{
                         objectFit: "contain",
-                        width: "40px",
-                        height: "40px",
+                        width: "30px",
+                        height: "30px",
                     }}
                 />
-            </div>
+            </Box>
         </Box>
     );
 };
