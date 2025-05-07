@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
+import BackgroundImage from "../../../src/assets/images/Admin/admin.png";
 
 const Background = () => {
     useEffect(() => {
@@ -16,7 +17,7 @@ const Background = () => {
                 maxWidth: "none",
                 width: "100vw",
                 height: "100vh",
-                backgroundImage: "url('/src/assets/images/Admin/admin.png')",
+                backgroundImage: `url(${BackgroundImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
