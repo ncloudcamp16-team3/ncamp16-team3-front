@@ -6,6 +6,7 @@ import CardContentAboutTime from "./CardContentAboutTime.jsx";
 
 const FacilityCards = ({ item }) => {
     const navigate = useNavigate();
+    console.log(item);
     let filledStars = Math.floor(item.rating);
     if (item.rating >= 4.5 && item.rating < 5) filledStars = 4;
 
@@ -50,7 +51,9 @@ const FacilityCards = ({ item }) => {
                                 flexWrap: "wrap",
                             }}
                         >
-                            <span style={{ color: "#d32f2f", fontWeight: "bold", marginRight: 2 }}>{item.rating}</span>
+                            <span style={{ color: "#d32f2f", fontWeight: "bold", marginRight: 2 }}>
+                                {Math.round(item.rating).toFixed(1)}
+                            </span>
                             {[...Array(5)].map((_, index) => (
                                 <StarIcon
                                     key={index}

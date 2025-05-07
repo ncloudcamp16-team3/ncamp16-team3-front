@@ -29,23 +29,53 @@ import DateTimeSelector from "./DateTimeSelector.jsx";
 import { addTempReserve, getFacilityToReserveById } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx";
 
-const transformScoreToChartData = (score) => {
-    if (!score) return [];
+const transformScoreToChartData = (ratingRatio) => {
+    if (!ratingRatio || !Array.isArray(ratingRatio)) return [];
 
-    const mapped = [
-        { name: "★5", value: score["5Stars"] || 0 },
-        { name: "★4", value: score["4Stars"] || 0 },
-        { name: "★3", value: score["3Stars"] || 0 },
-        { name: "★2", value: score["2Stars"] || 0 },
-        { name: "★1", value: score["1Star"] || 0 },
+    const scoreMap = {
+        "5Stars": 0,
+        "4Stars": 0,
+        "3Stars": 0,
+        "2Stars": 0,
+        "1Star": 0,
+    };
+
+    // ratingRatio = [[5, 1], [4, 2], ...] 이런 형태
+    ratingRatio.forEach(([star, count]) => {
+        if (star === 5) scoreMap["5Stars"] = count;
+        else if (star === 4) scoreMap["4Stars"] = count;
+        else if (star === 3) scoreMap["3Stars"] = count;
+        else if (star === 2) scoreMap["2Stars"] = count;
+        else if (star === 1) scoreMap["1Star"] = count;
+    });
+
+    console.log("ratingRatio" + ratingRatio);
+
+    const total = Object.values(scoreMap).reduce((sum, cur) => sum + cur, 0);
+
+    return [
+        {
+            name: "★5",
+            value: scoreMap["5Stars"],
+            percentage: total ? Math.round((scoreMap["5Stars"] / total) * 100) : 0,
+        },
+        {
+            name: "★4",
+            value: scoreMap["4Stars"],
+            percentage: total ? Math.round((scoreMap["4Stars"] / total) * 100) : 0,
+        },
+        {
+            name: "★3",
+            value: scoreMap["3Stars"],
+            percentage: total ? Math.round((scoreMap["3Stars"] / total) * 100) : 0,
+        },
+        {
+            name: "★2",
+            value: scoreMap["2Stars"],
+            percentage: total ? Math.round((scoreMap["2Stars"] / total) * 100) : 0,
+        },
+        { name: "★1", value: scoreMap["1Star"], percentage: total ? Math.round((scoreMap["1Star"] / total) * 100) : 0 },
     ];
-
-    const total = mapped.reduce((acc, cur) => acc + cur.value, 0);
-
-    return mapped.map((entry) => ({
-        ...entry,
-        percentage: total > 0 ? Math.round((entry.value / total) * 100) : 0,
-    }));
 };
 
 const ReserveDetail = () => {
@@ -66,15 +96,7 @@ const ReserveDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const [chartData, setChartData] = useState(
-        transformScoreToChartData({
-            "5Stars": 5,
-            "4Stars": 4,
-            "3Stars": 2,
-            "2Stars": 1,
-            "1Star": 0,
-        })
-    );
+    const [chartData, setChartData] = useState([]);
     // NaverPay
     const naverPayRef = useRef(null);
 
@@ -109,7 +131,8 @@ const ReserveDetail = () => {
                 console.log(data);
 
                 setFacilityData(data.data.facility);
-                setReviews(data.reviews || []);
+                setReviews(data.data.reviews || []);
+                setChartData(transformScoreToChartData(data.data.ratingRatio));
             } catch (err) {
                 console.error("시설 정보를 불러오는데 실패했습니다:", err);
                 setError("시설 정보를 불러오는데 실패했습니다. 다시 시도해주세요.");
@@ -198,8 +221,8 @@ const ReserveDetail = () => {
     const facilityType = facilityData.facilityType || "호텔";
 
     // 현재 요일의 영업 시간 정보
-    const openTime = facilityData.openingHours?.[today]?.openTime || "09:00";
-    const closeTime = facilityData.openingHours?.[today]?.closeTime || "18:00";
+    const openTime = facilityData.openingHours?.[today]?.openTime.substring(0, 5) || "09:00";
+    const closeTime = facilityData.openingHours?.[today]?.closeTime.substring(0, 5) || "18:00";
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -355,7 +378,7 @@ const ReserveDetail = () => {
                                     variant="h6"
                                     sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
                                 >
-                                    {facilityData.starPoint.toFixed(1)}/5.0
+                                    {Math.round(facilityData.starPoint).toFixed(1)}/5.0
                                 </Typography>
                                 <Box sx={{ mb: 1, ml: 3 }}>
                                     {Array.from({ length: 5 }).map((_, index) => (

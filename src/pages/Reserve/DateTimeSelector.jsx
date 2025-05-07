@@ -110,14 +110,17 @@ const DateTimeSelector = ({
     };
 
     const getAvailableEndTimes = () => {
-        if (!startTime) return timeOptions;
+        if (!startTime) return [];
 
-        const startHour = parseInt(startTime.split(":"[0]));
+        const startHour = parseInt(startTime.split(":")[0]);
+        const isToday = isTodayEnd;
+        const currentHour = now.hour();
 
         return timeOptions.filter((time) => {
-            const hour = parseInt(time.split(":"[0]));
-            if (startHour >= 20 && hour < 8) return true;
-            return hour > startHour;
+            const hour = parseInt(time.split(":")[0]);
+            const afterStart = hour > startHour;
+            const afterNow = !isToday || hour > currentHour;
+            return afterStart && afterNow;
         });
     };
 
@@ -138,6 +141,20 @@ const DateTimeSelector = ({
                 border: `1px solid ${isSelected ? "#E9A260" : "#CCCCCC"}`,
             },
         };
+    };
+    const now = dayjs();
+    const isTodayStart = startDate && dayjs(startDate).isSame(now, "day");
+    const isTodayEnd = endDate && dayjs(endDate).isSame(now, "day");
+
+    const getFilteredTimeOptions = (isStart) => {
+        const base = isStart ? startDate : endDate;
+        const isToday = isStart ? isTodayStart : isTodayEnd;
+        const currentHour = now.hour();
+
+        return timeOptions.filter((time) => {
+            const hour = parseInt(time.split(":")[0]);
+            return !isToday || hour > currentHour;
+        });
     };
 
     return (
@@ -185,6 +202,7 @@ const DateTimeSelector = ({
             <Box sx={{ gap: 3, display: "flex", justifyContent: "center" }}>
                 <Button
                     variant="outlined"
+                    disabled={!startDate} // ✅ 시작일 없으면 비활성화
                     sx={{
                         width: isHotel ? "40%" : "80%",
                         display: "flex",
@@ -196,10 +214,10 @@ const DateTimeSelector = ({
                     }}
                     onClick={() => toggleTimeSelector("start")}
                 >
-                    {" "}
                     <ScheduleIcon />
-                    {startTime || startTimeLabel}{" "}
+                    {startTime || startTimeLabel}
                 </Button>
+
                 {isHotel && (
                     <Button
                         variant="outlined"
@@ -258,7 +276,7 @@ const DateTimeSelector = ({
                             p: 1,
                         }}
                     >
-                        {timeOptions.map((time) => (
+                        {getFilteredTimeOptions(true).map((time) => (
                             <Button
                                 key={time}
                                 onClick={() => handleTimeSelect(time, "start")}
@@ -329,7 +347,7 @@ const DateTimeSelector = ({
                         <DateCalendar
                             value={dateDialog.target === "start" ? startDate : endDate}
                             onChange={(newValue) => handleDateSelect(newValue)}
-                            minDate={dateDialog.target === "end" && startDate ? startDate : undefined}
+                            minDate={dateDialog.target === "end" ? (startDate ? dayjs(startDate) : dayjs()) : dayjs()}
                         />
                     </LocalizationProvider>
                 </DialogContent>
