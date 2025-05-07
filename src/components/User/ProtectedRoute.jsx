@@ -187,15 +187,15 @@ const ProtectedRoute = () => {
         }
     };
 
-    useEffect(() => {
-        if (!nc || !user?.id) return;
-
-        const interval = setInterval(() => {
-            fetchRooms(); // 주기적으로 채팅방 정보 갱신
-        }, 5000); // 5초마다
-
-        return () => clearInterval(interval); // 언마운트 시 클리어
-    }, [nc, user?.id]);
+    // useEffect(() => {
+    //     if (!nc || !user?.id) return;
+    //
+    //     const interval = setInterval(() => {
+    //         fetchRooms(); // 주기적으로 채팅방 정보 갱신
+    //     }, 5000); // 5초마다
+    //
+    //     return () => clearInterval(interval); // 언마운트 시 클리어
+    // }, [nc, user?.id]);
 
     const parseMessage = (msg) => {
         let parsed;
