@@ -33,7 +33,7 @@ const PostDetails = () => {
     const [liked, setLiked] = useState(false);
     const [bookMarked, setBookMarked] = useState(false);
     const [replyingTo, setReplyingTo] = useState(null);
-    const [isReply, setIsReply] = useState(true);
+    const [isReply, setIsReply] = useState(false);
     const commentInputRef = useRef(null);
     const commentRefs = useRef({});
     const theme = useTheme();
@@ -215,7 +215,7 @@ const PostDetails = () => {
                     setLiked(data.liked);
                     setBookMarked(data.bookmarked);
                 })
-                .catch((err) => {});
+                .catch(() => {});
         };
 
         initPostDetailPage();
@@ -223,7 +223,7 @@ const PostDetails = () => {
 
     const likeBtnClick = () => {
         toggleLiked(user.id, postId, liked)
-            .then((res) => {
+            .then(() => {
                 setLiked(!liked);
                 if (liked) {
                     setPostData(
@@ -239,15 +239,15 @@ const PostDetails = () => {
                     );
                 }
             })
-            .catch((err) => {});
+            .catch(() => {});
     };
 
     const bookMarkBtnClick = () => {
         toggleBookmarked(user.id, postId, bookMarked)
-            .then((res) => {
+            .then(() => {
                 setBookMarked(!bookMarked);
             })
-            .catch((err) => {});
+            .catch(() => {});
     };
 
     const handleCancelReply = () => {
@@ -327,6 +327,7 @@ const PostDetails = () => {
                         </Typography>
                         <InputBase
                             value={postData.address}
+                            readOnly
                             sx={{
                                 width: "100%",
                                 px: "10px",
