@@ -207,12 +207,6 @@ const ProtectedRoute = () => {
     useEffect(() => {
         if (!nc || !user?.id) return;
 
-        nc.bind("onSubscriptionUpdated", (channelId, data) => {
-            console.log("✅ 채널 ID:", channelId);
-            console.log("✅ 채널 데이터:", data);
-            fetchRooms(); // 채팅 목록 갱신
-        });
-
         const interval = setInterval(() => {
             fetchRooms(); // 주기적으로 채팅방 정보 갱신
         }, 5000); // 5초마다
