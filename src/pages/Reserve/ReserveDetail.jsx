@@ -378,7 +378,7 @@ const ReserveDetail = () => {
                                     variant="h6"
                                     sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
                                 >
-                                    {facilityData.gstarPoint.toFixed(1)}/5.0
+                                    {facilityData.gstarPoint}/5.0
                                 </Typography>
                                 <Box sx={{ mb: 1, ml: 3 }}>
                                     {Array.from({ length: 5 }).map((_, index) => (
