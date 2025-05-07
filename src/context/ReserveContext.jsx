@@ -20,6 +20,15 @@ export const ReserveProvider = ({ children }) => {
         cancelText: "",
         redirectUrl: "",
     });
+    const [globalConfirmModal, setGlobalConfirmModal] = useState({
+        open: "",
+        onClose: "",
+        onConfirm: "",
+        title: "",
+        description: "",
+        confirmText: "",
+        cancelText: "",
+    });
 
     return (
         <ReserveContext.Provider
@@ -46,6 +55,8 @@ export const ReserveProvider = ({ children }) => {
                 setGlobalModalOpen,
                 message,
                 setMessage,
+                globalConfirmModal,
+                setGlobalConfirmModal,
             }}
         >
             {children}

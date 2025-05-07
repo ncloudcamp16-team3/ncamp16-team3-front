@@ -7,6 +7,7 @@ import StarRatingConstructor from "../../components/Reserve/utils/StarRatingCons
 import { getFacilityNameAndThumbnail, putReview } from "../../services/reserveService.js";
 import Loading from "../../components/Global/Loading.jsx";
 import { Context } from "../../context/Context.jsx";
+import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx";
 
 const Review = () => {
     const { id } = useParams(); // useParams 훅 사용
@@ -19,6 +20,7 @@ const Review = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { showModal } = useContext(Context);
+    const { globalConfirmModal, setGlobalConfirmModal } = useReserveContext();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -143,6 +145,7 @@ const Review = () => {
                     등 록
                 </Button>
             </Box>
+            <GlobalConfirmModal open={} onClose={} onConfirm={} onCancel={} title ={} description ={} confirmText = {} cancelText={} />
         </Container>
     );
 };
