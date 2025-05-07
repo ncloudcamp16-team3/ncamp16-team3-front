@@ -221,8 +221,8 @@ const ReserveDetail = () => {
     const facilityType = facilityData.facilityType || "호텔";
 
     // 현재 요일의 영업 시간 정보
-    const openTime = facilityData.openingHours?.[today]?.openTime || "09:00";
-    const closeTime = facilityData.openingHours?.[today]?.closeTime || "18:00";
+    const openTime = facilityData.openingHours?.[today]?.openTime.substring(0, 5) || "09:00";
+    const closeTime = facilityData.openingHours?.[today]?.closeTime.substring(0, 5) || "18:00";
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -378,7 +378,7 @@ const ReserveDetail = () => {
                                     variant="h6"
                                     sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
                                 >
-                                    {facilityData.gstarPoint}/5.0
+                                    {Math.round(facilityData.starPoint).toFixed(1)}/5.0
                                 </Typography>
                                 <Box sx={{ mb: 1, ml: 3 }}>
                                     {Array.from({ length: 5 }).map((_, index) => (
