@@ -6,7 +6,6 @@ const GlobalConfirmModal = ({
     open,
     onClose,
     onConfirm,
-    onCancel,
     title = "확인",
     description = "진행하시겠습니까?",
     confirmText = "확인",
@@ -59,7 +58,7 @@ const GlobalConfirmModal = ({
                         </Button>
                         <Button
                             variant="contained"
-                            onClick={onCancel}
+                            onClick={onClose}
                             sx={{
                                 mt: 2,
                                 borderRadius: 2,
