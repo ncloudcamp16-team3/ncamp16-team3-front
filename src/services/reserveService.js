@@ -107,3 +107,18 @@ export const fetchMyReserveList = async () => {
 export const getReserveDetail = async (id) => {
     return await instance.get(`${API_URL}/${id}`);
 };
+
+export const cancelReserve = (id) => {
+    return instance
+        .delete(`${API_URL}`, {
+            params: {
+                id,
+            },
+        })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};
