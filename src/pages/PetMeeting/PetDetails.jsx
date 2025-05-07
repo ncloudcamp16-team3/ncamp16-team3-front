@@ -119,6 +119,15 @@ const PetDetails = () => {
                 });
             }
 
+            await nc.sendMessage(realChannelId, {
+                type: "text",
+                customType: "USER_SUBSCRIBED",
+                content: {
+                    userId: realChannelId,
+                    channelId: realChannelId, // ✅ 이거 꼭 포함
+                },
+            });
+
             navigate(`/chat/room/${realChannelId}`);
         } catch (e) {
             console.error("❌ 채팅방 처리 실패:", e);

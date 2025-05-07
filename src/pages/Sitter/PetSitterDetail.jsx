@@ -105,12 +105,20 @@ const PetSitterDetail = () => {
                 });
             }
 
+            await nc.sendMessage(channelId, {
+                type: "text",
+                customType: "USER_SUBSCRIBED",
+                content: {
+                    userId: targetUserId,
+                    channelId: channelId, // ✅ 이거 꼭 포함
+                },
+            });
+
             navigate(`/chat/room/${channelId}`);
         } catch (e) {
             console.error("❌ 펫시터 채팅 생성 실패:", e);
         }
     };
-
 
     const formatPetInfo = (sitterData) => {
         if (sitterData && sitterData.petTypesFormatted) {

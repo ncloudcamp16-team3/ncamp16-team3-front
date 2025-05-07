@@ -134,15 +134,21 @@ const ProtectedRoute = () => {
             parsed = { customType: "TEXT", content: msg.content };
         }
 
+        console.log("parsed:", parsed);
+        console.log("parsed.content:", parsed.content);
+        console.log("typeof parsed.content:", typeof parsed.content);
+
         let typeId = 1;
         if (parsed.customType === "MATCH") typeId = 2;
         else if (parsed.customType === "TRADE") typeId = 3;
         else if (parsed.customType === "PETSITTER") typeId = 4;
+        else if (parsed.customType === "USER_SUBSCRIBED") typeId = 5;
 
         return {
             id: msg.message_id,
             senderId: msg.sender?.id,
-            text: parsed.content,
+            // text: parsed.content,
+            text: typeof parsed.content === "object" ? JSON.stringify(parsed.content) : parsed.content,
             type_id: typeId,
             metadata: parsed,
             photo: msg.sender?.profile,
@@ -160,13 +166,23 @@ const ProtectedRoute = () => {
             const isMine = msg.sender.id === `ncid${user.id}`;
             if (isMine) return; // 내 메시지는 무시
 
+            // ✅ "USER_SUBSCRIBED" 처리
+            if (parsed.customType === "USER_SUBSCRIBED" && parsed.content?.userId === user.id) {
+                const channelId = parsed.content.channelId;
+                await nc.subscribe(channelId);
+                console.log(channelId + " 구독됨");
+                nc.bind("onMessageReceived", backgroundHandler);
+                nc.unbind("onMessageReceived", backgroundHandler);
+            }
+
             const numericSenderId = msg.sender.id.replace(/\D/g, "");
 
             const payload = {
                 userId: user.id,
                 channelId: msg.channel_id,
                 senderId: numericSenderId,
-                message: parsed.content,
+                // message: parsed.content,
+                message: typeof parsed.content === "object" ? JSON.stringify(parsed.content) : parsed.content,
                 type: parsed.customType,
                 createdAt: new Date().toISOString(),
             };
