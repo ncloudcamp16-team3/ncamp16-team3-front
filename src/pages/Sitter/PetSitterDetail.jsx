@@ -85,7 +85,6 @@ const PetSitterDetail = () => {
             const messageFilter = { channel_id: channelId };
             const messages = await nc.getMessages(messageFilter, {}, { per_page: 100 });
 
-            // PETSITTER 타입 메시지가 있는지 확인
             let hasPetSitterMessage = false;
             if (messages.edges && messages.edges.length > 0) {
                 for (const edge of messages.edges) {
