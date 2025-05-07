@@ -116,7 +116,6 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeletePost}
-                onCancel={() => setConfirmDeleteOpen(false)}
                 title="게시글 삭제"
                 description="정말 이 게시글을 삭제하시겠습니까?"
                 confirmText="삭제"
