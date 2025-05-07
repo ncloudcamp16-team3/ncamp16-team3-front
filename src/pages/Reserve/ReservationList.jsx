@@ -1,9 +1,21 @@
 // src/pages/ReservationListPage.jsx
 import React, { useEffect, useState } from "react";
-import { Container, List, ListItem, ListItemText, Divider, Paper, CardMedia, Card, Typography } from "@mui/material";
+import {
+    Container,
+    List,
+    ListItem,
+    ListItemText,
+    Divider,
+    Paper,
+    CardMedia,
+    Card,
+    Typography,
+    Button,
+} from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate } from "react-router-dom";
 import { fetchMyReserveList } from "../../services/reserveService.js";
+import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx";
 
 const ReservationListPage = () => {
     const [reservations, setReservations] = useState([]);
@@ -20,17 +32,22 @@ const ReservationListPage = () => {
             });
     }, []);
 
+    if (reservations.length === 0)
+        return (
+            <CenteredContainer>
+                <ListItemText primary="예약 내역이 없습니다." />
+                <Divider />
+                <Button onClick={() => navigate(-1)}>이전 화면으로 돌아가기</Button>
+            </CenteredContainer>
+        );
+
     return (
         <Container maxWidth="sm">
             <TitleBar name="예약 목록" />
 
             <Paper elevation={3} sx={{ mt: 2 }}>
                 <List>
-                    {reservations.length === 0 ? (
-                        <ListItem>
-                            <ListItemText primary="예약 내역이 없습니다." />
-                        </ListItem>
-                    ) : (
+                    (
                         reservations.map((r) => (
                             <React.Fragment key={r.id}>
                                 <ListItem
@@ -82,7 +99,7 @@ const ReservationListPage = () => {
                                 <Divider />
                             </React.Fragment>
                         ))
-                    )}
+                    )
                 </List>
             </Paper>
         </Container>

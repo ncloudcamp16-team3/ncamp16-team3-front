@@ -4,12 +4,15 @@ import { Container, Box, List, ListItem, Typography, Button, Divider } from "@mu
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
-import { getReserveDetail } from "../../services/reserveService.js"; // ✅ API 호출 함수
+import { getReserveDetail } from "../../services/reserveService.js";
+import DarkModal from "../../components/Global/DarkModal.jsx";
+import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         getReserveDetail(id)
@@ -22,12 +25,17 @@ const ReservationDetail = () => {
             });
     }, [id]);
 
+    const handleCancelReservation = () => {
+        // 예약 취소 로직 구현
+        setOpen(true);
+    };
+
     if (!reservation) {
         return (
-            <Container>
+            <CenteredContainer>
                 <TitleBar name="예약 상세" />
                 <Typography component="div">예약 정보를 불러오는 중입니다...</Typography>
-            </Container>
+            </CenteredContainer>
         );
     }
 
@@ -96,6 +104,14 @@ const ReservationDetail = () => {
                     예약취소
                 </Button>
             </Box>
+            <DarkModal open={open} onClose={setOpen(false)} modalProps={redirectUrl}>
+                <Box>
+                    <Typography>정말 취소하시겠습니까?</Typography>
+                    <Typography sx={{ color: "red" }}></Typography>
+                </Box>
+                <Button onClose>취소</Button>
+                <Button redirectUrl>확인</Button>
+            </DarkModal>
         </Container>
     );
 };

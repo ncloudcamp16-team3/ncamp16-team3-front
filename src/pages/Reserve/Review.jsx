@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Box, Typography, TextField, Button, Divider } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
@@ -6,6 +6,7 @@ import FileUploader from "../../components/Reserve/utils/FileUploader.jsx";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
 import { getFacilityNameAndThumbnail, putReview } from "../../services/reserveService.js";
 import Loading from "../../components/Global/Loading.jsx";
+import { Context } from "../../context/Context.jsx";
 
 const Review = () => {
     const { id } = useParams(); // useParams 훅 사용
@@ -17,11 +18,12 @@ const Review = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { showModal } = useContext(Context);
 
     useEffect(() => {
         const fetchData = async () => {
             if (!id || id === undefined) {
-                console.warn("시설 ID가 유효하지 않습니다.");
+                console.warn("예약 ID가 유효하지 않습니다.");
                 return;
             }
             setLoading(true);
@@ -42,8 +44,8 @@ const Review = () => {
     const handleSubmit = async () => {
         const comment = text.current.value;
 
-        if (!starRating || !comment || !image) {
-            alert("내용, 별점, 이미지를 모두 입력해주세요.");
+        if (!starRating || !comment) {
+            showModal("", "내용과 별점을 모두 입력해주세요.");
             return;
         }
 
@@ -54,7 +56,9 @@ const Review = () => {
 
         try {
             const response = await putReview(id, formData);
-            navigate(`/reserve/${id}`);
+            showModal("", "리뷰가 등록되었습니다.\n시설정보 화면으로 돌아갑니다.", () =>
+                navigate(`/reserve/${facilityInfo.id}`)
+            );
         } catch (error) {
             console.error(error);
         }
@@ -72,6 +76,15 @@ const Review = () => {
         return (
             <Container>
                 <Typography>{error}</Typography>
+            </Container>
+        );
+    }
+
+    if (facilityInfo?.errorMsg) {
+        return (
+            <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
+                <Typography>{facilityInfo.errorMsg}</Typography>
+                <Button onClick={() => navigate(-1)}>이전 화면으로 돌아가기</Button>
             </Container>
         );
     }
