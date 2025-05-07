@@ -14,6 +14,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { deletePetstaPost } from "../../../services/petstaService.js";
 import * as PropTypes from "prop-types";
 import MyPostCenterMenu from "./MyPostCenterMenu.jsx";
+import GlobalModal from "../../Global/GlobalModal.jsx";
 
 MyPostCenterMenu.propTypes = {
     open: PropTypes.any,
