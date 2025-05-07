@@ -23,7 +23,7 @@ const MainPageHeader = () => {
         >
             <Box sx={{ flex: 1 }}>
                 <Typography variant="h5">{pet?.name} 동네친구들</Typography>
-                <Typography variant="caption">8시, 12시, 18시마다 새로운 친구를 만나보아요</Typography>
+                <Typography variant="caption">새로운 친구를 만나보아요</Typography>
             </Box>
             <Box
                 sx={{
@@ -31,7 +31,7 @@ const MainPageHeader = () => {
                     border: "2px solid #ccc",
                     borderRadius: 10,
                     cursor: "pointer",
-                    "&:hover": { backgroundColor: "#f0f0f0" }, // 호버 효과 추가
+                    "&:hover": { backgroundColor: "#f0f0f0" },
                     boxSizing: "border-box",
                     opacity: 0.5,
                 }}

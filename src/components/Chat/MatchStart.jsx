@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 
 const MatchStart = ({ participants, text }) => {
-    console.log(participants);
     return (
         <Box textAlign="center" py={2}>
             <Box display="flex" justifyContent="center" gap={2} mb={1}>

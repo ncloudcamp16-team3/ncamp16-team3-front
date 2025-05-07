@@ -1,29 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card, CardMedia, Container, ListItem, Typography, Box, List, Button } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import success from "../../assets/images/Reserve/payment-success.svg";
-import reserveList from "../../mock/Reserve/reserveList.json";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 
 const Reservation = () => {
-    const { id } = useParams();
-    const [facility, setFacility] = useState(null);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
-    useEffect(() => {
-        const found = reserveList.find((r) => r.id === parseInt(id));
-        if (found) {
-            setFacility(found);
-        }
-    }, [id]);
-
-    if (!facility) {
-        return (
-            <Container>
-                <Typography>예약 정보를 불러오는 중입니다...</Typography>
-            </Container>
-        );
-    }
+    const name = searchParams.get("name");
+    const amount = searchParams.get("amount");
+    const start = searchParams.get("start");
+    const end = searchParams.get("end");
 
     return (
         <Container sx={{ mt: 4 }}>
@@ -35,21 +23,22 @@ const Reservation = () => {
             </Typography>
             <Box>
                 <Typography variant="h6" sx={{ pt: 3, fontSize: 32 }}>
-                    {facility.name}
+                    {name}
                 </Typography>
                 <List sx={{ pt: 2 }}>
                     <ListItem>
                         <CustomizedDot />
-                        체크인: {facility.entry_time.start}
+                        체크인: {start ? new Date(start).toLocaleString("ko-KR") : "없음"}
                     </ListItem>
-                    {facility.entry_time.end && (
+                    {end && (
                         <ListItem>
-                            <CustomizedDot /> 체크아웃: {facility.entry_time.end}
+                            <CustomizedDot />
+                            체크아웃: {new Date(end).toLocaleString("ko-KR")}
                         </ListItem>
                     )}
                     <ListItem>
                         <CustomizedDot />
-                        결제금액: {facility.amount.toLocaleString()} 원
+                        결제금액: {Number(amount).toLocaleString()} 원
                     </ListItem>
                 </List>
             </Box>
@@ -67,7 +56,7 @@ const Reservation = () => {
                     variant="contained"
                     sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 1, mb: 2 }}
                     size="large"
-                    onClick={() => navigate(`/reserve/detail/${id}`)}
+                    onClick={() => navigate(`/`)} // 또는 상세 페이지 id가 있으면 detail 페이지 이동
                     fullWidth
                 >
                     예약 상세 보기

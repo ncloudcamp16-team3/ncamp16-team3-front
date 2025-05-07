@@ -1,17 +1,23 @@
 // src/pages/ReservationListPage.jsx
 import React, { useEffect, useState } from "react";
-import reserveList from "../../mock/Reserve/reserveList.json";
 import { Container, List, ListItem, ListItemText, Divider, Paper, CardMedia, Card, Typography } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate } from "react-router-dom";
+import { fetchMyReserveList } from "../../services/reserveService.js";
 
 const ReservationListPage = () => {
     const [reservations, setReservations] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const stored = reserveList || [];
-        setReservations(stored);
+        fetchMyReserveList()
+            .then((res) => {
+                setReservations(res.data);
+            })
+            .catch((err) => {
+                console.error("예약 목록 조회 실패:", err);
+                setReservations([]);
+            });
     }, []);
 
     return (
@@ -48,12 +54,12 @@ const ReservationListPage = () => {
                                                     주소: {r.address}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    {r.entry_time.end ? "체크인: " : "예약시간: "}
-                                                    {r.entry_time.start}
+                                                    {r.exitTime ? "체크인: " : "예약시간: "}
+                                                    {formatDateTime(r.entryTime)}
                                                 </Typography>
-                                                {r.entry_time.end && (
+                                                {r.exitTime && (
                                                     <Typography variant="body2" color="text.secondary">
-                                                        체크아웃: {r.entry_time.end}
+                                                        체크아웃: {formatDateTime(r.exitTime)}
                                                     </Typography>
                                                 )}
                                                 <Typography variant="body2" color="primary">
@@ -81,6 +87,19 @@ const ReservationListPage = () => {
             </Paper>
         </Container>
     );
+};
+
+// 날짜/시간 포맷 (ex. 2025-05-06T10:00:00 → "2025.05.06 (화) 10:00")
+const formatDateTime = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    return date.toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 };
 
 export default ReservationListPage;

@@ -10,7 +10,6 @@ const PetListSection = ({ pets, hover, onEditPet, onDeletePet, onAddPet, onHover
     const hasData = Array.isArray(pets) && pets.length > 0;
 
     const handleImageError = (e) => {
-        console.log("이미지 로드 실패, 기본 이미지로 대체:", e.target.src);
         e.target.src = petEx;
     };
 
@@ -72,7 +71,6 @@ const PetListSection = ({ pets, hover, onEditPet, onDeletePet, onAddPet, onHover
                 </Box>
             ) : (
                 pets.map((pet) => {
-                    console.log(`반려동물 ID ${pet.id} 렌더링:`, pet);
                     return (
                         <Card
                             key={pet.id}

@@ -84,12 +84,10 @@ const PetDetails = () => {
 
             if (!isSubscribed) {
                 await nc.subscribe(realChannelId);
-                console.log("✅ 사용자 구독 완료");
             }
 
             // ✅ 채팅 버튼 누를 때 매칭 체크
             const matched = await postMatchCheck(pet.id, currentPet.id);
-            console.log(matched);
 
             if (!matched.data) {
                 // 매칭이 안 되어있으면 매칭 생성
@@ -102,12 +100,12 @@ const PetDetails = () => {
                         participants: [
                             {
                                 name: pet?.name || "",
-                                age: pet?.birthDate ? `${getAge(pet.birthDate)}살` : "",
-                                photo: pet?.photos?.[0]?.path || "",
+                                age: pet?.birthDate ? `${getAge(pet.birthDate)}` : "",
+                                photo: pet?.photos?.find((p) => p.thumbnail)?.path || "",
                             },
                             {
                                 name: currentPet?.name || "",
-                                age: currentPet?.birthDate ? `${getAge(currentPet.birthDate)}살` : "",
+                                age: currentPet?.birthDate ? `${getAge(currentPet.birthDate)}` : "",
                                 photo: currentPet?.photos?.[0]?.path || "",
                             },
                         ],
@@ -119,8 +117,6 @@ const PetDetails = () => {
                     type: "text",
                     message: JSON.stringify(messagePayload),
                 });
-
-                console.log("✅ 매칭 메시지 전송 완료");
             }
 
             navigate(`/chat/room/${realChannelId}`);
@@ -134,10 +130,8 @@ const PetDetails = () => {
             try {
                 const res = await getPet({ id: petId });
                 setCurrentPet(res.data);
-                console.log(res.data);
                 setLoading(false);
             } catch (err) {
-                console.log("에러 발생: " + err.message);
                 showModal(null, "친구를 찾지 못했습니다", () => {
                     navigate(`/`);
                 });

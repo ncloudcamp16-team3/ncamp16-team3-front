@@ -75,7 +75,6 @@ const Notification = () => {
             const ch = edge?.node;
 
             const subscriptions = await nc.getSubscriptions(filter2, sort, option);
-            console.log(subscriptions);
             const subEdge1 = subscriptions.edges?.[0];
             const subEdge2 = subscriptions.edges?.[1];
 
@@ -193,7 +192,6 @@ const Notification = () => {
                         const channelId = notification.content;
                         const { user1, user2, user1_name, user2_name, message } =
                             await fetchNotificationLastMessage(channelId);
-                        console.log(user1, user2, message);
 
                         messageMap[notification.id] = {
                             user1,

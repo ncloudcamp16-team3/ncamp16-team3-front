@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-// 커스텀 훅을 사용하여 위치 정보 받아오기
 const useGeolocation = () => {
     const [location, setLocation] = useState({
         latitude: null,
@@ -9,25 +8,29 @@ const useGeolocation = () => {
     });
 
     useEffect(() => {
+        console.log("Geolocation hook 실행됨");
+
+        if (!navigator.geolocation) {
+            setLocation({ latitude: null, longitude: null, error: "Geolocation not supported" });
+            return;
+        }
+
         const handleSuccess = (position) => {
             const { latitude, longitude } = position.coords;
+            console.log("위치 성공:", latitude, longitude);
             setLocation({ latitude, longitude, error: null });
         };
 
         const handleError = (error) => {
+            console.error("위치 실패:", error.message);
             setLocation({ latitude: null, longitude: null, error: error.message });
         };
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
-        } else {
-            setLocation({ latitude: null, longitude: null, error: "Geolocation not supported" });
-        }
-
-        // 컴포넌트가 unmount될 때 위치 정보 가져오는 작업을 정리
-        return () => {
-            setLocation({ latitude: null, longitude: null, error: null });
-        };
+        navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+        });
     }, []);
 
     return location;

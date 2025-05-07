@@ -155,7 +155,6 @@ const AddPet = () => {
             setMainPhotoIndex(mainPhotoIndex - 1);
         }
 
-
         if (selectedImageIndex === index) {
             setSelectedImageIndex(newPreviews.length > 0 ? 0 : -1);
         } else if (selectedImageIndex > index) {
@@ -262,20 +261,12 @@ const AddPet = () => {
                 });
             }
 
-            console.log("FormData 내용:", {
-                petData: JSON.parse(petDataJson),
-                mainPhotoIndex: mainPhotoIndex,
-                imagesCount: images.length,
-            });
-
             // API 호출
             const response = await instance.post("/pet/add", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
-            console.log("반려동물 등록 응답:", response.data);
 
             // 성공 시 처리
             setSnackbar({
@@ -521,7 +512,6 @@ const AddPet = () => {
                     onChange={handleChange}
                     placeholder="반려동물 이름을 입력하세요"
                     sx={{ mb: 2 }}
-
                 />
 
                 <Typography variant="body2" sx={{ mb: 1 }}>

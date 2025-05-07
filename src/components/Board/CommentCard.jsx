@@ -34,7 +34,6 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
         updateComment(comment, commentItem.id, user.id)
             .then((res) => {
                 console.log("응답 결과: " + res.message);
-                handleSnackbarOpen(res.message, "success");
                 setUpdateAble(false);
 
                 return getComments(postId);

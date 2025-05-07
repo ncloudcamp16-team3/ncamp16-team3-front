@@ -3,21 +3,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Container, Box, List, ListItem, Typography, Button, Divider } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
-import reserveList from "../../mock/Reserve/reserveList.json";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
+import { getReserveDetail } from "../../services/reserveService.js"; // ✅ API 호출 함수
 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
-    const [address, setAddress] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const found = reserveList.find((r) => r.id === parseInt(id));
-        setReservation(found);
-        if (found) {
-            setAddress(found.address);
-        }
+        getReserveDetail(id)
+            .then((res) => {
+                setReservation(res.data);
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.error("예약 상세 조회 실패:", err);
+            });
     }, [id]);
 
     if (!reservation) {
@@ -29,6 +31,19 @@ const ReservationDetail = () => {
         );
     }
 
+    const formatDate = (datetimeStr) => {
+        if (!datetimeStr) return "";
+        const date = new Date(datetimeStr);
+        return date.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            weekday: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
     return (
         <Container>
             <TitleBar name="예약 상세" />
@@ -38,9 +53,7 @@ const ReservationDetail = () => {
                         {reservation.name}
                     </Typography>
                 </Box>
-
-                <ReserveMap address={address} setAddress={setAddress} />
-
+                <ReserveMap lat={reservation.latitude} lng={reservation.longitude} />
                 <List>
                     <ListItem>
                         <Box display="flex" flexDirection="column" gap={1} width="100%">
@@ -54,12 +67,12 @@ const ReservationDetail = () => {
                             </Typography>
                             <Typography variant="body2" component="div">
                                 <CustomizedDot />
-                                {reservation.entry_time.end ? "체크인" : "예약시간"}: {reservation.entry_time.start}
+                                {reservation.exitTime ? "체크인" : "예약시간"}: {formatDate(reservation.entryTime)}
                             </Typography>
-                            {reservation.entry_time.end && (
+                            {reservation.exitTime && (
                                 <Typography variant="body2" component="div">
                                     <CustomizedDot />
-                                    체크아웃: {reservation.entry_time.end}
+                                    체크아웃: {formatDate(reservation.exitTime)}
                                 </Typography>
                             )}
                             <Typography variant="body2" color="primary" component="div">

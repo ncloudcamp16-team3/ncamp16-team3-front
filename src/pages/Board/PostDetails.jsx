@@ -162,9 +162,7 @@ const PostDetails = () => {
         const message = comment.replace(/^@\S+\s*/, "");
 
         addComment(message, postId, user.id, replyingTo?.commentId)
-            .then((res) => {
-                console.log("응답 결과: " + res.message);
-                handleSnackbarOpen(res.message, "success");
+            .then(() => {
                 setComment("");
                 setPostData((prev) =>
                     produce(prev, (draft) => {
@@ -174,11 +172,9 @@ const PostDetails = () => {
                 return getComments(postId);
             })
             .then((res) => {
-                console.log(res.data);
                 setPostComments(res.data);
             })
             .catch((err) => {
-                console.log("에러 발생: " + err.message);
                 handleSnackbarOpen(err.message, "error");
                 setComment("");
             });
@@ -202,15 +198,12 @@ const PostDetails = () => {
             getBoardDetail(postId)
                 .then((res) => {
                     const data = res.data;
-                    console.log(data);
                     setPostData(data);
                     setPostComments(data.comments);
 
                     setBoardType(boardTypeList.find((item) => item.id === data.boardTypeId));
-                    console.log("응답 결과 : " + res.message);
                 })
                 .catch((err) => {
-                    console.log("에러 발생 : " + err.message);
                     showModal("", err.message, () => {
                         navigate("/board");
                     });
@@ -219,14 +212,10 @@ const PostDetails = () => {
             getBookmarkedAndLiked(user.id, postId)
                 .then((res) => {
                     const data = res.data;
-                    console.log("응답 결과" + res.message);
-                    console.log(data);
                     setLiked(data.liked);
                     setBookMarked(data.bookmarked);
                 })
-                .catch((err) => {
-                    console.log("에러 발생" + err.message);
-                });
+                .catch((err) => {});
         };
 
         initPostDetailPage();
@@ -249,22 +238,16 @@ const PostDetails = () => {
                         })
                     );
                 }
-                console.log("응답 결과: " + res.message);
             })
-            .catch((err) => {
-                console.log("에러 발생: " + err.message);
-            });
+            .catch((err) => {});
     };
 
     const bookMarkBtnClick = () => {
         toggleBookmarked(user.id, postId, bookMarked)
             .then((res) => {
                 setBookMarked(!bookMarked);
-                console.log("응답 결과: " + res.message);
             })
-            .catch((err) => {
-                console.log("에러 발생: " + err.message);
-            });
+            .catch((err) => {});
     };
 
     const handleCancelReply = () => {

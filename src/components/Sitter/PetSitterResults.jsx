@@ -12,7 +12,7 @@ import {
     CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { getAllApprovedPetSitters } from "../../services/petSitterService";
+import { getAllApprovedPetSitters, getApprovedPetSitters } from "../../services/petSitterService";
 
 const PetSitterResults = ({ filteredPetsitters, error }) => {
     const navigate = useNavigate();
@@ -76,6 +76,16 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
         } catch (error) {
             console.error("모든 펫시터 목록 조회 오류:", error);
             setLoadAllError("펫시터 목록을 불러오는데 실패했습니다.");
+
+            try {
+                const fallbackResponse = await getApprovedPetSitters({});
+                if (fallbackResponse && fallbackResponse.data) {
+                    setAllPetsitters(fallbackResponse.data);
+                    setLoadAllError(null);
+                }
+            } catch (fallbackError) {
+                console.error("대체 API 호출도 실패:", fallbackError);
+            }
         } finally {
             setIsLoading(false);
         }
