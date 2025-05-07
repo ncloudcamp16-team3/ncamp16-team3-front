@@ -100,6 +100,9 @@ const ReserveDetail = () => {
     // NaverPay
     const naverPayRef = useRef(null);
 
+    // 모달설정 관련
+    const { showModal } = useContext(Context);
+
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://nsp.pay.naver.com/sdk/js/naverpay.min.js";
@@ -148,20 +151,20 @@ const ReserveDetail = () => {
 
     const handlePaymentClick = async () => {
         if (!naverPayRef.current) {
-            alert("결제 모듈을 불러오지 못했습니다.");
+            showModal("불러오기 실패", "알 수 없는 서버 오류로 인해 결제를 진행할 수 없습니다.");
             return;
         }
 
         if (!startDate || !startTime) {
-            alert("예약 날짜 및 시간을 선택해주세요");
+            showModal("입력값 검증 실패", "예약 날짜와 시간을 선택해주세요.");
             return;
         }
 
         // Format dates for API
-        const entryTime = dayjs(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`).toISOString();
+        const entryTime = dayjs(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`).toLocaleString();
 
         const exitTime =
-            endDate && endTime ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toISOString() : null;
+            endDate && endTime ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toLocaleString() : null;
 
         try {
             const response = await addTempReserve({
@@ -169,7 +172,7 @@ const ReserveDetail = () => {
                 facilityId: id,
                 entryTime,
                 exitTime,
-                amount: 240000,
+                amount: 30000,
             });
 
             const merchantPayKey = response.data.reserveId;
@@ -179,14 +182,14 @@ const ReserveDetail = () => {
                 merchantPayKey,
                 productName: facilityData.name,
                 productCount: "1",
-                totalPayAmount: "240000",
-                taxScopeAmount: "240000",
+                totalPayAmount: "30000",
+                taxScopeAmount: "30000",
                 taxExScopeAmount: "0",
                 returnUrl: `https://tailfriends.kro.kr/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
             });
         } catch (err) {
             console.error("예약 생성 실패:", err);
-            alert("예약 생성 중 오류가 발생했습니다.");
+            showModal("예약 확정 실패", "예약 처리 중 오류가 발생했습니다.");
         }
     };
 
@@ -292,9 +295,7 @@ const ReserveDetail = () => {
 
                     {/* 예약 화면 */}
                     <Box sx={{ display: userWantReserve ? "block" : "none" }}>
-                        <Typography sx={{ whiteSpace: "pre-wrap", mb: 2, mt: 2 }}>
-                            ・요금 정보{"\n\t"}・기본요금 24시간 50,000원{"\n\t"}・추가요금 6시간 단위로 10,000원
-                        </Typography>
+                        <Typography sx={{ whiteSpace: "pre-wrap", mb: 2, mt: 2 }}>{facilityData.comment}</Typography>
                         <Divider />
                         <Box sx={{ mb: 2 }}>
                             <DateTimeSelector
@@ -321,10 +322,10 @@ const ReserveDetail = () => {
                             }}
                         >
                             <Box>
-                                <Typography sx={{ width: "100%" }}>・결제 금액</Typography>
+                                <Typography sx={{ width: "100%" }}>・예약금</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ textAlign: "right", width: "100%" }}>240,000원</Typography>
+                                <Typography sx={{ textAlign: "right", width: "100%" }}>30,000원</Typography>
                             </Box>
                         </Box>
                         <Divider />

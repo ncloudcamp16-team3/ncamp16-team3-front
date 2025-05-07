@@ -35,19 +35,17 @@ const ReserveContent = () => {
                     my={2}
                     sx={{
                         display: "flex",
-                        justifyContent: "row",
+                        justifyContent: "center",
+                        flexDirection: "row",
                         pl: 2,
                         pr: 2,
                         gap: 31,
                         mb: 0,
-                        "@media (max-width: 375px) and (max-height: 667px)": {
-                            /* 아이폰 SE 비율 */ gap: 15,
+                        "@media (max-width: 375px)": {
+                            gap: 10,
                         },
-                        "@media (max-width: 414px) and (max-height: 896px)": {
-                            /* 아이폰 12/13 Pro Max 비율 */ gap: 20,
-                        },
-                        "@media (max-width: 390px) and (max-height: 844px)": {
-                            /* 아이폰 12/13 비율 */ gap: 25,
+                        "@media (min-width: 376px) and (max-width: 499px)": {
+                            gap: 25,
                         },
                     }}
                 >
