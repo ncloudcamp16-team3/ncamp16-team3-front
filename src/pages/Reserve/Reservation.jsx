@@ -13,8 +13,6 @@ const Reservation = () => {
     const start = searchParams.get("start");
     const end = searchParams.get("end");
 
-    console.log(searchParams);
-
     return (
         <Container sx={{ mt: 4 }}>
             <Card sx={{ width: 350, mx: "auto", border: "none", boxShadow: "none", pr: 5 }}>
