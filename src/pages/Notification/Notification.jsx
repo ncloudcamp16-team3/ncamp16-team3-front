@@ -8,8 +8,10 @@ import {
     deleteAllNotificationsByUserId,
     deleteNotificationById,
     markNotificationAsRead,
+    checkNotification,
 } from "../../services/notificationService.js";
 import { useNavigate } from "react-router-dom";
+import { listenToMessages } from "../../../public/firebase.js";
 
 // 숫자 ID에 따라 아이콘 매핑
 const getIconByTypeId = (typeId) => {
@@ -43,12 +45,13 @@ const HoverTrash = styled(Trash2)(({ theme }) => ({
 }));
 
 const Notification = () => {
-    const [notifications, setNotifications] = useState([]);
     const [lastMessages, setLastMessages] = useState({});
-    const { user, nc } = useContext(Context);
+    const { user, nc, notifications, setNotifications, setHasNewNotification } = useContext(Context);
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!user?.id) return;
+
         const fetchNotifications = async () => {
             try {
                 const data = await getNotificationsByUserId(user.id);
@@ -58,10 +61,23 @@ const Notification = () => {
             }
         };
 
-        if (user?.id) {
-            fetchNotifications();
-        }
-    }, [user]);
+        fetchNotifications();
+
+        // listenToMessages는 user.id 있을 때만 등록
+        const unsubscribe = listenToMessages(async (payload) => {
+            console.log("📥 실시간 알림 수신됨:", payload);
+            await fetchNotifications();
+            const result = await checkNotification(user.id);
+            setHasNewNotification(result.exists);
+        });
+
+        // (선택) 언마운트 시 unsubscribe 로직 추가
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [user?.id]); // user?.id만 의존성에
 
     const fetchNotificationLastMessage = async (channelId) => {
         try {
@@ -122,6 +138,9 @@ const Notification = () => {
             if (success) {
                 setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, readStatus: true } : n)));
 
+                const result = await checkNotification(user.id);
+                setHasNewNotification(result.exists); // true/false
+
                 switch (notification.notificationTypeId) {
                     case 1: // 게시판 댓글
                         navigate(`/board/${notification.content}`); // 댓글ID
@@ -169,6 +188,8 @@ const Notification = () => {
         try {
             await deleteNotificationById(notification.id);
             setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+            const result = await checkNotification(user.id);
+            setHasNewNotification(result.exists); // true/false
         } catch (error) {
             console.error("Error deleting notification:", error);
         }
@@ -177,6 +198,8 @@ const Notification = () => {
         try {
             await deleteAllNotificationsByUserId(user.id);
             setNotifications([]); // 직접 비우기
+            const result = await checkNotification(user.id);
+            setHasNewNotification(result.exists); // true/false
         } catch (error) {
             console.error("Error deleting all notifications:", error);
         }

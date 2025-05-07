@@ -1,7 +1,7 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, onMessage } from "firebase/messaging";
 
 // Firebase 설정
 const firebaseConfig = {
@@ -22,6 +22,13 @@ const analytics = getAnalytics(app);
 
 // Firebase Cloud Messaging 초기화
 const messaging = getMessaging(app); // FCM 객체 초기화
+
+export const listenToMessages = (callback) => {
+    onMessage(messaging, (payload) => {
+        console.log("📲 FCM 메시지 수신:", payload);
+        callback(payload); // payload 전달
+    });
+};
 
 // 필요한 경우 app, messaging, analytics를 export
 export { app, messaging, analytics };
