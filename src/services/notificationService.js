@@ -58,3 +58,17 @@ export const sendChatNotification = async ({ userId, channelId, senderId, messag
         throw error;
     }
 };
+
+export const checkNotification = async (userId) => {
+    try {
+        const response = await instance.get(`${API_URL}/check-notification?userId=${userId}`);
+        if (response && response.data) {
+            const { message, data } = response.data; // 예: { exists: false }
+            return data; // { exists: true/false }
+        }
+        return null;
+    } catch (error) {
+        console.error("알림 읽음 여부 확인 중 오류:", error);
+        throw error;
+    }
+};
