@@ -29,7 +29,7 @@ const PetsitterList = () => {
     // 각 열에 대한 스타일 객체를 미리 정의
     const cellStyles = {
         id: { width: 50, minWidth: 50, maxWidth: 50 },
-        image: { width: 80, minWidth: 80, maxWidth: 80 },
+        image: { width: 90, minWidth: 90, maxWidth: 90 },
         sitterExp: { width: 100, minWidth: 100, maxWidth: 100 },
         nickname: { width: 150, minWidth: 150, maxWidth: 150 },
         age: { width: 100, minWidth: 100, maxWidth: 100 },
