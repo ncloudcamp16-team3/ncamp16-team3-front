@@ -202,6 +202,7 @@ const DateTimeSelector = ({
             <Box sx={{ gap: 3, display: "flex", justifyContent: "center" }}>
                 <Button
                     variant="outlined"
+                    disabled={!startDate} // ✅ 시작일 없으면 비활성화
                     sx={{
                         width: isHotel ? "40%" : "80%",
                         display: "flex",
@@ -213,10 +214,10 @@ const DateTimeSelector = ({
                     }}
                     onClick={() => toggleTimeSelector("start")}
                 >
-                    {" "}
                     <ScheduleIcon />
-                    {startTime || startTimeLabel}{" "}
+                    {startTime || startTimeLabel}
                 </Button>
+
                 {isHotel && (
                     <Button
                         variant="outlined"
@@ -346,7 +347,7 @@ const DateTimeSelector = ({
                         <DateCalendar
                             value={dateDialog.target === "start" ? startDate : endDate}
                             onChange={(newValue) => handleDateSelect(newValue)}
-                            minDate={dayjs()}
+                            minDate={dateDialog.target === "end" ? (startDate ? dayjs(startDate) : dayjs()) : dayjs()}
                         />
                     </LocalizationProvider>
                 </DialogContent>
