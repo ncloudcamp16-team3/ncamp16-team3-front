@@ -76,6 +76,7 @@ const Header = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     position: "relative",
+                    cursor: "pointer",
                 }}
                 onClick={toggleMenu}
             >
@@ -217,6 +218,7 @@ const Header = () => {
                         objectFit: "contain",
                         width: "40px",
                         height: "40px",
+                        cursor: "pointer",
                     }}
                 />
             </div>

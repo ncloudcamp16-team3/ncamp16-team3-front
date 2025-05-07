@@ -52,7 +52,7 @@ body.modal-open {
     font-size: 18px;
     height: 50px;
     padding: 5px 15px 0 15px;
-    z-index: 1000;
+    z-index: 900;
 }
 
 .footer{
@@ -71,7 +71,7 @@ body.modal-open {
     transform: translateZ(0);
     font-size: 10px;
     height: 65px;
-    z-index: 1000;
+    z-index: 900;
 }
 
 .bottom-button{
