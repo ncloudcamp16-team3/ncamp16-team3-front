@@ -6,7 +6,6 @@ import { useTheme } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import { addComment, getParentComments } from "../../services/petstaService.js";
 import { Context } from "../../context/Context.jsx";
-import GlobalModal from "../../components/Global/GlobalModal.jsx";
 
 const PostCommentPage = () => {
     const [replyTo, setReplyTo] = useState(null);
@@ -20,7 +19,7 @@ const PostCommentPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const inputRef = useRef(null);
     const { postId } = useParams();
-    const { user } = useContext(Context);
+    const { user, showModal } = useContext(Context);
     const theme = useTheme();
     const navigate = useNavigate();
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -89,7 +88,7 @@ const PostCommentPage = () => {
 
     const handleAddComment = async () => {
         if (!commentContent.trim()) {
-            setErrorModalOpen(true); // ✅ 모달 열기
+            showModal("", "댓글을 작성해 주세요!");
             return;
         }
 
@@ -311,15 +310,6 @@ const PostCommentPage = () => {
                 </Box>
                 <Box height="80px" bgcolor="white" zIndex={99}></Box>
             </Box>
-            <GlobalModal
-                open={errorModalOpen}
-                onClose={() => setErrorModalOpen(false)}
-                message={{
-                    title: "댓글 작성 실패",
-                    text: "댓글을 작성해 주세요!",
-                    confirmText: "확인",
-                }}
-            />
         </>
     );
 };
