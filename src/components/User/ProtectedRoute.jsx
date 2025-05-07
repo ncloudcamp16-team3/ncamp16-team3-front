@@ -132,23 +132,6 @@ const ProtectedRoute = () => {
         await trySetup();
     };
 
-    useEffect(() => {
-        if (!nc || !user?.chatId) return;
-
-        const handleMessage = (message) => {
-            const isMyMessage = message.sender.id === user.chatId;
-            if (!isMyMessage) {
-                fetchRooms(); // 채팅방 목록 다시 가져오기
-            }
-        };
-
-        nc.bind("message", handleMessage);
-
-        return () => {
-            nc.unbind("message", handleMessage); // 클린업
-        };
-    }, [nc, user?.chatId]);
-
     const fetchRooms = async () => {
         try {
             const roomList = await getMyChatRooms();
@@ -265,8 +248,6 @@ const ProtectedRoute = () => {
                 console.error("알림 전송 실패:", err);
             }
         };
-
-        // ✅ 실시간 채팅방 목록 새로고침
 
         if (!isChatOpen && !isChatRoomOpen) {
             nc.bind("onMessageReceived", backgroundHandler);
