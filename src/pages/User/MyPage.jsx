@@ -22,7 +22,7 @@ const MyPage = () => {
         isHold: false,
         status: "NOT_REGISTERED",
     });
-    const { user, setUser } = useContext(Context);
+    const { user, setUser, nc } = useContext(Context);
     const [hover, setHover] = useState({});
 
     // 모달 상태
@@ -238,23 +238,31 @@ const MyPage = () => {
     const handleWithdrawal = async () => {
         if (withdrawalInput === "탈퇴합니다") {
             try {
-                await instance.delete("/user/withdraw");
+                const res = await instance.delete("/user/withdraw");
 
-                // 상태 및 스토리지 완전 초기화
+                const channelNames = res.data.channelNames;
+                if (Array.isArray(channelNames) && channelNames.length > 0) {
+                    for (const channelName of channelNames) {
+                        try {
+                            await nc.deleteChannel(channelName);
+                        } catch (deleteErr) {
+                            console.warn(`❗채널 삭제 실패: ${channelName}`, deleteErr);
+                        }
+                    }
+                }
+
                 setUser(null);
                 setPets([]);
                 setSitterStatus({});
                 localStorage.clear();
                 sessionStorage.clear();
 
-                // 쿠키 삭제
                 document.cookie.split(";").forEach(function (c) {
                     document.cookie = c
                         .replace(/^ +/, "")
                         .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                 });
 
-                // 회원탈퇴 완료 페이지로 이동
                 navigate("/withdrawal-complete");
             } catch (err) {
                 console.error("회원 탈퇴 처리 실패:", err);

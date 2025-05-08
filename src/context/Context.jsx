@@ -145,10 +145,11 @@ export function Provider({ children }) {
         setIsChatRoomOpen(isChatRoom);
     }, [location.pathname]);
 
-    const [chatList, setChatList] = useState([]);
+    const [chatList, setChatList] = useState(false);
+    const [chatLoad, setChatLoad] = useState([]);
 
     const [notifications, setNotifications] = useState([]);
-    const [toastNotifications, setToastNotifications] = useState([]);
+    // const [toastNotifications, setToastNotifications] = useState([]);
     const [hasNewNotification, setHasNewNotification] = useState(false);
 
     if (isUserLoading) return null;
@@ -184,6 +185,10 @@ export function Provider({ children }) {
                 setNotifications,
                 chatList,
                 setChatList,
+                chatLoad,
+                setChatLoad,
+                snackbar,
+                setSnackbar,
             }}
         >
             {children}
