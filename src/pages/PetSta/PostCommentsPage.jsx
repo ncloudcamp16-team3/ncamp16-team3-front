@@ -24,6 +24,19 @@ const PostCommentPage = () => {
     const navigate = useNavigate();
     const [errorModalOpen, setErrorModalOpen] = useState(false);
 
+    useEffect(() => {
+        const handleFocus = () => {
+            setTimeout(() => {
+                inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 300);
+        };
+
+        const inputEl = inputRef.current;
+        inputEl?.addEventListener("focus", handleFocus);
+
+        return () => inputEl?.removeEventListener("focus", handleFocus);
+    }, []);
+
     const fetchComments = async () => {
         try {
             setIsLoading(true);
@@ -155,7 +168,7 @@ const PostCommentPage = () => {
             >
                 <Box
                     display="flex"
-                    position="fixed"
+                    position="static"
                     top="50px"
                     right={rightPosition}
                     width="100%"

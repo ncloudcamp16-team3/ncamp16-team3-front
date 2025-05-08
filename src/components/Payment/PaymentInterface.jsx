@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PaymentHistory } from "./PaymentHistory";
 import { FilterSection } from "./FilterSection";
 import styles from "../../css/payment/PaymentHistoryInterface.module.css";
@@ -7,12 +7,16 @@ import { fetchPaymentHistory } from "../../services/paymentService.js";
 
 export const PaymentHistoryInterface = () => {
     const today = dayjs().format("YYYY-MM-DD");
-
-    const [periodSelect, setPeriodSelect] = useState(null);
-    const [startDate, setStartDate] = useState(today);
+    const [periodSelect, setPeriodSelect] = useState("15일"); // ✅ 기본값 "15일"
+    const [startDate, setStartDate] = useState(dayjs().subtract(15, "day").format("YYYY-MM-DD")); // ✅ 기본 15일 전
     const [endDate, setEndDate] = useState(today);
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    // ✅ 초기 진입 시 자동 검색
+    useEffect(() => {
+        handleSearch();
+    }, []);
 
     const handlePeriodChange = (period) => {
         setPeriodSelect(period);
@@ -22,6 +26,8 @@ export const PaymentHistoryInterface = () => {
         if (period === "15일") newStartDate = todayObj.subtract(15, "day").format("YYYY-MM-DD");
         else if (period === "1개월") newStartDate = todayObj.subtract(1, "month").format("YYYY-MM-DD");
         else if (period === "3개월") newStartDate = todayObj.subtract(3, "month").format("YYYY-MM-DD");
+        else if (period === "6개월") newStartDate = todayObj.subtract(6, "month").format("YYYY-MM-DD");
+        else if (period === "1년") newStartDate = todayObj.subtract(1, "year").format("YYYY-MM-DD");
 
         setStartDate(newStartDate);
         setEndDate(today);

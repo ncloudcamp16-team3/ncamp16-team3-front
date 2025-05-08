@@ -1,9 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PeriodSelector } from "./PeriodSelector.jsx";
-import { DateRangeSelector } from "./DateRangeSelector.jsx";
+import { SimpleDateRangeSelector } from "./DateRangeSelector.jsx";
 import { Box, Typography, Paper, Divider } from "@mui/material";
+import dayjs from "dayjs";
 
-export const FilterSection = ({ periodSelect, startDate, endDate, onPeriodChange, onDateChange, onSearch }) => {
+export const FilterSection = ({ onSearch }) => {
+    const [periodSelect, setPeriodSelect] = useState("15일");
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+
+    useEffect(() => {
+        const today = dayjs();
+        let newStart = null;
+
+        switch (periodSelect) {
+            case "15일":
+                newStart = today.subtract(15, "day");
+                break;
+            case "1개월":
+                newStart = today.subtract(1, "month");
+                break;
+            case "3개월":
+                newStart = today.subtract(3, "month");
+                break;
+            case "6개월":
+                newStart = today.subtract(6, "month");
+                break;
+            case "1년":
+                newStart = today.subtract(1, "year");
+                break;
+            case "직접입력":
+                // 유지 (직접입력 선택 시 날짜를 초기화하지 않음)
+                return;
+            default:
+                return;
+        }
+
+        setStartDate(newStart);
+        setEndDate(today);
+    }, [periodSelect]);
+
+    const handlePeriodChange = (value) => {
+        // 직접입력으로 바뀌었을 때도 기존 날짜 유지
+        setPeriodSelect(value);
+    };
+
+    const handleDateChange = (target, value) => {
+        if (target === "start") setStartDate(value);
+        else if (target === "end") setEndDate(value);
+    };
+
     return (
         <Paper
             elevation={1}
@@ -12,7 +58,6 @@ export const FilterSection = ({ periodSelect, startDate, endDate, onPeriodChange
                 width: "100%",
                 display: "flex",
                 flexWrap: "wrap",
-                position: "fixed",
                 zIndex: 2,
                 backgroundColor: "background.paper",
                 borderBottom: "1px solid",
@@ -44,45 +89,74 @@ export const FilterSection = ({ periodSelect, startDate, endDate, onPeriodChange
                     justifyContent: "space-between",
                     width: "100%",
                     px: 1,
+                    gap: 1,
+                    flexWrap: "wrap",
                 }}
             >
                 <Box
                     sx={{
-                        fontSize: "0.875rem",
-                        color: "text.secondary",
+                        flexShrink: 1,
+                        flexGrow: 1,
+                        minWidth: 0,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "flex-start",
                         justifyContent: "center",
-                        ml: 1,
+                        width: "50%",
                     }}
                 >
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
                         조회기간 선택
                     </Typography>
-                    <PeriodSelector selected={periodSelect} onChange={onPeriodChange} />
+                    <PeriodSelector selected={periodSelect} onChange={handlePeriodChange} />
                 </Box>
 
                 <Box
                     sx={{
-                        fontSize: "0.875rem",
-                        color: "text.secondary",
+                        flexShrink: 1,
+                        flexGrow: 1,
+                        minWidth: 0,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "flex-start",
                         justifyContent: "center",
-                        mr: 1,
+                        width: "50%",
                     }}
                 >
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        조회일자 검색
-                    </Typography>
-                    <DateRangeSelector
-                        startDate={startDate}
-                        endDate={endDate}
-                        onDateChange={onDateChange}
-                        onSearch={onSearch}
-                    />
+                    {periodSelect === "직접입력" && (
+                        <Box sx={{ width: "100%", mt: 2 }}>
+                            <SimpleDateRangeSelector
+                                startDate={startDate}
+                                endDate={endDate}
+                                onDateChange={handleDateChange}
+                            />
+                        </Box>
+                    )}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            width: "100%",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                bgcolor: "#F97316",
+                                borderRadius: "20px",
+                                width: "60px",
+                                height: "30px",
+                                textAlign: "center",
+                                cursor: "pointer",
+                                padding: "2px",
+                                color: "white",
+                                lineHeight: "26px",
+                                fontWeight: "bold",
+                            }}
+                            onClick={onSearch}
+                        >
+                            검색
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
         </Paper>
