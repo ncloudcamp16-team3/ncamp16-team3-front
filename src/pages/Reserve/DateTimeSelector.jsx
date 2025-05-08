@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 // MUI Components
-import { Box, Typography, Button, Card, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+    Container,
+    Box,
+    Typography,
+    Button,
+    Card,
+    Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from "@mui/material";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -23,6 +34,10 @@ const DateTimeSelector = ({
     const [dateDialog, setDateDialog] = useState({ open: false, target: "start" });
     const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
+    const [timeOptions, setTimeOptions] = useState([]);
+    const [isTimetableEmpty, setIsTimetableEmpty] = useState(false);
+
+    const today = dayjs().format("ddd").toUpperCase();
 
     const isHotel = facilityType === "HOTEL";
     const startDateLabel = isHotel ? "시작일자" : "예약일자";
@@ -30,6 +45,15 @@ const DateTimeSelector = ({
 
     const generateTimeOptions = () => {
         const defaultTimes = [
+            "00:00",
+            "01:00",
+            "02:00",
+            "03:00",
+            "04:00",
+            "05:00",
+            "06:00",
+            "07:00",
+            "08:00",
             "09:00",
             "10:00",
             "11:00",
@@ -42,34 +66,42 @@ const DateTimeSelector = ({
             "18:00",
             "19:00",
             "20:00",
+            "21:00",
+            "22:00",
+            "23:00",
         ];
 
-        if (!openHours || typeof openHours !== "string") return defaultTimes;
+        const count = Object.values(openHours).filter((dayInfo) => dayInfo?.isOpen);
+        if (count.length === 0) {
+            setIsTimetableEmpty(true);
+        }
+        let startTime = openHours[today]?.openTime || null;
+        let endTime = openHours[today]?.closeTime || null;
 
-        try {
-            const timePattern = /(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/;
-            const matches = openHours.match(timePattern);
+        if (startTime && endTime) {
+            try {
+                const timePattern = /(\d{1,2}:\d{2})/;
+                const matches = openHours.match(timePattern);
 
-            if (!matches || matches.length < 3) return defaultTimes;
+                if (!matches || matches.length < 3) return defaultTimes;
 
-            const startTimeStr = matches[1].trim();
-            const endTimeStr = matches[2].trim();
+                const startTimeStr = matches[1].trim();
+                const endTimeStr = matches[2].trim();
 
-            let startHour = parseInt(startTimeStr.split(":"[0]));
-            let endHour = parseInt(endTimeStr.split(":"[0]));
+                let startHour = parseInt(startTimeStr.split(":")[0]);
+                let endHour = parseInt(endTimeStr.split(":")[0]);
 
-            if (endHour < startHour) endHour += 24;
+                const timeOptions = [];
+                for (let hour = startHour; hour <= endHour; hour++) {
+                    const displayHour = hour % 24;
+                    timeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
+                }
 
-            const timeOptions = [];
-            for (let hour = startHour; hour <= endHour; hour++) {
-                const displayHour = hour % 24;
-                timeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
+                return timeOptions;
+            } catch (error) {
+                console.error("영업 시간 형식 파싱 오류:", error);
+                return defaultTimes;
             }
-
-            return timeOptions;
-        } catch (error) {
-            console.error("영업 시간 형식 파싱 오류:", error);
-            return defaultTimes;
         }
     };
 
@@ -110,7 +142,7 @@ const DateTimeSelector = ({
     };
 
     const getAvailableEndTimes = () => {
-        if (!startTime) return [];
+        if (!endDate) return [];
 
         const startHour = parseInt(startTime.split(":")[0]);
         const isToday = isTodayEnd;
@@ -177,6 +209,14 @@ const DateTimeSelector = ({
 
         return filteredTimeOptions;
     };
+
+    if (isTimetableEmpty)
+        return (
+            <Container sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <Typography>예약이 가능한 일정을 준비중입니다...</Typography>
+                <Typography>이 시설의 일정에 대해 궁금하신 분은 관리자에게 문의 해주세요</Typography>
+            </Container>
+        );
 
     return (
         <Stack spacing={2} direction="column">
@@ -346,7 +386,7 @@ const DateTimeSelector = ({
                             p: 1,
                         }}
                     >
-                        {getAvailableEndTimes().map((time) => (
+                        {getFilteredTimeOptions().map((time) => (
                             <Button
                                 key={time}
                                 onClick={() => handleTimeSelect(time, "end")}

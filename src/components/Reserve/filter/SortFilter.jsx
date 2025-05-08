@@ -15,7 +15,7 @@ const SortFilter = () => {
     };
 
     return (
-        <ToggleButtonGroup value={sortBy} exclusive onChange={handleSort}>
+        <ToggleButtonGroup sx={{ minWidth: 120 }} value={sortBy} exclusive onChange={handleSort}>
             <ToggleButton value="starPoint">평점순</ToggleButton>
             <ToggleButton value="distance">거리순</ToggleButton>
         </ToggleButtonGroup>
