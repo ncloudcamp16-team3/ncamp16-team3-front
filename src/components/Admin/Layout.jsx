@@ -230,10 +230,10 @@ const Layout = ({ children }) => {
             setSelectedMenu("게시글 목록");
         } else if (path.includes("/admin/board/post")) {
             setSelectedIndex(2);
-            setSelectedMenu("공지글 작성");
+            setSelectedMenu("공지 작성");
         } else if (path.includes("/admin/board/notice/list")) {
             setSelectedIndex(3);
-            setSelectedMenu("공지글 목록");
+            setSelectedMenu("공지 목록");
         } else if (path.includes("/admin/petsitter/list")) {
             setSelectedIndex(4);
             setSelectedMenu("펫시터 목록");
@@ -314,7 +314,7 @@ const Layout = ({ children }) => {
 
                             <SubMenuListItemButton
                                 selected={selectedIndex === 2}
-                                onClick={() => handleListItemClick(2, "공지글 작성")}
+                                onClick={() => handleListItemClick(2, "공지 작성")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -327,12 +327,12 @@ const Layout = ({ children }) => {
                                 <ListItemIcon>
                                     <ArticleIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="공지글 작성" />
+                                <ListItemText primary="공지 작성" />
                             </SubMenuListItemButton>
 
                             <SubMenuListItemButton
                                 selected={selectedIndex === 3}
-                                onClick={() => handleListItemClick(3, "공지글 목록")}
+                                onClick={() => handleListItemClick(3, "공지 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -345,7 +345,7 @@ const Layout = ({ children }) => {
                                 <ListItemIcon>
                                     <FormatListBulletedIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="공지글 목록" />
+                                <ListItemText primary="공지 목록" />
                             </SubMenuListItemButton>
                         </List>
                     </Collapse>

@@ -9,6 +9,7 @@ import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
 import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
 import { getNotificationsByUserId, sendChatNotification } from "../../services/notificationService.js";
+import { getMyChatRooms } from "../../services/chatService.js";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
@@ -26,9 +27,26 @@ const ProtectedRoute = () => {
         setHasNewNotification,
         notifications,
         setNotifications,
+        setChatList,
+        chatLoad,
+        setChatLoad,
     } = useContext(Context);
 
     const [toastNotifications, setToastNotifications] = useState([]);
+
+    const initNcChat = async (userData, nc, setNc) => {
+        if (!nc) {
+            const chat = new ncloudchat.Chat();
+            await chat.initialize("8e8e626c-08d8-40e4-826f-185b1d1b8c4a");
+            await chat.connect({
+                id: "ncid" + userData.id,
+                name: userData.nickname,
+                profile: userData.path,
+                language: "ko",
+            });
+            setNc(chat);
+        }
+    };
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -54,17 +72,7 @@ const ProtectedRoute = () => {
                         chatId: "ncid" + userData.id,
                     });
 
-                    if (!nc) {
-                        const chat = new ncloudchat.Chat();
-                        await chat.initialize("8e8e626c-08d8-40e4-826f-185b1d1b8c4a");
-                        await chat.connect({
-                            id: "ncid" + userData.id,
-                            name: userData.nickname,
-                            profile: userData.path,
-                            language: "ko",
-                        });
-                        setNc(chat);
-                    }
+                    initNcChat(userData, nc, setNc);
                 }
 
                 setLoading(false);
@@ -125,6 +133,83 @@ const ProtectedRoute = () => {
 
         await trySetup();
     };
+
+    const fetchRooms = async () => {
+        try {
+            const roomList = await getMyChatRooms();
+            const result = [];
+
+            for (let room of roomList) {
+                const filter = { name: room.uniqueId };
+                const channels = await nc.getChannels(filter, {}, { per_page: 1 });
+                const edge = (channels.edges || [])[0];
+                if (!edge) continue;
+
+                const ch = edge.node;
+                await nc.subscribe(ch.id);
+
+                let lastMessageText = "";
+                if (ch.last_message?.content) {
+                    try {
+                        const parsed = JSON.parse(ch.last_message.content);
+                        if (typeof parsed.content === "string") {
+                            lastMessageText = parsed.content;
+                        } else if (typeof parsed.content === "object" && parsed.content.text) {
+                            lastMessageText = parsed.content.text;
+                        } else {
+                            lastMessageText = "알 수 없는 메시지";
+                        }
+                    } catch {
+                        lastMessageText = ch.last_message.content;
+                    }
+                }
+
+                let unreadCount = 0;
+                try {
+                    const unreadResult = await nc.unreadCount(ch.id);
+                    unreadCount = unreadResult.unread || 0;
+                } catch (err) {
+                    console.warn(`채널 ${ch.id} unreadCount 조회 실패`, err);
+                }
+
+                result.push({
+                    id: ch.id,
+                    name: room.nickname,
+                    photo: room.profileUrl,
+                    lastMessage: lastMessageText || "",
+                    lastMessageSentAt: ch.last_message?.sended_at || ch.updated_at,
+                    unreadCount,
+                });
+            }
+
+            result.sort((a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt));
+            setChatList(result);
+        } catch (e) {
+            console.error("채팅방 정보 조회 실패:", e);
+        }
+    };
+
+    useEffect(() => {
+        const unsubscribe = onMessage(messaging, (payload) => {
+            const { type } = payload.data || {};
+            if (type === "FETCH_ROOMS") {
+                console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
+                setChatLoad(true);
+            }
+        });
+
+        return () => unsubscribe(); // 언마운트 시 정리
+    }, [setChatLoad]);
+
+    useEffect(() => {
+        if (!nc || !user?.id) return;
+        // const interval = setInterval(() => {
+        //     fetchRooms(); // 주기적으로 채팅방 정보 갱신
+        // }, 5000); // 5초마다
+        // return () => clearInterval(interval); // 언마운트 시 클리어
+        fetchRooms();
+        setChatLoad(false);
+    }, [nc, user?.id, chatLoad, setChatLoad]);
 
     const parseMessage = (msg) => {
         let parsed;
@@ -195,6 +280,14 @@ const ProtectedRoute = () => {
                     return;
                 }
 
+                const { type } = payload.data || {};
+                console.log("🟢 FCM 수신:", payload.data); // 디버깅용
+                if (type === "FETCH_ROOMS") {
+                    console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
+                    setChatLoad(true);
+                    return;
+                }
+
                 console.log("Foreground message received:", payload);
 
                 const notificationData = payload?.data || {};
@@ -242,7 +335,7 @@ const ProtectedRoute = () => {
             });
 
             return () => unsubscribe();
-        }, [user, messaging, setNotifications, setHasNewNotification]);
+        }, [user, messaging, setNotifications, setHasNewNotification, setChatLoad, chatLoad]);
 
         return (
             <>

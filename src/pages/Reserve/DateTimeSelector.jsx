@@ -74,7 +74,7 @@ const DateTimeSelector = ({
         if (count.length === 0) {
             setIsTimetableEmpty(true);
         }
-        let startTime =
+        let startTime = Object.values(count).
 
         try {
             const timePattern = /(\d{1,2}:\d{2})/;
@@ -178,11 +178,32 @@ const DateTimeSelector = ({
         const base = isStart ? startDate : endDate;
         const isToday = isStart ? isTodayStart : isTodayEnd;
         const currentHour = now.hour();
+        const currentMinute = now.minute();
 
-        return timeOptions.filter((time) => {
-            const hour = parseInt(time.split(":")[0]);
-            return !isToday || hour > currentHour;
+        const filteredTimeOptions = timeOptions.filter((time) => {
+            const [hour, minute] = time.split(":").map((v) => parseInt(v));
+
+            // 오늘이라면, 현재 시간 이후로만 필터링
+            if (isToday) {
+                return hour > currentHour || (hour === currentHour && minute > currentMinute);
+            }
+
+            return true; // 오늘이 아니면 모두 허용
         });
+
+        if (endDate && endTime) {
+            // 종료 날짜와 시간이 선택되어 있을 경우
+            const endDateTime = dayjs(`${endDate.format("YYYY-MM-DD")}T${endTime}`);
+            // 시작시간이 종료시간보다 이후일 경우, 시작시간 필터링
+            return filteredTimeOptions.filter((time) => {
+                const [hour, minute] = time.split(":").map((v) => parseInt(v));
+                const startDateTime = dayjs(`${startDate.format("YYYY-MM-DD")}T${time}`);
+
+                return startDateTime.isBefore(endDateTime); // 종료시간 이후로만 선택 가능
+            });
+        }
+
+        return filteredTimeOptions;
     };
 
     if (isTimetableEmpty)
@@ -384,6 +405,7 @@ const DateTimeSelector = ({
                             value={dateDialog.target === "start" ? startDate : endDate}
                             onChange={(newValue) => handleDateSelect(newValue)}
                             minDate={dateDialog.target === "end" ? (startDate ? dayjs(startDate) : dayjs()) : dayjs()}
+                            maxDate={dateDialog.target === "start" && endDate ? dayjs(endDate) : undefined}
                         />
                     </LocalizationProvider>
                 </DialogContent>

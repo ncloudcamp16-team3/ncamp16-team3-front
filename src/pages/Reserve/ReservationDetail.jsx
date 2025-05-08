@@ -6,6 +6,9 @@ import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
+import { getReserveDetail } from "../../services/reserveService.js";
+import DarkModal from "../../components/Global/DarkModal.jsx";
+import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
 import { cancelReserve, getReserveDetail } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx"; // ✅ API 호출 함수
 
@@ -13,7 +16,6 @@ const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
     const { showModal, handleSnackbarOpen } = useContext(Context);
 
     const requestCancelReserve = () => {
