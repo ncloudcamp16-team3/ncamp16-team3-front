@@ -7,23 +7,23 @@ import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
 import { getReserveDetail } from "../../services/reserveService.js";
-import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
-import { cancelReserve, getReserveDetail } from "../../services/reserveService.js";
-import { Context } from "../../context/Context.jsx"; // ✅ API 호출 함수
+import { cancelReserve } from "../../services/reserveService.js";
+import { Context } from "../../context/Context.jsx";
+import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx"; // ✅ API 호출 함수
 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+    const { handleSnackbarOpen } = useContext(Context);
     const { showModal, handleSnackbarOpen } = useContext(Context);
 
     const requestCancelReserve = () => {
         cancelReserve(id)
             .then(() => {
-                showModal("", "예약 취소 성공", () => {
-                    navigate("/reserve/list");
-                });
+                navigate("/reserve/list");
             })
             .catch((err) => {
                 handleSnackbarOpen(err.message, "error");
@@ -123,12 +123,21 @@ const ReservationDetail = () => {
                         sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
                         size="large"
                         fullWidth
-                        onClick={requestCancelReserve}
+                        onClick={() => setOpen(true)}
                     >
                         예약취소
                     </Button>
                 )}
             </Box>
+            <GlobalConfirmModal
+                open={open}
+                title={"예약취소"}
+                description={"정말 취소하시겠습니까?"}
+                confirmText={"예"}
+                cancelText={"아니오"}
+                onConfirm={requestCancelReserve}
+                onClose={() => setOpen(false)}
+            />
 
         </Container>
     );

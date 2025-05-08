@@ -176,8 +176,6 @@ const ReserveDetail = () => {
             ? dayjs.tz(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`, "Asia/Seoul").format("YYYY-MM-DDTHH:mm:ss")
             : null;
 
-        alert(entryTime);
-
         try {
             const response = await addTempReserve({
                 userId: user.id,

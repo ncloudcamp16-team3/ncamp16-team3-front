@@ -75,7 +75,7 @@ const PetSitterDetail = () => {
 
     // 삭제 모달 열기
     const handleOpenDeleteDialog = () => {
-        setModalMessage("이 펫시터를 삭제하시겠습니까?");
+        setModalMessage("이 펫시터를 정지시키겠습니까?");
         setOpenDeleteDialog(true);
     };
 
@@ -245,7 +245,7 @@ const PetSitterDetail = () => {
                                 }}
                                 onClick={handleOpenDeleteDialog}
                             >
-                                삭제
+                                정지
                             </Button>
                         </Box>
                     </Card>

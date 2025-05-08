@@ -54,20 +54,6 @@ const ScheduleFormCard = ({
                         </Box>
                     </FormControl>
 
-                    {/*<FormControl variant="standard" fullWidth sx={{ mt: 1, mb: 0.5 }}>*/}
-                    {/*    <InputLabel>장소</InputLabel>*/}
-                    {/*    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mt: 1 }}>*/}
-                    {/*        <Input*/}
-                    {/*            name="address"*/}
-                    {/*            value={formData.address}*/}
-                    {/*            onChange={onInputChange}*/}
-                    {/*            fullWidth*/}
-                    {/*            sx={{ height: 36 }}*/}
-                    {/*        />*/}
-                    {/*        <DaumPost setAddressObj={setAddressObj} />*/}
-                    {/*    </Box>*/}
-                    {/*</FormControl>*/}
-
                     <Grid container spacing={2}>
                         <Grid item size={6}>
                             <TextField
