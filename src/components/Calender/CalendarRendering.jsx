@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "/src/css/calendar/cal.css";
-import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
 import { getScheduleAll, getEventAll, getReserveAll } from "../../services/calendarService.js";
@@ -11,7 +11,7 @@ import { CalendarContext } from "./CalendarContext.jsx";
 import RenderCard from "./RenderCard.jsx";
 
 const CalendarRendering = () => {
-    const { user } = useContext(Context);
+    const { user, snackbar, setSnackbar } = useContext(Context);
     const {
         selectedDate,
         setSelectedDate,
@@ -41,8 +41,6 @@ const CalendarRendering = () => {
         saveModifiedSchedule,
         removeSchedule,
         addSchedule,
-        snackbarOpen,
-        setSnackbarOpen,
         message,
         setMessage,
         reserves,
@@ -346,16 +344,18 @@ const CalendarRendering = () => {
                 )}
             </Box>
 
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarOpen(false)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            >
-                <Alert severity="warning" onClose={() => setSnackbarOpen(false)} variant="filled">
-                    {message}
-                </Alert>
-            </Snackbar>
+            {/*<Snackbar*/}
+            {/*    open={snackbarOpen}*/}
+            {/*    autoHideDuration={3000}*/}
+            {/*    onClose={() => setSnackbarOpen(false)}*/}
+            {/*    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}*/}
+            {/*>*/}
+            {/*    <Alert severity="warning" onClose={() => setSnackbarOpen(false)} variant="filled">*/}
+            {/*        {message}*/}
+            {/*    </Alert>*/}
+            {/*</Snackbar>*/}
+
+            {/*<GlobalSnackbar />*/}
         </>
     );
 };

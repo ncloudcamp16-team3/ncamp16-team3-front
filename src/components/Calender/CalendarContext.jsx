@@ -29,10 +29,10 @@ export const CalendarProvider = ({ children }) => {
         longitude: "",
     });
     const [address, setAddress] = useState("");
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    // const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [message, setMessage] = useState("");
 
-    const { user, fcmToken } = useContext(Context);
+    const { user, fcmToken, handleSnackbarOpen, snackbar, setSnackbar } = useContext(Context);
 
     const getTypeColor = (type) => {
         const colors = {
@@ -140,8 +140,13 @@ export const CalendarProvider = ({ children }) => {
                 content: "내용",
             };
             const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
-            setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
-            setSnackbarOpen(true); // Snackbar 열기
+            // setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
+            setSnackbar((prev) => ({
+                ...prev,
+                message: `${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`,
+                severity: "warning",
+                open: true,
+            }));
             return; // 필드 누락 시 진행되지 않도록 리턴
         }
 
@@ -172,7 +177,7 @@ export const CalendarProvider = ({ children }) => {
             setModifyForm(false);
             setSelectedItem(null);
         } catch (error) {
-            alert("일정 수정에 실패했습니다.");
+            handleSnackbarOpen("일정 등록에 실패했습니다.", "error");
             console.error("일정 수정 에러:", error);
         }
     };
@@ -193,7 +198,7 @@ export const CalendarProvider = ({ children }) => {
             setSelectedItem(null);
             setOpenItem({ id: null, type: null }); // 상세보기 닫기
         } catch (error) {
-            alert("일정 삭제에 실패했습니다.");
+            handleSnackbarOpen("일정 등록에 실패했습니다.", "error");
             console.error("일정 삭제 에러:", error);
         }
     };
@@ -224,8 +229,10 @@ export const CalendarProvider = ({ children }) => {
                 content: "내용",
             };
             const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
-            setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
-            setSnackbarOpen(true); // Snackbar 열기
+            handleSnackbarOpen(
+                `${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`,
+                "warning"
+            );
             return; // 필드 누락 시 진행되지 않도록 리턴
         }
 
@@ -265,10 +272,9 @@ export const CalendarProvider = ({ children }) => {
                 endDate: dayjs(selectedDate),
                 fcmToken: "",
             });
-            alert("일정이 성공적으로 등록되었습니다!");
+            handleSnackbarOpen("일정이 성공적으로 등록되었습니다!", "success");
         } catch (error) {
-            alert("일정 등록에 실패했습니다.");
-            console.error("일정 등록 에러:", error);
+            handleSnackbarOpen("일정 등록에 실패했습니다.", "error");
         }
     };
 
@@ -328,8 +334,6 @@ export const CalendarProvider = ({ children }) => {
                 saveModifiedSchedule,
                 removeSchedule,
                 addSchedule,
-                snackbarOpen,
-                setSnackbarOpen,
                 message,
                 setMessage,
                 reserveId,

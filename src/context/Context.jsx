@@ -187,6 +187,8 @@ export function Provider({ children }) {
                 setChatList,
                 chatLoad,
                 setChatLoad,
+                snackbar,
+                setSnackbar,
             }}
         >
             {children}
