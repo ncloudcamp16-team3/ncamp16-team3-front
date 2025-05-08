@@ -175,8 +175,6 @@ const ReserveDetail = () => {
                       .format("YYYY-MM-DDTHH:mm:ss")
                 : null;
 
-        alert(entryTime);
-
         try {
             const response = await addTempReserve({
                 userId: user.id,

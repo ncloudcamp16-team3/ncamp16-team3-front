@@ -5,24 +5,22 @@ import TitleBar from "../../components/Global/TitleBar.jsx";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 import { getReserveDetail } from "../../services/reserveService.js";
-import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
-import { cancelReserve, getReserveDetail } from "../../services/reserveService.js";
-import { Context } from "../../context/Context.jsx"; // ✅ API 호출 함수
+import { cancelReserve } from "../../services/reserveService.js";
+import { Context } from "../../context/Context.jsx";
+import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx"; // ✅ API 호출 함수
 
 const ReservationDetail = () => {
     const { id } = useParams();
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const { showModal, handleSnackbarOpen } = useContext(Context);
+    const { handleSnackbarOpen } = useContext(Context);
 
     const requestCancelReserve = () => {
         cancelReserve(id)
             .then(() => {
-                showModal("", "예약 취소 성공", () => {
-                    navigate("/reserve/list");
-                });
+                navigate("/reserve/list");
             })
             .catch((err) => {
                 handleSnackbarOpen(err.message, "error");
@@ -39,11 +37,6 @@ const ReservationDetail = () => {
                 console.error("예약 상세 조회 실패:", err);
             });
     }, [id]);
-
-    const handleCancelReservation = () => {
-        // 예약 취소 로직 구현
-        setOpen(true);
-    };
 
     if (!reservation) {
         return (
@@ -127,20 +120,21 @@ const ReservationDetail = () => {
                         sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
                         size="large"
                         fullWidth
-                        onClick={requestCancelReserve}
+                        onClick={() => setOpen(true)}
                     >
                         예약취소
                     </Button>
                 )}
             </Box>
-            <DarkModal open={open} onClose={setOpen(false)} modalProps={redirectUrl}>
-                <Box>
-                    <Typography>정말 취소하시겠습니까?</Typography>
-                    <Typography sx={{ color: "red" }}></Typography>
-                </Box>
-                <Button onClose>취소</Button>
-                <Button redirectUrl>확인</Button>
-            </DarkModal>
+            <GlobalConfirmModal
+                open={open}
+                title={"예약취소"}
+                description={"정말 취소하시겠습니까?"}
+                confirmText={"예"}
+                cancelText={"아니오"}
+                onConfirm={requestCancelReserve}
+                onClose={() => setOpen(false)}
+            />
         </Container>
     );
 };
