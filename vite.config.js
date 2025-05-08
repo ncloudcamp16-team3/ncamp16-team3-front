@@ -20,15 +20,7 @@ export default defineConfig(({ mode }) => {
                               secure: false,
                           },
                       }
-                    : mode === "production"
-                      ? {
-                            "/api": {
-                                target: "https://tailfriends.kro.kr:8080",
-                                changeOrigin: true,
-                                secure: false,
-                            },
-                        }
-                      : {},
+                    : {},
         },
     };
 });

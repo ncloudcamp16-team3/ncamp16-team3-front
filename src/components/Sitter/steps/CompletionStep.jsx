@@ -41,7 +41,7 @@ const CompletionStep = ({ imagePreview, formData, onComplete }) => {
             >
                 <Box
                     component="img"
-                    src={imagePreview || "/mock/Global/images/haribo.jpg"}
+                    src={imagePreview}
                     alt="프로필"
                     sx={{
                         width: "100%",

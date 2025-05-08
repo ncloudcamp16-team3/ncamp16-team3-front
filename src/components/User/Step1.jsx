@@ -98,7 +98,16 @@ const Step1 = () => {
                     회원가입이 완료되었어요! 닉네임을 설정해주세요.
                 </Typography>
 
-                <FormControl variant="standard" fullWidth error={error}>
+                <FormControl
+                    variant="standard"
+                    fullWidth
+                    error={error}
+                    component="form"
+                    onSubmit={(e) => {
+                        e.preventDefault(); // 기본 새로고침 방지
+                        handleNext();
+                    }}
+                >
                     <InputLabel htmlFor="nickname">
                         닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
                     </InputLabel>
@@ -109,6 +118,12 @@ const Step1 = () => {
                         placeholder="2~16자 이내로 입력해주세요"
                         value={nickname}
                         onChange={handleChange}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault(); // 이 줄은 optional (안해도 동작함)
+                                handleNext();
+                            }
+                        }}
                     />
                 </FormControl>
             </Box>

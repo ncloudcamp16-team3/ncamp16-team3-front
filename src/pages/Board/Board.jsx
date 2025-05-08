@@ -6,8 +6,8 @@ import { Context } from "../../context/Context.jsx";
 import PostCard from "../../components/Board/PostCard.jsx";
 import AddBtn from "../../components/Board/AddBtn.jsx";
 import { searchPost } from "../../services/boardService.js";
-import Loading from "../../components/Global/Loading.jsx";
 import { getAnnounces } from "../../services/announceService.js";
+import Loading from "../../components/Global/Loading.jsx";
 
 const Board = () => {
     const { boardType } = useContext(Context);
@@ -69,7 +69,7 @@ const Board = () => {
         if (isInitialMount.current) return;
 
         getPostList({
-            page: 0,
+            page,
             boardType: boardType,
             keyword: keyword === "" ? null : keyword,
         });
@@ -106,24 +106,21 @@ const Board = () => {
                 p: "10px",
             }}
         >
-            {loading ? (
-                <Loading />
-            ) : (
-                <Box>
-                    <SelectBoardAndSearch keywordSearch={keywordSearch} />
-                    <AnnounceContainer announceData={announceData} />
+            <Box>
+                <SelectBoardAndSearch keywordSearch={keywordSearch} />
+                <AnnounceContainer announceData={announceData} />
 
-                    {postList.map((item, index) => {
-                        const isLast = index === postList.length - 1;
-                        return (
-                            <Box ref={isLast ? lastItemRef : null}>
-                                <PostCard postItem={item} />
-                            </Box>
-                        );
-                    })}
-                    <AddBtn />
-                </Box>
-            )}
+                {postList.map((item, index) => {
+                    const isLast = index === postList.length - 1;
+                    return (
+                        <Box ref={isLast ? lastItemRef : null}>
+                            <PostCard postItem={item} />
+                        </Box>
+                    );
+                })}
+                {loading && <Loading />}
+                <AddBtn />
+            </Box>
         </Box>
     );
 };

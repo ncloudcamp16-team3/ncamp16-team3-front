@@ -32,7 +32,7 @@ const EditPhotoDetail = () => {
     const handleUpdate = async () => {
         try {
             await updatePost(postId, { content });
-            showModal("", "수정 완료!", () => navigate("/petsta"));
+            showModal("", "수정 완료!");
             navigate(`/petsta/post/${postId}`);
         } catch (error) {
             showModal("", "수정이 실패했습니다.");

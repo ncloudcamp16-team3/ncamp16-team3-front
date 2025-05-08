@@ -43,6 +43,7 @@ const ListContent = () => {
         const fetchFacilities = async () => {
             setLoading(true); // 로딩 시작
             setError(null); // 에러 초기화
+
             try {
                 if (noData || last) return;
                 const result = await getFacilityListsToReserve({

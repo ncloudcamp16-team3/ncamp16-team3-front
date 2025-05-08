@@ -30,7 +30,12 @@ export const PaymentHistory = ({ payments, loading }) => {
                     color: "text.secondary",
                 }}
             >
-                <Typography variant="body1">결제 내역이 없습니다</Typography>
+                <Typography variant="body1" sx={{ fontWeight: "bold", mb: 1 }}>
+                    결제 내역이 없습니다.
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    조회 기간을 다르게 설정해 보세요.
+                </Typography>
             </Box>
         );
     }

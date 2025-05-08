@@ -34,7 +34,6 @@ const DateTimeSelector = ({
     const [dateDialog, setDateDialog] = useState({ open: false, target: "start" });
     const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
-    const [timeOptions, setTimeOptions] = useState([]);
     const [isTimetableEmpty, setIsTimetableEmpty] = useState(false);
 
     const today = dayjs().format("ddd").toUpperCase();
