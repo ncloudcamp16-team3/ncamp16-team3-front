@@ -4,10 +4,8 @@ import { Container, Box, List, ListItem, Typography, Button, Divider } from "@mu
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
-import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
 import { getReserveDetail } from "../../services/reserveService.js";
-import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
 import { cancelReserve } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx";
 import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx"; // ✅ API 호출 함수
@@ -17,7 +15,6 @@ const ReservationDetail = () => {
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const { handleSnackbarOpen } = useContext(Context);
     const { showModal, handleSnackbarOpen } = useContext(Context);
 
     const requestCancelReserve = () => {
@@ -138,7 +135,6 @@ const ReservationDetail = () => {
                 onConfirm={requestCancelReserve}
                 onClose={() => setOpen(false)}
             />
-
         </Container>
     );
 };
