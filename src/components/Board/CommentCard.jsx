@@ -6,6 +6,7 @@ import { Context } from "../../context/Context.jsx";
 import { useTheme } from "@mui/material/styles";
 import DropdownCommentBtns from "./DropdownCommentBtns.jsx";
 import { deleteComment, getComments, updateComment } from "../../services/boardService.js";
+import replyIcon from "../../assets/images/Board/reply.png";
 
 const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbarOpen, setPostComments, postId }) => {
     const { user } = useContext(Context);
@@ -77,7 +78,7 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
                 {commentItem.hasParent && (
                     <Box
                         component="img"
-                        src="/mock/Board/images/reply.png"
+                        src={replyIcon}
                         sx={{
                             height: "30px",
                             mt: "10px",

@@ -3,6 +3,7 @@ import { Box, Button, InputBase, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Mappin from "../../assets/images/PetMeeting/map-pin.svg";
 import { Context } from "../../context/Context.jsx";
+import myLocation from "../../assets/images/PetMeeting/myLocation.png";
 
 const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude }) => {
     const { showModal, user } = useContext(Context);
@@ -140,7 +141,7 @@ const KakaoMap = ({ address, setAddress, setDongName, setLatitude, setLongitude 
                 >
                     <Box
                         component="img"
-                        src="/mock/PetMeeting/images/myLocation.png"
+                        src={myLocation}
                         sx={{
                             width: "20px",
                             height: "20px",
