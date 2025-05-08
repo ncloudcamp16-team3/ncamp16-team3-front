@@ -218,7 +218,7 @@ const PostCommentPage = () => {
                 justifyContent="center"
                 position="absolute"
                 bottom={0}
-                right={rightPosition}
+                right={0}
                 width="100%"
                 maxWidth="500px"
                 zIndex={3}
