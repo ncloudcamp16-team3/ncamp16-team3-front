@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Container, Typography } from "@mui/material";
 import FacilityCards from "./FacilityCards.jsx";
 import { useReserveContext } from "../../../context/ReserveContext.jsx";
-import useScrollRestore from "../../../hook/Reserve/useScrollRestore.js";
 import useInfiniteScroll from "../../../hook/Reserve/useInfiniteScroll.js";
 import useTodayTimer from "../../../hook/Reserve/useTodayTimer.js";
 import useGeolocation from "../../../hook/Reserve/useGeolocation.js";
@@ -18,8 +17,6 @@ const ListContent = () => {
         page,
         setPage,
         size,
-        getScrollY,
-        setScrollY,
         location,
         setLocation,
         noData,
@@ -31,7 +28,6 @@ const ListContent = () => {
     const [loading, setLoading] = useState(false); // 로딩 상태
     const [error, setError] = useState(null); // 에러 상태
 
-    useScrollRestore(getScrollY, setScrollY);
     useInfiniteScroll(setPage);
     const today = useTodayTimer().locale("en").format("ddd");
 
