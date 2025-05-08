@@ -209,7 +209,7 @@ const ProtectedRoute = () => {
         // return () => clearInterval(interval); // 언마운트 시 클리어
         fetchRooms();
         setChatLoad(false);
-    }, [nc, user?.id, chatLoad]);
+    }, [nc, user?.id, chatLoad, setChatLoad]);
 
     const parseMessage = (msg) => {
         let parsed;
@@ -285,6 +285,7 @@ const ProtectedRoute = () => {
                 if (type === "FETCH_ROOMS") {
                     console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
                     setChatLoad(true);
+                    return;
                 }
 
                 console.log("Foreground message received:", payload);
