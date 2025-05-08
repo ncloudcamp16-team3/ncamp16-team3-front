@@ -6,7 +6,6 @@ import { Box, Button, Container, Divider } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useNavigate } from "react-router-dom";
-import { ReserveProvider } from "../../context/ReserveContext";
 
 const ReserveContent = () => {
     const navigate = useNavigate();
@@ -47,7 +46,7 @@ const ReserveContent = () => {
 
 const Reserve = () => (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ReserveContent />
+        <ReserveContent />
     </LocalizationProvider>
 );
 
