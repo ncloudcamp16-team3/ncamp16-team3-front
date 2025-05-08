@@ -4,7 +4,6 @@ import { Container, Box, List, ListItem, Typography, Button, Divider } from "@mu
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
-import { getReserveDetail } from "../../services/reserveService.js";
 import DarkModal from "../../components/Global/DarkModal.jsx";
 import CenteredContainer from "../../components/Reserve/utils/CenteredContainer.jsx"; // ✅ API 호출 함수
 import { cancelReserve, getReserveDetail } from "../../services/reserveService.js";
