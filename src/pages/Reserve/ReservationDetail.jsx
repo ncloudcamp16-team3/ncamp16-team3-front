@@ -41,11 +41,6 @@ const ReservationDetail = () => {
             });
     }, [id]);
 
-    const handleCancelReservation = () => {
-        // 예약 취소 로직 구현
-        setOpen(true);
-    };
-
     if (!reservation) {
         return (
             <CenteredContainer>
@@ -134,14 +129,7 @@ const ReservationDetail = () => {
                     </Button>
                 )}
             </Box>
-            <DarkModal open={open} onClose={setOpen(false)} modalProps={redirectUrl}>
-                <Box>
-                    <Typography>정말 취소하시겠습니까?</Typography>
-                    <Typography sx={{ color: "red" }}></Typography>
-                </Box>
-                <Button onClose>취소</Button>
-                <Button redirectUrl>확인</Button>
-            </DarkModal>
+
         </Container>
     );
 };

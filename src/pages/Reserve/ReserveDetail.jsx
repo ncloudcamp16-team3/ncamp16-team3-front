@@ -166,19 +166,15 @@ const ReserveDetail = () => {
         }
 
         // Format dates for API
-        const entryTime = dayjs(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`).toLocaleString();
-
         const entryTime = dayjs
             .tz(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`, "Asia/Seoul")
             .format("YYYY-MM-DDTHH:mm:ss");
 
         const exitTime =
             endDate && endTime ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toLocaleString() : null;
-            endDate && endTime
-                ? dayjs
-                      .tz(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`, "Asia/Seoul")
-                      .format("YYYY-MM-DDTHH:mm:ss")
-                : null;
+        endDate && endTime
+            ? dayjs.tz(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`, "Asia/Seoul").format("YYYY-MM-DDTHH:mm:ss")
+            : null;
 
         alert(entryTime);
 

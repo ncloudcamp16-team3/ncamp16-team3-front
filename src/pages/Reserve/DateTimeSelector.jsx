@@ -34,6 +34,7 @@ const DateTimeSelector = ({
     const [dateDialog, setDateDialog] = useState({ open: false, target: "start" });
     const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
+    const [timeOptions, setTimeOptions] = useState([]);
     const [isTimetableEmpty, setIsTimetableEmpty] = useState(false);
 
     const today = dayjs().format("ddd").toUpperCase();
@@ -74,30 +75,33 @@ const DateTimeSelector = ({
         if (count.length === 0) {
             setIsTimetableEmpty(true);
         }
-        let startTime = Object.values(count).
+        let startTime = openHours[today]?.openTime || null;
+        let endTime = openHours[today]?.closeTime || null;
 
-        try {
-            const timePattern = /(\d{1,2}:\d{2})/;
-            const matches = openHours.match(timePattern);
+        if (startTime && endTime) {
+            try {
+                const timePattern = /(\d{1,2}:\d{2})/;
+                const matches = openHours.match(timePattern);
 
-            if (!matches || matches.length < 3) return defaultTimes;
+                if (!matches || matches.length < 3) return defaultTimes;
 
-            const startTimeStr = matches[1].trim();
-            const endTimeStr = matches[2].trim();
+                const startTimeStr = matches[1].trim();
+                const endTimeStr = matches[2].trim();
 
-            let startHour = parseInt(startTimeStr.split(":")[0]);
-            let endHour = parseInt(endTimeStr.split(":")[0]);
+                let startHour = parseInt(startTimeStr.split(":")[0]);
+                let endHour = parseInt(endTimeStr.split(":")[0]);
 
-            const timeOptions = [];
-            for (let hour = startHour; hour <= endHour; hour++) {
-                const displayHour = hour % 24;
-                timeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
+                const timeOptions = [];
+                for (let hour = startHour; hour <= endHour; hour++) {
+                    const displayHour = hour % 24;
+                    timeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
+                }
+
+                return timeOptions;
+            } catch (error) {
+                console.error("영업 시간 형식 파싱 오류:", error);
+                return defaultTimes;
             }
-
-            return timeOptions;
-        } catch (error) {
-            console.error("영업 시간 형식 파싱 오류:", error);
-            return defaultTimes;
         }
     };
 

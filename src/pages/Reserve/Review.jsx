@@ -88,7 +88,7 @@ const Review = () => {
         formData.append("file", image);
 
         try {
-            const response = await putReview(id, formData);
+            const response = await putReview({ id: facilityInfo.id, formData });
             showModal("", "리뷰가 등록되었습니다.\n시설정보 화면으로 돌아갑니다.", () =>
                 navigate(`/reserve/${facilityInfo.id}`)
             );
