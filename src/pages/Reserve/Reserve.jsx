@@ -34,19 +34,13 @@ const ReserveContent = () => {
                 <Box
                     my={2}
                     sx={{
+                        width: "100%",
                         display: "flex",
-                        justifyContent: "center",
                         flexDirection: "row",
+                        justifyContent: "space-between",
                         pl: 2,
                         pr: 2,
-                        gap: 31,
                         mb: 0,
-                        "@media (max-width: 375px)": {
-                            gap: 10,
-                        },
-                        "@media (min-width: 376px) and (max-width: 499px)": {
-                            gap: 25,
-                        },
                     }}
                 >
                     <SortFilter />

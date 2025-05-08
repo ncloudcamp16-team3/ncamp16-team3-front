@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { getAllApprovedPetSitters, getApprovedPetSitters } from "../../services/petSitterService";
 
-const PetSitterResults = ({ filteredPetsitters, error }) => {
+const PetSitterResults = ({ filteredPetsitters, error, showResults, resetSearch }) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [allPetsitters, setAllPetsitters] = useState(null);
@@ -142,15 +142,36 @@ const PetSitterResults = ({ filteredPetsitters, error }) => {
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
-                {allPetsitters ? "전체 펫시터 목록" : "검색 결과"} ({sittersList.length}명)
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                {allPetsitters
-                    ? "모든 승인된 펫시터 목록입니다."
-                    : `조건에 맞는 펫시터가 ${sittersList.length}명 검색되었습니다.`}
-            </Typography>
-
+            <Box display="flex" justifyContent="space-between" width="100%" alignItems="center" mb={3}>
+                <Box>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+                        {allPetsitters ? "전체 펫시터 목록" : "검색 결과"} ({sittersList.length}명)
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
+                        {allPetsitters
+                            ? "모든 승인된 펫시터 목록입니다."
+                            : `조건에 맞는 펫시터가 ${sittersList.length}명 검색되었습니다.`}
+                    </Typography>
+                </Box>
+                {showResults && (
+                    <Button
+                        sx={{
+                            minWidth: "56px",
+                            width: "100px",
+                            height: "40px",
+                            bgcolor: "#E9A260",
+                            color: "white",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            zIndex: 1000,
+                        }}
+                        onClick={resetSearch}
+                    >
+                        다시 찾기
+                    </Button>
+                )}
+            </Box>
             {sittersList.map((sitter) => {
                 const petInfo = formatPetInfo(sitter);
 
