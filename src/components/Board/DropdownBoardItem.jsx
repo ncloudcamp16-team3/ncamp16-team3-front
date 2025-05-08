@@ -15,6 +15,7 @@ const DropdownBoardItem = ({ icon, selectedBoardType, setDroplist }) => {
             onClick={setBoardAndSetDrop}
             sx={{
                 m: "5px 0",
+                cursor: "pointer",
             }}
         >
             <Box
