@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, TextareaAutosize } from "@mui/material";
 import TitleBar from "../../Global/TitleBar.jsx";
 import { useTheme } from "@mui/material/styles";
 import { addPhoto } from "../../../services/petstaService.js";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../../../context/Context.jsx";
 
 const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {
     const theme = useTheme();
     const [content, setContent] = React.useState(""); // 내용 저장
     const navigate = useNavigate();
+
+    const { showModal } = useContext(Context);
 
     const handleShare = async () => {
         try {
@@ -18,7 +21,7 @@ const AddPhotoDetail = ({ imagePreview, imageFile, onBack }) => {
 
             await addPhoto(formData);
 
-            alert("게시물이 업로드되었습니다!");
+            showModal("", "게시물이 업로드되었습니다!", () => navigate("/petsta"));
             navigate("/petsta");
         } catch (error) {
             console.error(error);

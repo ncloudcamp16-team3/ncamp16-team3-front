@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Paper, TextField, Button, DialogActions, DialogContent, DialogContentText, Modal } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Background from "../../components/Admin/Background.jsx";
-import { useAdmin } from "../../components/Admin/AdminContext.jsx"; // 이미 이 부분은 올바르게 되어 있음.
+import { useAdmin } from "../../components/Admin/AdminContext.jsx";
+import Logo from "../../../src/assets/images/logo.png";
 
 const Admin = () => {
     const { login, isAuthenticated } = useAdmin();
@@ -66,7 +67,7 @@ const Admin = () => {
                     }}
                 >
                     <img
-                        src="/src/assets/images/logo.png"
+                        src={Logo}
                         alt="Logo"
                         style={{
                             width: "220px",

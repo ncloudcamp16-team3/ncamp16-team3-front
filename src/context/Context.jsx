@@ -145,6 +145,8 @@ export function Provider({ children }) {
         setIsChatRoomOpen(isChatRoom);
     }, [location.pathname]);
 
+    const [chatList, setChatList] = useState([]);
+
     const [notifications, setNotifications] = useState([]);
     const [toastNotifications, setToastNotifications] = useState([]);
     const [hasNewNotification, setHasNewNotification] = useState(false);
@@ -180,6 +182,8 @@ export function Provider({ children }) {
                 setHasNewNotification,
                 notifications,
                 setNotifications,
+                chatList,
+                setChatList,
             }}
         >
             {children}

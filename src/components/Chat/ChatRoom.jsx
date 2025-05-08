@@ -50,6 +50,7 @@ const ChatRoom = () => {
     const [rightPosition, setRightPosition] = useState("20px");
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef(null);
+    const [sending, setSending] = useState(false);
 
     const parseMessage = (msg) => {
         let parsed;
@@ -153,6 +154,7 @@ const ChatRoom = () => {
                         photo: msg.sender?.profile,
                     };
                 });
+
                 const filteredMessages = loadedMessages.filter((msg) => {
                     if (msg.type_id === 4 && msg.metadata.visibleTo) {
                         return msg.metadata.visibleTo === `ncid${user.id}`;
@@ -208,8 +210,9 @@ const ChatRoom = () => {
     }, []);
 
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || sending) return;
 
+        setSending(true);
         try {
             const payload = {
                 customType: "TEXT",
@@ -224,6 +227,8 @@ const ChatRoom = () => {
             setInput("");
         } catch (e) {
             console.error("메시지 전송 실패:", e);
+        } finally {
+            setSending(false);
         }
     };
 

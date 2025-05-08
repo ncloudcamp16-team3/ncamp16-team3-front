@@ -165,12 +165,14 @@ const Layout = ({ children }) => {
         } else if (index === 2) {
             navigate(`/admin/board/post`);
         } else if (index === 3) {
-            navigate("/admin/petsitter/list");
+            navigate("/admin/board/notice/list");
         } else if (index === 4) {
-            navigate("/admin/petsitter/pending");
+            navigate("/admin/petsitter/list");
         } else if (index === 5) {
-            navigate("/admin/facility/list");
+            navigate("/admin/petsitter/pending");
         } else if (index === 6) {
+            navigate("/admin/facility/list");
+        } else if (index === 7) {
             navigate("/admin/facility/add");
         }
     };
@@ -228,18 +230,21 @@ const Layout = ({ children }) => {
             setSelectedMenu("게시글 목록");
         } else if (path.includes("/admin/board/post")) {
             setSelectedIndex(2);
-            setSelectedMenu("공지글 작성");
-        } else if (path.includes("/admin/petsitter/list")) {
+            setSelectedMenu("공지 작성");
+        } else if (path.includes("/admin/board/notice/list")) {
             setSelectedIndex(3);
+            setSelectedMenu("공지 목록");
+        } else if (path.includes("/admin/petsitter/list")) {
+            setSelectedIndex(4);
             setSelectedMenu("펫시터 목록");
         } else if (path.includes("/admin/petsitter/apply")) {
-            setSelectedIndex(4);
+            setSelectedIndex(5);
             setSelectedMenu("펫시터 신청목록");
         } else if (path.includes("/admin/facility/list")) {
-            setSelectedIndex(5);
+            setSelectedIndex(6);
             setSelectedMenu("업체 목록");
         } else if (path.includes("/admin/facility/add")) {
-            setSelectedIndex(6);
+            setSelectedIndex(7);
             setSelectedMenu("업체 등록");
         }
     }, [location]);
@@ -302,14 +307,32 @@ const Layout = ({ children }) => {
                                 }}
                             >
                                 <ListItemIcon>
-                                    <ArticleIcon />
+                                    <FormatListBulletedIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="게시글 목록" />
                             </SubMenuListItemButton>
 
                             <SubMenuListItemButton
                                 selected={selectedIndex === 2}
-                                onClick={() => handleListItemClick(2, "공지글 작성")}
+                                onClick={() => handleListItemClick(2, "공지 작성")}
+                                sx={{
+                                    "&.Mui-selected": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                    "&.Mui-selected:hover": {
+                                        backgroundColor: "#F2DFCE",
+                                    },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <ArticleIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="공지 작성" />
+                            </SubMenuListItemButton>
+
+                            <SubMenuListItemButton
+                                selected={selectedIndex === 3}
+                                onClick={() => handleListItemClick(3, "공지 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -322,7 +345,7 @@ const Layout = ({ children }) => {
                                 <ListItemIcon>
                                     <FormatListBulletedIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="공지글 작성" />
+                                <ListItemText primary="공지 목록" />
                             </SubMenuListItemButton>
                         </List>
                     </Collapse>
@@ -357,8 +380,8 @@ const Layout = ({ children }) => {
                         >
                             {/* 펫시터 목록 메뉴 */}
                             <SubMenuListItemButton
-                                selected={selectedIndex === 3}
-                                onClick={() => handleListItemClick(3, "펫시터 목록")}
+                                selected={selectedIndex === 4}
+                                onClick={() => handleListItemClick(4, "펫시터 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -376,8 +399,8 @@ const Layout = ({ children }) => {
 
                             {/* 펫시터 신청목록 메뉴 */}
                             <SubMenuListItemButton
-                                selected={selectedIndex === 4}
-                                onClick={() => handleListItemClick(4, "펫시터 신청목록")}
+                                selected={selectedIndex === 5}
+                                onClick={() => handleListItemClick(5, "펫시터 신청목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -421,8 +444,8 @@ const Layout = ({ children }) => {
                         >
                             {/* 업체 목록 메뉴 */}
                             <SubMenuListItemButton
-                                selected={selectedIndex === 5}
-                                onClick={() => handleListItemClick(5, "업체 목록")}
+                                selected={selectedIndex === 6}
+                                onClick={() => handleListItemClick(6, "업체 목록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
@@ -440,8 +463,8 @@ const Layout = ({ children }) => {
 
                             {/* 업체 등록 메뉴 */}
                             <SubMenuListItemButton
-                                selected={selectedIndex === 6}
-                                onClick={() => handleListItemClick(6, "업체 등록")}
+                                selected={selectedIndex === 7}
+                                onClick={() => handleListItemClick(7, "업체 등록")}
                                 sx={{
                                     "&.Mui-selected": {
                                         backgroundColor: "#F2DFCE",
