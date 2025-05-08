@@ -41,7 +41,7 @@ const ReservationDetail = () => {
     if (!reservation) {
         return (
             <CenteredContainer>
-                <TitleBar name="예약 상세" />
+                <TitleBar name="예약 상세" onBack={() => navigate("/reserve/list")} />
                 <Typography component="div">예약 정보를 불러오는 중입니다...</Typography>
             </CenteredContainer>
         );
@@ -65,7 +65,7 @@ const ReservationDetail = () => {
 
     return (
         <Container>
-            <TitleBar name="예약 상세" />
+            <TitleBar name="예약 상세" onBack={() => navigate("/reserve/list")} />
             <Box sx={{ m: 2 }}>
                 <Box my={2} sx={{ cursor: "pointer" }} onClick={() => navigate(`/reserve/${reservation.id}`)}>
                     <Typography variant="h5" fontWeight="bold">
