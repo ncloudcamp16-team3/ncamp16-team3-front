@@ -41,8 +41,7 @@ const CalendarRendering = () => {
         saveModifiedSchedule,
         removeSchedule,
         addSchedule,
-        message,
-        setMessage,
+
         reserves,
         setReserves,
     } = useContext(CalendarContext);

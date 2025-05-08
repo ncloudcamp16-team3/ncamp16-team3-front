@@ -275,6 +275,7 @@ export const CalendarProvider = ({ children }) => {
             handleSnackbarOpen("일정이 성공적으로 등록되었습니다!", "success");
         } catch (error) {
             handleSnackbarOpen("일정 등록에 실패했습니다.", "error");
+            console.log("일정 등록 에러:", error);
         }
     };
 
@@ -340,6 +341,7 @@ export const CalendarProvider = ({ children }) => {
                 setReserveId,
                 selectedReserve,
                 setSelectedReserve,
+                handleReserveId,
             }}
         >
             {children}
