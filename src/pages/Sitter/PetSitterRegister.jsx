@@ -437,7 +437,7 @@ const PetSitterRegister = () => {
             // 이미지 파일 추가
             if (imageFile) {
                 formData.append("image", imageFile);
-            } else if (imagePreview && !imagePreview.startsWith("http")) {
+            } else if (imagePreview) {
                 try {
                     const response = await fetch(imagePreview);
                     const imageBlob = await response.blob();
@@ -445,10 +445,6 @@ const PetSitterRegister = () => {
                 } catch (err) {
                     console.error("이미지 변환 오류:", err);
                 }
-            }
-
-            // FormData 내용 확인
-            for (let [key, value] of formData.entries()) {
             }
 
             // API 호출 (instance 사용)

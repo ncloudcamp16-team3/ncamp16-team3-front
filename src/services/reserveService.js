@@ -65,7 +65,7 @@ export const getReserveDetailById = ({ uid, rid }) => {
         });
 };
 
-export const putReview = async (id, formData) => {
+export const putReview = async ({ id, formData }) => {
     return await instance
         .put(`${API_URL}/facility/${id}/review`, formData, {
             headers: {
