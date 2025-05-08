@@ -309,7 +309,7 @@ const ReserveDetail = () => {
                         <Divider />
                         <Box sx={{ mb: 2 }}>
                             <DateTimeSelector
-                                openHours={`${openTime} - ${closeTime}`}
+                                openHours={facilityData?.openingHours}
                                 facilityType={facilityType}
                                 startDate={startDate}
                                 setStartDate={setStartDate}
