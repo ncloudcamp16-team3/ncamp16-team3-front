@@ -10,14 +10,25 @@ export const ReserveProvider = ({ children }) => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const [last, setLast] = useState(false);
-    const [scrollMap, setScrollMap] = useState({});
     const [location, setLocation] = useState({ latitude: null, longitude: null });
-
-    const setScrollY = (pathname, y) => {
-        setScrollMap((prev) => ({ ...prev, [pathname]: y }));
-    };
-
-    const getScrollY = (pathname) => scrollMap[pathname] || 0;
+    const [infoModalOpen, setInfoModalOpen] = useState(false);
+    const [globalModalOpen, setGlobalModalOpen] = useState(false);
+    const [message, setMessage] = useState({
+        title: "",
+        text: "",
+        confirmText: "",
+        cancelText: "",
+        redirectUrl: "",
+    });
+    const [globalConfirmModal, setGlobalConfirmModal] = useState({
+        open: false,
+        onClose: () => {},
+        onConfirm: () => {},
+        title: "",
+        description: "",
+        confirmText: "",
+        cancelText: "",
+    });
 
     return (
         <ReserveContext.Provider
@@ -32,14 +43,20 @@ export const ReserveProvider = ({ children }) => {
                 setPage,
                 size,
                 setSize,
-                getScrollY,
-                setScrollY,
                 location,
                 setLocation,
                 noData,
                 setNoData,
                 last,
                 setLast,
+                infoModalOpen,
+                setInfoModalOpen,
+                globalModalOpen,
+                setGlobalModalOpen,
+                message,
+                setMessage,
+                globalConfirmModal,
+                setGlobalConfirmModal,
             }}
         >
             {children}
