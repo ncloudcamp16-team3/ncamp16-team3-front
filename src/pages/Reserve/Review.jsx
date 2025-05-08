@@ -47,9 +47,25 @@ const Review = () => {
     const handleClick = async () => {
         setGlobalConfirmModal({
             open: true,
-            onClose: () => setGlobalConfirmModal({ ...globalConfirmModal, open: false }),
+            onClose: () =>
+                setGlobalConfirmModal({
+                    open: false,
+                    title: "",
+                    description: "",
+                    onConfirm: () => {},
+                    confirmText: "확인",
+                    cancelText: "취소",
+                }),
             onConfirm: () => {
-                handleSubmit;
+                handleSubmit(); // handleSubmit 함수 실행
+                setGlobalConfirmModal({
+                    open: false,
+                    title: "",
+                    description: "",
+                    onConfirm: () => {},
+                    confirmText: "확인",
+                    cancelText: "취소",
+                });
             },
             title: "리뷰 등록",
             description: "리뷰를 등록하시겠습니까?",
@@ -72,7 +88,7 @@ const Review = () => {
         formData.append("file", image);
 
         try {
-            const response = await putReview(id, formData);
+            const response = await putReview({ id: facilityInfo.id, formData });
             showModal("", "리뷰가 등록되었습니다.\n시설정보 화면으로 돌아갑니다.", () =>
                 navigate(`/reserve/${facilityInfo.id}`)
             );

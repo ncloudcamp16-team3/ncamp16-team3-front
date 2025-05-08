@@ -339,9 +339,10 @@ const PetSitterFinder = () => {
                     <Button
                         variant="contained"
                         sx={{
-                            position: "fixed",
-                            bottom: "9%",
-                            right: "41%",
+                            position: "absolute",
+                            top: "2%",
+                            right: "1%",
+                            transform: "translateX(-50%)",
                             borderRadius: "50%",
                             minWidth: "56px",
                             width: "56px",
