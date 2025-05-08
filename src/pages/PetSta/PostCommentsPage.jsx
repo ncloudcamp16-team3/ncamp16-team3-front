@@ -23,7 +23,6 @@ const PostCommentPage = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     const [errorModalOpen, setErrorModalOpen] = useState(false);
-
     useEffect(() => {
         const handleFocus = () => {
             setTimeout(() => {
@@ -168,7 +167,7 @@ const PostCommentPage = () => {
             >
                 <Box
                     display="flex"
-                    position="static"
+                    position="fixed"
                     top="50px"
                     right={rightPosition}
                     width="100%"
@@ -217,7 +216,7 @@ const PostCommentPage = () => {
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
-                position="fixed"
+                position="absolute"
                 bottom={0}
                 right={rightPosition}
                 width="100%"
