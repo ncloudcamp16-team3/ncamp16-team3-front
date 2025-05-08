@@ -28,6 +28,8 @@ const ProtectedRoute = () => {
         notifications,
         setNotifications,
         setChatList,
+        chatLoad,
+        setChatLoad,
     } = useContext(Context);
 
     const [toastNotifications, setToastNotifications] = useState([]);
@@ -187,15 +189,27 @@ const ProtectedRoute = () => {
         }
     };
 
-    // useEffect(() => {
-    //     if (!nc || !user?.id) return;
-    //
-    //     const interval = setInterval(() => {
-    //         fetchRooms(); // 주기적으로 채팅방 정보 갱신
-    //     }, 5000); // 5초마다
-    //
-    //     return () => clearInterval(interval); // 언마운트 시 클리어
-    // }, [nc, user?.id]);
+    useEffect(() => {
+        const unsubscribe = onMessage(messaging, (payload) => {
+            const { type } = payload.data || {};
+            if (type === "FETCH_ROOMS") {
+                console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
+                setChatLoad(true);
+            }
+        });
+
+        return () => unsubscribe(); // 언마운트 시 정리
+    }, [setChatLoad]);
+
+    useEffect(() => {
+        if (!nc || !user?.id) return;
+        // const interval = setInterval(() => {
+        //     fetchRooms(); // 주기적으로 채팅방 정보 갱신
+        // }, 5000); // 5초마다
+        // return () => clearInterval(interval); // 언마운트 시 클리어
+        fetchRooms();
+        setChatLoad(false);
+    }, [nc, user?.id, chatLoad]);
 
     const parseMessage = (msg) => {
         let parsed;
@@ -266,6 +280,13 @@ const ProtectedRoute = () => {
                     return;
                 }
 
+                const { type } = payload.data || {};
+                console.log("🟢 FCM 수신:", payload.data); // 디버깅용
+                if (type === "FETCH_ROOMS") {
+                    console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
+                    setChatLoad(true);
+                }
+
                 console.log("Foreground message received:", payload);
 
                 const notificationData = payload?.data || {};
@@ -313,7 +334,7 @@ const ProtectedRoute = () => {
             });
 
             return () => unsubscribe();
-        }, [user, messaging, setNotifications, setHasNewNotification]);
+        }, [user, messaging, setNotifications, setHasNewNotification, setChatLoad, chatLoad]);
 
         return (
             <>
