@@ -32,7 +32,7 @@ const EditVideoDetail = () => {
     const handleSave = async () => {
         try {
             await updatePost(postId, { content }); // PATCH API
-            showModal("", "수정 완료!", () => navigate("/petsta"));
+            showModal("", "수정 완료!");
             navigate(`/petsta/post/${postId}`);
         } catch (e) {
             showModal("", "수정이 실패했습니다.");
