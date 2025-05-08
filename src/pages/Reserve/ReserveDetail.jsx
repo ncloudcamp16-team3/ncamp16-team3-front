@@ -18,7 +18,6 @@ import {
     Alert,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
-import dayjs from "dayjs";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -28,6 +27,12 @@ import useInTimeRange from "../../hook/Reserve/useInTimeRange.js";
 import DateTimeSelector from "./DateTimeSelector.jsx";
 import { addTempReserve, getFacilityToReserveById } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const transformScoreToChartData = (ratingRatio) => {
     if (!ratingRatio || !Array.isArray(ratingRatio)) return [];
@@ -158,10 +163,19 @@ const ReserveDetail = () => {
         }
 
         // Format dates for API
-        const entryTime = dayjs(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`).toISOString();
+
+        const entryTime = dayjs
+            .tz(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`, "Asia/Seoul")
+            .format("YYYY-MM-DDTHH:mm:ss");
 
         const exitTime =
-            endDate && endTime ? dayjs(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`).toISOString() : null;
+            endDate && endTime
+                ? dayjs
+                      .tz(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`, "Asia/Seoul")
+                      .format("YYYY-MM-DDTHH:mm:ss")
+                : null;
+
+        alert(entryTime);
 
         try {
             const response = await addTempReserve({
@@ -169,7 +183,7 @@ const ReserveDetail = () => {
                 facilityId: id,
                 entryTime,
                 exitTime,
-                amount: 240000,
+                amount: 30000,
             });
 
             const merchantPayKey = response.data.reserveId;
@@ -179,8 +193,8 @@ const ReserveDetail = () => {
                 merchantPayKey,
                 productName: facilityData.name,
                 productCount: "1",
-                totalPayAmount: "50000",
-                taxScopeAmount: "50000",
+                totalPayAmount: "30000",
+                taxScopeAmount: "30000",
                 taxExScopeAmount: "0",
                 returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
             });
@@ -334,7 +348,7 @@ const ReserveDetail = () => {
                                 <Typography sx={{ width: "100%" }}>・결제 금액</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ textAlign: "right", width: "100%" }}>240,000원</Typography>
+                                <Typography sx={{ textAlign: "right", width: "100%" }}>30,000원</Typography>
                             </Box>
                         </Box>
                         <Divider />
