@@ -91,7 +91,6 @@ body.modal-open {
     min-height: 100vh;
     padding-top: 50px;
     padding-bottom: 65px;
-    position: relative;
 }
 
 /*푸터, 헤더가 있을때*/
