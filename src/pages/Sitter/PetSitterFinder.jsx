@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, IconButton, CircularProgress, Button } from "@mui/material";
+import { Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
 import PetSitterSurvey from "../../components/Sitter/PetSitterSurvey";
 import PetSitterResults from "../../components/Sitter/PetSitterResults";
@@ -236,8 +235,6 @@ const PetSitterFinder = () => {
         <Box
             sx={{
                 p: 2,
-                height: "100vh",
-                overflow: "hidden",
                 bgcolor: "white",
                 display: "flex",
                 flexDirection: "column",
@@ -270,7 +267,7 @@ const PetSitterFinder = () => {
                     width: "100%",
                     display: "flex",
                     alignItems: "center",
-                    mb: 3,
+                    mb: 1,
                 }}
             >
                 <Box
@@ -317,7 +314,12 @@ const PetSitterFinder = () => {
                     </Box>
                 ) : showResults ? (
                     // 결과 화면 - PetSitterResults
-                    <PetSitterResults filteredPetsitters={filteredPetsitters} error={error} />
+                    <PetSitterResults
+                        filteredPetsitters={filteredPetsitters}
+                        error={error}
+                        showResults={showResults}
+                        resetSearch={resetSearch}
+                    />
                 ) : (
                     // 질문 화면 - PetSitterSurvey
                     <PetSitterSurvey
@@ -332,36 +334,6 @@ const PetSitterFinder = () => {
                         handleNext={handleNext}
                         handleBack={handleBack}
                     />
-                )}
-
-                {/* 새로고침 버튼 */}
-                {showResults && (
-                    <Button
-                        variant="contained"
-                        sx={{
-                            position: "fixed",
-                            bottom: "9%",
-                            right: "41%",
-                            borderRadius: "50%",
-                            minWidth: "56px",
-                            width: "56px",
-                            height: "56px",
-                            bgcolor: "#E9A260",
-                            color: "white",
-                            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-                            "&:hover": {
-                                bgcolor: "#d0905a",
-                                boxShadow: "0 6px 12px rgba(0,0,0,0.3)",
-                            },
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 1000,
-                        }}
-                        onClick={resetSearch}
-                    >
-                        <RefreshIcon fontSize="large" />
-                    </Button>
                 )}
             </Box>
         </Box>

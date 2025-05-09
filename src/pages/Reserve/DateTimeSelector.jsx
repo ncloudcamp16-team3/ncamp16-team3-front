@@ -26,6 +26,7 @@ const DateTimeSelector = ({
     const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
     const [timeOptions, setTimeOptions] = useState([]);
+    const [isTimetableEmpty, setIsTimetableEmpty] = useState(false);
 
     const today = dayjs().format("ddd").toUpperCase(); // 'MON', 'TUE' 등의 형식
 
@@ -270,10 +271,10 @@ const DateTimeSelector = ({
 
     if (isTimetableEmpty)
         return (
-            <>
+            <Container sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                 <Typography>예약이 가능한 일정을 준비중입니다...</Typography>
                 <Typography>이 시설의 일정에 대해 궁금하신 분은 관리자에게 문의 해주세요</Typography>
-            </>
+            </Container>
         );
 
     return (

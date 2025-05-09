@@ -40,8 +40,7 @@ const LocationConfig = () => {
             setUser(updatedUser);
 
             saveUserData(updatedUser)
-                .then((res) => {
-                    console.log("응답 성공:", res.message);
+                .then(() => {
                     showModal(null, "위치 저장 완료", () => setView("petMeeting"));
                 })
                 .catch((err) => {

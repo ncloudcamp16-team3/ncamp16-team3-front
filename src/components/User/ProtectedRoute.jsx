@@ -8,12 +8,17 @@ import { registerSW } from "../../../public/firebase-messaging-sw-register.js";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
 import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
-import { getNotificationsByUserId, sendChatNotification } from "../../services/notificationService.js";
+import {
+    checkNotification,
+    getNotificationsByUserId,
+    sendChatNotification,
+} from "../../services/notificationService.js";
 import { getMyChatRooms } from "../../services/chatService.js";
 
 const ProtectedRoute = () => {
     const [loading, setLoading] = useState(true);
     const hasRun = useRef(false);
+    const [toastNotifications, setToastNotifications] = useState([]);
 
     const {
         isLogin,
@@ -31,8 +36,6 @@ const ProtectedRoute = () => {
         chatLoad,
         setChatLoad,
     } = useContext(Context);
-
-    const [toastNotifications, setToastNotifications] = useState([]);
 
     const initNcChat = async (userData, nc, setNc) => {
         if (!nc) {
@@ -121,7 +124,6 @@ const ProtectedRoute = () => {
             } catch (error) {
                 attempts++;
                 console.warn(`FCM 설정 시도 실패 (${attempts}/${maxRetries}):`, error);
-
                 if (attempts < maxRetries) {
                     // 1초 후 재시도
                     setTimeout(trySetup, 1000);
@@ -209,6 +211,61 @@ const ProtectedRoute = () => {
         // return () => clearInterval(interval); // 언마운트 시 클리어
         fetchRooms();
         setChatLoad(false);
+    }, [nc, user?.id, chatLoad, setChatLoad]);
+
+    useEffect(() => {
+        if (!navigator.serviceWorker) return;
+
+        const handleMessage = (event) => {
+            const { type } = event.data || {};
+            if (type === "FETCH_ROOMS") {
+                console.log("📨 서비스 워커로부터 FETCH_ROOMS 수신");
+                setChatLoad(true); // 또는 fetchRooms();
+                fetchRooms();
+            }
+        };
+
+        navigator.serviceWorker.addEventListener("message", handleMessage);
+
+        return () => {
+            navigator.serviceWorker.removeEventListener("message", handleMessage);
+        };
+    }, [nc, user?.id, chatLoad, setChatLoad]);
+
+    useEffect(() => {
+        const fetchAll = async () => {
+            if (!user?.id) return;
+
+            try {
+                // 1. 채팅방 새로고침
+                fetchRooms();
+                console.log("채팅방 리로드");
+
+                // 2. 알림 존재 여부 확인 및 리스트 조회
+                const [checkResult, notifications] = await Promise.all([
+                    checkNotification(user.id),
+                    getNotificationsByUserId(user.id),
+                ]);
+
+                setHasNewNotification(checkResult.exists);
+                setNotifications(notifications);
+            } catch (error) {
+                console.error("알림 정보 로딩 실패:", error);
+            }
+        };
+
+        fetchAll();
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                fetchAll(); // 탭이 다시 보여질 때도 데이터 로딩
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
     }, [nc, user?.id, chatLoad, setChatLoad]);
 
     const parseMessage = (msg) => {
