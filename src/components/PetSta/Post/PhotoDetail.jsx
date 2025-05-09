@@ -10,7 +10,7 @@ const PhotoDetail = ({ post }) => {
     return (
         <Box height="92vh" backgroundColor="white" display="flex" flexDirection="column">
             <Box top={0} left={0} display="flex" alignItems="center" padding="10px 15px" fontSize="18px" gap={1}>
-                <IconButton onClick={() => navigate(-1)}>
+                <IconButton onClick={() => navigate("/petsta")}>
                     <img src={LeftArrow} />
                 </IconButton>
                 게시물
