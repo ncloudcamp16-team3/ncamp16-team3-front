@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Box } from "@mui/material";
-import PetBtn from "../../assets/images/PetMeeting/pet-btn.svg";
+import PetBtn from "../../assets/images/PetMeeting/pet-btn.png";
 import LocationBtn from "../../assets/images/PetMeeting/location-btn.svg";
 import PlayBtn from "../../assets/images/PetMeeting/play-btn.svg";
 import WalkBtn from "../../assets/images/PetMeeting/walk-btn.svg";

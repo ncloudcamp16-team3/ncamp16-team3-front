@@ -96,6 +96,9 @@ const PostProfile = ({ userName, userId, userPhoto, isVisited, isAbsolute = fals
                     sx={{
                         color: isAbsolute ? "white" : "inherit",
                         cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        pt: 0.5,
                     }}
                 >
                     {isFollow ? "팔로잉" : "팔로우"}
