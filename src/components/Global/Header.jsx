@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../../css/App.css";
-import icon from "../../assets/images/Global/icon1.svg";
 import { useNavigate } from "react-router-dom";
 import { Box, MenuItem, Menu } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -13,6 +12,7 @@ import { logout } from "../../services/authService.js";
 import { Context } from "../../context/Context.jsx";
 import alert_noti from "../../assets/images/Global/active_bell.gif";
 import noti from "../../assets/images/Global/bell.png";
+import headerLogo from "../../assets/images/Global/headerLogo.png";
 import { checkNotification } from "../../services/notificationService.js";
 
 const Header = () => {
@@ -104,6 +104,7 @@ const Header = () => {
                         borderRadius: "10px",
                         width: "145px",
                         padding: "5px 5px 0 5px",
+                        mt: 0.5,
                     },
                 }}
             >
@@ -188,22 +189,13 @@ const Header = () => {
             <Box display="flex" alignItems="center">
                 <Box
                     component="img"
-                    src={icon}
-                    alt="아이콘"
+                    src={headerLogo}
+                    alt="로고"
                     sx={{
                         objectFit: "contain",
+                        width: "150px",
                     }}
                 />
-                <Box
-                    component="span"
-                    sx={{
-                        ml: 0.5,
-                        whiteSpace: "nowrap",
-                        fontWeight: "bold",
-                    }}
-                >
-                    꼬리친구들
-                </Box>
             </Box>
             <Box
                 onClick={() => {

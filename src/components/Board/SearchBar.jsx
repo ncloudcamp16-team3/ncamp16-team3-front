@@ -7,6 +7,7 @@ export default function SearchBar({ openSearch, setOpenSearch, keywordSearch }) 
     const inputRef = useRef(null);
     const [inputValue, setInputValue] = useState("");
     const [width, setWidth] = useState("250px");
+
     useEffect(() => {
         const updateWidth = () => {
             const width = window.innerWidth;
@@ -23,10 +24,16 @@ export default function SearchBar({ openSearch, setOpenSearch, keywordSearch }) 
         return () => window.removeEventListener("resize", updateWidth);
     }, []);
 
-    const searchBtnClick = () => {
-        if (openSearch && inputValue.trim()) {
-            searchRequest(inputValue);
+    const handleButtonClick = () => {
+        if (openSearch) {
+            // 이미 열려있는 경우: 입력값이 있으면 검색 실행, 없으면 닫기
+            if (inputValue.trim()) {
+                searchRequest(inputValue);
+            } else {
+                setOpenSearch(false); // 검색창 닫기
+            }
         } else {
+            // 닫혀있는 경우: 검색창 열기
             setOpenSearch(true);
             setTimeout(() => inputRef.current?.focus(), 100);
         }
@@ -37,9 +44,9 @@ export default function SearchBar({ openSearch, setOpenSearch, keywordSearch }) 
     };
 
     const searchRequest = (keyword) => {
-        setOpenSearch(false);
         keywordSearch(keyword);
         setInputValue(""); // 검색 후 초기화
+        // 검색 실행 후에는 검색창을 닫지 않음 (필요하면 여기에 setOpenSearch(false) 추가)
     };
 
     return (
@@ -87,7 +94,7 @@ export default function SearchBar({ openSearch, setOpenSearch, keywordSearch }) 
                 />
             </Collapse>
             <Button
-                onClick={searchBtnClick}
+                onClick={handleButtonClick}
                 sx={{
                     backgroundColor: theme.brand3,
                     borderRadius: "999px",
@@ -99,7 +106,7 @@ export default function SearchBar({ openSearch, setOpenSearch, keywordSearch }) 
                     whiteSpace: "nowrap",
                 }}
             >
-                검색
+                {openSearch ? "닫기" : "검색"}
             </Button>
         </Box>
     );
