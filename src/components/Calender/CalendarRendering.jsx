@@ -342,19 +342,6 @@ const CalendarRendering = () => {
                     </Box>
                 )}
             </Box>
-
-            {/*<Snackbar*/}
-            {/*    open={snackbarOpen}*/}
-            {/*    autoHideDuration={3000}*/}
-            {/*    onClose={() => setSnackbarOpen(false)}*/}
-            {/*    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}*/}
-            {/*>*/}
-            {/*    <Alert severity="warning" onClose={() => setSnackbarOpen(false)} variant="filled">*/}
-            {/*        {message}*/}
-            {/*    </Alert>*/}
-            {/*</Snackbar>*/}
-
-            {/*<GlobalSnackbar />*/}
         </>
     );
 };

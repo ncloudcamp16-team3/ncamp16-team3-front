@@ -75,15 +75,15 @@ export const CalendarProvider = ({ children }) => {
     const isSameDate = (date1, date2) => format(date1, "yyyy-MM-dd") === format(date2, "yyyy-MM-dd");
 
     const selectedSchedules = schedules.filter((s) => s.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
-    const selectedEvents = events.filter((e) => isSameDate(parseISO(e.startDate), selectedDate));
-    const selectedReserves = reserves.filter((r) => isSameDate(parseISO(r.entryTime), selectedDate));
+    const selectedEvents = events.filter((e) => e.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
+    const selectedReserves = reserves.filter((r) => r.dateList?.includes(format(selectedDate, "yyyy-MM-dd")));
 
     const checkHasScheduleOrEvent = (date) => {
         const dateStr = format(date, "yyyy-MM-dd");
         return {
             hasSchedule: schedules.some((s) => s.dateList?.includes(dateStr)),
-            hasEvent: events.some((e) => isSameDate(parseISO(e.startDate), date)),
-            hasReserve: reserves.some((r) => isSameDate(parseISO(r.entryTime), date)),
+            hasEvent: events.some((e) => e.dateList?.includes(dateStr)),
+            hasReserve: reserves.some((r) => r.dateList?.includes(dateStr)),
         };
     };
 
@@ -140,7 +140,6 @@ export const CalendarProvider = ({ children }) => {
                 content: "내용",
             };
             const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
-            // setMessage(`${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`);
             setSnackbar((prev) => ({
                 ...prev,
                 message: `${missing} ${missingFields.length > 1 ? "항목들이" : "항목이"} 입력되지 않았습니다.`,
