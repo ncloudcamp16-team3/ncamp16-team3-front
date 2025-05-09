@@ -281,7 +281,7 @@ const ReserveDetail = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Container disableGutters sx={{ display: "flex", width: 500, flexDirection: "column" }}>
+            <Container disableGutters sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
                 <TitleBar
                     sx={{ width: "100%", display: "flex" }}
                     name="편의시설 상세정보"

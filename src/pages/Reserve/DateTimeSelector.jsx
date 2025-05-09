@@ -222,6 +222,8 @@ const DateTimeSelector = ({
         SUN: "일",
     };
 
+    const orderedDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]; // 고정된 요일 순서
+
     // 날짜의 요일에 따라 영어 코드 반환
     const getDayCode = (date) => {
         const dayOfWeek = date.format("ddd").toUpperCase();
@@ -462,16 +464,17 @@ const DateTimeSelector = ({
                     {dateDialog.target === "start" ? (isHotel ? "시작일 선택" : "예약일 선택") : "종료일 선택"}
                     <Typography variant="caption" sx={{ display: "block", color: "#666666", mt: 1 }}>
                         ※ 영업일(
-                        {Object.keys(openHours)
+                        {orderedDays
                             .filter((day) => openHours[day]?.isOpen)
                             .map((day) => dayMapping[day])
                             .join(", ")}
                         )만 선택 가능합니다.
                     </Typography>
                 </DialogTitle>
-                <DialogContent sx={{ bgcolor: "#FFF7EF" }}>
+                <DialogContent sx={{ bgcolor: "#FFF7EF", paddingX: "0" }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateCalendar
+                            sx={{ maxWidth: "100%" }}
                             value={dateDialog.target === "start" ? startDate : endDate}
                             onChange={(newValue) => handleDateSelect(newValue)}
                             minDate={dayjs()} // 오늘 이전 날짜는 선택 불가
