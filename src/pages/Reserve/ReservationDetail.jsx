@@ -59,9 +59,10 @@ const ReservationDetail = () => {
             minute: "2-digit",
         });
     };
+
     const now = new Date();
     const canCancel = reservation.entryTime && new Date(reservation.entryTime) > now;
-    const canReview = reservation.exitTime && new Date(reservation.exitTime) < now;
+    const canReview = reservation.exitTime && new Date(reservation.entryTime) < now;
 
     return (
         <Container>
@@ -103,7 +104,7 @@ const ReservationDetail = () => {
                 </List>
                 <Divider />
                 <Divider />
-                {canReview && (
+                {canReview && !reservation.reviewDto && (
                     <Button
                         variant="contained"
                         sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
