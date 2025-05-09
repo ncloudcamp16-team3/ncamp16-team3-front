@@ -87,8 +87,27 @@ const PostCommentPage = () => {
     };
 
     const handleAddComment = async () => {
-        if (!commentContent.trim()) {
+        const trimmed = (commentContent ?? "").trim();
+
+        if (!trimmed) {
             showModal("", "댓글을 작성해 주세요!");
+            return;
+        }
+
+        const mention = extractMention(trimmed);
+        const hasMention = mention !== null;
+        const fullMentionText = hasMention ? `@${mention.nickname}` : "";
+
+        const isOnlyMention = hasMention && trimmed === fullMentionText;
+        const isPartialMention = trimmed.startsWith("@") && hasMention === false;
+
+        if (isPartialMention) {
+            showModal("", "존재하지 않는 멘션입니다.");
+            return;
+        }
+
+        if (isOnlyMention) {
+            showModal("", "댓글 내용을 작성해 주세요.");
             return;
         }
 
