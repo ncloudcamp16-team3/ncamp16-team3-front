@@ -96,7 +96,9 @@ const Review = () => {
 
         try {
             const response = await addReview({ formData });
-            showModal("리뷰 등록 성공", "시설정보 화면으로 이동", () => navigate(`/reserve/${facilityInfo.id}`));
+            showModal("리뷰 등록 성공", `${facilityInfo.name}(으)로 이동`, () =>
+                navigate(`/reserve/${facilityInfo.id}`)
+            );
         } catch (error) {
             console.error(error);
         }
@@ -159,7 +161,7 @@ const Review = () => {
 
                 <StarRatingConstructor starRating={starRating} setStarRating={setStarRating} />
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2, mb: 2.5 }}>
                 <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>이용 후기</Typography>
                 <TextField
                     inputRef={text}

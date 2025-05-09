@@ -84,7 +84,7 @@ const ReservationListPage = () => {
                             component="img"
                             image={r.image}
                             alt="시설 이미지"
-                            sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 1 }}
+                            sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 1, ml: 4 }}
                         />
                     </Card>
                 ))}
