@@ -26,7 +26,6 @@ const DateTimeSelector = ({
     const [showStartTimeSelector, setShowStartTimeSelector] = useState(false);
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
     const [timeOptions, setTimeOptions] = useState([]);
-    const [isTimetableEmpty, setIsTimetableEmpty] = useState(false);
 
     const today = dayjs().format("ddd").toUpperCase(); // 'MON', 'TUE' 등의 형식
 
