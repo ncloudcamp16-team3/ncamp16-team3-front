@@ -6,24 +6,12 @@ import { useTheme } from "@mui/material/styles";
 const ReviewDropdown = ({ user, review, onUpdate, onDelete }) => {
     const theme = useTheme();
     const dropdownRef = useRef(null);
-    const [dropReviewBtn, setDropReviewBtn] = useState(false);
+    const [open, setOpen] = useState(false);
 
-    // 수정 가능 상태 전달용 (예: 상위에서 onUpdate(true))
-    const setUpdateAble = (flag) => {
-        onUpdate(flag);
-    };
-
-    // 삭제 요청 핸들러
-    const requestReviewDelete = () => {
-        onDelete(); // 삭제 로직은 부모에서 처리
-        setDropReviewBtn(false);
-    };
-
-    // 외부 클릭 시 드롭다운 닫기
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setDropReviewBtn(false);
+                setOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -32,65 +20,66 @@ const ReviewDropdown = ({ user, review, onUpdate, onDelete }) => {
         };
     }, []);
 
-    const DropdownCommentBtns = () => (
-        <Box
-            sx={{
-                position: "absolute",
-                bgcolor: theme.brand4,
-                borderRadius: 2,
-                top: "45px",
-                right: "10px",
-                pointerEvents: dropReviewBtn ? "auto" : "none",
-                zIndex: 1000,
-            }}
-        >
-            <Collapse in={dropReviewBtn} unmountOnExit>
+    if (user.id !== review.userId) return null;
+
+    return (
+        <Box ref={dropdownRef} sx={{ position: "relative", display: "inline-block", flex: "1 0 auto", mb: 4 }}>
+            <MoreVertIcon
+                onClick={() => setOpen((prev) => !prev)}
+                sx={{
+                    position: "absolute",
+                    right: "10px",
+                    cursor: "pointer",
+                    color: theme.brand3,
+                    fontSize: "28px",
+                    borderRadius: 20,
+                }}
+            />
+            <Collapse in={open} unmountOnExit>
                 <Box
-                    onClick={() => {
-                        setDropReviewBtn(false);
-                        setUpdateAble(true);
-                    }}
                     sx={{
-                        cursor: "pointer",
-                        color: "white",
-                        p: "5px 10px",
+                        position: "absolute",
+                        top: "45px",
+                        right: "10px",
+                        bgcolor: theme.brand4,
+                        borderRadius: 2,
+                        zIndex: 1000,
+                        p: "5px 0",
                     }}
                 >
-                    <Typography sx={{ m: "5px 10px" }}>리뷰 수정하기</Typography>
-                </Box>
-                <Box
-                    onClick={requestReviewDelete}
-                    sx={{
-                        cursor: "pointer",
-                        color: "white",
-                        p: "5px 10px",
-                    }}
-                >
-                    <Typography sx={{ m: "0px 10px 5px 10px" }}>리뷰 삭제하기</Typography>
+                    <Box
+                        onClick={() => {
+                            onUpdate(true);
+                            setOpen(false);
+                        }}
+                        sx={{
+                            cursor: "pointer",
+                            color: "white",
+                            px: 2,
+                            py: 1,
+                            "&:hover": { bgcolor: theme.brand3 },
+                        }}
+                    >
+                        <Typography variant="body2">리뷰 수정하기</Typography>
+                    </Box>
+                    <Box
+                        onClick={() => {
+                            onDelete();
+                            setOpen(false);
+                        }}
+                        sx={{
+                            cursor: "pointer",
+                            color: "white",
+                            px: 2,
+                            py: 1,
+                            "&:hover": { bgcolor: theme.brand3 },
+                        }}
+                    >
+                        <Typography variant="body2">리뷰 삭제하기</Typography>
+                    </Box>
                 </Box>
             </Collapse>
         </Box>
-    );
-
-    return (
-        user?.id === review?.userId && (
-            <Box ref={dropdownRef}>
-                <MoreVertIcon
-                    onClick={() => {
-                        setDropReviewBtn((prev) => !prev);
-                    }}
-                    sx={{
-                        position: "absolute",
-                        right: "10px",
-                        top: "10px",
-                        cursor: "pointer",
-                        color: theme.brand3,
-                        fontSize: "28px",
-                    }}
-                />
-                <DropdownCommentBtns />
-            </Box>
-        )
     );
 };
 

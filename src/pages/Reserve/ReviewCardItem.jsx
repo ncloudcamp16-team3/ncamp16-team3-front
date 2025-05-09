@@ -34,6 +34,12 @@ const ReviewCardItem = ({ review, user, handleReviewDelete }) => {
         }
     };
 
+    const handleUpdateCancel = () => {
+        setComment(review.comment);
+        setImage(review.reviewImages?.[0] || null);
+        setEditable(false);
+    };
+
     return (
         <Grid item sx={{ width: "100%" }}>
             <Card sx={{ width: "100%" }}>
@@ -50,19 +56,54 @@ const ReviewCardItem = ({ review, user, handleReviewDelete }) => {
                             />
                         )}
                     </Stack>
-
-                    {image && (
+                    {editable ? (
                         <Box sx={{ position: "relative", mb: 2 }}>
+                            {image ? (
+                                <CardMedia
+                                    component="img"
+                                    height="180"
+                                    image={image}
+                                    alt="review"
+                                    sx={{ borderRadius: 1, cursor: "pointer", boxShadow: 3 }}
+                                    onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
+                                />
+                            ) : (
+                                <Box
+                                    onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
+                                    sx={{
+                                        height: 180,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        border: "1px dashed #ccc",
+                                        borderRadius: 1,
+                                        cursor: "pointer",
+                                        color: "#888",
+                                        fontSize: 14,
+                                        boxShadow: 1,
+                                    }}
+                                >
+                                    이미지를 업로드하려면 클릭하세요
+                                </Box>
+                            )}
+                            <input
+                                id={`fileInput-${review.id}`}
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                        </Box>
+                    ) : (
+                        image && (
                             <CardMedia
                                 component="img"
                                 height="180"
                                 image={image}
                                 alt="review"
-                                sx={{ borderRadius: 1, cursor: editable ? "pointer" : "default" }}
-                                onClick={() => editable && document.getElementById(`fileInput-${review.id}`).click()}
+                                sx={{ borderRadius: 1, mb: 2, boxShadow: 1 }}
                             />
-                            <input id={`fileInput-${review.id}`} type="file" hidden onChange={handleImageChange} />
-                        </Box>
+                        )
                     )}
 
                     <TextField
@@ -73,7 +114,6 @@ const ReviewCardItem = ({ review, user, handleReviewDelete }) => {
                         disabled={!editable}
                         variant="outlined"
                         sx={{
-                            mb: 1,
                             bgcolor: "none",
                             "& .MuiOutlinedInput-notchedOutline": {
                                 border: "none",
@@ -98,9 +138,14 @@ const ReviewCardItem = ({ review, user, handleReviewDelete }) => {
                             {new Date(review.createdAt).toLocaleDateString()}
                         </Typography>
                         {editable && (
-                            <Button size="small" variant="contained" onClick={handleUpdateSubmit}>
-                                저장
-                            </Button>
+                            <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
+                                <Button size="small" variant="contained" onClick={handleUpdateCancel}>
+                                    취소
+                                </Button>
+                                <Button size="small" variant="contained" onClick={handleUpdateSubmit}>
+                                    저장
+                                </Button>
+                            </Box>
                         )}
                     </Box>
                 </CardContent>
