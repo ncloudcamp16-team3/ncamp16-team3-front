@@ -15,7 +15,7 @@ const ReservationDetail = () => {
     const [reservation, setReservation] = useState(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const { showModal, handleSnackbarOpen } = useContext(Context);
+    const { handleSnackbarOpen } = useContext(Context);
 
     const requestCancelReserve = () => {
         cancelReserve(id)

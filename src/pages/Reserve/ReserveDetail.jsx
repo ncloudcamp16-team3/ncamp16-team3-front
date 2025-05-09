@@ -54,8 +54,6 @@ const transformScoreToChartData = (ratingRatio) => {
         else if (star === 1) scoreMap["1Star"] = count;
     });
 
-    console.log("ratingRatio" + ratingRatio);
-
     const total = Object.values(scoreMap).reduce((sum, cur) => sum + cur, 0);
 
     return [
