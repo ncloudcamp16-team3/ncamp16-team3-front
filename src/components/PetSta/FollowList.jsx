@@ -38,6 +38,7 @@ const FollowList = ({ type, userId }) => {
     useEffect(() => {
         const initLoad = async () => {
             setIsLoading(true);
+            setUsers([]);
             try {
                 const pageSize = 10;
                 const data =

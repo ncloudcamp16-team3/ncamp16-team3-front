@@ -1,17 +1,16 @@
 import "./css/App.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { ThemeProvider } from "@mui/material";
+import { Box, CircularProgress, ThemeProvider } from "@mui/material";
 import theme from "./theme/theme.js";
 import { Provider } from "./context/Context.jsx";
 import { ReserveProvider } from "./context/ReserveContext.jsx";
-import { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import WithdrawalCompletePage from "./pages/User/WithdrawalCompletePage";
 import { Outlet } from "react-router-dom";
 
 // Global Layouts
 import Layout0 from "./components/Global/Layout0.jsx";
 import Layout1 from "./components/Global/Layout1.jsx";
-import Layout2 from "./components/Global/Layout2.jsx";
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 
 // Protected Routes
@@ -78,9 +77,15 @@ const MyPosts = lazy(() => import("./pages/User/MyPosts.jsx"));
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <Router>
-                <Provider>
-                    <Suspense fallback={<div>로딩 중...</div>}>
+            <Suspense
+                fallback={
+                    <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center">
+                        <CircularProgress size={30} />
+                    </Box>
+                }
+            >
+                <Router>
+                    <Provider>
                         <Routes>
                             <Route path="/admin" element={<AdminLayout />}>
                                 <Route index element={<Admin />} />
@@ -159,15 +164,13 @@ function App() {
                                     <Route path="/chat" element={<ChatList />} />
                                     <Route path="/chat/room/:channelId" element={<ChatRoom />} />
                                     <Route path="/payment" element={<Payment />} />
-                                </Route>
-                                <Route element={<Layout2 />}>
                                     <Route path="/petsta/post/:postId" element={<PostDetailWrapper />} />
                                 </Route>
                             </Route>
                         </Routes>
-                    </Suspense>
-                </Provider>
-            </Router>
+                    </Provider>
+                </Router>
+            </Suspense>
         </ThemeProvider>
     );
 }

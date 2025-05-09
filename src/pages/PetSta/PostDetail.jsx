@@ -31,8 +31,6 @@ const PostDetail = () => {
         getPost();
     }, []);
 
-    if (loading) return <div>로딩 중...</div>;
-
     if (error) {
         return (
             <div style={{ textAlign: "center", marginTop: "100px" }}>

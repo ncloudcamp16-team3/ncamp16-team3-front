@@ -4,6 +4,7 @@ import { Context } from "../../context/Context.jsx";
 import MyProfile from "../../components/PetSta/MyProfile.jsx";
 import UserProfile from "../../components/PetSta/UserProfile.jsx";
 import { getUserPage } from "../../services/petstaService.js";
+import { CircularProgress } from "@mui/material";
 
 const UserPage = () => {
     const { userId } = useParams();
@@ -29,11 +30,22 @@ const UserPage = () => {
     }, [userId]);
     const isMyPage = String(userId) === String(user.id);
 
-    if (loading) return <div>로딩 중...</div>;
     if (error) return <div>{error}</div>;
-    if (!userInfo) return <div>해당 유저를 찾을 수 없습니다.</div>;
+    if (!userInfo && !loading) return <div>해당 유저를 찾을 수 없습니다.</div>;
 
-    return <div>{isMyPage ? <MyProfile userInfo={userInfo} /> : <UserProfile userInfo={userInfo} />}</div>;
+    return (
+        <div>
+            {!loading && userInfo ? (
+                isMyPage ? (
+                    <MyProfile userInfo={userInfo} />
+                ) : (
+                    <UserProfile userInfo={userInfo} />
+                )
+            ) : (
+                <CircularProgress size={30} />
+            )}
+        </div>
+    );
 };
 
 export default UserPage;
