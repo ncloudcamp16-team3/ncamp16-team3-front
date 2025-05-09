@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 // MUI Components
 import {
     Box,
@@ -263,6 +262,48 @@ const ReserveDetail = () => {
         );
     };
 
+    const ScoreBar = () => {
+        return (
+            <Box
+                sx={{
+                    backgroundColor: "#FFF5EE",
+                    p: 1,
+                    borderRadius: 3,
+                    width: 200,
+                }}
+            >
+                <Typography sx={{ fontWeight: "bold", mb: 3, ml: 2, mt: 1 }}>점수 비율</Typography>
+                {chartData.map((item) => (
+                    <Box key={item.name} sx={{ display: "flex", alignItems: "center", ml: 3 }}>
+                        <Typography sx={{ width: 24, fontSize: 14, color: "#FF5555", fontWeight: 500 }}>
+                            {item.name}
+                        </Typography>
+                        <Box
+                            sx={{
+                                flex: 1,
+                                height: 10,
+                                backgroundColor: "#E0E0E0",
+                                borderRadius: 5,
+                                mx: 1,
+                                position: "relative",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: `${item.percentage}%`,
+                                    height: "100%",
+                                    backgroundColor: "#1976d2",
+                                    borderRadius: 5,
+                                }}
+                            />
+                        </Box>
+                        <Typography sx={{ fontSize: 13, color: "#FF5555", width: 30 }}>{item.percentage}%</Typography>
+                    </Box>
+                ))}
+            </Box>
+        );
+    };
+
     // 로딩 중이면 로딩 인디케이터 표시
     if (loading) {
         return (
@@ -482,7 +523,11 @@ const ReserveDetail = () => {
                                 borderRadius: 5,
                             }}
                         >
-                            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold", ml: 3, mt: 2 }}>
+                            <Typography
+                                variant="subtitle1"
+                                gutterBottom
+                                sx={{ fontWeight: "bold", ml: 3, mt: 2, mb: 1 }}
+                            >
                                 이용자 평점
                             </Typography>
                             <Typography variant="h6" sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}>
@@ -498,86 +543,7 @@ const ReserveDetail = () => {
 
                         {/* 점수 비율 그래프 */}
                         <Box sx={{ flex: 1, height: 200, ml: 0, bgcolor: "#FFF7EF", borderRadius: 5 }}>
-                            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold", ml: 3, mt: 2 }}>
-                                점수 비율
-                            </Typography>
-                            <Box sx={{ position: "relative", width: "100%", height: 150 }}>
-                                <ResponsiveContainer width="100%" height={150}>
-                                    <BarChart
-                                        layout="vertical"
-                                        data={chartData} // 위에서 생성한 chartData 사용
-                                        margin={{ top: 5, right: 40, left: 30, bottom: 20 }}
-                                        barCategoryGap={8}
-                                        barGap={4}
-                                    >
-                                        <XAxis type="number" hide />
-                                        <YAxis
-                                            dataKey="name"
-                                            type="category"
-                                            width={30}
-                                            tick={{ fontSize: 13, fill: "#FF5555", fontWeight: 500 }}
-                                            axisLine={false}
-                                            tickLine={false}
-                                        />
-                                        <Tooltip
-                                            content={({ payload }) => {
-                                                if (!payload || payload.length === 0) return null;
-                                                return (
-                                                    <Box
-                                                        sx={{
-                                                            backgroundColor: "white",
-                                                            p: 1,
-                                                            border: "1px solid #ccc",
-                                                            borderRadius: 1,
-                                                        }}
-                                                    >
-                                                        <Typography fontSize={13}>
-                                                            {payload[0].payload.name}: {payload[0].value}명 (
-                                                            {payload[0].payload.percentage}%)
-                                                        </Typography>
-                                                    </Box>
-                                                );
-                                            }}
-                                        />
-                                        <Bar
-                                            dataKey="percentage"
-                                            fill="#1976d2"
-                                            barSize={12} // 더 두껍게
-                                            radius={[10, 10, 10, 10]} // 모서리 둥글게
-                                            background={{ fill: "#E0E0E0", radius: [10, 10, 10, 10] }}
-                                        />
-                                    </BarChart>
-                                </ResponsiveContainer>
-
-                                {/* 퍼센트 표시 */}
-                                <Box
-                                    sx={{
-                                        position: "absolute",
-                                        top: 9,
-                                        right: 0,
-                                        height: "83%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        justifyContent: "space-around",
-                                        alignItems: "flex-end",
-                                        pr: 2,
-                                        pointerEvents: "none",
-                                    }}
-                                >
-                                    {chartData.map((entry, idx) => (
-                                        <Typography
-                                            key={idx}
-                                            sx={{
-                                                fontSize: "10px",
-                                                color: "#FF5555",
-                                                height: `${100 / chartData.length}%`,
-                                            }}
-                                        >
-                                            {entry.percentage}%
-                                        </Typography>
-                                    ))}
-                                </Box>
-                            </Box>
+                            <ScoreBar />
                         </Box>
                     </Stack>
 
