@@ -1,18 +1,44 @@
 import React from "react";
-import { formatDate, formatPrice } from "./utils/formatters.jsx";
+import { formatPrice } from "./utils/formatters.jsx";
 import { Box, Typography, Card, CardMedia, CardContent, Divider } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+// 날짜/시간 포맷 (ex. 2025-05-06T10:00:00 → "2025.05.06 (화) 10:00")
+const formatDateTime = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    return date.toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+};
 
 export const PaymentHistoryItem = ({ payment, isLast }) => {
+    const navigate = useNavigate();
+
     return (
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
             <Card
-                elevation={0}
+                elevation={3}
                 sx={{
                     display: "flex",
-                    padding: 2,
-                    bgcolor: "background.paper",
-                    borderRadius: 0,
+                    alignItems: "flex-start",
+                    p: 1.5,
+                    mb: 0,
+                    borderRadius: 2,
+                    cursor: "pointer",
+                    boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
+                    border: "1px solid #eee",
+                    transition: "transform 0.2s ease-in-out",
+                    "&:hover": {
+                        transform: "translateY(-5px)",
+                        boxShadow: "4px 8px 15px rgba(0, 0, 0, 0.2)",
+                    },
                 }}
+                onClick={() => navigate(`/reserve/detail/${payment.reserveId}`)}
             >
                 <CardMedia
                     component="img"
@@ -47,16 +73,15 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     >
                         {payment.name}
                     </Typography>
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                            fontSize: "0.875rem",
-                            mb: 1,
-                        }}
-                    >
-                        {formatDate(payment.createdAt)}
+                    <Typography variant="body2" color="text.secondary">
+                        {payment.exitTime ? "체크인: " : "예약시간: "}
+                        {formatDateTime(payment.entryTime)}
                     </Typography>
+                    {payment.exitTime && (
+                        <Typography variant="body2" color="text.secondary">
+                            체크아웃: {formatDateTime(payment.exitTime)}
+                        </Typography>
+                    )}
                     <Typography
                         variant="subtitle1"
                         sx={{
