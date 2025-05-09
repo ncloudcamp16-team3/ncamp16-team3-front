@@ -84,8 +84,6 @@ export const CalendarProvider = ({ children }) => {
             hasSchedule: schedules.some((s) => s.dateList?.includes(dateStr)),
             hasEvent: events.some((e) => e.dateList?.includes(dateStr)),
             hasReserve: reserves.some((r) => r.dateList?.includes(dateStr)),
-            // hasEvent: events.some((e) => isSameDate(parseISO(e.startDate), date)),
-            // hasReserve: reserves.some((r) => isSameDate(parseISO(r.entryTime), date)),
         };
     };
 
