@@ -1,17 +1,6 @@
 // src/pages/ReservationListPage.jsx
 import React, { useEffect, useState } from "react";
-import {
-    Container,
-    List,
-    ListItem,
-    ListItemText,
-    Divider,
-    Paper,
-    CardMedia,
-    Card,
-    Typography,
-    Button,
-} from "@mui/material";
+import { Container, ListItemText, Divider, CardMedia, Card, Typography, Button, Box } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { useNavigate } from "react-router-dom";
 import { fetchMyReserveList } from "../../services/reserveService.js";
@@ -46,112 +35,60 @@ const ReservationListPage = () => {
         <Container maxWidth="sm">
             <TitleBar name="예약 목록" />
 
-            <Paper elevation={3} sx={{ mt: 2 }}>
-                <List>
-                    {reservations.map((r) => (
-                        <React.Fragment key={r.id}>
-                            <ListItem
-                                button
-                                alignItems="flex-start"
-                                onClick={() => navigate(`/reserve/detail/${r.id}`)}
-                                sx={{ display: "flex", gap: 2 }}
-                            >
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="subtitle1" fontWeight="bold">
-                                            {r.name}
-                                        </Typography>
-                                    }
-                                    secondary={
-                                        <>
-                                            <Typography variant="body2" color="text.secondary">
-                                                업종: {r.type}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                주소: {r.address}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {r.exitTime ? "체크인: " : "예약시간: "}
-                                                {formatDateTime(r.entryTime)}
-                                            </Typography>
-                                            {r.exitTime && (
-                                                <Typography variant="body2" color="text.secondary">
-                                                    체크아웃: {formatDateTime(r.exitTime)}
-                                                </Typography>
-                                            )}
-                                            <Typography variant="body2" color="primary">
-                                                예약금액: {r.amount.toLocaleString()}원
-                                            </Typography>
-                                        </>
-                                    }
-                                />
-                    {reservations?.map((r) => (
-                        <React.Fragment key={r.id}>
-                            <ListItem
-                                button
-                                alignItems="flex-start"
-                                onClick={() => navigate(`/reserve/detail/${r.id}`)}
-                                sx={{ display: "flex", gap: 2 }}
-                            >
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="subtitle1" fontWeight="bold">
-                                            {r.name}
-                                        </Typography>
-                                    }
-                                    secondary={
-                                        <>
-                                            <Typography variant="body2" color="text.secondary">
-                                                업종: {r.type}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                주소: {r.address}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {r.exitTime ? "체크인: " : "예약시간: "}
-                                                {formatDateTime(r.entryTime)}
-                                            </Typography>
-                                            {r.exitTime && (
-                                                <Typography variant="body2" color="text.secondary">
-                                                    체크아웃: {formatDateTime(r.exitTime)}
-                                                </Typography>
-                                            )}
-                                            <Typography variant="body2" color="primary">
-                                                예약금액: {r.amount.toLocaleString()}원
-                                            </Typography>
-                                        </>
-                                    }
-                                />
-
-                                <Card sx={{ width: 100, height: 100, flexShrink: 0 }}>
-                                    <CardMedia
-                                        component="img"
-                                        height="100"
-                                        image={r.image}
-                                        alt="시설 이미지"
-                                        sx={{ objectFit: "cover" }}
-                                    />
-                                </Card>
-                            </ListItem>
-                            <Divider />
-                        </React.Fragment>
-                    ))}
-                    )
-                                <Card sx={{ width: 100, height: 100, flexShrink: 0 }}>
-                                    <CardMedia
-                                        component="img"
-                                        height="100"
-                                        image={r.image}
-                                        alt="시설 이미지"
-                                        sx={{ objectFit: "cover" }}
-                                    />
-                                </Card>
-                            </ListItem>
-                            <Divider />
-                        </React.Fragment>
-                    ))}
-                </List>
-            </Paper>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+                {reservations.map((r) => (
+                    <Card
+                        key={r.id}
+                        elevation={3}
+                        sx={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            p: 1.5,
+                            mb: 0,
+                            borderRadius: 2,
+                            cursor: "pointer",
+                            boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
+                            border: "1px solid #eee",
+                            transition: "transform 0.2s ease-in-out",
+                            "&:hover": {
+                                transform: "translateY(-5px)",
+                                boxShadow: "4px 8px 15px rgba(0, 0, 0, 0.2)",
+                            },
+                        }}
+                        onClick={() => navigate(`/reserve/detail/${r.id}`)}
+                    >
+                        <Box sx={{ flex: 1 }}>
+                            <Typography variant="subtitle1" fontWeight="bold">
+                                {r.name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                업종: {r.type}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                주소: {r.address}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                {r.exitTime ? "체크인: " : "예약시간: "}
+                                {formatDateTime(r.entryTime)}
+                            </Typography>
+                            {r.exitTime && (
+                                <Typography variant="body2" color="text.secondary">
+                                    체크아웃: {formatDateTime(r.exitTime)}
+                                </Typography>
+                            )}
+                            <Typography variant="body2" color="primary">
+                                예약금액: {r.amount.toLocaleString()}원
+                            </Typography>
+                        </Box>
+                        <CardMedia
+                            component="img"
+                            image={r.image}
+                            alt="시설 이미지"
+                            sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 1 }}
+                        />
+                    </Card>
+                ))}
+            </Box>
         </Container>
     );
 };

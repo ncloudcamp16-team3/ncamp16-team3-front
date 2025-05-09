@@ -4,7 +4,7 @@ import { Container, Box, Typography, TextField, Button, Divider } from "@mui/mat
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import FileUploader from "../../components/Reserve/utils/FileUploader.jsx";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
-import { getFacilityNameAndThumbnail, putReview } from "../../services/reserveService.js";
+import { addReview, getFacilityNameAndThumbnail } from "../../services/reserveService.js";
 import Loading from "../../components/Global/Loading.jsx";
 import { Context } from "../../context/Context.jsx";
 import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx";
@@ -83,15 +83,20 @@ const Review = () => {
         }
 
         const formData = new FormData();
-        formData.append("comment", comment);
-        formData.append("starPoint", starRating);
+
+        const reviewData = {
+            reserveId: id,
+            facilityId: facilityInfo.id,
+            comment: comment,
+            starPoint: starRating,
+        };
+
+        formData.append("reviewData", new Blob([JSON.stringify(reviewData)], { type: "application/json" }));
         formData.append("file", image);
 
         try {
-            const response = await putReview({ id: facilityInfo.id, formData });
-            showModal("", "리뷰가 등록되었습니다.\n시설정보 화면으로 돌아갑니다.", () =>
-                navigate(`/reserve/${facilityInfo.id}`)
-            );
+            const response = await addReview({ formData });
+            showModal("리뷰 등록 성공", "시설정보 화면으로 이동", () => navigate(`/reserve/${facilityInfo.id}`));
         } catch (error) {
             console.error(error);
         }
