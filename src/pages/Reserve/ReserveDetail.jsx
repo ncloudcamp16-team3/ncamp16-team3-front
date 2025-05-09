@@ -195,7 +195,7 @@ const ReserveDetail = () => {
                 totalPayAmount: "30000",
                 taxScopeAmount: "30000",
                 taxExScopeAmount: "0",
-                returnUrl: `http://localhost:5173/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
+                returnUrl: `https://tailfriends/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
             });
         } catch (err) {
             console.error("예약 생성 실패:", err);
