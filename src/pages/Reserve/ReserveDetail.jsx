@@ -53,8 +53,6 @@ const transformScoreToChartData = (ratingRatio) => {
         else if (star === 1) scoreMap["1Star"] = count;
     });
 
-    console.log("ratingRatio" + ratingRatio);
-
     const total = Object.values(scoreMap).reduce((sum, cur) => sum + cur, 0);
 
     return [
@@ -278,7 +276,6 @@ const ReserveDetail = () => {
                     backgroundColor: "#FFF5EE",
                     p: 1,
                     borderRadius: 3,
-                    width: 200,
                 }}
             >
                 <Typography sx={{ fontWeight: "bold", mb: 3, ml: 2, mt: 1 }}>점수 비율</Typography>
@@ -517,8 +514,13 @@ const ReserveDetail = () => {
 
                     <Stack
                         direction="row"
-                        spacing={4}
-                        sx={{ my: 4, width: "100%", px: 3, justifyContent: "center" }}
+                        sx={{
+                            my: 4,
+                            width: "100%",
+                            px: 3,
+                            justifyContent: "center",
+                            gap: "5%",
+                        }}
                         alignItems="stretch"
                     >
                         {/* 이용자 평점 */}
@@ -532,26 +534,39 @@ const ReserveDetail = () => {
                                 borderRadius: 5,
                             }}
                         >
-                            <Typography
-                                variant="subtitle1"
-                                gutterBottom
-                                sx={{ fontWeight: "bold", ml: 3, mt: 2, mb: 1 }}
+                            <Box
+                                sx={{
+                                    backgroundColor: "#FFF5EE",
+                                    p: 1,
+                                    borderRadius: 3,
+                                }}
                             >
-                                이용자 평점
-                            </Typography>
-                            <Typography variant="h6" sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}>
-                                {rating.toFixed(1)}/5.0
-                            </Typography>
-                            <Box sx={{ mb: 1, ml: 3 }}>
-                                <StarRating />
+                                <Typography sx={{ fontWeight: "bold", mb: 3, ml: 2, mt: 1 }}>이용자 평점</Typography>
+                                <Typography
+                                    variant="h6"
+                                    sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
+                                >
+                                    {rating.toFixed(1)}/5.0
+                                </Typography>
+                                <Box sx={{ mb: 1, ml: 3 }}>
+                                    <StarRating />
+                                </Box>
+                                <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
+                                    {facilityData.reviewCount}명 참여
+                                </Typography>
                             </Box>
-                            <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
-                                {facilityData.reviewCount}명 참여
-                            </Typography>
                         </Box>
 
                         {/* 점수 비율 그래프 */}
-                        <Box sx={{ flex: 1, height: 200, ml: 0, bgcolor: "#FFF7EF", borderRadius: 5 }}>
+                        <Box
+                            sx={{
+                                flex: 1,
+                                display: "flex",
+                                flexDirection: "column",
+                                bgcolor: "#FFF7EF",
+                                borderRadius: 5,
+                            }}
+                        >
                             <ScoreBar />
                         </Box>
                     </Stack>

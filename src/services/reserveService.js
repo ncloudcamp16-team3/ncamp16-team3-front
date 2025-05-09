@@ -65,9 +65,9 @@ export const getReserveDetailById = ({ uid, rid }) => {
         });
 };
 
-export const insertReview = async ({ id, formData }) => {
+export const addReview = async ({ formData }) => {
     return await instance
-        .post(`${API_URL}/facility/${id}/review`, formData, {
+        .post(`${API_URL}/facility/review`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

@@ -40,6 +40,7 @@ const ListContent = () => {
     }, [latitude, longitude, setLocation]);
 
     useEffect(() => {
+        console.log("시설 useEffect 들어오나 확인용");
         const fetchFacilities = async () => {
             setLoading(true); // 로딩 시작
             setError(null); // 에러 초기화
