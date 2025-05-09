@@ -6,10 +6,8 @@ import {
     Typography,
     Button,
     Card,
-    CardContent,
     CardMedia,
     Container,
-    Avatar,
     Grid,
     Stack,
     Divider,
@@ -17,7 +15,6 @@ import {
     CircularProgress,
     Alert,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
 import Star from "@mui/icons-material/Star";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
@@ -26,11 +23,12 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import DateTimeSelector from "./DateTimeSelector.jsx";
-import { addTempReserve, getFacilityToReserveById } from "../../services/reserveService.js";
+import { addTempReserve, deleteReview, getFacilityToReserveById } from "../../services/reserveService.js";
 import { Context } from "../../context/Context.jsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import ReviewCardItem from "./ReviewCardItem.jsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -102,11 +100,23 @@ const ReserveDetail = () => {
     const [error, setError] = useState(null);
 
     const [chartData, setChartData] = useState([]);
+
     // NaverPay
     const naverPayRef = useRef(null);
 
     // 모달설정 관련
     const { showModal } = useContext(Context);
+
+    // 리뷰 삭제 관련
+    const handleReviewDelete = async (reviewId) => {
+        try {
+            await deleteReview(reviewId);
+            // 리뷰 목록 재요청 or 상태 업데이트
+            setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
+        } catch (error) {
+            setError(error.message);
+        }
+    };
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -131,7 +141,6 @@ const ReserveDetail = () => {
             try {
                 setLoading(true);
                 setError(null);
-
                 const response = await getFacilityToReserveById(id);
                 const data = response.data;
 
@@ -573,49 +582,15 @@ const ReserveDetail = () => {
                     <Grid container spacing={3}>
                         {reviews.length > 0 ? (
                             reviews.map((review, idx) => (
-                                <Grid item xs={12} md={12} key={idx} sx={{ width: "100%" }}>
-                                    <Card sx={{ width: "100%", height: "100%" }}>
-                                        <CardContent>
-                                            <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-                                                <Avatar src={review.userProfileImage} />
-                                                <Typography variant="subtitle1">{review.userName}</Typography>
-                                            </Stack>
-                                            {review.reviewImages && review.reviewImages.length > 0 && (
-                                                <CardMedia
-                                                    component="img"
-                                                    height="180"
-                                                    image={review.reviewImages[0]}
-                                                    alt="review"
-                                                    sx={{ borderRadius: 1, mb: 2 }}
-                                                />
-                                            )}
-                                            <Typography variant="body2" sx={{ mb: 1 }}>
-                                                {review.comment}
-                                            </Typography>
-                                            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                                                {Array.from({ length: 5 }).map((_, index) => (
-                                                    <StarIcon
-                                                        key={index}
-                                                        fontSize="small"
-                                                        sx={{
-                                                            color: index < review.starPoint ? "#FFC107" : "#E0E0E0",
-                                                        }}
-                                                    />
-                                                ))}
-                                            </Box>
-                                            <Typography variant="caption" color="text.secondary">
-                                                {new Date(review.createdAt).toLocaleDateString()}
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
+                                <ReviewCardItem
+                                    key={idx}
+                                    review={review}
+                                    user={user}
+                                    handleReviewDelete={handleReviewDelete}
+                                />
                             ))
                         ) : (
-                            <Grid item xs={12}>
-                                <Typography align="center" color="text.secondary">
-                                    아직 리뷰가 없습니다.
-                                </Typography>
-                            </Grid>
+                            <Typography>리뷰가 없습니다.</Typography>
                         )}
                     </Grid>
                 </Box>

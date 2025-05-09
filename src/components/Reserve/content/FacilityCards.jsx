@@ -26,6 +26,10 @@ const FacilityCards = ({ item }) => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        "@media (max-width: 768px)": {
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                        },
                     }}
                 >
                     <Box
@@ -79,6 +83,12 @@ const FacilityCards = ({ item }) => {
                             objectFit: "cover",
                             borderRadius: 1,
                             border: "1px solid #C8C8C8",
+                            "@media (max-width: 768px)": {
+                                width: "100%",
+                                height: 180,
+                                borderRadius: "8px 8px 0 0",
+                                mt: 1,
+                            },
                         }}
                     />
                 </Box>
