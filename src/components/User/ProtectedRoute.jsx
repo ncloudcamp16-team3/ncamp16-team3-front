@@ -7,7 +7,7 @@ import * as ncloudchat from "ncloudchat";
 import { registerSW } from "../../../public/firebase-messaging-sw-register.js";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../../../public/firebase.js";
-import { Alert, Avatar, Snackbar, Stack } from "@mui/material";
+import { Alert, Avatar, CircularProgress, Snackbar, Stack, Box } from "@mui/material";
 import {
     checkNotification,
     getNotificationsByUserId,
@@ -437,7 +437,12 @@ const ProtectedRoute = () => {
         );
     };
 
-    if (loading) return <div>로그인 상태 확인 중...</div>;
+    if (loading)
+        return (
+            <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center">
+                <CircularProgress size={30} />
+            </Box>
+        );
 
     if (!isLogin) return <Navigate to="/login" replace />;
 
