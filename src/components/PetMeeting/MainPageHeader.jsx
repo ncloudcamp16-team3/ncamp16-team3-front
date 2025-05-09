@@ -22,6 +22,7 @@ const MainPageHeader = () => {
             }}
         >
             <Box sx={{ flex: 1 }}>
+                <img src={pet.photos[0].path} width="50px" height="50px" />
                 <Typography variant="h5">{pet?.name} 동네친구들</Typography>
                 <Typography variant="caption">새로운 친구를 만나보아요</Typography>
             </Box>
