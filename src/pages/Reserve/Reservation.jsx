@@ -45,7 +45,7 @@ const Reservation = () => {
             <Box>
                 <Button
                     variant="contained"
-                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 2, mt: 12 }}
+                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 2, mt: 8 }}
                     size="large"
                     onClick={() => navigate(`/reserve/list`)}
                     fullWidth
@@ -54,7 +54,7 @@ const Reservation = () => {
                 </Button>
                 <Button
                     variant="contained"
-                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 1, mb: 2 }}
+                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 1, mb: 3.5 }}
                     size="large"
                     onClick={() => navigate(`/reserve/detail/${searchParams.get("id")}`)} // 또는 상세 페이지 id가 있으면 detail 페이지 이동
                     fullWidth
