@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
             viteCompression(),
             VitePWA({
                 registerType: "autoUpdate",
+                injectRegister: "auto",
                 includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
                 manifest: {
                     name: "TailFriend",
@@ -30,10 +31,6 @@ export default defineConfig(({ mode }) => {
                             type: "image/png",
                         },
                     ],
-                },
-                workbox: {
-                    // 🔥 firebase-messaging-sw.js는 무조건 제외 (중복 서비스워커 방지)
-                    exclude: [/firebase-messaging-sw\.js$/],
                 },
             }),
         ],
