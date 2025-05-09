@@ -306,7 +306,7 @@ const AddPet = () => {
         navigate(-1);
     };
 
-    const petTypes = ["강아지", "고양이", "햄스터", "새", "물고기", "기타"];
+    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
 
     // 현재 보여줄 이미지 (선택된 이미지 또는 첫 번째 이미지)
     const currentDisplayImage =
