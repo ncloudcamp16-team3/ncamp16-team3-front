@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { PeriodSelector } from "./PeriodSelector.jsx";
 import { SimpleDateRangeSelector } from "./DateRangeSelector.jsx";
 import { Box, Typography, Paper, Divider } from "@mui/material";
 import dayjs from "dayjs";
 
-export const FilterSection = ({ onSearch }) => {
-    const [periodSelect, setPeriodSelect] = useState("15일");
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+export const FilterSection = ({
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    onSearch,
+    periodSelect,
+    setPeriodSelect,
+}) => {
+    const handlePeriodChange = (value) => {
+        setPeriodSelect(value);
 
-    useEffect(() => {
         const today = dayjs();
         let newStart = null;
 
-        switch (periodSelect) {
+        switch (value) {
             case "15일":
                 newStart = today.subtract(15, "day");
                 break;
@@ -30,24 +36,21 @@ export const FilterSection = ({ onSearch }) => {
                 newStart = today.subtract(1, "year");
                 break;
             case "직접입력":
-                // 유지 (직접입력 선택 시 날짜를 초기화하지 않음)
                 return;
             default:
                 return;
         }
 
-        setStartDate(newStart);
-        setEndDate(today);
-    }, [periodSelect]);
-
-    const handlePeriodChange = (value) => {
-        // 직접입력으로 바뀌었을 때도 기존 날짜 유지
-        setPeriodSelect(value);
+        if (newStart) {
+            setStartDate(newStart);
+            setEndDate(today);
+        }
     };
 
     const handleDateChange = (target, value) => {
-        if (target === "start") setStartDate(value);
-        else if (target === "end") setEndDate(value);
+        const newValue = dayjs(value); // Convert the value to dayjs format
+        if (target === "start") setStartDate(newValue);
+        else if (target === "end") setEndDate(newValue);
     };
 
     return (
@@ -65,17 +68,7 @@ export const FilterSection = ({ onSearch }) => {
                 paddingBottom: "10px",
             }}
         >
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    ml: 2,
-                    mt: 2,
-                    mb: 1,
-                    order: -1,
-                }}
-            >
+            <Box sx={{ width: "100%", display: "flex", flexDirection: "row", ml: 2, mt: 2, mb: 1, order: -1 }}>
                 <Typography variant="h6" component="h2" sx={{ fontWeight: "bold", color: "text.primary" }}>
                     결제내역
                 </Typography>
@@ -126,19 +119,13 @@ export const FilterSection = ({ onSearch }) => {
                     {periodSelect === "직접입력" && (
                         <Box sx={{ width: "100%", mt: 2 }}>
                             <SimpleDateRangeSelector
-                                startDate={startDate}
-                                endDate={endDate}
+                                startDate={startDate.format("YYYY-MM-DD")}
+                                endDate={endDate.format("YYYY-MM-DD")}
                                 onDateChange={handleDateChange}
                             />
                         </Box>
                     )}
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            width: "100%",
-                        }}
-                    >
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                         <Box
                             sx={{
                                 bgcolor: "#F97316",
@@ -152,7 +139,7 @@ export const FilterSection = ({ onSearch }) => {
                                 lineHeight: "26px",
                                 fontWeight: "bold",
                             }}
-                            onClick={onSearch}
+                            onClick={() => onSearch(startDate, endDate)}
                         >
                             검색
                         </Box>
