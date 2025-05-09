@@ -28,6 +28,7 @@ const FacilityCards = ({ item }) => {
                         alignItems: "center",
                         "@media (max-width: 768px)": {
                             flexDirection: "column",
+                            alignItems: "flex-start",
                         },
                     }}
                 >

@@ -65,9 +65,9 @@ export const getReserveDetailById = ({ uid, rid }) => {
         });
 };
 
-export const putReview = async ({ id, formData }) => {
+export const insertReview = async ({ id, formData }) => {
     return await instance
-        .put(`${API_URL}/facility/${id}/review`, formData, {
+        .post(`${API_URL}/facility/${id}/review`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -120,5 +120,33 @@ export const cancelReserve = (id) => {
         })
         .catch((error) => {
             throw error.response.data;
+        });
+};
+
+export const putReview = async ({ id, formData }) => {
+    return await instance
+        .put(`${API_URL}/facility/review${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((response) => response)
+        .catch((error) => {
+            console.error("리뷰 업로드에 실패했습니다.", error);
+            throw error;
+        });
+};
+
+export const deleteReview = async (id) => {
+    return await instance
+        .delete(`${API_URL}/facility/review${id}`, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((response) => response)
+        .catch((error) => {
+            console.error("리뷰 업로드에 실패했습니다.", error);
+            throw error;
         });
 };

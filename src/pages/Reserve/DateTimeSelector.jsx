@@ -99,9 +99,7 @@ const DateTimeSelector = ({
     const handleDateSelect = (value) => {
         if (dateDialog.target === "start") {
             setStartDate(value);
-            setEndDate(null);
             setStartTime("");
-            setEndTime("");
         } else {
             setEndDate(value);
             setEndTime("");
@@ -112,9 +110,7 @@ const DateTimeSelector = ({
     const handleResetDate = () => {
         if (dateDialog.target === "start") {
             setStartDate(null);
-            setEndDate(null);
             setStartTime("");
-            setEndTime("");
         } else {
             setEndDate(null);
             setEndTime("");
