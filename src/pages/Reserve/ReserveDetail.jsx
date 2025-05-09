@@ -197,7 +197,7 @@ const ReserveDetail = () => {
                 totalPayAmount: "30000",
                 taxScopeAmount: "30000",
                 taxExScopeAmount: "0",
-                returnUrl: `https://tailfriends/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
+                returnUrl: `https://tailfriends.kro.kr/api/reserve/payment/naver/return?merchantPayKey=${merchantPayKey}`,
             });
         } catch (err) {
             console.error("예약 생성 실패:", err);
@@ -335,7 +335,7 @@ const ReserveDetail = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Container disableGutters sx={{ display: "flex", width: 500, flexDirection: "column" }}>
+            <Container disableGutters sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
                 <TitleBar
                     sx={{ width: "100%", display: "flex" }}
                     name="편의시설 상세정보"
