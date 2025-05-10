@@ -50,29 +50,43 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     }}
                     image={payment.imageUrl}
                     alt={payment.name}
-                />
+                />{" "}
                 <CardContent
                     sx={{
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
                         padding: "5px 5px 5px 16px",
+                        width: "100%", // ✅ 추가
                         "&:last-child": { paddingBottom: "5px" },
                     }}
                 >
-                    <Typography
-                        variant="h6"
-                        component="div"
+                    <Box
                         sx={{
-                            fontWeight: "bold",
-                            fontSize: "1.5rem",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                             mb: 1,
-                            height: "40px",
-                            lineHeight: 1.2,
                         }}
                     >
-                        {payment.name}
-                    </Typography>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{
+                                fontWeight: "bold",
+                                fontSize: "1.5rem",
+                                lineHeight: 1.2,
+                            }}
+                        >
+                            {payment.name}
+                        </Typography>
+
+                        {payment.createdAt && (
+                            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap", ml: 2 }}>
+                                {formatDateTime(payment.createdAt)}
+                            </Typography>
+                        )}
+                    </Box>
                     <Typography variant="body2" color="text.secondary">
                         {payment.exitTime ? "체크인: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}

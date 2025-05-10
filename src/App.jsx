@@ -29,7 +29,6 @@ const Register = lazy(() => import("./pages/User/Register.jsx"));
 const Board = lazy(() => import("./pages/Board/Board.jsx"));
 const Reserve = lazy(() => import("./pages/Reserve/Reserve.jsx"));
 const ReserveDetail = lazy(() => import("./pages/Reserve/ReserveDetail.jsx"));
-const ReservationList = lazy(() => import("./pages/Reserve/ReservationList.jsx"));
 const Reservation = lazy(() => import("./pages/Reserve/Reservation.jsx"));
 const ReservationDetail = lazy(() => import("./pages/Reserve/ReservationDetail.jsx"));
 const Review = lazy(() => import("./pages/Reserve/Review.jsx"));
@@ -138,7 +137,6 @@ function App() {
                                     >
                                         <Route index element={<Reserve />} />
                                         <Route path=":id" element={<ReserveDetail />} />
-                                        <Route path="list" element={<ReservationList />} />
                                         <Route path="success" element={<Reservation />} />
                                         <Route path="detail/:id" element={<ReservationDetail />} />
                                         <Route path="review/:id" element={<Review />} />
