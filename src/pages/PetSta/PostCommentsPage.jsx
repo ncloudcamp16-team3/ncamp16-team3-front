@@ -212,7 +212,7 @@ const PostCommentPage = () => {
                         />
                     ))
                 ) : (
-                    <Box textAlign="center" fontSize="16px" color="gray">
+                    <Box textAlign="center" fontSize="16px" color="gray" mt="20px">
                         댓글이 없습니다.
                     </Box>
                 )}
@@ -290,7 +290,27 @@ const PostCommentPage = () => {
                                 inputRef={inputRef}
                                 placeholder="댓글을 작성해주세요"
                                 value={commentContent}
-                                onChange={(e) => setCommentContent(e.target.value)}
+                                onChange={(e) => {
+                                    let text = e.target.value;
+                                    const mentionRegex = /@(\S+)/;
+                                    const match = text.match(mentionRegex);
+
+                                    if (!match) {
+                                        // 멘션 아예 없으면 상태 초기화
+                                        setMentionUserList([]);
+                                    } else {
+                                        const nickname = match[1];
+                                        const found = mentionUserList.find((u) => u.nickname === nickname);
+
+                                        if (!found) {
+                                            // 멘션이 손상됐으면 멘션 부분 텍스트에서 제거
+                                            text = text.replace(mentionRegex, "").trimStart();
+                                            setMentionUserList([]);
+                                        }
+                                    }
+
+                                    setCommentContent(text);
+                                }}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" && !e.shiftKey) {
                                         e.preventDefault();
