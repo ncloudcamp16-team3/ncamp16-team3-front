@@ -427,11 +427,19 @@ const PetSitterRegister = () => {
                     break;
                 case 4: // 반려동물 타입 선택 후
                     const selectedPetTypes = getSelectedPetTypes(petTypes);
+
+                    let formattedPetTypes = selectedPetTypes;
+                    if (petTypes["기타"] && otherPetText.trim()) {
+                        formattedPetTypes = selectedPetTypes
+                          .filter(type => type !== "기타")
+                          .concat([otherPetText.trim()]);
+                    }
+
                     setPetSitterData((prev) => ({
                         ...prev,
-                        petTypesFormatted: selectedPetTypes.join(", "),
-                        petTypes: selectedPetTypes,
-                        petTypeId: selectedPetTypes.length > 0 ? getPetTypeId(selectedPetTypes[0]) : null,
+                        petTypesFormatted: formattedPetTypes.join(", "),
+                        petTypes: formattedPetTypes,
+                        petTypeId: formattedPetTypes.length > 0 ? getPetTypeId(formattedPetTypes[0]) : null,
                     }));
                     break;
                 case 5: // 반려동물 수 선택 후
@@ -467,7 +475,7 @@ const PetSitterRegister = () => {
         if (step > 1 && step <= 8) {
             updatePetSitterData();
         }
-    }, [step, selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText]);
+    }, [step, selectedAges, hasPet, petTypes, petCount, sitterExperience, houseType, commentText, otherPetText]);
 
     const handleSnackbarClose = () => {
         setSnackbar({ ...snackbar, open: false });

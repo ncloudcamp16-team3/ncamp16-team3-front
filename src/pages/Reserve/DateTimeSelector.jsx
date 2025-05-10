@@ -165,12 +165,21 @@ const DateTimeSelector = ({
                     }
 
                     // 시작 요일과 종료 요일이 같고 시작 시간이 있는 경우,
-                    // 종료 시간 옵션에서 시작 시간 이전의 시간을 제외
+                    // 종료 시간 옵션에서 시작 시간 이후의 시간만 표시
                     if (selectedStartDay === selectedEndDay && startTime) {
                         const selectedStartHour = parseInt(startTime.split(":")[0]);
-                        newEndTimeOptions = newEndTimeOptions.filter(
-                            (time) => parseInt(time.split(":")[0]) >= selectedStartHour
-                        );
+                        const selectedStartMinute = parseInt(startTime.split(":")[1] || "0");
+
+                        // 시작 시간보다 이후(큰)인 시간만 필터링
+                        newEndTimeOptions = newEndTimeOptions.filter((time) => {
+                            const hourToCheck = parseInt(time.split(":")[0]);
+                            const minuteToCheck = parseInt(time.split(":")[1] || "0");
+
+                            return (
+                                hourToCheck > selectedStartHour ||
+                                (hourToCheck === selectedStartHour && minuteToCheck > selectedStartMinute)
+                            );
+                        });
                     }
 
                     setEndTimeOptions(newEndTimeOptions);
@@ -284,15 +293,19 @@ const DateTimeSelector = ({
             }
         }
 
-        // 시작 시간과 종료 시간이 같은 날에 설정되어 있고, 종료 시간이 시작 시간보다 빠른 경우
-        if (target === "end" && startDate && endDate && dayjs(startDate).isSame(dayjs(endDate), "day") && startTime) {
+        // 종료 시간 선택 시 검증 로직 수정
+        if (target === "end" && startDate && endDate) {
             const [startHour, startMinute] = startTime.split(":").map(Number);
             const [endHour, endMinute] = time.split(":").map(Number);
 
-            if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
-                setValidationError("종료 시간은 시작 시간 이후로 선택해주세요.");
-                setTimeout(() => setValidationError(null), 3000);
-                return;
+            // 같은 날짜인 경우에만 시간 비교
+            if (dayjs(startDate).isSame(dayjs(endDate), "day")) {
+                // 시간이 같거나 이전인 경우
+                if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+                    setValidationError("종료 시간은 시작 시간 이후로 선택해주세요.");
+                    setTimeout(() => setValidationError(null), 3000);
+                    return;
+                }
             }
         }
 
@@ -306,7 +319,9 @@ const DateTimeSelector = ({
                 const [endHour, endMinute] = endTime.split(":").map(Number);
 
                 if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
-                    setEndTime("");
+                    setEndTime(""); // 종료 시간 초기화
+                    setValidationError("종료 시간이 시작 시간보다 빠르므로 종료 시간이 초기화되었습니다.");
+                    setTimeout(() => setValidationError(null), 3000);
                 }
             }
         } else {
@@ -343,7 +358,7 @@ const DateTimeSelector = ({
     const getFilteredTimeOptions = (isStart) => {
         const baseDate = isStart ? startDate : endDate;
         const selectedDayCode = isStart ? selectedStartDay : selectedEndDay;
-        const isToday = isStart ? isTodayStart : isTodayEnd;
+        const isToday = baseDate && dayjs(baseDate).isSame(dayjs(), "day");
         const currentTime = dayjs();
         const currentHour = currentTime.hour();
         const currentMinute = currentTime.minute();
@@ -383,18 +398,25 @@ const DateTimeSelector = ({
             }
         }
 
-        // 오늘인 경우 현재 시간 이후의 옵션만 필터링
+        // 옵션 필터링 로직
         return generatedTimes.filter((time) => {
             const [hour, minute] = time.split(":").map(Number);
 
-            if (isToday && baseDate?.isSame(currentTime, "day")) {
-                return hour > currentHour || (hour === currentHour && minute >= currentMinute);
+            // 오늘인 경우 현재 시간 이후의 옵션만 표시
+            if (isToday) {
+                if (hour < currentHour || (hour === currentHour && minute < currentMinute)) {
+                    return false;
+                }
             }
 
-            // 종료 시간 선택 중이고, 시작 시간이 설정된 경우
+            // 종료 시간 선택 중이고, 시작 시간이 설정된 경우 (같은 날짜인 경우에만)
             if (!isStart && startDate && endDate && dayjs(startDate).isSame(dayjs(endDate), "day") && startTime) {
                 const [startHour, startMinute] = startTime.split(":").map(Number);
-                return hour > startHour || (hour === startHour && minute > startMinute);
+
+                // 시작 시간과 동일하거나 이전인 시간 제외
+                if (hour < startHour || (hour === startHour && minute <= startMinute)) {
+                    return false;
+                }
             }
 
             return true;
