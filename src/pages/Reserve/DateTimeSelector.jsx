@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 // MUI Components
-import { Box, Typography, Button, Card, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Button,
+    Card,
+    Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Container,
+} from "@mui/material";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -27,7 +38,8 @@ const DateTimeSelector = ({
     const [showEndTimeSelector, setShowEndTimeSelector] = useState(false);
     const [timeOptions, setTimeOptions] = useState([]);
 
-    const today = dayjs().format("ddd").toUpperCase(); // 'MON', 'TUE' 등의 형식
+    const [selectedStartDay, setSelectedStartDay] = useState(null);
+    const [selectedEndDay, setSelectedEndDay] = useState(null);
 
     const isHotel = facilityType === "HOTEL";
     const startDateLabel = isHotel ? "시작일자" : "예약일자";
@@ -36,10 +48,10 @@ const DateTimeSelector = ({
     useEffect(() => {
         const count = Object.values(openHours).filter((dayInfo) => dayInfo?.isOpen);
         setIsTimetableEmpty(count.length === 0);
-    }, [openHours]);
+    }, [openHours, setIsTimetableEmpty]);
 
     useEffect(() => {
-        const generateTimeOptions = () => {
+        const generateStartTimeOptions = () => {
             const defaultTimes = [
                 "00:00",
                 "01:00",
@@ -67,22 +79,22 @@ const DateTimeSelector = ({
                 "23:00",
             ];
 
-            let startHour = openHours[today]?.openTime?.trim() || null;
-            let endHour = openHours[today]?.closeTime?.trim() || null;
+            const selectedStartDayData = openHours[selectedStartDay] || {};
+            const { openTime: startOpenTime, closeTime: startCloseTime } = selectedStartDayData;
+            let newStartTimeOptions = [];
 
-            if (startHour && endHour) {
+            if (startOpenTime && startCloseTime) {
                 try {
-                    let startHourNumber = parseInt(startHour.split(":")[0]);
-                    let endHourNumber = parseInt(endHour.split(":")[0]);
+                    let startHourNumber = parseInt(startOpenTime.split(":")[0]);
+                    let endHourNumber = parseInt(startCloseTime.split(":")[0]);
 
-                    const newTimeOptions = [];
                     for (let hour = startHourNumber; hour <= endHourNumber; hour++) {
                         const displayHour = hour % 24;
-                        newTimeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
+                        newStartTimeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
                     }
-                    setTimeOptions(newTimeOptions);
+                    setTimeOptions(newStartTimeOptions);
                 } catch (error) {
-                    console.error("영업 시간 형식 파싱 오류:", error);
+                    console.error("시작 시간 옵션 생성 오류:", error);
                     setTimeOptions(defaultTimes);
                 }
             } else {
@@ -90,19 +102,91 @@ const DateTimeSelector = ({
             }
         };
 
-        generateTimeOptions();
-    }, [openHours, today]); // today도 의존성 배열에 추가
+        const generateEndTimeOptions = () => {
+            const defaultTimes = [
+                "00:00",
+                "01:00",
+                "02:00",
+                "03:00",
+                "04:00",
+                "05:00",
+                "06:00",
+                "07:00",
+                "08:00",
+                "09:00",
+                "10:00",
+                "11:00",
+                "12:00",
+                "13:00",
+                "14:00",
+                "15:00",
+                "16:00",
+                "17:00",
+                "18:00",
+                "19:00",
+                "20:00",
+                "21:00",
+                "22:00",
+                "23:00",
+            ];
+
+            const selectedEndDayData = openHours[selectedEndDay] || {};
+            const { openTime: endOpenTime, closeTime: endCloseTime } = selectedEndDayData;
+            let newEndTimeOptions = [];
+
+            if (endOpenTime && endCloseTime) {
+                try {
+                    let startHourNumber = parseInt(endOpenTime.split(":")[0]);
+                    let endHourNumber = parseInt(endCloseTime.split(":")[0]);
+
+                    for (let hour = startHourNumber; hour <= endHourNumber; hour++) {
+                        const displayHour = hour % 24;
+                        newEndTimeOptions.push(`${displayHour.toString().padStart(2, "0")}:00`);
+                    }
+
+                    // 시작 요일과 종료 요일이 같고 시작 시간이 있는 경우,
+                    // 종료 시간 옵션에서 시작 시간 이전의 시간을 제외합니다.
+                    if (selectedStartDay === selectedEndDay && startTime) {
+                        const selectedStartHour = parseInt(startTime.split(":")[0]);
+                        newEndTimeOptions = newEndTimeOptions.filter(
+                            (time) => parseInt(time.split(":")[0]) > selectedStartHour
+                        );
+                    }
+
+                    setTimeOptions(newEndTimeOptions);
+                } catch (error) {
+                    console.error("종료 시간 옵션 생성 오류:", error);
+                    setTimeOptions(defaultTimes);
+                }
+            } else {
+                setTimeOptions(defaultTimes);
+            }
+        };
+
+        if (selectedStartDay) {
+            generateStartTimeOptions();
+        } else {
+            setTimeOptions([]); // 시작 요일이 없으면 시간 옵션 초기화
+        }
+
+        if (selectedEndDay && isHotel && startTime) {
+            generateEndTimeOptions();
+        }
+    }, [openHours, selectedStartDay, selectedEndDay, startTime, isHotel]);
 
     const handleOpenDateDialog = (target) => setDateDialog({ open: true, target });
     const handleCloseDateDialog = () => setDateDialog({ ...dateDialog, open: false });
 
     const handleDateSelect = (value) => {
+        const dayCode = value.format("ddd").toUpperCase();
         if (dateDialog.target === "start") {
             setStartDate(value);
             setStartTime("");
+            setSelectedStartDay(dayCode);
         } else {
             setEndDate(value);
             setEndTime("");
+            setSelectedEndDay(dayCode);
         }
         handleCloseDateDialog();
     };
@@ -111,9 +195,11 @@ const DateTimeSelector = ({
         if (dateDialog.target === "start") {
             setStartDate(null);
             setStartTime("");
+            setSelectedStartDay(null);
         } else {
             setEndDate(null);
             setEndTime("");
+            setSelectedEndDay(null);
         }
     };
 
@@ -137,21 +223,6 @@ const DateTimeSelector = ({
         }
     };
 
-    const getAvailableEndTimes = () => {
-        if (!endDate) return [];
-
-        const startHour = parseInt(startTime.split(":")[0]);
-        const isToday = isTodayEnd;
-        const currentHour = now.hour();
-
-        return timeOptions.filter((time) => {
-            const hour = parseInt(time.split(":")[0]);
-            const afterStart = hour > startHour;
-            const afterNow = !isToday || hour > currentHour;
-            return afterStart && afterNow;
-        });
-    };
-
     const getTimeButtonStyle = (time, selectedTime) => {
         const isSelected = time === selectedTime;
         return {
@@ -171,40 +242,55 @@ const DateTimeSelector = ({
         };
     };
     const now = dayjs();
-    console.log("now", now);
     const isTodayStart = startDate && dayjs(startDate).isSame(now, "day");
     const isTodayEnd = endDate && dayjs(endDate).isSame(now, "day");
 
     const getFilteredTimeOptions = (isStart) => {
-        const base = isStart ? startDate : endDate;
+        const baseDate = isStart ? startDate : endDate;
+        const selectedDayCode = isStart ? selectedStartDay : selectedEndDay;
         const isToday = isStart ? isTodayStart : isTodayEnd;
-        const currentHour = now.hour();
-        const currentMinute = now.minute();
+        const currentTime = dayjs();
+        const currentHour = currentTime.hour();
+        const currentMinute = currentTime.minute();
 
-        const filteredTimeOptions = timeOptions.filter((time) => {
-            const [hour, minute] = time.split(":").map((v) => parseInt(v));
-
-            // 오늘이라면, 현재 시간 이후로만 필터링
-            if (isToday) {
-                return hour > currentHour || (hour === currentHour && minute > currentMinute);
-            }
-
-            return true; // 오늘이 아니면 모두 허용
-        });
-
-        if (endDate && endTime) {
-            // 종료 날짜와 시간이 선택되어 있을 경우
-            const endDateTime = dayjs(`${endDate.format("YYYY-MM-DD")}T${endTime}`);
-            // 시작시간이 종료시간보다 이후일 경우, 시작시간 필터링
-            return filteredTimeOptions.filter((time) => {
-                const [hour, minute] = time.split(":").map((v) => parseInt(v));
-                const startDateTime = dayjs(`${startDate.format("YYYY-MM-DD")}T${time}`);
-
-                return startDateTime.isBefore(endDateTime); // 종료시간 이후로만 선택 가능
-            });
+        if (!selectedDayCode || !openHours[selectedDayCode]?.isOpen) {
+            return []; // 선택된 요일이 유효하지 않거나 영업일이 아니면 빈 배열 반환
         }
 
-        return filteredTimeOptions;
+        const openTimeStr = openHours[selectedDayCode]?.openTime?.trim();
+        const closeTimeStr = openHours[selectedDayCode]?.closeTime?.trim();
+
+        if (!openTimeStr || !closeTimeStr) {
+            return []; // 영업 시작/종료 시간이 없으면 빈 배열 반환
+        }
+
+        const [openHour, openMinute] = openTimeStr.split(":").map(Number);
+        const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
+
+        const startTimeOfDay = dayjs().hour(openHour).minute(openMinute).second(0);
+        const endTimeOfDay = dayjs().hour(closeHour).minute(closeMinute).second(0);
+
+        const generatedTimes = [];
+        let current = startTimeOfDay.clone();
+        while (current.isBefore(endTimeOfDay) || current.isSame(endTimeOfDay)) {
+            generatedTimes.push(current.format("HH:mm"));
+            current = current.add(60, "minute"); // 1시간 단위로 생성 (조정 가능)
+            if (current.isSame(endTimeOfDay) && closeMinute > 0) {
+                generatedTimes.push(current.format("HH:mm"));
+                break;
+            } else if (current.isAfter(endTimeOfDay)) {
+                break;
+            }
+        }
+
+        return generatedTimes.filter((time) => {
+            const [hour, minute] = time.split(":").map(Number);
+
+            if (isToday && baseDate?.isSame(currentTime, "day")) {
+                return hour > currentHour || (hour === currentHour && minute >= currentMinute);
+            }
+            return true;
+        });
     };
 
     // 요일 매핑 테이블 정의
@@ -222,17 +308,7 @@ const DateTimeSelector = ({
 
     // 날짜의 요일에 따라 영어 코드 반환
     const getDayCode = (date) => {
-        const dayOfWeek = date.format("ddd").toUpperCase();
-        const mapping = {
-            MON: "MON",
-            TUE: "TUE",
-            WED: "WED",
-            THU: "THU",
-            FRI: "FRI",
-            SAT: "SAT",
-            SUN: "SUN",
-        };
-        return mapping[dayOfWeek];
+        return date.format("ddd").toUpperCase();
     };
 
     // 날짜 비활성화 함수 추가
@@ -242,7 +318,7 @@ const DateTimeSelector = ({
             return true;
         }
 
-        // 시작일 선택 중이고 종료일이 있는 경우, 종료일 이후면 비활성화
+        // 시작일 선택 중이고 종료일이 있는 경우, 종료일 이전이면 비활성화
         if (dateDialog.target === "start" && endDate && date.isAfter(endDate, "day")) {
             return true;
         }
