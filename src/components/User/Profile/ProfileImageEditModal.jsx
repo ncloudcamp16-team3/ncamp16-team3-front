@@ -161,7 +161,6 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
                     >
                         <Avatar
                             src={previewUrl || currentImage}
-                            alt="프로필 미리보기"
                             sx={{
                                 width: "100%",
                                 height: "100%",
