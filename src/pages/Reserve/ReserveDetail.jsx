@@ -87,8 +87,13 @@ const ReserveDetail = () => {
 
     // 요일 정보
     const today = dayjs().format("ddd").toUpperCase();
-    // const timeNow = dayjs.format("HH");
-    const inRange = facilityData?.openingHours?.[today]?.isOpen || false;
+    const timeNow = dayjs().format("HH:mm:ss");
+
+    const inRange =
+        (facilityData?.openingHours?.[today]?.isOpen &&
+            facilityData?.openingHours?.[today]?.openTime <= timeNow &&
+            facilityData?.openingHours?.[today]?.closeTime >= timeNow) ||
+        false;
 
     // API에서 데이터 가져오기
     useEffect(() => {
@@ -265,7 +270,7 @@ const ReserveDetail = () => {
                         color={inRange ? "success" : "default"}
                         sx={{ color: "#fff", mb: 1 }}
                     />
-                    {inRange ? (
+                    {facilityData?.openingHours?.[today]?.openTime && facilityData?.openingHours?.[today]?.closeTime ? (
                         <Typography sx={{ fontWeight: "bold", mb: 1 }}>
                             {facilityData?.openingHours?.[today]?.openTime.substring(0, 5)} -{" "}
                             {facilityData?.openingHours?.[today]?.closeTime.substring(0, 5)}
