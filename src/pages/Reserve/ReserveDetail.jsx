@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
 import {
     Box,
@@ -29,62 +29,17 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import ReviewCardItem from "./ReviewCardItem.jsx";
+import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-const transformScoreToChartData = (ratingRatio) => {
-    if (!ratingRatio || !Array.isArray(ratingRatio)) return [];
-
-    const scoreMap = {
-        "5Stars": 0,
-        "4Stars": 0,
-        "3Stars": 0,
-        "2Stars": 0,
-        "1Star": 0,
-    };
-
-    // ratingRatio = [[5, 1], [4, 2], ...] 이런 형태
-    ratingRatio.forEach(([star, count]) => {
-        if (star === 5) scoreMap["5Stars"] = count;
-        else if (star === 4) scoreMap["4Stars"] = count;
-        else if (star === 3) scoreMap["3Stars"] = count;
-        else if (star === 2) scoreMap["2Stars"] = count;
-        else if (star === 1) scoreMap["1Star"] = count;
-    });
-
-    const total = Object.values(scoreMap).reduce((sum, cur) => sum + cur, 0);
-
-    return [
-        {
-            name: "★5",
-            value: scoreMap["5Stars"],
-            percentage: total ? Math.round((scoreMap["5Stars"] / total) * 100) : 0,
-        },
-        {
-            name: "★4",
-            value: scoreMap["4Stars"],
-            percentage: total ? Math.round((scoreMap["4Stars"] / total) * 100) : 0,
-        },
-        {
-            name: "★3",
-            value: scoreMap["3Stars"],
-            percentage: total ? Math.round((scoreMap["3Stars"] / total) * 100) : 0,
-        },
-        {
-            name: "★2",
-            value: scoreMap["2Stars"],
-            percentage: total ? Math.round((scoreMap["2Stars"] / total) * 100) : 0,
-        },
-        { name: "★1", value: scoreMap["1Star"], percentage: total ? Math.round((scoreMap["1Star"] / total) * 100) : 0 },
-    ];
-};
 
 const ReserveDetail = () => {
     const { id } = useParams();
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [userWantReserve, setUserWantReserve] = useState(false);
     const { user } = useContext(Context);
+    const navigate = useNavigate();
 
     // 예약 시간과 날짜
     const [startDate, setStartDate] = useState(null);
@@ -99,6 +54,7 @@ const ReserveDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // 별점 업데이트
     const [chartData, setChartData] = useState([]);
 
     // NaverPay
@@ -108,13 +64,25 @@ const ReserveDetail = () => {
     const { showModal } = useContext(Context);
 
     // 리뷰 삭제 관련
-    const handleReviewDelete = async (reviewId) => {
+    const handleReviewDelete = async (review) => {
         try {
-            await deleteReview(reviewId);
-            // 리뷰 목록 재요청 or 상태 업데이트
-            setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
-        } catch (error) {
-            setError(error.message);
+            const reviewId = review.id;
+            setLoading(true);
+            setError(null);
+            const response = await deleteReview(reviewId);
+            const data = response;
+
+            console.log(data);
+
+            setFacilityData(data.facility);
+            setReviews(data.reviews || []);
+            setChartData(transformScoreToChartData(data.ratingRatio));
+            showModal("", "리뷰가 삭제되었습니다.");
+        } catch (err) {
+            console.error("리뷰를 불러오는데 실패했습니다:", err);
+            setError("리뷰를 불러오는데 실패했습니다. 다시 시도해주세요.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -345,7 +313,9 @@ const ReserveDetail = () => {
                 <TitleBar
                     sx={{ width: "100%", display: "flex" }}
                     name="편의시설 상세정보"
-                    {...(userWantReserve ? { onBack: () => setUserWantReserve(false) } : {})}
+                    {...(userWantReserve
+                        ? { onBack: () => setUserWantReserve(false) }
+                        : { onBack: () => navigate("/reserve") })}
                 />
                 <Divider sx={{ width: "100%" }} />
                 <Box sx={{ width: "100%", display: "flex" }}>
@@ -459,6 +429,7 @@ const ReserveDetail = () => {
                                 setEndTime={setEndTime}
                                 isTimetableEmpty={isTimetableEmpty}
                                 setIsTimetableEmpty={setIsTimetableEmpty}
+                                transformScoreToChartData={transformScoreToChartData}
                             />
                         </Box>
                     ))}
@@ -587,10 +558,15 @@ const ReserveDetail = () => {
                                     review={review}
                                     user={user}
                                     handleReviewDelete={handleReviewDelete}
+                                    setChartData={setChartData}
+                                    setReviews={setReviews}
+                                    setFacilityData={setFacilityData}
+                                    setLoading={setLoading}
+                                    setError={setError}
                                 />
                             ))
                         ) : (
-                            <Typography>리뷰가 없습니다.</Typography>
+                            <Typography sx={{ ml: 3 }}>리뷰가 없습니다.</Typography>
                         )}
                     </Grid>
                 </Box>
