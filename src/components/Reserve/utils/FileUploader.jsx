@@ -23,10 +23,11 @@ const UploadBox = styled(Box)(({ theme }) => ({
 }));
 
 const PreviewImage = styled("img")({
-    width: 100,
-    height: 100,
-    objectFit: "cover",
+    maxWidth: "100%",
+    maxHeight: 150,
+    objectFit: "contain",
     borderRadius: 4,
+    marginBottom: 8,
 });
 
 const FileUploader = ({ onFileChange }) => {
@@ -54,41 +55,46 @@ const FileUploader = ({ onFileChange }) => {
     };
 
     return (
-        <Box sx={{ width: "100%", mt: 2 }}>
-            {preview && (
-                <Box mb={2} position="relative" display="inline-block">
-                    <PreviewImage src={preview} alt="preview" />
-                    <IconButton
-                        size="small"
-                        onClick={removeFile}
-                        sx={{
-                            position: "absolute",
-                            top: -10,
-                            right: -10,
-                            bgcolor: "white",
-                            boxShadow: 1,
-                            "&:hover": { bgcolor: "grey.100" },
-                        }}
-                    >
-                        <DeleteIcon fontSize="small" />
-                    </IconButton>
+        <Box sx={{ width: "80%", mt: 2 }}>
+            {preview ? (
+                <Box display="flex" flexDirection="column" alignItems="center">
+                    <Box position="relative" display="inline-block">
+                        <PreviewImage src={preview} alt="preview" />
+                        <IconButton
+                            size="small"
+                            onClick={removeFile}
+                            sx={{
+                                position: "absolute",
+                                top: -10,
+                                right: -10,
+                                bgcolor: "white",
+                                boxShadow: 1,
+                                "&:hover": { bgcolor: "grey.100" },
+                            }}
+                        >
+                            <DeleteIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
                 </Box>
+            ) : (
+                <>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        style={{ display: "none" }}
+                        id="file-upload"
+                    />
+                    <label htmlFor="file-upload">
+                        <UploadBox>
+                            <CloudUploadIcon fontSize="large" color="action" />
+                            <Typography variant="h6" color="textSecondary">
+                                사진 첨부하기
+                            </Typography>
+                        </UploadBox>
+                    </label>
+                </>
             )}
-            <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-                id="file-upload"
-            />
-            <label htmlFor="file-upload">
-                <UploadBox>
-                    <CloudUploadIcon fontSize="large" color="action" />
-                    <Typography variant="h6" color="textSecondary">
-                        사진 첨부하기
-                    </Typography>
-                </UploadBox>
-            </label>
         </Box>
     );
 };

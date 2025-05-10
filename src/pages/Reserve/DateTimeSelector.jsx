@@ -149,7 +149,7 @@ const DateTimeSelector = ({
                     if (selectedStartDay === selectedEndDay && startTime) {
                         const selectedStartHour = parseInt(startTime.split(":")[0]);
                         newEndTimeOptions = newEndTimeOptions.filter(
-                            (time) => parseInt(time.split(":")[0]) > selectedStartHour
+                            (time) => parseInt(time.split(":")[0]) >= selectedStartHour
                         );
                     }
 
