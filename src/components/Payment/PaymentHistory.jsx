@@ -44,7 +44,7 @@ export const PaymentHistory = ({ payments, loading }) => {
         <Container
             disableGutters
             sx={{
-                paddingTop: "145px",
+                paddingTop: "1px",
                 bgcolor: "background.paper",
             }}
         >

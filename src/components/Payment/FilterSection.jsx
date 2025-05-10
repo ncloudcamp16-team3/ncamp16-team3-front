@@ -14,10 +14,20 @@ export const FilterSection = ({
     setPeriodSelect,
 }) => {
     const handlePeriodChange = (value) => {
-        setPeriodSelect(value);
-
         const today = dayjs();
         let newStart = null;
+
+        // ✅ 토글: 이미 '직접입력' 상태면 다시 누르면 초기화
+        if (value === "직접입력") {
+            if (periodSelect === "직접입력") {
+                setPeriodSelect(""); // 초기화
+                return;
+            }
+            setPeriodSelect("직접입력");
+            return;
+        }
+
+        setPeriodSelect(value);
 
         switch (value) {
             case "15일":
@@ -104,19 +114,19 @@ export const FilterSection = ({
                     <PeriodSelector selected={periodSelect} onChange={handlePeriodChange} />
                 </Box>
 
-                <Box
-                    sx={{
-                        flexShrink: 1,
-                        flexGrow: 1,
-                        minWidth: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        justifyContent: "center",
-                        width: "50%",
-                    }}
-                >
-                    {periodSelect === "직접입력" && (
+                {periodSelect === "직접입력" && (
+                    <Box
+                        sx={{
+                            flexShrink: 1,
+                            flexGrow: 1,
+                            minWidth: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                            justifyContent: "center",
+                            width: "50%",
+                        }}
+                    >
                         <Box sx={{ width: "100%", mt: 2 }}>
                             <SimpleDateRangeSelector
                                 startDate={startDate.format("YYYY-MM-DD")}
@@ -124,27 +134,28 @@ export const FilterSection = ({
                                 onDateChange={handleDateChange}
                             />
                         </Box>
-                    )}
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-                        <Box
-                            sx={{
-                                bgcolor: "#F97316",
-                                borderRadius: "20px",
-                                width: "60px",
-                                height: "30px",
-                                textAlign: "center",
-                                cursor: "pointer",
-                                padding: "2px",
-                                color: "white",
-                                lineHeight: "26px",
-                                fontWeight: "bold",
-                            }}
-                            onClick={() => onSearch(startDate, endDate)}
-                        >
-                            검색
+
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+                            <Box
+                                sx={{
+                                    bgcolor: "#F97316",
+                                    borderRadius: "20px",
+                                    width: "60px",
+                                    height: "30px",
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    padding: "2px",
+                                    color: "white",
+                                    lineHeight: "26px",
+                                    fontWeight: "bold",
+                                }}
+                                onClick={() => onSearch(startDate, endDate)}
+                            >
+                                검색
+                            </Box>
                         </Box>
                     </Box>
-                </Box>
+                )}
             </Box>
         </Paper>
     );
