@@ -36,35 +36,6 @@ export const getFacilityToReserveById = (id) => {
     });
 };
 
-export const getReserveListById = ({ id }) => {
-    return instance
-        .get(`${API_URL}/lists`, {
-            params: {
-                id,
-            },
-        })
-        .then((response) => response.data)
-        .catch((error) => {
-            console.error("예약 목록을 불러오는 데 실패했습니다.", error);
-            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
-        });
-};
-
-export const getReserveDetailById = ({ uid, rid }) => {
-    return instance
-        .get(`${API_URL}/detail`, {
-            params: {
-                uid,
-                rid,
-            },
-        })
-        .then((response) => response.data)
-        .catch((error) => {
-            console.error("예약 정보를 불러오는 데 실패했습니다.", error);
-            throw error; // 에러를 다시 던져서 호출한 곳에서 처리
-        });
-};
-
 export const addReview = async ({ formData }) => {
     return await instance
         .post(`${API_URL}/facility/review`, formData, {
@@ -125,28 +96,24 @@ export const cancelReserve = (id) => {
 
 export const putReview = async ({ id, formData }) => {
     return await instance
-        .put(`${API_URL}/facility/review${id}`, formData, {
+        .put(`${API_URL}/facility/review/${id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
         })
         .then((response) => response)
         .catch((error) => {
-            console.error("리뷰 업로드에 실패했습니다.", error);
+            console.error("리뷰 수정에 실패했습니다.", error);
             throw error;
         });
 };
 
 export const deleteReview = async (id) => {
     return await instance
-        .delete(`${API_URL}/facility/review${id}`, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        })
-        .then((response) => response)
+        .delete(`${API_URL}/facility/review/${id}`)
+        .then((response) => response.data)
         .catch((error) => {
-            console.error("리뷰 업로드에 실패했습니다.", error);
+            console.error("리뷰 삭제에 실패했습니다.", error);
             throw error;
         });
 };

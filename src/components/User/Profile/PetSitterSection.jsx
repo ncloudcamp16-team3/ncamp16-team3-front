@@ -11,11 +11,6 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
     // 디버깅을 위한 로그 추가
     useEffect(() => {
         if (sitterInfo) {
-            console.log("PetSitterSection - sitterInfo:", sitterInfo);
-            console.log("grown 값:", sitterInfo.grown);
-            console.log("grown 타입:", typeof sitterInfo.grown);
-            console.log("petTypesFormatted:", sitterInfo.petTypesFormatted);
-
             // 로컬 스토리지에서 펫시터 정보 로깅
             try {
                 const localInfo = localStorage.getItem("petSitterInfo");
@@ -150,7 +145,7 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                     <InfoRow label="반려동물" value="없음" />
                                 )}
 
-                                <InfoRow label="임시보호 경험" value={sitterInfo.sitterExp ? "있음" : "없음"} />
+                                <InfoRow label="펫시터 경험" value={sitterInfo.experience ? "있음" : "없음"} />
                                 <InfoRow label="주거 형태" value={sitterInfo.houseType} />
                                 <Box
                                     sx={{
@@ -293,7 +288,9 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                                 <InfoRow
                                     label="펫시터 경험"
                                     value={
-                                        sitterInfo?.sitterExp || getSitterInfoFromLocalStorage()?.sitterExp
+                                        sitterInfo.experience === true ||
+                                        sitterInfo.experience === "true" ||
+                                        String(sitterInfo.experience).toLowerCase() === "true"
                                             ? "있음"
                                             : "없음"
                                     }
