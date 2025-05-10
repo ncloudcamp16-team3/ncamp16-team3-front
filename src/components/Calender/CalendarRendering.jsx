@@ -3,7 +3,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "/src/css/calendar/cal.css";
 import { Box, Typography, Button } from "@mui/material";
-import TitleBar from "../../components/Global/TitleBar.jsx";
 import ScheduleFormCard from "../../components/Calender/ScheduleFormCard.jsx";
 import { getScheduleAll, getEventAll, getReserveAll } from "../../services/calendarService.js";
 import { Context } from "../../context/Context.jsx";
@@ -143,16 +142,33 @@ const CalendarRendering = () => {
 
     return (
         <>
-            <Box style={{ backgroundColor: "#F2DFCE", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-                <div style={{ backgroundColor: "white", borderBottom: "1px #ccc solid" }}>
-                    <TitleBar name="캘린더" />
-                </div>
+            <Box
+                style={{
+                    backgroundColor: "#F2DFCE",
+                    minHeight: "90vh",
+                    flexDirection: "column",
+                }}
+            >
+                <Box
+                    sx={{
+                        backgroundColor: "white",
+                        borderBottom: "1px solid #ccc",
+                        fontSize: "20px",
+                        fontWeight: "bold",
+                        height: "60px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>캘린더</Typography>
+                </Box>
                 <Box
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
                     textAlign="center"
-                    sx={{ height: "390px", backgroundColor: "white", color: "white" }}
+                    sx={{ backgroundColor: "white", color: "white", pb: 2 }}
                 >
                     <Calendar
                         prev2Label={null}
