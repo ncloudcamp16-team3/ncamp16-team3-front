@@ -12,6 +12,7 @@ import PetListSection from "../../components/User/Profile/PetListSection";
 import PetSitterSection from "../../components/User/Profile/PetSitterSection";
 // 전역 컴포넌트
 import GlobalSnackbar from "../../components/Global/GlobalSnackbar";
+import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal";
 // axios 인스턴스
 import instance from "../../services/axiosInstance.js";
 
@@ -33,6 +34,12 @@ const MyPage = () => {
     const [openQuitPetsitterModal, setOpenQuitPetsitterModal] = useState(false);
     const [openProfileImageModal, setOpenProfileImageModal] = useState(false);
     const [withdrawalInput, setWithdrawalInput] = useState("");
+
+    // 반려동물 삭제 확인 모달 상태 추가
+    const [petDeleteConfirmModal, setPetDeleteConfirmModal] = useState({
+        open: false,
+        petId: null,
+    });
 
     // 로딩 및 오류 상태
     const [isLoading, setIsLoading] = useState(true);
@@ -69,7 +76,7 @@ const MyPage = () => {
                         path: response.data.profileImageUrl,
                     }));
 
-                    // 반려동물 정보 처리 - 주요 수정 부분
+                    // 반려동물 정보 처리
                     if (response.data.pets && Array.isArray(response.data.pets)) {
                         const petsWithProfiles = response.data.pets.map((pet) => {
                             // 프로필 이미지 URL 찾기 로직 개선
@@ -204,35 +211,50 @@ const MyPage = () => {
         navigate("/add-pet");
     };
 
+    // 반려동물 삭제 확인 모달 핸들러 추가
+    const handleOpenDeletePetModal = (petId) => {
+        setPetDeleteConfirmModal({
+            open: true,
+            petId: petId,
+        });
+    };
+
+    const handleCloseDeletePetModal = () => {
+        setPetDeleteConfirmModal({
+            open: false,
+            petId: null,
+        });
+    };
+
+    // 반려동물 삭제 함수 수정
     const handleDeletePet = async (petId) => {
-        if (window.confirm("정말로 이 반려동물 정보를 삭제하시겠습니까?")) {
-            try {
-                await instance.delete(`/pet/${petId}`);
-                setPets(pets.filter((pet) => pet.id !== petId));
+        // 모달을 통해 확인을 받은 경우에만 실행
+        try {
+            await instance.delete(`/pet/${petId}`);
+            setPets(pets.filter((pet) => pet.id !== petId));
+            setSnackbar({
+                open: true,
+                message: "반려동물 정보가 삭제되었습니다.",
+                severity: "success",
+            });
+        } catch (err) {
+            console.error("반려동물 삭제 실패:", err);
+
+            if (err.response && err.response.status === 401) {
                 setSnackbar({
                     open: true,
-                    message: "반려동물 정보가 삭제되었습니다.",
-                    severity: "success",
-                });
-            } catch (err) {
-                console.error("반려동물 삭제 실패:", err);
-
-                if (err.response && err.response.status === 401) {
-                    setSnackbar({
-                        open: true,
-                        message: "인증이 만료되었습니다. 다시 로그인해주세요.",
-                        severity: "error",
-                    });
-                    setTimeout(() => navigate("/login"), 2000);
-                    return;
-                }
-
-                setSnackbar({
-                    open: true,
-                    message: err.response?.data?.message || "반려동물 정보 삭제 중 오류가 발생했습니다.",
+                    message: "인증이 만료되었습니다. 다시 로그인해주세요.",
                     severity: "error",
                 });
+                setTimeout(() => navigate("/login"), 2000);
+                return;
             }
+
+            setSnackbar({
+                open: true,
+                message: err.response?.data?.message || "반려동물 정보 삭제 중 오류가 발생했습니다.",
+                severity: "error",
+            });
         }
     };
 
@@ -479,7 +501,7 @@ const MyPage = () => {
                     <PetListSection
                         pets={pets}
                         onEditPet={handleEditPet}
-                        onDeletePet={handleDeletePet}
+                        onDeletePet={handleOpenDeletePetModal}
                         hover={hover}
                         onHoverEnter={handleHoverEnter}
                         onHoverLeave={handleHoverLeave}
@@ -534,6 +556,22 @@ const MyPage = () => {
                         onClose={handleCloseProfileImageModal}
                         currentImage={user?.path || "/src/assets/images/User/profile-pic.jpg"}
                         onImageUpdate={handleProfileImageUpdate}
+                    />
+
+                    {/* 반려동물 삭제 확인 모달  */}
+                    <GlobalConfirmModal
+                        open={petDeleteConfirmModal.open}
+                        onClose={handleCloseDeletePetModal}
+                        onConfirm={() => {
+                            if (petDeleteConfirmModal.petId) {
+                                handleDeletePet(petDeleteConfirmModal.petId);
+                                handleCloseDeletePetModal();
+                            }
+                        }}
+                        title="반려동물 삭제"
+                        description="정말로 이 반려동물 정보를 삭제하시겠습니까?"
+                        confirmText="삭제"
+                        cancelText="취소"
                     />
 
                     {/* 스낵바  */}
