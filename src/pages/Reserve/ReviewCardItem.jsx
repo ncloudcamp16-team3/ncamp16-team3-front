@@ -88,22 +88,21 @@ const ReviewCardItem = ({
                             {image ? (
                                 <CardMedia
                                     component="img"
-                                    height="180"
+                                    height="90"
                                     image={image}
                                     alt="review"
-                                    sx={{ borderRadius: 1, cursor: "pointer", boxShadow: 3 }}
+                                    sx={{ cursor: "pointer" }}
                                     onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
                                 />
                             ) : (
                                 <Box
                                     onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
                                     sx={{
-                                        height: 180,
+                                        height: 90,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
                                         border: "1px dashed #ccc",
-                                        borderRadius: 1,
                                         cursor: "pointer",
                                         color: "#888",
                                         fontSize: 14,

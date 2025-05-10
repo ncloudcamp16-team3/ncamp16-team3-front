@@ -145,7 +145,7 @@ const CalendarRendering = () => {
             <Box
                 style={{
                     backgroundColor: "#F2DFCE",
-                    minHeight: "90vh",
+                    minHeight: "100vh",
                     flexDirection: "column",
                 }}
             >
