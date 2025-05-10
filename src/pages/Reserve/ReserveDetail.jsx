@@ -29,6 +29,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import ReviewCardItem from "./ReviewCardItem.jsx";
+import ImgSlide from "../../components/Global/ImgSlider.jsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -347,7 +348,7 @@ const ReserveDetail = () => {
                     name="편의시설 상세정보"
                     {...(userWantReserve ? { onBack: () => setUserWantReserve(false) } : {})}
                 />
-                <Divider sx={{ width: "100%" }} />
+                <ImgSlide photos={facilityData.imagePaths} />
                 <Box sx={{ width: "100%", display: "flex" }}>
                     {/* 상단 이미지 */}
                     <Card sx={{ mb: 2, width: "100%", height: "100%", boxShadow: "none" }}>

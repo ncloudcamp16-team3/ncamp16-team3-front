@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, InputBase, Typography } from "@mui/material";
-import ImgSlide from "../../components/Board/ImgSlider.jsx";
+import ImgSlide from "../../components/Global/ImgSlider.jsx";
 import PostTitleBar from "../../components/Board/PostTitleBar.jsx";
 import DeletePostModal from "../../components/Board/DeletePostModal.jsx";
 import WriterInfo from "../../components/Board/WriterInfo.jsx";
@@ -270,7 +270,7 @@ const PostDetails = () => {
                     margin: "0 10px 80px 10px",
                 }}
             >
-                {postData?.imageUrls?.length > 0 && <ImgSlide photos={postData.imageUrls} />}
+                {postData?.imageUrls?.length > 0 && <ImgSlide photos={postData.imageUrls} borderRadius={true} />}
                 <WriterInfo postData={postData} />
                 <Typography
                     sx={{

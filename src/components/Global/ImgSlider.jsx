@@ -54,7 +54,7 @@ const NextArrow = ({ onClick }) => (
     />
 );
 
-const ImgSlide = ({ photos }) => {
+const ImgSlide = ({ photos, borderRadius }) => {
     const settings = {
         infinite: true,
         speed: 500,
@@ -77,7 +77,7 @@ const ImgSlide = ({ photos }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 position: "relative",
-                borderRadius: "20px",
+                borderRadius: borderRadius ? "20px" : undefined,
                 mb: "10px",
                 overflow: "hidden",
             }}
