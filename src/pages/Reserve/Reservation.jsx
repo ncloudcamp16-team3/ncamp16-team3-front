@@ -47,7 +47,7 @@ const Reservation = () => {
                     variant="contained"
                     sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 2, mt: 8 }}
                     size="large"
-                    onClick={() => navigate(`/reserve/list`)}
+                    onClick={() => navigate(`/payment`)}
                     fullWidth
                 >
                     예약 목록 가기
