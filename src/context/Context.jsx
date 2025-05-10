@@ -145,7 +145,7 @@ export function Provider({ children }) {
         setIsChatRoomOpen(isChatRoom);
     }, [location.pathname]);
 
-    const [chatList, setChatList] = useState(false);
+    const [chatList, setChatList] = useState([]);
     const [chatLoad, setChatLoad] = useState([]);
 
     const [notifications, setNotifications] = useState([]);

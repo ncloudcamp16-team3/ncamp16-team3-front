@@ -31,13 +31,13 @@ const ListContent = () => {
     useInfiniteScroll(setPage);
     const today = useTodayTimer().locale("en").format("ddd");
 
-    const { latitude, longitude } = useGeolocation();
+    const geolocation = useGeolocation();
 
     useEffect(() => {
-        if (latitude && longitude) {
-            setLocation({ latitude, longitude });
+        if (geolocation.latitude && geolocation.longitude) {
+            setLocation({ latitude: geolocation.latitude, longitude: geolocation.longitude });
         }
-    }, [latitude, longitude, setLocation]);
+    }, [geolocation.latitude, geolocation.longitude]);
 
     useEffect(() => {
         console.log("시설 useEffect 들어오나 확인용");
@@ -88,8 +88,8 @@ const ListContent = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             console.log("[5초 주기] 현재 시설 데이터:", data);
-            console.log("latitude" + latitude);
-            console.log("longitude" + longitude);
+            console.log("geolocation latitude:", geolocation.latitude);
+            console.log("geolocation longitude:", geolocation.longitude);
         }, 3000);
 
         return () => clearInterval(interval); // 언마운트 시 인터벌 정리

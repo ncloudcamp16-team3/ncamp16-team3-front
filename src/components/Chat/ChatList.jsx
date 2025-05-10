@@ -55,19 +55,23 @@ const ChatList = () => {
                     await nc.subscribe(ch.id);
 
                     let lastMessageText = "";
-                    if (ch.last_message?.content) {
-                        try {
-                            const parsed = JSON.parse(ch.last_message.content);
-                            if (typeof parsed.content === "string") {
-                                lastMessageText = parsed.content;
-                            } else if (typeof parsed.content === "object" && parsed.content.text) {
-                                lastMessageText = parsed.content.text;
-                            } else {
-                                lastMessageText = "알 수 없는 메시지";
-                            }
-                        } catch {
-                            lastMessageText = ch.last_message.content;
+
+                    try {
+                        const raw = ch.last_message?.content;
+                        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+                        if (typeof parsed.content === "string") {
+                            lastMessageText = parsed.content;
+                        } else if (parsed.customType === "PETSITTER" && parsed.content?.sitterName) {
+                            lastMessageText = `[펫시터] ${parsed.content.sitterName}`;
+                        } else if (parsed.customType === "MATCH" && parsed.content?.text) {
+                            lastMessageText = parsed.content.text;
+                        } else {
+                            lastMessageText = "알 수 없는 메시지";
                         }
+                    } catch (err) {
+                        console.error("last_message 파싱 실패:", err);
+                        lastMessageText = "메시지를 불러올 수 없음";
                     }
 
                     let unreadCount = 0;
