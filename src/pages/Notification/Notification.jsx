@@ -269,7 +269,7 @@ const Notification = () => {
                             ? last?.message || "불러오는 중..."
                             : notification.body?.trim()
                               ? notification.body
-                              : "삭제된 메세지입니다";
+                              : "삭제된 댓글입니다";
                     return (
                         <div
                             key={notification.id}
