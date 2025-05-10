@@ -118,7 +118,7 @@ const ReservationDetail = () => {
                 {canCancel && (
                     <Button
                         variant="contained"
-                        sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
+                        sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}
                         size="large"
                         fullWidth
                         onClick={() => setOpen(true)}

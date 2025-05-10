@@ -162,7 +162,7 @@ const Review = () => {
     }
 
     return (
-        <Container>
+        <Container disableGutters>
             <TitleBar name="리뷰 작성" />
             <Divider />
             <Box
@@ -200,7 +200,7 @@ const Review = () => {
                     }}
                 >
                     <Typography sx={{ fontWeight: "bold", fontSize: 24 }}>{facilityInfo?.name}</Typography>
-                    <Typography component="h2" variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+                    <Typography component="h2" variant="h5" sx={{ pt: 2, pb: 2, fontWeight: "bold" }}>
                         만족도 평가
                     </Typography>
                     <StarRatingConstructor
@@ -210,7 +210,7 @@ const Review = () => {
                         setHover={setHover}
                         starSize="large"
                     />
-                    <Box sx={{ ml: 1, display: "flex", justifyContent: "center" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
                         {starRating !== null && (
                             <Typography sx={{ fontWeight: "medium" }}>
                                 {labels[hover !== -1 ? hover : starRating]}
@@ -227,16 +227,15 @@ const Review = () => {
                     multiline
                     rows={6}
                     variant="outlined"
-                    sx={{ borderRadius: 3 }}
+                    sx={{ width: "80%", borderRadius: 3 }}
                     fullWidth
                 />
                 <FileUploader onFileChange={(file) => setImage(file)} />
                 <Button
                     variant="contained"
-                    sx={{ bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
+                    sx={{ width: "80%", bgcolor: "#E9A260", borderRadius: 3, mb: 1 }}
                     size="large"
                     onClick={handleClick}
-                    fullWidth
                 >
                     등 록
                 </Button>
