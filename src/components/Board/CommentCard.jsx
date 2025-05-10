@@ -206,6 +206,12 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
                             <TextField
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault();
+                                        requestCommentUpdate();
+                                    }
+                                }}
                                 variant={updateAble ? "outlined" : "standard"}
                                 fullWidth
                                 multiline

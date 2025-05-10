@@ -82,7 +82,7 @@ function NoticeList() {
                 id: item.id,
                 title: item.title,
                 content: item.content,
-                image: item.photos[0].url,
+                image: item.photos?.length > 0 ? item.photos[0]?.url : null,
                 date: new Date(item.createdAt).toLocaleString(),
             }));
 

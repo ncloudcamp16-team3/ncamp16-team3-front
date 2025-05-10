@@ -4,7 +4,7 @@ import { Container, Box, Typography, TextField, Button, Divider } from "@mui/mat
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import FileUploader from "../../components/Reserve/utils/FileUploader.jsx";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
-import { addReview, getFacilityNameAndThumbnail } from "../../services/reserveService.js";
+import { addReview, getFacilityNameAndThumbnail, getReserveDetail } from "../../services/reserveService.js";
 import Loading from "../../components/Global/Loading.jsx";
 import { Context } from "../../context/Context.jsx";
 import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx";
@@ -23,6 +23,7 @@ const Review = () => {
     const { showModal } = useContext(Context);
     const { globalConfirmModal, setGlobalConfirmModal } = useReserveContext();
     const [hover, setHover] = useState(-1);
+    const [invalidAccess, setInvalidAccess] = useState(false);
 
     const labels = {
         0: "평가 안함",
@@ -43,11 +44,22 @@ const Review = () => {
                 console.warn("예약 ID가 유효하지 않습니다.");
                 return;
             }
+
+            const reserveData = await getReserveDetail(id);
+            reserveData.reviewDto;
+
             setLoading(true);
             setError(null);
             try {
                 const result = await getFacilityNameAndThumbnail(id);
                 setFacilityInfo(result);
+
+                const now = new Date();
+                const res = await getReserveDetail(id);
+                const reserveData = res.data;
+                if (new Date(reserveData.entryTime) > now || reserveData.reviewDto) {
+                    setInvalidAccess(true);
+                }
             } catch (err) {
                 setError("시설 정보를 불러오는 중 오류 발생: " + err.message);
             } finally {
@@ -134,13 +146,21 @@ const Review = () => {
         );
     }
 
-    if (facilityInfo?.errorMsg) {
+    const ErrorScreen = (errorMessage) => {
         return (
             <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
-                <Typography>{facilityInfo.errorMsg}</Typography>
+                <Typography>{errorMessage}</Typography>
                 <Button onClick={() => navigate(-1)}>이전 화면으로 돌아가기</Button>
             </Container>
         );
+    };
+
+    if (facilityInfo?.errorMsg) {
+        return ErrorScreen(facilityInfo?.errorMsg);
+    }
+
+    if (invalidAccess) {
+        return ErrorScreen("잘못된 접근입니다");
     }
 
     return (

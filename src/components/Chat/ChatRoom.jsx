@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Box, Typography, TextField, IconButton, CircularProgress } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
 import SendIcon from "@mui/icons-material/Send";
 import LeftArrow from "../../assets/images/Global/left-arrow-black.svg";
 import ChatMessageLeft from "./ChatMessageLeft";
@@ -10,36 +9,7 @@ import MatchStart from "./MatchStart.jsx";
 import { Context } from "../../context/Context";
 import { useNavigate, useParams } from "react-router-dom";
 import { sendChatNotification } from "../../services/notificationService.js";
-
-const PetSitterStart = ({ sitter }) => {
-    const renderPetInfo = () => {
-        if (sitter.petInfo && sitter.petInfo !== "정보 없음") {
-            return `반려동물: ${sitter.petInfo}`;
-        }
-        return "반려동물 없음";
-    };
-
-    return (
-        <Box textAlign="center" py={2}>
-            <Box display="flex" justifyContent="center" gap={2} mb={1}>
-                <Box textAlign="center">
-                    <Avatar
-                        src={sitter.image}
-                        alt={sitter.sitterName}
-                        sx={{ width: 60, height: 60, margin: "0 auto" }}
-                    />
-                    <Typography variant="body2">
-                        {sitter.sitterName} ({sitter.age})
-                    </Typography>
-                </Box>
-            </Box>
-            <Typography fontWeight="bold">펫시터 {sitter.sitterName}님과 채팅을 시작합니다.</Typography>
-            <Typography variant="body2" color="text.secondary">
-                {renderPetInfo()} / {sitter.experience ? "펫시터 경험 있음" : "펫시터 경험 없음"}
-            </Typography>
-        </Box>
-    );
-};
+import PetSitterStart from "./PetSitterStart.jsx";
 
 const ChatRoom = () => {
     const { user, nc, isChatOpen, isChatRoomOpen } = useContext(Context);

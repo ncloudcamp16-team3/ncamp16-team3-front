@@ -87,49 +87,35 @@ const ProtectedRoute = () => {
         })();
     }, []);
 
-    // ✅ FCM 설정은 로그인/유저 정보 세팅 완료 후 지연 실행
     useEffect(() => {
         if (!user?.id) return;
 
         const timer = setTimeout(() => {
             setupFCM(user.id);
-        }, 1500); // 로그인 후 1.5초 뒤에 실행
+        }, 1500);
 
         return () => clearTimeout(timer);
     }, [user?.id]);
 
-    // 🔧 FCM 설정 함수 분리
     const setupFCM = async (userId, maxRetries = 3) => {
         let attempts = 0;
-
         const mobile = /Mobi|Android/i.test(navigator.userAgent);
         const dev = import.meta.env.MODE === "development";
 
         const trySetup = async () => {
             try {
                 registerSW();
-
                 const permission = await Notification.requestPermission();
                 if (permission !== "granted") return;
-
                 const currentToken = await getToken(messaging, {
                     vapidKey: "BJfLUXGb7eC1k4y9ihVlJp7jzWlgp_gTKjqggd4WKX9U6xQsRelQupBMT9Z3PdvFYpYJKolSaguWXHzCUWVugXc",
                 });
-
                 if (!currentToken) throw new Error("FCM 토큰을 가져오지 못했습니다.");
-
-                console.log("Current FCM Token:", currentToken);
                 await saveOrUpdateFcmToken({ userId, fcmToken: currentToken, mobile, dev });
-                console.log("FCM 토큰이 새로 저장 또는 갱신되었습니다.");
             } catch (error) {
                 attempts++;
-                console.warn(`FCM 설정 시도 실패 (${attempts}/${maxRetries}):`, error);
-                if (attempts < maxRetries) {
-                    // 1초 후 재시도
-                    setTimeout(trySetup, 1000);
-                } else {
-                    console.error("FCM 설정 실패: 최대 재시도 횟수 초과");
-                }
+                if (attempts < maxRetries) setTimeout(trySetup, 1000);
+                else console.error("FCM 설정 실패: 최대 재시도 초과");
             }
         };
 
@@ -137,53 +123,26 @@ const ProtectedRoute = () => {
     };
 
     const fetchRooms = async () => {
+        if (!nc || !user?.id || !isLogin) return;
         try {
             const roomList = await getMyChatRooms();
             const result = [];
-
             for (let room of roomList) {
                 const filter = { name: room.uniqueId };
                 const channels = await nc.getChannels(filter, {}, { per_page: 1 });
                 const edge = (channels.edges || [])[0];
                 if (!edge) continue;
-
                 const ch = edge.node;
                 await nc.subscribe(ch.id);
-
-                let lastMessageText = "";
-                if (ch.last_message?.content) {
-                    try {
-                        const parsed = JSON.parse(ch.last_message.content);
-                        if (typeof parsed.content === "string") {
-                            lastMessageText = parsed.content;
-                        } else if (typeof parsed.content === "object" && parsed.content.text) {
-                            lastMessageText = parsed.content.text;
-                        } else {
-                            lastMessageText = "알 수 없는 메시지";
-                        }
-                    } catch {
-                        lastMessageText = ch.last_message.content;
-                    }
-                }
-
-                let unreadCount = 0;
-                try {
-                    const unreadResult = await nc.unreadCount(ch.id);
-                    unreadCount = unreadResult.unread || 0;
-                } catch (err) {
-                    console.warn(`채널 ${ch.id} unreadCount 조회 실패`, err);
-                }
-
                 result.push({
                     id: ch.id,
                     name: room.nickname,
                     photo: room.profileUrl,
-                    lastMessage: lastMessageText || "",
+                    lastMessage: ch.last_message?.content || "",
                     lastMessageSentAt: ch.last_message?.sended_at || ch.updated_at,
-                    unreadCount,
+                    unreadCount: (await nc.unreadCount(ch.id)).unread || 0,
                 });
             }
-
             result.sort((a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt));
             setChatList(result);
         } catch (e) {
@@ -192,235 +151,98 @@ const ProtectedRoute = () => {
     };
 
     useEffect(() => {
-        const unsubscribe = onMessage(messaging, (payload) => {
-            const { type } = payload.data || {};
-            if (type === "FETCH_ROOMS") {
-                console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
-                setChatLoad(true);
-            }
-        });
+        if (chatLoad) {
+            fetchRooms();
+            setChatLoad(false);
+        }
+    }, [nc, user?.id, isLogin, chatLoad]);
 
-        return () => unsubscribe(); // 언마운트 시 정리
+    useEffect(() => {
+        const unsubscribe = onMessage(messaging, (payload) => {
+            if (payload.data?.type === "FETCH_ROOMS") setChatLoad(true);
+        });
+        return () => unsubscribe();
     }, [setChatLoad]);
 
     useEffect(() => {
-        if (!nc || !user?.id) return;
-        // const interval = setInterval(() => {
-        //     fetchRooms(); // 주기적으로 채팅방 정보 갱신
-        // }, 5000); // 5초마다
-        // return () => clearInterval(interval); // 언마운트 시 클리어
-        fetchRooms();
-        setChatLoad(false);
-    }, [nc, user?.id, chatLoad, setChatLoad]);
-
-    useEffect(() => {
-        if (!navigator.serviceWorker) return;
-
         const handleMessage = (event) => {
-            const { type } = event.data || {};
-            if (type === "FETCH_ROOMS") {
-                console.log("📨 서비스 워커로부터 FETCH_ROOMS 수신");
-                setChatLoad(true); // 또는 fetchRooms();
+            if (event.data?.type === "FETCH_ROOMS") {
+                setChatLoad(true);
                 fetchRooms();
             }
         };
-
-        navigator.serviceWorker.addEventListener("message", handleMessage);
-
-        return () => {
-            navigator.serviceWorker.removeEventListener("message", handleMessage);
-        };
-    }, [nc, user?.id, chatLoad, setChatLoad]);
+        navigator.serviceWorker?.addEventListener("message", handleMessage);
+        return () => navigator.serviceWorker?.removeEventListener("message", handleMessage);
+    }, [nc, user?.id]);
 
     useEffect(() => {
         const fetchAll = async () => {
             if (!user?.id) return;
-
             try {
-                // 1. 채팅방 새로고침
                 fetchRooms();
-                console.log("채팅방 리로드");
-
-                // 2. 알림 존재 여부 확인 및 리스트 조회
-                const [checkResult, notifications] = await Promise.all([
+                const [checkResult, notiList] = await Promise.all([
                     checkNotification(user.id),
                     getNotificationsByUserId(user.id),
                 ]);
-
                 setHasNewNotification(checkResult.exists);
-                setNotifications(notifications);
-            } catch (error) {
-                console.error("알림 정보 로딩 실패:", error);
+                setNotifications(notiList);
+            } catch (e) {
+                console.error("알림 정보 로딩 실패:", e);
             }
         };
-
         fetchAll();
 
         const handleVisibilityChange = () => {
-            if (document.visibilityState === "visible") {
-                fetchAll(); // 탭이 다시 보여질 때도 데이터 로딩
-            }
+            if (document.visibilityState === "visible") fetchAll();
         };
-
         document.addEventListener("visibilitychange", handleVisibilityChange);
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-        };
-    }, [nc, user?.id, chatLoad, setChatLoad]);
-
-    const parseMessage = (msg) => {
-        let parsed;
-        try {
-            parsed = JSON.parse(msg.content);
-        } catch {
-            parsed = { customType: "TEXT", content: msg.content };
-        }
-
-        let typeId = 1;
-        if (parsed.customType === "MATCH") typeId = 2;
-        else if (parsed.customType === "TRADE") typeId = 3;
-        else if (parsed.customType === "PETSITTER") typeId = 4;
-
-        return {
-            id: msg.message_id,
-            senderId: msg.sender?.id,
-            text: parsed.content,
-            type_id: typeId,
-            metadata: parsed,
-            photo: msg.sender?.profile,
-            parsed,
-        };
-    };
+        return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    }, [nc, user?.id]);
 
     useEffect(() => {
         if (!nc || !user?.id) return;
-
         const backgroundHandler = async (channel, msg) => {
-            if (!msg || !msg.sender?.id) return;
-
-            const { parsed } = parseMessage(msg);
-            const isMine = msg.sender.id === `ncid${user.id}`;
-            if (isMine) return; // 내 메시지는 무시
-
-            const numericSenderId = msg.sender.id.replace(/\D/g, "");
-
-            const payload = {
+            if (!msg?.sender?.id) return;
+            const parsed = JSON.parse(msg.content || "{}");
+            if (msg.sender.id === `ncid${user.id}`) return;
+            await sendChatNotification({
                 userId: user.id,
                 channelId: msg.channel_id,
-                senderId: numericSenderId,
+                senderId: msg.sender.id.replace(/\D/g, ""),
                 message: parsed.content,
                 type: parsed.customType,
                 createdAt: new Date().toISOString(),
-            };
-
-            try {
-                await sendChatNotification(payload);
-            } catch (err) {
-                console.error("알림 전송 실패:", err);
-            }
+            });
         };
-
-        if (!isChatOpen && !isChatRoomOpen) {
-            nc.bind("onMessageReceived", backgroundHandler);
-        }
-
-        return () => {
-            nc.unbind("onMessageReceived", backgroundHandler);
-        };
+        if (!isChatOpen && !isChatRoomOpen) nc.bind("onMessageReceived", backgroundHandler);
+        return () => nc.unbind("onMessageReceived", backgroundHandler);
     }, [nc, user.id, isChatOpen, isChatRoomOpen]);
 
-    // Notification List component
     const NotificationList = () => {
         useEffect(() => {
             const unsubscribe = onMessage(messaging, async (payload) => {
-                if (payload.notification) {
-                    return;
-                }
-
-                const { type } = payload.data || {};
-                console.log("🟢 FCM 수신:", payload.data); // 디버깅용
-                if (type === "FETCH_ROOMS") {
-                    console.log("💬 FETCH_ROOMS 수신, 채팅방 새로고침 트리거");
-                    setChatLoad(true);
-                    return;
-                }
-
-                console.log("Foreground message received:", payload);
-
-                const notificationData = payload?.data || {};
-
-                const newNotification = {
+                if (payload.notification) return;
+                if (payload.data?.type === "FETCH_ROOMS") return setChatLoad(true);
+                const noti = {
                     id: Date.now(),
-                    title: notificationData.title || "알림",
-                    body: notificationData.body || "",
-                    image: notificationData.icon || "/default-icon.png",
+                    title: payload.data?.title || "알림",
+                    body: payload.data?.body || "",
+                    image: payload.data?.icon || "/default-icon.png",
                     createdAt: new Date().toISOString(),
                 };
-
-                // 브라우저 알림
-                if (Notification.permission === "granted" && navigator.serviceWorker?.getRegistration) {
-                    navigator.serviceWorker.getRegistration().then((registration) => {
-                        if (registration) {
-                            const notificationOptions = {
-                                body: newNotification.body,
-                                icon: newNotification.image,
-                                data: newNotification,
-                            };
-
-                            registration.showNotification(newNotification.title, notificationOptions);
-                        }
-                    });
-                }
-
-                // setNotifications((prev) => [...prev, newNotification]);
-                setToastNotifications((prev) => [...prev, newNotification]);
+                setToastNotifications((prev) => [...prev, noti]);
                 setHasNewNotification(true);
-
-                // 새 알림 목록 가져오기
-                if (user?.id) {
-                    try {
-                        const data = await getNotificationsByUserId(user.id);
-                        setNotifications(data);
-                    } catch (err) {
-                        console.error("Error refreshing notifications after FCM:", err);
-                    }
-                }
-
-                setTimeout(() => {
-                    setToastNotifications((prev) => prev.filter((n) => n.id !== newNotification.id));
-                }, 5000);
+                setTimeout(() => setToastNotifications((prev) => prev.filter((n) => n.id !== noti.id)), 5000);
+                if (user?.id) setNotifications(await getNotificationsByUserId(user.id));
             });
-
             return () => unsubscribe();
-        }, [user, messaging, setNotifications, setHasNewNotification, setChatLoad, chatLoad]);
+        }, [user]);
 
         return (
             <>
                 {toastNotifications.map((notification) => (
-                    <Snackbar
-                        key={notification.id}
-                        open={true}
-                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                        sx={{
-                            top: "80px", // 알림이 좀 더 아래에서 나오도록 위치 조정
-                            zIndex: 20000,
-                        }}
-                    >
-                        <Alert
-                            severity="info"
-                            variant="filled"
-                            icon={false}
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                backgroundColor: "#fff5e5",
-                                color: "#333",
-                                boxShadow: 3,
-                                borderRadius: 2,
-                                minWidth: 300,
-                                maxWidth: 500,
-                            }}
-                        >
+                    <Snackbar key={notification.id} open anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                        <Alert severity="info" variant="filled" sx={{ backgroundColor: "#fff5e5", color: "#333" }}>
                             <Stack direction="row" spacing={2} alignItems="center">
                                 {notification.image && (
                                     <Avatar alt="알림 이미지" src={notification.image} sx={{ width: 40, height: 40 }} />

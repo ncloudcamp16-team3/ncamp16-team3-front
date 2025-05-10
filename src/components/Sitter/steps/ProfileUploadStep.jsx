@@ -47,7 +47,6 @@ const ProfileUploadStep = ({ imagePreview, onImageUpload }) => {
                     <Box
                         component="img"
                         src={imagePreview}
-                        alt="프로필 미리보기"
                         sx={{
                             width: "100%",
                             height: "100%",

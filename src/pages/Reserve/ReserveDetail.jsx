@@ -2,9 +2,11 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
 import { Box, Typography, Button, Container, Grid, Stack, Divider, Chip, CircularProgress, Alert } from "@mui/material";
+import { Star, StarBorder } from "@mui/icons-material";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import DateTimeSelector from "./DateTimeSelector.jsx";
@@ -16,7 +18,6 @@ import timezone from "dayjs/plugin/timezone";
 import ReviewCardItem from "./ReviewCardItem.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
 import ImgSlide from "../../components/Global/ImgSlider.jsx";
-import StarRating from "./StarRating.jsx";
 import ReviewFilter from "../../components/Reserve/filter/ReviewFilter.jsx";
 
 dayjs.extend(utc);
@@ -129,8 +130,13 @@ const ReserveDetail = () => {
 
     // 요일 정보
     const today = dayjs().format("ddd").toUpperCase();
-    // const timeNow = dayjs.format("HH");
-    const inRange = facilityData?.openingHours?.[today]?.isOpen || false;
+    const timeNow = dayjs().format("HH:mm:ss");
+
+    const inRange =
+        (facilityData?.openingHours?.[today]?.isOpen &&
+            facilityData?.openingHours?.[today]?.openTime <= timeNow &&
+            facilityData?.openingHours?.[today]?.closeTime >= timeNow) ||
+        false;
 
     // API에서 데이터 가져오기
     useEffect(() => {
@@ -213,8 +219,6 @@ const ReserveDetail = () => {
         setUserWantReserve(false);
     };
 
-    const rating = facilityData.starPoint || 0;
-
     const ScoreBar = () => {
         return (
             <Box
@@ -252,6 +256,158 @@ const ReserveDetail = () => {
                         <Typography sx={{ fontSize: 13, color: "#FF5555", width: 30 }}>{item.percentage}%</Typography>
                     </Box>
                 ))}
+            </Box>
+        );
+    };
+
+    const rating = facilityData.starPoint || 0;
+
+    const StarRating = () => {
+        const percentage = (rating / 5) * 100;
+
+        return (
+            <Box
+                sx={{
+                    position: "relative",
+                    display: "inline-block",
+                    width: 100,
+                    height: 20,
+                }}
+            >
+                {/* 빈 별 5개 */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        color: "#ccc", // 빈 별 색상
+                    }}
+                >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <StarBorder key={i} sx={{ width: 20, height: 20 }} />
+                    ))}
+                </Box>
+
+                {/* 채워진 별 5개 (클리핑) */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: `${percentage}%`,
+                        height: "100%",
+                        overflow: "hidden",
+                        color: "#FFD700", // 채워진 별 색상
+                        pointerEvents: "none",
+                    }}
+                >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} sx={{ width: 20, height: 20 }} />
+                    ))}
+                </Box>
+            </Box>
+        );
+    };
+
+    const BusinessHoursDisplay = () => {
+        const shortDayMapping = {
+            MON: "월",
+            TUE: "화",
+            WED: "수",
+            THU: "목",
+            FRI: "금",
+            SAT: "토",
+            SUN: "일",
+        };
+
+        // 순서대로 요일 정렬
+        const orderedDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+        if (!facilityData?.openingHours) {
+            return <Typography color="text.secondary">영업시간 정보가 없습니다.</Typography>;
+        }
+
+        return (
+            <Box sx={{ mt: 2, mb: 2 }}>
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1, display: "flex", alignItems: "center" }}>
+                    <AccessTimeIcon sx={{ mr: 1 }} /> 영업시간
+                </Typography>
+                <Grid container spacing={1}>
+                    <Grid item xs={6}>
+                        {orderedDays.slice(0, 4).map((day) => {
+                            const dayInfo = facilityData.openingHours[day];
+                            const isOpen = dayInfo?.isOpen;
+                            const openTime = dayInfo?.openTime?.substring(0, 5);
+                            const closeTime = dayInfo?.closeTime?.substring(0, 5);
+
+                            return (
+                                <Box
+                                    key={day}
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        py: 0.5,
+                                        px: 1,
+                                        mb: 0.5,
+                                        borderRadius: 1,
+                                        bgcolor: day === today ? "#FFF7EF" : "transparent",
+                                    }}
+                                >
+                                    <Typography
+                                        fontWeight={day === today ? "bold" : "normal"}
+                                        color={day === today ? "#E9A260" : "text.primary"}
+                                        sx={{ width: "40px" }}
+                                    >
+                                        {shortDayMapping[day]}
+                                    </Typography>
+
+                                    <Typography color={isOpen ? "text.primary" : "text.secondary"} sx={{ pl: 1 }}>
+                                        {isOpen ? `${openTime} - ${closeTime}` : "휴무일"}
+                                    </Typography>
+                                </Box>
+                            );
+                        })}
+                    </Grid>
+                    <Grid item xs={6}>
+                        {orderedDays.slice(4).map((day) => {
+                            const dayInfo = facilityData.openingHours[day];
+                            const isOpen = dayInfo?.isOpen;
+                            const openTime = dayInfo?.openTime?.substring(0, 5);
+                            const closeTime = dayInfo?.closeTime?.substring(0, 5);
+
+                            return (
+                                <Box
+                                    key={day}
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        py: 0.5,
+                                        px: 1,
+                                        mb: 0.5,
+                                        borderRadius: 1,
+                                        bgcolor: day === today ? "#FFF7EF" : "transparent",
+                                    }}
+                                >
+                                    <Typography
+                                        fontWeight={day === today ? "bold" : "normal"}
+                                        color={day === today ? "#E9A260" : "text.primary"}
+                                        sx={{ width: "40px" }}
+                                    >
+                                        {shortDayMapping[day]}
+                                    </Typography>
+
+                                    <Typography color={isOpen ? "text.primary" : "text.secondary"} sx={{ pl: 1 }}>
+                                        {isOpen ? `${openTime} - ${closeTime}` : "휴무일"}
+                                    </Typography>
+                                </Box>
+                            );
+                        })}
+                    </Grid>
+                </Grid>
             </Box>
         );
     };
@@ -307,7 +463,7 @@ const ReserveDetail = () => {
                         color={inRange ? "success" : "default"}
                         sx={{ color: "#fff", mb: 1 }}
                     />
-                    {inRange ? (
+                    {facilityData?.openingHours?.[today]?.openTime && facilityData?.openingHours?.[today]?.closeTime ? (
                         <Typography sx={{ fontWeight: "bold", mb: 1 }}>
                             {facilityData?.openingHours?.[today]?.openTime.substring(0, 5)} -{" "}
                             {facilityData?.openingHours?.[today]?.closeTime.substring(0, 5)}
@@ -344,6 +500,13 @@ const ReserveDetail = () => {
                         <ReserveMap lat={facilityData.latitude} lng={facilityData.longitude} />
                     </Box>
                 )}
+                <Divider />
+
+                {/* 영업시간 정보 추가 */}
+                <Box sx={{ px: 3 }}>
+                    <BusinessHoursDisplay />
+                </Box>
+
                 <Divider />
                 <Box sx={{ display: "flex", ml: 3 }}>
                     <Typography sx={{ whiteSpace: "pre-wrap", mb: 2, mt: 2 }}>{facilityData.comment}</Typography>
@@ -539,6 +702,7 @@ const ReserveDetail = () => {
                                     key={idx}
                                     review={review}
                                     user={user}
+                                    isLast={idx === sortedReviews.length - 1} // ✅ 마지막 여부 전달
                                     handleReviewDelete={handleReviewDelete}
                                     setChartData={setChartData}
                                     setReviews={setReviews}

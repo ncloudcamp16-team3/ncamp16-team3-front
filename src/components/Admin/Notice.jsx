@@ -173,9 +173,11 @@ const Notice = () => {
         formData.append("title", title.trim());
         formData.append("content", content.trim());
 
-        imageFiles.forEach((file) => {
-            formData.append("images", file);
-        });
+        if (imageFiles && imageFiles.length > 0) {
+            imageFiles.forEach((file) => {
+                formData.append("images", file);
+            });
+        }
 
         try {
             const response = await adminAxios.post("/api/admin/announce/post", formData);

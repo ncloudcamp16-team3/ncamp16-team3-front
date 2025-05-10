@@ -1,12 +1,65 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Star, StarBorder } from "@mui/icons-material";
 import CardContentAboutTime from "./CardContentAboutTime.jsx";
-import StarRating from "../../../pages/Reserve/StarRating.jsx";
 
 const FacilityCards = ({ item }) => {
     const navigate = useNavigate();
     console.log(item);
+
+    const rating = item.rating || 0;
+
+    const StarRating = () => {
+        const percentage = (rating / 5) * 100;
+
+        return (
+            <Box
+                sx={{
+                    position: "relative",
+                    display: "inline-block",
+                    width: 100,
+                    height: 20,
+                }}
+            >
+                {/* 빈 별 5개 */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        color: "#ccc", // 빈 별 색상
+                    }}
+                >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <StarBorder key={i} sx={{ width: 20, height: 20 }} />
+                    ))}
+                </Box>
+
+                {/* 채워진 별 5개 (클리핑) */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: `${percentage}%`,
+                        height: "100%",
+                        overflow: "hidden",
+                        color: "#FFD700", // 채워진 별 색상
+                        pointerEvents: "none",
+                    }}
+                >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} sx={{ width: 20, height: 20 }} />
+                    ))}
+                </Box>
+            </Box>
+        );
+    };
 
     return (
         <Card
@@ -53,7 +106,7 @@ const FacilityCards = ({ item }) => {
                             <span style={{ color: "#d32f2f", fontWeight: "bold", marginRight: 2 }}>
                                 {Math.round(item.rating).toFixed(1)}
                             </span>
-                            <StarRating rating={item.starPoint} />
+                            <StarRating />
                             리뷰 {item.reviewCount}건
                         </Typography>
                         <Typography sx={{ fontSize: 14, color: "#555" }}>
