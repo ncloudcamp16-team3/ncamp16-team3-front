@@ -112,7 +112,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                         <Typography
                             sx={{
                                 position: "absolute",
-                                top: 13,
+                                top: 15,
                                 right: 16,
                                 fontSize: "0.75rem",
                                 color: "text.secondary",
@@ -146,7 +146,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                         )}
                     </Box>
 
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, wordBreak: "keep-all" }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 2, wordBreak: "keep-all" }}>
                         {payment.exitTime ? "체크인: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}
                     </Typography>
