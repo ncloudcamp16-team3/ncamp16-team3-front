@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
 import { Box, Typography, Button, Container, Grid, Stack, Divider, Chip, CircularProgress, Alert } from "@mui/material";
-import StarBorder from "@mui/icons-material/StarBorder";
-import Star from "@mui/icons-material/Star";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -534,7 +532,7 @@ const ReserveDetail = () => {
                     </Box>
 
                     {/* 리뷰 목록 */}
-                    <Grid container spacing={3} sx={{ px: 2 }}>
+                    <Grid container sx={{ px: 2 }}>
                         {sortedReviews && sortedReviews.length > 0 ? (
                             sortedReviews.map((review, idx) => (
                                 <ReviewCardItem
