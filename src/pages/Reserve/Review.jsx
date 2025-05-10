@@ -210,6 +210,7 @@ const Review = () => {
                         setStarRating={setStarRating}
                         getLabelText={getLabelText}
                         setHover={setHover}
+                        starSize="large"
                     />
                     <Box sx={{ ml: 1, display: "flex", justifyContent: "center" }}>
                         {starRating !== null && (
