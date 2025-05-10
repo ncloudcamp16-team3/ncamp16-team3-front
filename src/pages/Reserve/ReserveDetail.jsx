@@ -349,17 +349,6 @@ const ReserveDetail = () => {
                     {...(userWantReserve ? { onBack: () => setUserWantReserve(false) } : {})}
                 />
                 <ImgSlide photos={facilityData.imagePaths} />
-                <Box sx={{ width: "100%", display: "flex" }}>
-                    {/* 상단 이미지 */}
-                    <Card sx={{ mb: 2, width: "100%", height: "100%", boxShadow: "none" }}>
-                        <CardMedia
-                            component="img"
-                            height="300"
-                            image={facilityData.imagePath || "https://via.placeholder.com/400x300"}
-                            alt={facilityData.name}
-                        />
-                    </Card>
-                </Box>
                 <Divider />
                 <Box sx={{ width: "100%", display: "flex", alignItems: "center", gap: 1, px: 3, mt: 2 }}>
                     <Typography variant="h4" gutterBottom>
