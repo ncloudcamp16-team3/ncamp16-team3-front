@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Grid, Card, CardContent, Avatar, Typography, TextField, Button, Box, Stack, CardMedia } from "@mui/material";
-import ReviewDropdown from "./ReviewDropdown"; // 드롭다운 버튼 컴포넌트
+import ReviewDropdown from "./ReviewDropDown"; // 드롭다운 버튼 컴포넌트
 import { putReview } from "../../services/reserveService";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
 import { Context } from "../../context/Context.jsx";
