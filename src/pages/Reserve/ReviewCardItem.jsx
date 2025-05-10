@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
     Grid,
     CardContent,
@@ -10,12 +10,14 @@ import {
     CardMedia,
     TextField,
     Divider,
+    IconButton,
 } from "@mui/material";
 import ReviewDropdown from "./ReviewDropDown";
 import { putReview } from "../../services/reserveService";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
 import { Context } from "../../context/Context.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ReviewCardItem = ({
     review,
@@ -34,17 +36,22 @@ const ReviewCardItem = ({
     const [starPoint, setStarPoint] = useState(review.starPoint);
     const [imageFile, setImageFile] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
+    const [imageToShow, setImageToShow] = useState(review.reviewImages?.[0] || null);
     const [isExpended, setIsExpended] = useState(false);
 
     const { showModal } = useContext(Context);
+    const fileInputRef = useRef(); // ✅ 파일 input 참조
 
-    // ✅ 외부 review 변경 시 comment와 starPoint 동기화
     useEffect(() => {
         if (!editable) {
             setComment(review.comment);
             setStarPoint(review.starPoint);
         }
     }, [review, editable]);
+
+    useEffect(() => {
+        setImageToShow(previewImage || review.reviewImages?.[0] || null);
+    }, [previewImage, review.reviewImages]);
 
     const isLongContent = comment.length > 30;
     const shortContent = isLongContent ? comment.slice(0, 30) + "..." : comment;
@@ -53,7 +60,17 @@ const ReviewCardItem = ({
         const file = e.target.files[0];
         if (file) {
             setImageFile(file);
-            setPreviewImage(URL.createObjectURL(file));
+            const previewUrl = URL.createObjectURL(file);
+            setPreviewImage(previewUrl);
+        }
+    };
+
+    const handleImageRemove = () => {
+        setImageFile(null);
+        setPreviewImage(null);
+        setImageToShow(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ""; // ✅ input 초기화
         }
     };
 
@@ -103,8 +120,6 @@ const ReviewCardItem = ({
         setEditable(false);
     };
 
-    const imageToShow = editable ? previewImage : review.reviewImages?.[0];
-
     return (
         <Grid item sx={{ width: "100%", padding: "0" }}>
             <Box sx={{ width: "100%" }}>
@@ -131,7 +146,7 @@ const ReviewCardItem = ({
                             minHeight: imageToShow ? 100 : "auto",
                         }}
                     >
-                        <Box sx={{ display: "flex", flexDirection: "column", pr: "10px", width: "100%" }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", pr: "10px", flex: 3 }}>
                             {editable ? (
                                 <TextField
                                     multiline
@@ -142,7 +157,7 @@ const ReviewCardItem = ({
                                     onChange={(e) => setComment(e.target.value)}
                                     variant="outlined"
                                     size="small"
-                                    sx={{ width: "100%", mb: 1 }}
+                                    sx={{ mb: 1 }}
                                 />
                             ) : (
                                 <Typography
@@ -173,30 +188,53 @@ const ReviewCardItem = ({
 
                         <Box
                             sx={{
-                                maxWidth: 80,
+                                maxWidth: 100,
                                 flexShrink: 0,
+                                display: "flex",
+                                alignItems: "flex-start",
+                                flex: 1,
                             }}
                         >
                             {editable ? (
-                                <Box sx={{ position: "relative", mb: 2 }}>
-                                    {previewImage ? (
-                                        <CardMedia
-                                            component="img"
-                                            height="100"
-                                            image={previewImage}
-                                            alt="preview"
-                                            sx={{
-                                                borderRadius: 1,
-                                                cursor: "pointer",
-                                                objectFit: "contain",
-                                            }}
-                                            onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
-                                        />
+                                <Box sx={{ position: "relative" }}>
+                                    {imageToShow ? (
+                                        <>
+                                            <CardMedia
+                                                component="img"
+                                                image={imageToShow}
+                                                alt="preview"
+                                                sx={{
+                                                    borderRadius: 1,
+                                                    cursor: "pointer",
+                                                    objectFit: "contain",
+                                                    width: "100%",
+                                                }}
+                                                onClick={() =>
+                                                    document.getElementById(`fileInput-${review.id}`).click()
+                                                }
+                                            />
+                                            <IconButton
+                                                size="small"
+                                                onClick={handleImageRemove} // ✅ 여기에 함수 적용
+                                                sx={{
+                                                    position: "absolute",
+                                                    top: -10,
+                                                    right: -10,
+                                                    backgroundColor: "#fff",
+                                                    border: "1px solid #ccc",
+                                                    p: 0.5,
+                                                    "&:hover": {
+                                                        backgroundColor: "#f5f5f5",
+                                                    },
+                                                }}
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
+                                        </>
                                     ) : (
                                         <Box
                                             onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
                                             sx={{
-                                                height: 100,
                                                 width: "100%",
                                                 display: "flex",
                                                 alignItems: "center",
@@ -206,12 +244,14 @@ const ReviewCardItem = ({
                                                 cursor: "pointer",
                                                 color: "#888",
                                                 fontSize: 14,
+                                                height: 100,
                                             }}
                                         >
                                             이미지를 업로드하려면 클릭하세요
                                         </Box>
                                     )}
                                     <input
+                                        ref={fileInputRef} // ✅ input ref
                                         id={`fileInput-${review.id}`}
                                         type="file"
                                         hidden
@@ -223,7 +263,6 @@ const ReviewCardItem = ({
                                 imageToShow && (
                                     <CardMedia
                                         component="img"
-                                        height="100"
                                         image={imageToShow}
                                         alt="review"
                                         sx={{
@@ -240,10 +279,38 @@ const ReviewCardItem = ({
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         {editable && (
                             <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
-                                <Button size="small" variant="contained" onClick={handleUpdateCancel}>
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={handleUpdateCancel}
+                                    sx={{
+                                        bgcolor: "#FDF1E5",
+                                        color: "#E9A260",
+                                        "&:hover": {
+                                            bgcolor: "#F2DFCE",
+                                        },
+                                        borderRadius: "4px",
+                                        px: 3,
+                                        py: 1,
+                                    }}
+                                >
                                     취소
                                 </Button>
-                                <Button size="small" variant="contained" onClick={handleUpdateSubmit}>
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={handleUpdateSubmit}
+                                    sx={{
+                                        bgcolor: "#E9A260",
+                                        color: "white",
+                                        "&:hover": {
+                                            bgcolor: "#d0905a",
+                                        },
+                                        borderRadius: "4px",
+                                        px: 3,
+                                        py: 1,
+                                    }}
+                                >
                                     저장
                                 </Button>
                             </Box>
