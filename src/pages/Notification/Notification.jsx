@@ -265,8 +265,11 @@ const Notification = () => {
                                 "유저를 알 수 없습니다."));
 
                     const displayBody =
-                        notification.notificationTypeId === 5 ? last?.message || "불러오는 중..." : notification.body;
-
+                        notification.notificationTypeId === 5
+                            ? last?.message || "불러오는 중..."
+                            : notification.body?.trim()
+                              ? notification.body
+                              : "삭제된 메세지입니다";
                     return (
                         <div
                             key={notification.id}
