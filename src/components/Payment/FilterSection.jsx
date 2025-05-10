@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { PeriodSelector } from "./PeriodSelector.jsx";
-import { Box, Typography, Paper, Divider } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 export const FilterSection = ({
@@ -70,7 +70,7 @@ export const FilterSection = ({
     }, [startDate, endDate]);
 
     return (
-        <Paper
+        <Box
             elevation={1}
             sx={{
                 maxWidth: "500px",
@@ -89,8 +89,6 @@ export const FilterSection = ({
                     결제내역
                 </Typography>
             </Box>
-
-            <Divider sx={{ width: "100%", mb: 1 }} />
 
             <Box
                 sx={{
@@ -113,6 +111,6 @@ export const FilterSection = ({
                     <PeriodSelector selected={periodSelect} onChange={handlePeriodChange} />
                 </Box>
             </Box>
-        </Paper>
+        </Box>
     );
 };
