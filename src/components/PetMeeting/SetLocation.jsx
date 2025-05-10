@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import Plus from "../../assets/images/PetMeeting/plus.png";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const SetLocation = () => {
-    const { setView } = useContext(PetMeetingContext);
+    const navigete = useNavigate();
 
     return (
         <Box
@@ -20,7 +20,7 @@ const SetLocation = () => {
                 cursor: "pointer",
             }}
             onClick={() => {
-                setView("locationConfig");
+                navigete("/location");
             }}
         >
             <Typography
