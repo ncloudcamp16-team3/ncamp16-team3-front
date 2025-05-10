@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Box, Typography, Link, Button, CircularProgress, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, Link, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../context/Context.jsx";
 // 모달 컴포넌트
@@ -10,7 +10,9 @@ import ProfileImageModal from "../../components/User/Profile/ProfileImageEditMod
 import UserProfileSection from "../../components/User/Profile/UserProfileSection";
 import PetListSection from "../../components/User/Profile/PetListSection";
 import PetSitterSection from "../../components/User/Profile/PetSitterSection";
-// axios 인스턴스 가져오기
+// 전역 컴포넌트
+import GlobalSnackbar from "../../components/Global/GlobalSnackbar";
+// axios 인스턴스
 import instance from "../../services/axiosInstance.js";
 
 const MyPage = () => {
@@ -53,7 +55,9 @@ const MyPage = () => {
             setError(null);
             try {
                 // 사용자 정보 API 호출
+                console.log("마이페이지 ");
                 const response = await instance.get("/user/mypage");
+                console.log("마이페이지 응답 데이터:", response.data);
 
                 // API에서 받아온 데이터로 상태 업데이트
                 if (response.data) {
@@ -141,6 +145,7 @@ const MyPage = () => {
                 }
             } catch (err) {
                 console.error("마이페이지 데이터 로드 실패:", err);
+                console.error("에러 상세:", err.response || err.message);
 
                 if (err.response && err.response.status === 401) {
                     setError("로그인이 필요합니다.");
@@ -181,6 +186,11 @@ const MyPage = () => {
             window.removeEventListener("petSitterRegistered", handlePetSitterRegistered);
         };
     }, [setUser, navigate]);
+
+    // 스낵바 닫기 핸들러
+    const handleSnackbarClose = () => {
+        setSnackbar((prev) => ({ ...prev, open: false }));
+    };
 
     // 반려동물 관련 핸들러
     const handleEditPet = (petId) => {
@@ -300,6 +310,16 @@ const MyPage = () => {
 
     const handleNicknameSave = async (newNickname) => {
         try {
+            // 닉네임 유효성 검사 (2-8자)
+            if (newNickname.length < 2 || newNickname.length > 8) {
+                setSnackbar({
+                    open: true,
+                    message: "닉네임은 2~8자 사이로 입력해주세요.",
+                    severity: "warning",
+                });
+                return;
+            }
+
             const response = await instance.put("/user/nickname", { nickname: newNickname });
 
             if (response.data && response.data.nickname) {
@@ -322,6 +342,16 @@ const MyPage = () => {
                     severity: "error",
                 });
                 setTimeout(() => navigate("/login"), 2000);
+                return;
+            }
+
+            // 중복 닉네임 오류 처리
+            if (err.response?.data?.error?.includes("이미 사용 중인 닉네임")) {
+                setSnackbar({
+                    open: true,
+                    message: "이미 사용 중인 닉네임입니다.",
+                    severity: "warning",
+                });
                 return;
             }
 
@@ -506,21 +536,13 @@ const MyPage = () => {
                         onImageUpdate={handleProfileImageUpdate}
                     />
 
-                    {/* 스낵바 알림 */}
-                    <Snackbar
+                    {/* 스낵바  */}
+                    <GlobalSnackbar
                         open={snackbar.open}
-                        autoHideDuration={4000}
-                        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                    >
-                        <Alert
-                            onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-                            severity={snackbar.severity}
-                            sx={{ width: "100%" }}
-                        >
-                            {snackbar.message}
-                        </Alert>
-                    </Snackbar>
+                        message={snackbar.message}
+                        severity={snackbar.severity}
+                        handleSnackbarClose={handleSnackbarClose}
+                    />
                 </>
             )}
         </Box>

@@ -38,7 +38,7 @@ const Step1 = () => {
     }, [loaded, snsAccountId, snsTypeId]);
 
     const validateNickname = (value) => {
-        return value.trim().length >= 2 && value.trim().length <= 16;
+        return value.trim().length >= 2 && value.trim().length <= 8;
     };
 
     const handleChange = (e) => {
@@ -54,7 +54,7 @@ const Step1 = () => {
 
         if (!validateNickname(trimmedNickname)) {
             setError(true);
-            setErrorMessage("닉네임은 2~16자 이내로 입력해주세요.");
+            setErrorMessage("닉네임은 2~8자 이내로 입력해주세요.");
             setShowSnackbar(true);
             return;
         }
@@ -109,13 +109,13 @@ const Step1 = () => {
                     }}
                 >
                     <InputLabel htmlFor="nickname">
-                        닉네임 <ReqUi /> (닉네임은 2~16자 이내로 입력해주세요.)
+                        닉네임 <ReqUi /> (닉네임은 2~8자 이내로 입력해주세요.)
                     </InputLabel>
                     <Input
                         required
                         id="nickname"
                         name="nickname"
-                        placeholder="2~16자 이내로 입력해주세요"
+                        placeholder="2~8자 이내로 입력해주세요"
                         value={nickname}
                         onChange={handleChange}
                         onKeyDown={(e) => {

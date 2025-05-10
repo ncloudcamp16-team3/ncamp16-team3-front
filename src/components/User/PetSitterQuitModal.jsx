@@ -1,16 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { DialogTitle, DialogContent, DialogActions, Typography, Button, Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DarkModal from "/src/components/Global/DarkModal.jsx";
+import GlobalSnackbar from "/src/components/Global/GlobalSnackbar.jsx";
 
 const PetSitterQuitModal = ({ open, onClose, onConfirm }) => {
+    // 스낵바 상태
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
+
+    const handleSnackbarClose = () => {
+        setSnackbar((prev) => ({ ...prev, open: false }));
+    };
+
+    const handleConfirm = () => {
+        onConfirm();
+        setSnackbar({
+            open: true,
+            message: "펫시터 탈퇴 요청이 처리되었습니다.",
+            severity: "success",
+        });
+    };
+
     return (
         <DarkModal
-            open={open}
+            open={Boolean(open)}
             onClose={onClose}
             modalProps={{
                 fullWidth: true,
                 maxWidth: "xs",
+                disableEscapeKeyDown: false,
+                disableAutoFocus: true,
             }}
         >
             <Box
@@ -76,7 +99,7 @@ const PetSitterQuitModal = ({ open, onClose, onConfirm }) => {
                         취소
                     </Button>
                     <Button
-                        onClick={onConfirm}
+                        onClick={handleConfirm}
                         variant="contained"
                         sx={{
                             backgroundColor: "#f44336",
@@ -90,6 +113,14 @@ const PetSitterQuitModal = ({ open, onClose, onConfirm }) => {
                     </Button>
                 </DialogActions>
             </Box>
+
+            {/* 스낵바 알림 */}
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
+            />
         </DarkModal>
     );
 };

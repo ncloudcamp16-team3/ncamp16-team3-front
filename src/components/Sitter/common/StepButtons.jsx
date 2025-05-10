@@ -11,6 +11,7 @@ const StepButtons = ({ step, totalSteps, onBack, onNext, hideButtons = false }) 
                     position: "absolute",
                     bottom: "140px",
                     right: "20px",
+                    zIndex: 10,
                 }}
             >
                 <Button
@@ -41,6 +42,7 @@ const StepButtons = ({ step, totalSteps, onBack, onNext, hideButtons = false }) 
                 right: "20px",
                 display: "flex",
                 gap: 1,
+                zIndex: 10,
             }}
         >
             <Button
@@ -73,7 +75,7 @@ const StepButtons = ({ step, totalSteps, onBack, onNext, hideButtons = false }) 
                     py: 1,
                 }}
             >
-                {step === totalSteps - 1 ? "완료" : "다음"}
+                {step === 8 ? "완료" : step === totalSteps - 1 ? "완료" : "다음"}
             </Button>
         </Box>
     );
