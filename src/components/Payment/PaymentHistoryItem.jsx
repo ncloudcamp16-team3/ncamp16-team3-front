@@ -45,12 +45,15 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     sx={{
                         width: 120,
                         height: 96,
+                        minWidth: 120, // ✅ 작아도 영역 확보
                         objectFit: "cover",
+                        objectPosition: "center", // 가운데 기준 자르기 (left center도 가능)
                         bgcolor: "grey.100",
                     }}
                     image={payment.imageUrl}
                     alt={payment.name}
-                />{" "}
+                />
+
                 <CardContent
                     sx={{
                         display: "flex",
