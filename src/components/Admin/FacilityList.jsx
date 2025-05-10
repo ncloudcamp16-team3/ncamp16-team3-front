@@ -166,7 +166,7 @@ function FacilityList() {
                                     <TableCell sx={{ ...cellStyles.date, ...commonCellStyle }}>등록일자</TableCell>
                                 </TableRow>
                             </TableHead>
-                            <TableBody>
+                            <TableBody sx={{ cursor: "pointer" }}>
                                 {filteredRows.length > 0 ? (
                                     filteredRows.map((row) => (
                                         <TableRow
@@ -192,7 +192,7 @@ function FacilityList() {
                                                 {getFacilityType(row.facilityType)}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.starPoint, ...commonCellStyle }}>
-                                                {Math.round(row.starPoint).toFixed(1)}
+                                                g{(Math.round(row.starPoint * 10) / 10).toFixed(1)}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
                                                 {row.image ? (
