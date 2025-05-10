@@ -595,6 +595,7 @@ const ReserveDetail = () => {
                                     key={idx}
                                     review={review}
                                     user={user}
+                                    isLast={idx === sortedReviews.length - 1} // ✅ 마지막 여부 전달
                                     handleReviewDelete={handleReviewDelete}
                                     setChartData={setChartData}
                                     setReviews={setReviews}

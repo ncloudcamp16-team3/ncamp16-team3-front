@@ -1,5 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Grid, CardContent, Avatar, Typography, Button, Box, Stack, CardMedia, TextField } from "@mui/material";
+import {
+    Grid,
+    CardContent,
+    Avatar,
+    Typography,
+    Button,
+    Box,
+    Stack,
+    CardMedia,
+    TextField,
+    Divider,
+} from "@mui/material";
 import ReviewDropdown from "./ReviewDropDown";
 import { putReview } from "../../services/reserveService";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
@@ -15,6 +26,7 @@ const ReviewCardItem = ({
     setFacilityData,
     setLoading,
     setError,
+    isLast,
 }) => {
     const isMyReview = user?.id === review.userId;
     const [editable, setEditable] = useState(false);
@@ -239,7 +251,7 @@ const ReviewCardItem = ({
                     </Box>
                 </CardContent>
             </Box>
-            <hr />
+            {!isLast && <Divider sx={{ my: 2, borderColor: "#ccc", borderBottomWidth: "1px" }} />}
         </Grid>
     );
 };
