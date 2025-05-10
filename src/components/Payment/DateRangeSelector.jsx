@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
-export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange }) => {
+export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange, onSearch }) => {
     const [startOpen, setStartOpen] = useState(false);
     const [endOpen, setEndOpen] = useState(false);
     const [tempDate, setTempDate] = useState(null); // 선택 중인 날짜 임시 보관
@@ -34,7 +34,7 @@ export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange }) =>
                     <Button
                         variant="contained"
                         size="big"
-                        sx={{ mt: 1, bgcolor: "#F97316", borderRadius: 2 }}
+                        sx={{ bgcolor: "#F97316", borderRadius: 2 }}
                         onClick={() => {
                             onDateChange(target, tempDate);
                             setTempDate(null);
@@ -55,13 +55,14 @@ export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange }) =>
                 sx={{
                     display: "flex",
                     flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center", // 날짜 텍스트 가운데 정렬
                     width: "100%",
-                    gap: 2,
-                    justifyContent: "space-between",
+                    px: 2,
                     flexWrap: "wrap",
                 }}
             >
-                {/* 표시되는 날짜 텍스트 */}
+                {/* 날짜 텍스트를 가운데 정렬 */}
                 <Box
                     sx={{
                         display: "flex",
@@ -69,7 +70,7 @@ export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange }) =>
                         cursor: "pointer",
                         fontWeight: "bold",
                         justifyContent: "center",
-                        width: "100%",
+                        flexGrow: 1, // 가운데 정렬을 위한 flex-grow
                     }}
                 >
                     <div
@@ -91,6 +92,26 @@ export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange }) =>
                     >
                         {format(endDate)}
                     </div>
+                </Box>
+
+                {/* 검색 버튼을 오른쪽 끝에 배치 */}
+                <Box
+                    sx={{
+                        bgcolor: "#FFA500",
+                        borderRadius: "20px",
+                        width: "80px",
+                        height: "36px",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        color: "white",
+                        lineHeight: "36px",
+                        fontWeight: "bold",
+                        flexShrink: 0,
+                        marginLeft: "auto", // 오른쪽 끝에 배치
+                    }}
+                    onClick={() => onSearch(startDate, endDate)}
+                >
+                    검색
                 </Box>
             </Box>
 
