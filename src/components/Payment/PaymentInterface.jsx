@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PaymentHistory } from "./PaymentHistory";
 import { FilterSection } from "./FilterSection";
-import styles from "../../css/payment/PaymentHistoryInterface.module.css";
 import dayjs from "dayjs";
 import { fetchPaymentHistory } from "../../services/paymentService.js";
 
@@ -32,7 +31,7 @@ export const PaymentHistoryInterface = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <div>
             <FilterSection
                 startDate={startDate}
                 setStartDate={setStartDate}

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, Checkbox, FormControlLabel } from "@mui/material";
+import GlobalSnackbar from "../Global/GlobalSnackbar";
 
 const PetSitterSurvey = ({
     step,
@@ -13,15 +14,24 @@ const PetSitterSurvey = ({
     handleNext,
     handleBack,
 }) => {
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
+
     // 체크박스 선택 핸들러
     const handleCheckboxChange = (option, setter, currentState) => {
-        // 라디오 버튼처럼 동작하도록 모든 항목 false로 설정 후 선택된 항목만 true로 변경
         const newState = {};
         Object.keys(currentState).forEach((key) => {
             newState[key] = false;
         });
         newState[option] = true;
         setter(newState);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     // 체크박스 옵션 UI 렌더링
@@ -96,6 +106,45 @@ const PetSitterSurvey = ({
                 </Box>
             </Box>
         );
+    };
+
+    // 다음 버튼 핸들러 - 유효성 검사 추가
+    const handleNextWithValidation = () => {
+        let isValid = true;
+        let errorMessage = "";
+
+        switch (step) {
+            case 1: // 연령대
+                if (!Object.values(selectedAges).some((v) => v)) {
+                    isValid = false;
+                    errorMessage = "연령대를 하나 이상 선택해주세요.";
+                }
+                break;
+            case 2: // 반려동물 여부
+                if (!Object.values(hasPet).some((v) => v)) {
+                    isValid = false;
+                    errorMessage = "선택지를 하나 선택해주세요.";
+                }
+                break;
+            case 3: // 펫시터 경험 여부
+                if (!Object.values(hasSitterExperience).some((v) => v)) {
+                    isValid = false;
+                    errorMessage = "선택지를 하나 선택해주세요.";
+                }
+                break;
+        }
+
+        if (!isValid) {
+            setSnackbar({
+                open: true,
+                message: errorMessage,
+                severity: "warning",
+            });
+            return;
+        }
+
+        // 유효성 검사 통과 시 기존 handleNext 호출
+        handleNext();
     };
 
     // 현재 질문 렌더링
@@ -192,7 +241,7 @@ const PetSitterSurvey = ({
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={handleNext}
+                                onClick={handleNextWithValidation}
                                 sx={{
                                     bgcolor: "#E9A260",
                                     color: "white",
@@ -250,7 +299,7 @@ const PetSitterSurvey = ({
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={handleNext}
+                                onClick={handleNextWithValidation}
                                 sx={{
                                     bgcolor: "#E9A260",
                                     color: "white",
@@ -308,7 +357,7 @@ const PetSitterSurvey = ({
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={handleNext}
+                                onClick={handleNextWithValidation}
                                 sx={{
                                     bgcolor: "#E9A260",
                                     color: "white",
@@ -411,6 +460,14 @@ const PetSitterSurvey = ({
 
             {/* 선택지 표시 */}
             {renderOptions()}
+
+            {/* GlobalSnackbar*/}
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
+            />
         </>
     );
 };

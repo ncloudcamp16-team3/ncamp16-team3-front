@@ -55,19 +55,26 @@ const ChatList = () => {
                     await nc.subscribe(ch.id);
 
                     let lastMessageText = "";
-                    if (ch.last_message?.content) {
-                        try {
-                            const parsed = JSON.parse(ch.last_message.content);
-                            if (typeof parsed.content === "string") {
-                                lastMessageText = parsed.content;
-                            } else if (typeof parsed.content === "object" && parsed.content.text) {
-                                lastMessageText = parsed.content.text;
-                            } else {
-                                lastMessageText = "알 수 없는 메시지";
-                            }
-                        } catch {
-                            lastMessageText = ch.last_message.content;
+
+                    try {
+                        const raw = ch.last_message?.content;
+                        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+                        const customType = parsed.customType;
+                        const content = parsed.content;
+
+                        if (typeof content === "string") {
+                            lastMessageText = content;
+                        } else if (customType === "PETSITTER" && content?.sitterName) {
+                            lastMessageText = `[펫시터] ${content.sitterName}`;
+                        } else if ((customType === "MATCH" || customType === "TRADE") && content?.text) {
+                            lastMessageText = content.text;
+                        } else {
+                            lastMessageText = "알 수 없는 메시지";
                         }
+                    } catch (err) {
+                        console.error("last_message 파싱 실패:", err);
+                        lastMessageText = "메시지를 불러올 수 없음";
                     }
 
                     let unreadCount = 0;
@@ -77,12 +84,12 @@ const ChatList = () => {
                     } catch (err) {
                         console.warn(`채널 ${ch.id} unreadCount 조회 실패`, err);
                     }
-
+                    console.log(ch.last_message?.content);
                     result.push({
                         id: ch.id,
                         name: room.nickname,
                         photo: room.profileUrl,
-                        lastMessage: lastMessageText || "",
+                        lastMessage: typeof lastMessageText === "string" ? lastMessageText : "메시지 오류",
                         lastMessageSentAt: ch.last_message?.sended_at || ch.updated_at,
                         unreadCount,
                     });
@@ -100,7 +107,7 @@ const ChatList = () => {
         const handleReceiveMessage = async (channel, msg) => {
             const { parsed } = parseMessage(msg);
             const isMine = msg.sender.id === `ncid${user.id}`;
-            if (isMine) return; // 내 메시지는 무시
+            if (isMine) return;
 
             const numericSenderId = msg.sender.id.replace(/\D/g, "");
 
@@ -128,7 +135,11 @@ const ChatList = () => {
                         const parsed = JSON.parse(msg.content);
                         if (typeof parsed.content === "string") {
                             text = parsed.content;
-                        } else if (typeof parsed.content === "object" && parsed.content.text) {
+                        } else if (parsed.customType === "PETSITTER" && parsed.content?.sitterName) {
+                            text = `[펫시터] ${parsed.content.sitterName}`;
+                        } else if (parsed.customType === "MATCH" && parsed.content?.text) {
+                            text = parsed.content.text;
+                        } else if (parsed.customType === "TRADE" && parsed.content?.text) {
                             text = parsed.content.text;
                         } else {
                             text = "알 수 없는 메시지";
@@ -136,8 +147,6 @@ const ChatList = () => {
                     } catch {
                         text = msg.content;
                     }
-
-                    const isMine = msg.sender?.id === `ncid${user.id}`;
 
                     updated[idx] = {
                         ...updated[idx],
@@ -148,7 +157,6 @@ const ChatList = () => {
 
                     updated.sort((a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt));
                 }
-
                 return updated;
             });
         };

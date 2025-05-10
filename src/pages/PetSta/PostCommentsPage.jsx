@@ -19,7 +19,7 @@ const PostCommentPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const inputRef = useRef(null);
     const { postId } = useParams();
-    const { user, showModal } = useContext(Context);
+    const { user, showModal, handleSnackbarOpen } = useContext(Context);
     const theme = useTheme();
     const navigate = useNavigate();
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -90,7 +90,7 @@ const PostCommentPage = () => {
         const trimmed = (commentContent ?? "").trim();
 
         if (!trimmed) {
-            showModal("", "댓글을 작성해 주세요!");
+            handleSnackbarOpen("댓글을 입력해 주세요!", "warning");
             return;
         }
 

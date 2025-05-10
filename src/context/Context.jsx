@@ -115,8 +115,14 @@ export function Provider({ children }) {
         setSnackbar((prev) =>
             produce(prev, (draft) => {
                 draft.open = false;
-                draft.message = "";
-                draft.severity = "success";
+                setTimeout(() => {
+                    setSnackbar((prev) =>
+                        produce(prev, (draft) => {
+                            draft.message = "";
+                            draft.severity = "success";
+                        })
+                    );
+                }, 300); // 300ms 정도면 충분
             })
         );
     };
@@ -145,7 +151,7 @@ export function Provider({ children }) {
         setIsChatRoomOpen(isChatRoom);
     }, [location.pathname]);
 
-    const [chatList, setChatList] = useState(false);
+    const [chatList, setChatList] = useState([]);
     const [chatLoad, setChatLoad] = useState([]);
 
     const [notifications, setNotifications] = useState([]);

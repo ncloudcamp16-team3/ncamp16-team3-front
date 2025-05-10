@@ -35,6 +35,8 @@ const MyPosts = () => {
     );
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         const fetchMyPosts = async () => {
             try {
                 setLoading(true);

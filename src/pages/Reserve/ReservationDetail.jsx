@@ -62,7 +62,7 @@ const ReservationDetail = () => {
 
     const now = new Date();
     const canCancel = reservation.entryTime && new Date(reservation.entryTime) > now;
-    const canReview = reservation.exitTime && new Date(reservation.entryTime) < now;
+    const canReview = reservation.entryTime && new Date(reservation.entryTime) < now;
 
     return (
         <Container>

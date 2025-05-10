@@ -173,7 +173,7 @@ const ReviewCardItem = ({
 
                         <Box
                             sx={{
-                                minWidth: 120,
+                                maxWidth: 80,
                                 flexShrink: 0,
                             }}
                         >

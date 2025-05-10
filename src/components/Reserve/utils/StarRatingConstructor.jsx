@@ -3,7 +3,14 @@ import { Rating, Box, Stack } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 
-const StarRatingConstructor = ({ defaultValue = 0, setStarRating, getLabelText, setHover, editable = true, size }) => {
+const StarRatingConstructor = ({
+    defaultValue = 0,
+    setStarRating,
+    getLabelText,
+    setHover,
+    editable = true,
+    starSize = "small",
+}) => {
     const [value, setValue] = useState(defaultValue);
 
     useEffect(() => {
@@ -35,8 +42,8 @@ const StarRatingConstructor = ({ defaultValue = 0, setStarRating, getLabelText, 
                             setHover(newHover);
                         }
                     }}
-                    icon={<StarIcon fontSize={size || "small"} sx={{ color: "#faaf00" }} />}
-                    emptyIcon={<StarBorderIcon fontSize={size || "small"} sx={{ color: "#ccc" }} />}
+                    icon={<StarIcon fontSize={starSize} sx={{ color: "#faaf00" }} />}
+                    emptyIcon={<StarBorderIcon fontSize={starSize} sx={{ color: "#ccc" }} />}
                 />
             </Stack>
         </Box>

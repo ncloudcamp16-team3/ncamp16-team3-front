@@ -1,6 +1,6 @@
 import React from "react";
 import { formatPrice } from "./utils/formatters.jsx";
-import { Box, Typography, Card, CardMedia, CardContent, Divider, Chip } from "@mui/material";
+import { Box, Typography, Card, CardMedia, CardContent, Chip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import StarIcon from "@mui/icons-material/Star";
 
@@ -17,7 +17,7 @@ const formatDateTime = (dateTimeStr) => {
     });
 };
 
-export const PaymentHistoryItem = ({ payment, isLast }) => {
+export const PaymentHistoryItem = ({ payment }) => {
     const navigate = useNavigate();
     const hasReview = payment.reviewDto != null;
 
@@ -30,6 +30,7 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     alignItems: "flex-start",
                     p: 1.5,
                     mb: 0,
+                    mx: 1.5, // ✅ 좌우 마진 추가 (예: theme.spacing(1.5) → 12px)
                     borderRadius: 2,
                     cursor: "pointer",
                     boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
@@ -86,43 +87,47 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                         flexDirection: "column",
                         justifyContent: "space-between",
                         padding: "5px 5px 5px 16px",
-                        width: "100%", // ✅ 추가
+                        width: "100%",
                         "&:last-child": { paddingBottom: "5px" },
                     }}
                 >
-                    <Box
+                    <Typography
+                        variant="h6"
+                        component="div"
                         sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 1,
+                            fontWeight: "bold",
+                            fontSize: "1.3rem",
+                            lineHeight: 1.2,
                         }}
                     >
-                        <Typography
-                            variant="h6"
-                            component="div"
-                            sx={{
-                                fontWeight: "bold",
-                                fontSize: "1.5rem",
-                                lineHeight: 1.2,
-                            }}
-                        >
-                            {payment.name}
-                        </Typography>
+                        {payment.name}
+                    </Typography>
 
-                        {payment.createdAt && (
-                            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap", ml: 2 }}>
+                    {payment.createdAt && (
+                        <Box sx={{ position: "relative", width: "100%", height: "1.2rem", mt: 0.5 }}>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{
+                                    position: "absolute",
+                                    right: 0,
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
                                 {formatDateTime(payment.createdAt)}
                             </Typography>
-                        )}
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
-                        {payment.exitTime ? "체크인: " : "예약시간: "}
+                        </Box>
+                    )}
+
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, wordBreak: "keep-all" }}>
+                        {payment.exitTime ? "In: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}
                     </Typography>
+
+                    {/* 체크아웃 (있을 경우만) */}
                     {payment.exitTime && (
-                        <Typography variant="body2" color="text.secondary">
-                            체크아웃: {formatDateTime(payment.exitTime)}
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, wordBreak: "keep-all" }}>
+                            Out: {formatDateTime(payment.exitTime)}
                         </Typography>
                     )}
 
@@ -131,7 +136,7 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                             variant="subtitle1"
                             sx={{
                                 fontWeight: "bold",
-                                fontSize: "1.25rem",
+                                fontSize: "1.2rem",
                             }}
                         >
                             {formatPrice(payment.price)}원
@@ -156,7 +161,6 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     </Box>
                 </CardContent>
             </Card>
-            {!isLast && <Divider />}
         </Box>
     );
 };

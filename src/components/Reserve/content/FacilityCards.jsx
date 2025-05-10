@@ -6,7 +6,6 @@ import CardContentAboutTime from "./CardContentAboutTime.jsx";
 
 const FacilityCards = ({ item }) => {
     const navigate = useNavigate();
-    console.log(item);
 
     const rating = item.rating || 0;
 
@@ -104,7 +103,7 @@ const FacilityCards = ({ item }) => {
                             }}
                         >
                             <span style={{ color: "#d32f2f", fontWeight: "bold", marginRight: 2 }}>
-                                {Math.round(item.rating).toFixed(1)}
+                                {(Math.round(item.rating * 10) / 10).toFixed(1)}
                             </span>
                             <StarRating />
                             리뷰 {item.reviewCount}건
