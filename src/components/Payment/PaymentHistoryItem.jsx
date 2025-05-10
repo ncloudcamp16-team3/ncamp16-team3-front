@@ -87,42 +87,45 @@ export const PaymentHistoryItem = ({ payment }) => {
                         flexDirection: "column",
                         justifyContent: "space-between",
                         padding: "5px 5px 5px 16px",
-                        width: "100%", // ✅ 추가
+                        width: "100%",
                         "&:last-child": { paddingBottom: "5px" },
                     }}
                 >
-                    <Box
+                    <Typography
+                        variant="h6"
+                        component="div"
                         sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 1,
+                            fontWeight: "bold",
+                            fontSize: "1.3rem",
+                            lineHeight: 1.2,
                         }}
                     >
-                        <Typography
-                            variant="h6"
-                            component="div"
-                            sx={{
-                                fontWeight: "bold",
-                                fontSize: "1.5rem",
-                                lineHeight: 1.2,
-                            }}
-                        >
-                            {payment.name}
-                        </Typography>
+                        {payment.name}
+                    </Typography>
 
-                        {payment.createdAt && (
-                            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap", ml: 2 }}>
+                    {payment.createdAt && (
+                        <Box sx={{ position: "relative", width: "100%", height: "1.2rem", mt: 0.5 }}>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{
+                                    position: "absolute",
+                                    right: 0,
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
                                 {formatDateTime(payment.createdAt)}
                             </Typography>
-                        )}
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
+                        </Box>
+                    )}
+
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
                         {payment.exitTime ? "체크인: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}
                     </Typography>
+
                     {payment.exitTime && (
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary" sx={{}}>
                             체크아웃: {formatDateTime(payment.exitTime)}
                         </Typography>
                     )}
@@ -132,7 +135,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                             variant="subtitle1"
                             sx={{
                                 fontWeight: "bold",
-                                fontSize: "1.25rem",
+                                fontSize: "1.2rem",
                             }}
                         >
                             {formatPrice(payment.price)}원
