@@ -112,7 +112,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                         <Typography
                             sx={{
                                 position: "absolute",
-                                top: 15,
+                                top: 20,
                                 right: 16,
                                 fontSize: "0.75rem",
                                 color: "text.secondary",
@@ -125,7 +125,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                             <Box
                                 sx={{
                                     position: "absolute",
-                                    top: 28, // 제목 아랫줄로
+                                    top: 35, // 제목 아랫줄로
                                     right: 16,
                                     textAlign: "right",
                                 }}
