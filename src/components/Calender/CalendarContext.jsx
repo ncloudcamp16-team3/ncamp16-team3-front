@@ -46,7 +46,7 @@ export const CalendarProvider = ({ children }) => {
     const handleToggle = (id, type) => {
         console.log("startDate", formData.startDate);
         console.log("endDate", formData.endDate);
-        setOpenItem((prev) => (prev.id === id && prev.type === type ? { id: null, type: null } : { id, type }));
+        setOpenItem({ id, type });
     };
 
     const getTitle = (item, type) => {
@@ -210,8 +210,8 @@ export const CalendarProvider = ({ children }) => {
         const fieldsToCheck = {
             title: formData.title,
             address: formData.address,
-            latitude: formData.latitude,
-            longitude: formData.longitude,
+            // latitude: formData.latitude,
+            // longitude: formData.longitude,
             content: formData.content,
         };
 
@@ -223,8 +223,8 @@ export const CalendarProvider = ({ children }) => {
             const fieldLabels = {
                 title: "제목",
                 address: "장소",
-                latitude: "위도",
-                longitude: "경도",
+                // latitude: "위도",
+                // longitude: "경도",
                 content: "내용",
             };
             const missing = missingFields.map((f) => fieldLabels[f] || f).join(", ");
@@ -273,7 +273,7 @@ export const CalendarProvider = ({ children }) => {
             });
             handleSnackbarOpen("일정이 성공적으로 등록되었습니다!", "success");
         } catch (error) {
-            handleSnackbarOpen("일정 등록에 실패했습니다.", "error");
+            handleSnackbarOpen("시작일시와 종료일시를 확인해주세요.", "error");
             console.log("일정 등록 에러:", error);
         }
     };

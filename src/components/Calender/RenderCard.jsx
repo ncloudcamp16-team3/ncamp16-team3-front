@@ -39,7 +39,14 @@ const RenderCard = ({ item, type }) => {
                         <RenderButtonGroup
                             buttons={[
                                 { label: "수정", color: "#FFA500", onClick: () => handleModifyClick(item) },
-                                { label: "확인", color: "#E9A260", onClick: handleBack },
+                                {
+                                    label: "확인",
+                                    color: "#E9A260",
+                                    onClick: (e) => {
+                                        e.stopPropagation();
+                                        handleBack();
+                                    },
+                                },
                             ]}
                         />
                     </>
@@ -96,6 +103,7 @@ const RenderCard = ({ item, type }) => {
                 position: "relative",
                 display: "flex",
             }}
+            onClick={() => handleToggle(item.id, type)}
         >
             <Box
                 sx={{
@@ -118,12 +126,7 @@ const RenderCard = ({ item, type }) => {
                     flexGrow: 1,
                 }}
             >
-                <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{ cursor: "pointer", fontWeight: "bold" }}
-                    onClick={() => handleToggle(item.id, type)}
-                >
+                <Typography variant="h6" component="div" sx={{ cursor: "pointer", fontWeight: "bold" }}>
                     {getTitle(item, type)}
                 </Typography>
                 <Typography sx={{ color: "#A8A8A9", textAlign: "right" }}>{getPeriod(item, type)}</Typography>

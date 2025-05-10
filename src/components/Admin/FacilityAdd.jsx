@@ -124,6 +124,20 @@ const FacilityAdd = () => {
         SUN: true,
     });
 
+    // 시간 비교 함수 추가
+    const isTimeValid = (open, close) => {
+        // 24시간 영업인 경우 (동일한 시간)
+        if (open === close) {
+            return true;
+        }
+
+        const openHour = parseInt(open.split(":")[0]);
+        const closeHour = parseInt(close.split(":")[0]);
+
+        // 마감 시간이 오픈 시간보다 이후인지 확인
+        return closeHour > openHour;
+    };
+
     useEffect(() => {
         // 우편번호 스크립트 로드
         const loadPostcodeScript = () => {
@@ -322,19 +336,60 @@ const FacilityAdd = () => {
         }).open();
     };
 
-    // 요일별 시간 변경 핸들러
+    // 요일별 시간 변경 핸들러 (오픈 시간)
     const handleDailyOpenTimeChange = (day, time) => {
+        // 오픈 시간이 마감 시간보다 늦으면 경고
+        if (!isTimeValid(time, dailyCloseTimes[day])) {
+            setSnackbarMessage("오픈 시간은 마감 시간보다 빨라야 합니다.");
+            setSnackbarSeverity("warning");
+            setOpenSnackbar(true);
+            return;
+        }
+
         setDailyOpenTimes((prev) => ({
             ...prev,
             [day]: time,
         }));
     };
 
+    // 요일별 시간 변경 핸들러 (마감 시간)
     const handleDailyCloseTimeChange = (day, time) => {
+        // 마감 시간이 오픈 시간보다 빠르면 경고
+        if (!isTimeValid(dailyOpenTimes[day], time)) {
+            setSnackbarMessage("마감 시간은 오픈 시간보다 늦어야 합니다.");
+            setSnackbarSeverity("warning");
+            setOpenSnackbar(true);
+            return;
+        }
+
         setDailyCloseTimes((prev) => ({
             ...prev,
             [day]: time,
         }));
+    };
+
+    // 일반 오픈 시간 변경 핸들러
+    const handleOpenTimeChange = (time) => {
+        if (!isTimeValid(time, closeTime)) {
+            setSnackbarMessage("오픈 시간은 마감 시간보다 빨라야 합니다.");
+            setSnackbarSeverity("warning");
+            setOpenSnackbar(true);
+            return;
+        }
+
+        setOpenTime(time);
+    };
+
+    // 일반 마감 시간 변경 핸들러
+    const handleCloseTimeChange = (time) => {
+        if (!isTimeValid(openTime, time)) {
+            setSnackbarMessage("마감 시간은 오픈 시간보다 늦어야 합니다.");
+            setSnackbarSeverity("warning");
+            setOpenSnackbar(true);
+            return;
+        }
+
+        setCloseTime(time);
     };
 
     // 영업일 토글 핸들러
@@ -405,6 +460,41 @@ const FacilityAdd = () => {
         }
     };
 
+    // 영업 시간 유효성 검사
+    const validateOperationTimes = () => {
+        // 모든 요일 동일한 시간 설정인 경우
+        if (operationTimeType === "same") {
+            if (!isTimeValid(openTime, closeTime)) {
+                setSnackbarMessage("오픈 시간은 마감 시간보다 빨라야 합니다.");
+                setSnackbarSeverity("error");
+                setOpenSnackbar(true);
+                return false;
+            }
+        } else {
+            // 요일별 다른 시간 설정인 경우, 영업일로 설정된 날짜에 대해서만 검사
+            for (const day of ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]) {
+                if (openDays[day] && !isTimeValid(dailyOpenTimes[day], dailyCloseTimes[day])) {
+                    const dayNames = {
+                        MON: "월요일",
+                        TUE: "화요일",
+                        WED: "수요일",
+                        THU: "목요일",
+                        FRI: "금요일",
+                        SAT: "토요일",
+                        SUN: "일요일",
+                    };
+
+                    setSnackbarMessage(`${dayNames[day]}의 오픈 시간은 마감 시간보다 빨라야 합니다.`);
+                    setSnackbarSeverity("error");
+                    setOpenSnackbar(true);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
+
     // 폼 제출 핸들러
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -428,6 +518,11 @@ const FacilityAdd = () => {
             setSnackbarMessage("내용을 입력해주세요");
             setSnackbarSeverity("error");
             setOpenSnackbar(true);
+            return;
+        }
+
+        // 영업 시간 유효성 검사
+        if (!validateOperationTimes()) {
             return;
         }
 
@@ -765,7 +860,7 @@ const FacilityAdd = () => {
                                             <FormControl size="medium" fullWidth sx={{ minWidth: "180px" }}>
                                                 <Select
                                                     value={openTime}
-                                                    onChange={(e) => setOpenTime(e.target.value)}
+                                                    onChange={(e) => handleOpenTimeChange(e.target.value)}
                                                     displayEmpty
                                                 >
                                                     {Array.from({ length: 24 }).map((_, i) => (
@@ -785,7 +880,7 @@ const FacilityAdd = () => {
                                             <FormControl size="medium" fullWidth sx={{ minWidth: "180px" }}>
                                                 <Select
                                                     value={closeTime}
-                                                    onChange={(e) => setCloseTime(e.target.value)}
+                                                    onChange={(e) => handleCloseTimeChange(e.target.value)}
                                                     displayEmpty
                                                 >
                                                     {Array.from({ length: 24 }).map((_, i) => (
