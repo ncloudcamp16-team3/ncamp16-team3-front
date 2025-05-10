@@ -191,9 +191,9 @@ const PetSitterRegister = () => {
             age: data.age || "",
             houseType: data.houseType || "",
             comment: data.comment || "",
-            grown: Boolean(data.grown), // 명시적으로 불리언으로 변환
+            grown: Boolean(data.grown),
             petCount: data.petCount || "",
-            sitterExp: Boolean(data.experience), // experience 필드 사용
+            sitterExp: Boolean(data.experience),
             petTypeId: data.petType ? getPetTypeId(data.petType) : null,
             petTypesFormatted: data.petTypesFormatted || "",
             petTypes: data.petTypes || [],
@@ -370,6 +370,43 @@ const PetSitterRegister = () => {
 
         console.log("폼 데이터 초기화 완료");
     };
+    useEffect(() => {
+        // "키우고 있지 않습니다"로 변경된 경우
+        if (hasPet["키우고 있지 않습니다"]) {
+            // 반려동물 관련 상태 초기화
+            setPetTypes({
+                강아지: false,
+                고양이: false,
+                앵무새: false,
+                햄스터: false,
+                기타: false,
+            });
+
+            setPetCount({
+                "1마리": false,
+                "2마리": false,
+                "3마리 이상": false,
+            });
+
+            setOtherPetText("");
+
+            // petSitterData 업데이트 - 중요: 반려동물 관련 정보 초기화
+            setPetSitterData((prev) => ({
+                ...prev,
+                grown: false,
+                petTypeId: null,
+                petTypesFormatted: "",
+                petTypes: [],
+                petCount: null,
+            }));
+        } else {
+            // "네, 키우고 있습니다"로 변경된 경우
+            setPetSitterData((prev) => ({
+                ...prev,
+                grown: true,
+            }));
+        }
+    }, [hasPet]);
 
     // 단계 이동에 따른 상태 업데이트
     useEffect(() => {
@@ -700,30 +737,43 @@ const PetSitterRegister = () => {
                 age: petSitterData.age || Object.keys(selectedAges).find((key) => selectedAges[key]) || "20대",
                 houseType: petSitterData.houseType || Object.keys(houseType).find((key) => houseType[key]) || "아파트",
                 comment: petSitterData.comment || commentText || "제 가족이라는 마음으로 돌봐드려요 ♥",
-                grown: petSitterData.grown !== undefined ? petSitterData.grown : hasPet["네, 키우고 있습니다"] || false,
-                petCount:
-                    petSitterData.petCount ||
-                    getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "1마리"),
+                grown: hasPet["네, 키우고 있습니다"] ? true : false,
+
+                // 반려동물 관련 필드: "키우고 있지 않습니다"일 경우 null로 설정
+                petCount: hasPet["네, 키우고 있습니다"]
+                    ? petSitterData.petCount ||
+                      getPetCountEnum(Object.keys(petCount).find((key) => petCount[key]) || "1마리")
+                    : null,
+
                 sitterExp:
                     petSitterData.sitterExp !== undefined
                         ? petSitterData.sitterExp
                         : sitterExperience["네, 해본적 있습니다"] || false,
-                petTypeId: petSitterData.petTypeId,
-                petTypesFormatted: petSitterData.petTypesFormatted || getSelectedPetTypes(petTypes).join(", "),
+
+                petTypeId: hasPet["네, 키우고 있습니다"]
+                    ? petSitterData.petTypeId ||
+                      (getSelectedPetTypes(petTypes).length > 0 ? getPetTypeId(getSelectedPetTypes(petTypes)[0]) : null)
+                    : null,
+
+                petTypesFormatted: hasPet["네, 키우고 있습니다"]
+                    ? petSitterData.petTypesFormatted || getSelectedPetTypes(petTypes).join(", ")
+                    : "",
             };
-
             // 추가 데이터 - petTypeIds
-            const selectedPetTypes = getSelectedPetTypes(petTypes);
-            const selectedPetTypeIds = selectedPetTypes.map((type) => getPetTypeId(type)).filter((id) => id !== null);
-
-            submitData.petTypeIds = selectedPetTypeIds;
-
+            let selectedPetTypes = [];
+            if (hasPet["네, 키우고 있습니다"]) {
+                selectedPetTypes = getSelectedPetTypes(petTypes);
+                const selectedPetTypeIds = selectedPetTypes
+                    .map((type) => getPetTypeId(type))
+                    .filter((id) => id !== null);
+                submitData.petTypeIds = selectedPetTypeIds;
+            } else {
+                submitData.petTypeIds = [];
+            }
             // 기존 이미지 정보 추가
             if (existingImagePath && !isImageChanged) {
                 submitData.existingImagePath = existingImagePath;
             }
-
-            console.log("제출할 데이터:", submitData);
 
             const formData = new FormData();
             formData.append("data", new Blob([JSON.stringify(submitData)], { type: "application/json" }));
@@ -823,16 +873,18 @@ const PetSitterRegister = () => {
                         isPending: true,
                         status: "NONE",
                         age: submitData.age,
-                        petType: selectedPetTypes[0] || "",
+                        petType: selectedPetTypes.length > 0 ? selectedPetTypes[0] : "",
                         petTypes: selectedPetTypes,
                         petTypesFormatted: submitData.petTypesFormatted,
-                        petCount: Object.keys(petCount).find((key) => petCount[key]) || "1마리",
+                        petCount: hasPet["네, 키우고 있습니다"]
+                            ? Object.keys(petCount).find((key) => petCount[key]) || "1마리"
+                            : "",
                         houseType: submitData.houseType,
                         comment: submitData.comment,
                         image: finalImagePath,
                         experience: submitData.sitterExp,
                         registeredAt: new Date().toISOString(),
-                        grown: submitData.grown, // grown 필드 추가
+                        grown: submitData.grown,
                     };
 
                     console.log("로컬 스토리지에 저장할 완전한 정보:", sitterInfoComplete);
