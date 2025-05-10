@@ -146,22 +146,21 @@ const Review = () => {
         );
     }
 
-    if (invalidAccess) {
+    const ErrorScreen = (errorMessage) => {
         return (
             <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
-                <Typography>잘못된 접근입니다</Typography>
+                <Typography>{errorMessage}</Typography>
                 <Button onClick={() => navigate(-1)}>이전 화면으로 돌아가기</Button>
             </Container>
         );
-    }
+    };
 
     if (facilityInfo?.errorMsg) {
-        return (
-            <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2 }}>
-                <Typography>{facilityInfo.errorMsg}</Typography>
-                <Button onClick={() => navigate(-1)}>이전 화면으로 돌아가기</Button>
-            </Container>
-        );
+        return ErrorScreen(facilityInfo?.errorMsg);
+    }
+
+    if (invalidAccess) {
+        return ErrorScreen("잘못된 접근입니다");
     }
 
     return (
