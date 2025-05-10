@@ -41,6 +41,14 @@ const Step3 = () => {
             petInfo: !formData.petInfo || formData.petInfo.trim().length === 0,
             petNeutered: formData.petNeutered == null,
         };
+
+        // 255자 제한 검사 추가
+        if (formData.petInfo && formData.petInfo.length > 255) {
+            newErrors.petInfo = true;
+            showSnackbar("소개글은 255자 이내로 작성해주세요.");
+            return;
+        }
+
         setErrors(newErrors);
 
         // 에러 메시지 처리
@@ -306,7 +314,7 @@ const Step3 = () => {
                             onClick={handleNext}
                             sx={{ mt: 1, width: "100%", backgroundColor: "#E9A260" }}
                         >
-                            저장
+                            다음
                         </Button>
                     </Grid>
                 </Grid>
