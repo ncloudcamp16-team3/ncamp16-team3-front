@@ -1,38 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const UploadBox = styled(Box)(({ theme }) => ({
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+const ContainerBox = styled(Box)(({ theme }) => ({
+    width: "80%",
+    marginTop: theme.spacing(2),
     border: `2px dashed ${theme.palette.grey[400]}`,
     borderRadius: theme.shape.borderRadius,
-    padding: theme.spacing(4),
+    height: 200,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     textAlign: "center",
     cursor: "pointer",
+    position: "relative", // for absolute positioning of delete button
     "&:hover": {
         borderColor: theme.palette.primary.main,
         backgroundColor: theme.palette.action.hover,
     },
-    height: 200,
-    width: "100%",
+    overflow: "hidden", // Clip image if it overflows
 }));
 
 const PreviewImage = styled("img")({
     maxWidth: "100%",
-    maxHeight: 150,
-    objectFit: "contain",
+    maxHeight: "100%",
+    objectFit: "contain", // Maintain aspect ratio and fit within container
     borderRadius: 4,
-    marginBottom: 8,
 });
 
 const FileUploader = ({ onFileChange }) => {
     const [preview, setPreview] = useState(null);
     const [file, setFile] = useState(null);
+    const fileInputRef = useRef(null);
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
@@ -54,48 +55,59 @@ const FileUploader = ({ onFileChange }) => {
         onFileChange(null); // 상위에도 초기화 전달
     };
 
+    const handleClick = () => {
+        fileInputRef.current.click();
+    };
+
     return (
-        <Box sx={{ width: "80%", mt: 2 }}>
+        <ContainerBox onClick={handleClick}>
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+                id="file-upload"
+                ref={fileInputRef}
+            />
             {preview ? (
-                <Box display="flex" flexDirection="column" alignItems="center">
-                    <Box position="relative" display="inline-block">
-                        <PreviewImage src={preview} alt="preview" />
-                        <IconButton
-                            size="small"
-                            onClick={removeFile}
-                            sx={{
-                                position: "absolute",
-                                top: -10,
-                                right: -10,
-                                bgcolor: "white",
-                                boxShadow: 1,
-                                "&:hover": { bgcolor: "grey.100" },
-                            }}
-                        >
-                            <DeleteIcon fontSize="small" />
-                        </IconButton>
-                    </Box>
-                </Box>
-            ) : (
                 <>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        style={{ display: "none" }}
-                        id="file-upload"
-                    />
-                    <label htmlFor="file-upload">
-                        <UploadBox>
-                            <CloudUploadIcon fontSize="large" color="action" />
-                            <Typography variant="h6" color="textSecondary">
-                                사진 첨부하기
-                            </Typography>
-                        </UploadBox>
-                    </label>
+                    <PreviewImage src={preview} alt="preview" />
+                    <IconButton
+                        size="small"
+                        onClick={(event) => {
+                            event.stopPropagation(); // Prevent container click
+                            removeFile();
+                        }}
+                        sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            bgcolor: "white",
+                            boxShadow: 1,
+                            "&:hover": { bgcolor: "grey.100" },
+                        }}
+                    >
+                        <DeleteIcon fontSize="small" />
+                    </IconButton>
                 </>
+            ) : (
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                    }}
+                >
+                    <CloudUploadIcon fontSize="large" color="action" />
+                    <Typography variant="h6" color="textSecondary">
+                        사진 첨부하기
+                    </Typography>
+                </Box>
             )}
-        </Box>
+        </ContainerBox>
     );
 };
 
