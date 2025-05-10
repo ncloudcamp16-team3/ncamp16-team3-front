@@ -20,7 +20,7 @@ const Review = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const { showModal } = useContext(Context);
+    const { handleSnackbarOpen } = useContext(Context);
     const { globalConfirmModal, setGlobalConfirmModal } = useReserveContext();
     const [hover, setHover] = useState(-1);
     const [invalidAccess, setInvalidAccess] = useState(false);
@@ -104,7 +104,7 @@ const Review = () => {
         const comment = text.current.value;
 
         if (!starRating || !comment) {
-            showModal("", "내용과 별점을 모두 입력해주세요.");
+            handleSnackbarOpen("내용과 별점을 모두 입력해주세요", "warning");
             return;
         }
 
@@ -122,9 +122,7 @@ const Review = () => {
 
         try {
             await addReview({ formData });
-            showModal("리뷰 등록 성공", `${facilityInfo.name}(으)로 이동`, () =>
-                navigate(`/reserve/${facilityInfo.id}`)
-            );
+            navigate(`/reserve/${facilityInfo.id}`);
         } catch (error) {
             console.error(error);
         }
