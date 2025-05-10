@@ -279,10 +279,38 @@ const ReviewCardItem = ({
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         {editable && (
                             <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
-                                <Button size="small" variant="contained" onClick={handleUpdateCancel}>
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={handleUpdateCancel}
+                                    sx={{
+                                        bgcolor: "#FDF1E5",
+                                        color: "#E9A260",
+                                        "&:hover": {
+                                            bgcolor: "#F2DFCE",
+                                        },
+                                        borderRadius: "4px",
+                                        px: 3,
+                                        py: 1,
+                                    }}
+                                >
                                     취소
                                 </Button>
-                                <Button size="small" variant="contained" onClick={handleUpdateSubmit}>
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={handleUpdateSubmit}
+                                    sx={{
+                                        bgcolor: "#E9A260",
+                                        color: "white",
+                                        "&:hover": {
+                                            bgcolor: "#d0905a",
+                                        },
+                                        borderRadius: "4px",
+                                        px: 3,
+                                        py: 1,
+                                    }}
+                                >
                                     저장
                                 </Button>
                             </Box>
