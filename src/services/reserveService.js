@@ -29,11 +29,14 @@ export const getFacilityListsToReserve = ({
         });
 };
 
-export const getFacilityToReserveById = (id) => {
-    return instance.get(`/facility/${id}/detail`).catch((error) => {
-        console.error("시설 정보를 불러오는 데 실패했습니다.", error);
+export const getFacilityToReserveById = async (id, sortBy = "recent") => {
+    try {
+        const response = await instance.get(`/facility/${id}/detail?sortBy=${sortBy}`);
+        return response;
+    } catch (error) {
+        console.error("시설 상세 정보 로딩 실패:", error);
         throw error;
-    });
+    }
 };
 
 export const addReview = async ({ formData }) => {
@@ -74,7 +77,6 @@ export const fetchMyReserveList = async () => {
     return await instance.get(`${API_URL}/my`);
 };
 
-// services/reserveService.js
 export const getReserveDetail = async (id) => {
     return await instance.get(`${API_URL}/${id}`);
 };

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Background from "../../components/Admin/Background.jsx";
 import { useAdmin } from "../../components/Admin/AdminContext.jsx";
 import Logo from "../../../src/assets/images/logo.png";
+import Dog from "../../../src/assets/images/Admin/dog.svg";
 
 const Admin = () => {
     const { login, isAuthenticated } = useAdmin();
@@ -126,7 +127,7 @@ const Admin = () => {
                         >
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                 <img
-                                    src="/src/assets/images/Admin/dog.svg"
+                                    src={Dog}
                                     alt="Dog"
                                     style={{
                                         width: "100px",

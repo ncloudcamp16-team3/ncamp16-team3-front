@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Grid, CardContent, Avatar, Typography, Button, Box, Stack, CardMedia, TextField } from "@mui/material";
 import ReviewDropdown from "./ReviewDropDown";
 import { putReview } from "../../services/reserveService";
@@ -20,11 +20,19 @@ const ReviewCardItem = ({
     const [editable, setEditable] = useState(false);
     const [comment, setComment] = useState(review.comment);
     const [starPoint, setStarPoint] = useState(review.starPoint);
-    const [image, setImage] = useState(review.reviewImages?.[0] || null);
     const [imageFile, setImageFile] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const [isExpended, setIsExpended] = useState(false);
 
     const { showModal } = useContext(Context);
+
+    // ✅ 외부 review 변경 시 comment와 starPoint 동기화
+    useEffect(() => {
+        if (!editable) {
+            setComment(review.comment);
+            setStarPoint(review.starPoint);
+        }
+    }, [review, editable]);
 
     const isLongContent = comment.length > 30;
     const shortContent = isLongContent ? comment.slice(0, 30) + "..." : comment;
@@ -33,7 +41,7 @@ const ReviewCardItem = ({
         const file = e.target.files[0];
         if (file) {
             setImageFile(file);
-            setImage(URL.createObjectURL(file));
+            setPreviewImage(URL.createObjectURL(file));
         }
     };
 
@@ -65,6 +73,8 @@ const ReviewCardItem = ({
             setReviews(data.reviews || []);
             setChartData(transformScoreToChartData(data.ratingRatio));
             setEditable(false);
+            setImageFile(null);
+            setPreviewImage(null);
             showModal("", "리뷰가 수정되었습니다.");
         } catch (err) {
             showModal("", "리뷰 수정 실패: " + err.message);
@@ -76,9 +86,12 @@ const ReviewCardItem = ({
     const handleUpdateCancel = () => {
         setComment(review.comment);
         setStarPoint(review.starPoint);
-        setImage(review.reviewImages?.[0] || null);
+        setImageFile(null);
+        setPreviewImage(null);
         setEditable(false);
     };
+
+    const imageToShow = editable ? previewImage : review.reviewImages?.[0];
 
     return (
         <Grid item sx={{ width: "100%", padding: "0" }}>
@@ -103,7 +116,7 @@ const ReviewCardItem = ({
                         sx={{
                             display: "flex",
                             justifyContent: "space-between",
-                            minHeight: image ? 100 : "auto",
+                            minHeight: imageToShow ? 100 : "auto",
                         }}
                     >
                         <Box sx={{ display: "flex", flexDirection: "column", pr: "10px", width: "100%" }}>
@@ -148,18 +161,18 @@ const ReviewCardItem = ({
 
                         <Box
                             sx={{
-                                minWidth: 120, // ✅ 고정 너비
-                                flexShrink: 0, // ✅ shrink 방지
+                                minWidth: 120,
+                                flexShrink: 0,
                             }}
                         >
                             {editable ? (
                                 <Box sx={{ position: "relative", mb: 2 }}>
-                                    {image ? (
+                                    {previewImage ? (
                                         <CardMedia
                                             component="img"
                                             height="100"
-                                            image={image}
-                                            alt="review"
+                                            image={previewImage}
+                                            alt="preview"
                                             sx={{
                                                 borderRadius: 1,
                                                 cursor: "pointer",
@@ -172,7 +185,7 @@ const ReviewCardItem = ({
                                             onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
                                             sx={{
                                                 height: 100,
-                                                width: "100%", // ✅ 박스 채우기
+                                                width: "100%",
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
@@ -195,11 +208,11 @@ const ReviewCardItem = ({
                                     />
                                 </Box>
                             ) : (
-                                image && (
+                                imageToShow && (
                                     <CardMedia
                                         component="img"
                                         height="100"
-                                        image={image}
+                                        image={imageToShow}
                                         alt="review"
                                         sx={{
                                             borderRadius: 1,

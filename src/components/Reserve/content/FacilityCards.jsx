@@ -1,14 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Typography, Box } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 import CardContentAboutTime from "./CardContentAboutTime.jsx";
+import StarRating from "../../../pages/Reserve/StarRating.jsx";
 
 const FacilityCards = ({ item }) => {
     const navigate = useNavigate();
     console.log(item);
-    let filledStars = Math.floor(item.rating);
-    if (item.rating >= 4.5 && item.rating < 5) filledStars = 4;
 
     return (
         <Card
@@ -55,13 +53,7 @@ const FacilityCards = ({ item }) => {
                             <span style={{ color: "#d32f2f", fontWeight: "bold", marginRight: 2 }}>
                                 {Math.round(item.rating).toFixed(1)}
                             </span>
-                            {[...Array(5)].map((_, index) => (
-                                <StarIcon
-                                    key={index}
-                                    fontSize="small"
-                                    sx={{ color: index < filledStars ? "#ff9800" : "#ccc" }}
-                                />
-                            ))}
+                            <StarRating rating={item.starPoint} />
                             리뷰 {item.reviewCount}건
                         </Typography>
                         <Typography sx={{ fontSize: 14, color: "#555" }}>

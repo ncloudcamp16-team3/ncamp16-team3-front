@@ -8,6 +8,7 @@ import Calendar from "../../assets/images/Global/modal-calendar.svg";
 import Info from "../../assets/images/Global/modal-info.svg";
 import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
+import Chat from "../../assets/images/Global/modal-chat.png";
 import { logout } from "../../services/authService.js";
 import { Context } from "../../context/Context.jsx";
 import alert_noti from "../../assets/images/Global/active_bell.gif";
@@ -136,6 +137,21 @@ const Header = () => {
                 >
                     <img src={Calendar} alt="캘린더" style={{ width: "24px", height: "24px" }} />
                     <span>캘린더</span>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleClickMenu("/chat")}
+                    sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        gap: 1.5,
+                        fontWeight: "600",
+                        padding: "4px 8px 4px 8px",
+                        minHeight: "16px",
+                    }}
+                >
+                    <img src={Chat} alt="채팅" style={{ width: "24px", height: "24px" }} />
+                    <span>내 채팅</span>
                 </MenuItem>
 
                 <MenuItem
