@@ -97,7 +97,7 @@ export const SimpleDateRangeSelector = ({ startDate, endDate, onDateChange, onSe
                 {/* 검색 버튼을 오른쪽 끝에 배치 */}
                 <Box
                     sx={{
-                        bgcolor: "#F97316",
+                        bgcolor: "#FFA500",
                         borderRadius: "20px",
                         width: "80px",
                         height: "36px",
