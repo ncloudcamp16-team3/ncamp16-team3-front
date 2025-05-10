@@ -35,8 +35,8 @@ const StarRatingConstructor = ({ defaultValue = 0, setStarRating, getLabelText, 
                             setHover(newHover);
                         }
                     }}
-                    icon={<StarIcon fontSize="large" sx={{ color: "#faaf00" }} />}
-                    emptyIcon={<StarBorderIcon fontSize="large" sx={{ color: "#ccc" }} />}
+                    icon={<StarIcon fontSize="small" sx={{ color: "#faaf00" }} />}
+                    emptyIcon={<StarBorderIcon fontSize="small" sx={{ color: "#ccc" }} />}
                 />
             </Stack>
         </Box>
