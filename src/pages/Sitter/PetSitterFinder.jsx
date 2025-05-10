@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import PetSitterSurvey from "../../components/Sitter/PetSitterSurvey";
 import PetSitterResults from "../../components/Sitter/PetSitterResults";
 import { getApprovedPetSitters } from "../../services/petSitterService";
+import GlobalSnackbar from "../../components/Global/GlobalSnackbar";
 
 const PetSitterFinder = () => {
     const navigate = useNavigate();
@@ -67,6 +68,12 @@ const PetSitterFinder = () => {
         return savedConditions?.filteredPetsitters || [];
     });
 
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
+
     // 진행률 매핑
     const progressMapping = {
         1: 0,
@@ -94,6 +101,10 @@ const PetSitterFinder = () => {
         };
         sessionStorage.setItem("petSitterConditions", JSON.stringify(conditions));
     }, [selectedAges, hasPet, hasSitterExperience, step, history, progress, showResults, filteredPetsitters]);
+
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
 
     const resetSearch = () => {
         sessionStorage.removeItem("petSitterConditions");
@@ -129,7 +140,11 @@ const PetSitterFinder = () => {
         switch (step) {
             case 1: // 연령대
                 if (!Object.values(selectedAges).some((v) => v)) {
-                    alert("연령대를 하나 이상 선택해주세요.");
+                    setSnackbar({
+                        open: true,
+                        message: "연령대를 하나 이상 선택해주세요.",
+                        severity: "warning",
+                    });
                     return;
                 }
 
@@ -144,7 +159,11 @@ const PetSitterFinder = () => {
 
             case 2: // 반려동물 여부
                 if (!Object.values(hasPet).some((v) => v)) {
-                    alert("선택지를 하나 선택해주세요.");
+                    setSnackbar({
+                        open: true,
+                        message: "선택지를 하나 선택해주세요.",
+                        severity: "warning",
+                    });
                     return;
                 }
 
@@ -156,7 +175,11 @@ const PetSitterFinder = () => {
 
             case 3: // 펫시터 경험 여부
                 if (!Object.values(hasSitterExperience).some((v) => v)) {
-                    alert("선택지를 하나 선택해주세요.");
+                    setSnackbar({
+                        open: true,
+                        message: "선택지를 하나 선택해주세요.",
+                        severity: "warning",
+                    });
                     return;
                 }
 
@@ -214,6 +237,12 @@ const PetSitterFinder = () => {
         } catch (error) {
             console.error("펫시터 검색 오류:", error);
             setError("펫시터 정보를 불러오는데 실패했습니다. 다시 시도해주세요.");
+
+            setSnackbar({
+                open: true,
+                message: "펫시터 정보를 불러오는데 실패했습니다. 다시 시도해주세요.",
+                severity: "error",
+            });
         } finally {
             setIsLoading(false);
         }
@@ -336,6 +365,14 @@ const PetSitterFinder = () => {
                     />
                 )}
             </Box>
+
+            {/* GlobalSnackbar */}
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
+            />
         </Box>
     );
 };
