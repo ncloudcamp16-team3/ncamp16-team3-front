@@ -8,7 +8,7 @@ import Calendar from "../../assets/images/Global/modal-calendar.svg";
 import Info from "../../assets/images/Global/modal-info.svg";
 import Logout from "../../assets/images/Global/modal-logout.svg";
 import Purchase from "../../assets/images/Global/modal-purchase.svg";
-import Chat from "../../assets/images/Global/modal-chat.svg";
+import Chat from "../../assets/images/Global/modal-chat.png";
 import { logout } from "../../services/authService.js";
 import { Context } from "../../context/Context.jsx";
 import alert_noti from "../../assets/images/Global/active_bell.gif";
