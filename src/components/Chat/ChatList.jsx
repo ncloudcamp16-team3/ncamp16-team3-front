@@ -196,6 +196,10 @@ const ChatList = () => {
                 <Box display="flex" justifyContent="center" py={5}>
                     <CircularProgress size={32} />
                 </Box>
+            ) : filteredChatList.length === 0 ? (
+                <Typography textAlign="center" color="text.secondary" mt={4}>
+                    아직 채팅방이 없습니다.
+                </Typography>
             ) : (
                 filteredChatList.map((item) => (
                     <ChatItem

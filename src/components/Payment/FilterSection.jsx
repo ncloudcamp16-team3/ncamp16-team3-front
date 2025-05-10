@@ -24,6 +24,7 @@ export const FilterSection = ({
                 return;
             }
             setPeriodSelect("직접입력");
+            setEndDate(today); // ✅ endDate를 오늘로 설정
             return;
         }
 
