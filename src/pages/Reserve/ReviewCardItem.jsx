@@ -36,7 +36,7 @@ const ReviewCardItem = ({
     const [previewImage, setPreviewImage] = useState(null);
     const [isExpended, setIsExpended] = useState(false);
 
-    const { showModal } = useContext(Context);
+    const { handleSnackbarOpen } = useContext(Context);
 
     // ✅ 외부 review 변경 시 comment와 starPoint 동기화
     useEffect(() => {
@@ -87,9 +87,9 @@ const ReviewCardItem = ({
             setEditable(false);
             setImageFile(null);
             setPreviewImage(null);
-            showModal("", "리뷰가 수정되었습니다.");
+            handleSnackbarOpen("리뷰가 수정되었습니다");
         } catch (err) {
-            showModal("", "리뷰 수정 실패: " + err.message);
+            handleSnackbarOpen("리뷰 수정 실패 : " + err.message, "error");
         } finally {
             setLoading(false);
         }
