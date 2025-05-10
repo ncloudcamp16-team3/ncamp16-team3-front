@@ -178,9 +178,11 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
                         >
                             {commentItem.refComment && (
                                 <Typography
-                                    onClick={() => {
-                                        scrollToComment(commentItem.refComment.id);
-                                    }}
+                                    onClick={
+                                        commentItem.refComment.deletedAuthor
+                                            ? undefined
+                                            : () => scrollToComment(commentItem.refComment.id)
+                                    }
                                     sx={{
                                         display: "flex",
                                         alignItems: "center",
@@ -189,12 +191,16 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
                                         py: 0.5,
                                         pl: "3px",
                                         pr: "5px",
-                                        color: "blue",
-                                        cursor: "pointer",
+                                        color: commentItem.refComment.deletedAuthor ? "gray" : "blue",
+                                        cursor: commentItem.refComment.deletedAuthor ? undefined : "pointer",
+                                        fontStyle: commentItem.refComment.deletedAuthor && "italic",
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    @{commentItem.refComment.authorNickname}
+                                    @
+                                    {commentItem.refComment.deletedAuthor
+                                        ? "삭제된 회원"
+                                        : commentItem.refComment.authorNickname}
                                 </Typography>
                             )}
                             <TextField
