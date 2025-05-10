@@ -22,6 +22,20 @@ const Review = () => {
     const navigate = useNavigate();
     const { showModal } = useContext(Context);
     const { globalConfirmModal, setGlobalConfirmModal } = useReserveContext();
+    const [hover, setHover] = useState(-1);
+
+    const labels = {
+        0: "평가 안함",
+        1: "매우 나쁨",
+        2: "나쁨",
+        3: "보통",
+        4: "좋음",
+        5: "매우 좋음",
+    };
+
+    const getLabelText = (value) => {
+        return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,7 +109,7 @@ const Review = () => {
         formData.append("file", image);
 
         try {
-            const response = await addReview({ formData });
+            await addReview({ formData });
             showModal("리뷰 등록 성공", `${facilityInfo.name}(으)로 이동`, () =>
                 navigate(`/reserve/${facilityInfo.id}`)
             );
@@ -156,10 +170,35 @@ const Review = () => {
                         }}
                     />
                 )}
-
-                <Typography sx={{ fontWeight: "bold", fontSize: 24 }}>{facilityInfo?.name}</Typography>
-
-                <StarRatingConstructor starRating={starRating} setStarRating={setStarRating} />
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: 3,
+                        borderRadius: 2,
+                        bgcolor: "background.paper",
+                    }}
+                >
+                    <Typography sx={{ fontWeight: "bold", fontSize: 24 }}>{facilityInfo?.name}</Typography>
+                    <Typography component="h2" variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+                        만족도 평가
+                    </Typography>
+                    <StarRatingConstructor
+                        starRating={starRating}
+                        setStarRating={setStarRating}
+                        getLabelText={getLabelText}
+                        setHover={setHover}
+                    />
+                    <Box sx={{ ml: 1, display: "flex", justifyContent: "center" }}>
+                        {starRating !== null && (
+                            <Typography sx={{ fontWeight: "medium" }}>
+                                {labels[hover !== -1 ? hover : starRating]}
+                            </Typography>
+                        )}
+                    </Box>
+                </Box>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 2, mb: 2.5 }}>
                 <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>이용 후기</Typography>
