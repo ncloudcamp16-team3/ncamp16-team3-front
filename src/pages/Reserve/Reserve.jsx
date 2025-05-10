@@ -10,8 +10,6 @@ import { useNavigate } from "react-router-dom";
 const ReserveContent = () => {
     const navigate = useNavigate();
 
-    // 에러 처리
-
     return (
         <Container sx={{ maxWidth: 500 }}>
             <Box

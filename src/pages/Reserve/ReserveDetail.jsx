@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
 import { Box, Typography, Button, Container, Grid, Stack, Divider, Chip, CircularProgress, Alert } from "@mui/material";
+import { Star, StarBorder } from "@mui/icons-material";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -16,7 +17,6 @@ import timezone from "dayjs/plugin/timezone";
 import ReviewCardItem from "./ReviewCardItem.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
 import ImgSlide from "../../components/Global/ImgSlider.jsx";
-import StarRating from "./StarRating.jsx";
 import ReviewFilter from "../../components/Reserve/filter/ReviewFilter.jsx";
 
 dayjs.extend(utc);
@@ -218,8 +218,6 @@ const ReserveDetail = () => {
         setUserWantReserve(false);
     };
 
-    const rating = facilityData.starPoint || 0;
-
     const ScoreBar = () => {
         return (
             <Box
@@ -257,6 +255,59 @@ const ReserveDetail = () => {
                         <Typography sx={{ fontSize: 13, color: "#FF5555", width: 30 }}>{item.percentage}%</Typography>
                     </Box>
                 ))}
+            </Box>
+        );
+    };
+
+    const rating = facilityData.starPoint || 0;
+
+    const StarRating = () => {
+        const percentage = (rating / 5) * 100;
+
+        return (
+            <Box
+                sx={{
+                    position: "relative",
+                    display: "inline-block",
+                    width: 100,
+                    height: 20,
+                }}
+            >
+                {/* 빈 별 5개 */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        color: "#ccc", // 빈 별 색상
+                    }}
+                >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <StarBorder key={i} sx={{ width: 20, height: 20 }} />
+                    ))}
+                </Box>
+
+                {/* 채워진 별 5개 (클리핑) */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: `${percentage}%`,
+                        height: "100%",
+                        overflow: "hidden",
+                        color: "#FFD700", // 채워진 별 색상
+                        pointerEvents: "none",
+                    }}
+                >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} sx={{ width: 20, height: 20 }} />
+                    ))}
+                </Box>
             </Box>
         );
     };
