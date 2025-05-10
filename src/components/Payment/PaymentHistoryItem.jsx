@@ -119,14 +119,15 @@ export const PaymentHistoryItem = ({ payment }) => {
                         </Box>
                     )}
 
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                        {payment.exitTime ? "체크인: " : "예약시간: "}
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, wordBreak: "keep-all" }}>
+                        {payment.exitTime ? "In: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}
                     </Typography>
 
+                    {/* 체크아웃 (있을 경우만) */}
                     {payment.exitTime && (
-                        <Typography variant="caption" color="text.secondary" sx={{}}>
-                            체크아웃: {formatDateTime(payment.exitTime)}
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, wordBreak: "keep-all" }}>
+                            Out: {formatDateTime(payment.exitTime)}
                         </Typography>
                     )}
 
