@@ -54,7 +54,7 @@ const EditPet = () => {
     const today = new Date().toISOString().split("T")[0];
 
     // 반려동물 종류 옵션
-    const petTypes = ["강아지", "고양이", "햄스터", "새", "물고기", "기타"];
+    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
 
     // 데이터 로드
     useEffect(() => {

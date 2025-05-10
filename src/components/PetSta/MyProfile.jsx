@@ -72,7 +72,7 @@ const MyProfile = ({ userInfo }) => {
                 @{userInfo.name}
             </Typography>
             {/* 유저 이름 */}
-            <Box width="90%" borderBottom="1px solid #ccc" m="0 auto" />
+            <Box width="100%" borderBottom="1px solid #ccc" m="0 auto" />
             {/* 포스팅 썸네일 목록 */}
             <Box display="flex" flexWrap="wrap" gap={1}>
                 {userInfo.posts.map((post) => (

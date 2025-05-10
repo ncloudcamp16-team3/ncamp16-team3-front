@@ -44,7 +44,7 @@ const ReserveContent = () => {
                     }}
                 >
                     <SortFilter />
-                    <Button sx={{ bgcolor: "#FFF", borderRadius: 2 }} onClick={() => navigate("/reserve/list")}>
+                    <Button sx={{ bgcolor: "#FFF", borderRadius: 2 }} onClick={() => navigate("/payment")}>
                         내 예약 목록
                     </Button>
                 </Box>

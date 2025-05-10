@@ -16,6 +16,7 @@ const CompletionStep = ({ imagePreview, formData, onComplete }) => {
                 alignItems: "center",
                 justifyContent: "flex-start",
                 pt: 6,
+                overflow: "auto", // 내용이 많을 경우 스크롤 가능하도록
             }}
         >
             <Typography

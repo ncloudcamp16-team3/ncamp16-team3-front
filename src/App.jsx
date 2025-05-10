@@ -23,12 +23,12 @@ import AdminNoticeDetail from "./pages/Admin/AdminNoticeDetail.jsx";
 
 // Lazy-loaded Pages
 const Main = lazy(() => import("./pages/PetMeeting/Main.jsx"));
+const LocationConfig = lazy(() => import("./pages/LocationConfig/LocationConfig.jsx"));
 const Login = lazy(() => import("./pages/User/Login.jsx"));
 const Register = lazy(() => import("./pages/User/Register.jsx"));
 const Board = lazy(() => import("./pages/Board/Board.jsx"));
 const Reserve = lazy(() => import("./pages/Reserve/Reserve.jsx"));
 const ReserveDetail = lazy(() => import("./pages/Reserve/ReserveDetail.jsx"));
-const ReservationList = lazy(() => import("./pages/Reserve/ReservationList.jsx"));
 const Reservation = lazy(() => import("./pages/Reserve/Reservation.jsx"));
 const ReservationDetail = lazy(() => import("./pages/Reserve/ReservationDetail.jsx"));
 const Review = lazy(() => import("./pages/Reserve/Review.jsx"));
@@ -116,6 +116,7 @@ function App() {
                             <Route element={<ProtectedRoute />}>
                                 <Route element={<Layout1 />}>
                                     <Route path="/" element={<Main />} />
+                                    <Route path="/location" element={<LocationConfig />} />
                                     <Route path="/announce/:announceId" element={<Announce />} />
                                     <Route path="/pet/:petId" element={<PetDetails />} />
                                     <Route path="/board" element={<Board />} />
@@ -136,7 +137,6 @@ function App() {
                                     >
                                         <Route index element={<Reserve />} />
                                         <Route path=":id" element={<ReserveDetail />} />
-                                        <Route path="list" element={<ReservationList />} />
                                         <Route path="success" element={<Reservation />} />
                                         <Route path="detail/:id" element={<ReservationDetail />} />
                                         <Route path="review/:id" element={<Review />} />

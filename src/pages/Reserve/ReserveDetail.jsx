@@ -1,20 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
-import {
-    Box,
-    Typography,
-    Button,
-    Card,
-    CardMedia,
-    Container,
-    Grid,
-    Stack,
-    Divider,
-    Chip,
-    CircularProgress,
-    Alert,
-} from "@mui/material";
+import { Box, Typography, Button, Container, Grid, Stack, Divider, Chip, CircularProgress, Alert } from "@mui/material";
 import StarBorder from "@mui/icons-material/StarBorder";
 import Star from "@mui/icons-material/Star";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
@@ -30,6 +17,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import ReviewCardItem from "./ReviewCardItem.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
+import ImgSlide from "../../components/Global/ImgSlider.jsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -317,18 +305,7 @@ const ReserveDetail = () => {
                         ? { onBack: () => setUserWantReserve(false) }
                         : { onBack: () => navigate("/reserve") })}
                 />
-                <Divider sx={{ width: "100%" }} />
-                <Box sx={{ width: "100%", display: "flex" }}>
-                    {/* 상단 이미지 */}
-                    <Card sx={{ mb: 2, width: "100%", height: "100%", boxShadow: "none" }}>
-                        <CardMedia
-                            component="img"
-                            height="300"
-                            image={facilityData.imagePath || "https://via.placeholder.com/400x300"}
-                            alt={facilityData.name}
-                        />
-                    </Card>
-                </Box>
+                <ImgSlide photos={facilityData.imagePaths} />
                 <Divider />
                 <Box sx={{ width: "100%", display: "flex", alignItems: "center", gap: 1, px: 3, mt: 2 }}>
                     <Typography variant="h4" gutterBottom>
@@ -429,7 +406,6 @@ const ReserveDetail = () => {
                                 setEndTime={setEndTime}
                                 isTimetableEmpty={isTimetableEmpty}
                                 setIsTimetableEmpty={setIsTimetableEmpty}
-                                transformScoreToChartData={transformScoreToChartData}
                             />
                         </Box>
                     ))}

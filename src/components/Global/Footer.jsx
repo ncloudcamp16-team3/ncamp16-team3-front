@@ -3,11 +3,11 @@ import "../../css/App.css";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import BottomButton from "./BottomButton.jsx";
-import board from "../../assets/images/Global/board.svg";
+import board from "../../assets/images/Global/board.png";
 import main from "../../assets/images/Global/main.svg";
-import petsta from "../../assets/images/Global/petsta.svg";
-import reserve from "../../assets/images/Global/reserve.svg";
-import petsitter from "../../assets/images/Global/petsitter.svg";
+import petsta from "../../assets/images/Global/petsta.png";
+import reserve from "../../assets/images/Global/reserve.png";
+import petsitter from "../../assets/images/Global/petsitter.png";
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Footer = () => {
                 <img src={main} />
             </Box>
             <BottomButton icon={reserve} label="예약" onClick={() => navigate("/reserve")} />
-            <BottomButton icon={petsitter} label="임보구해요" onClick={() => navigate("/petsitter-finder")} />
+            <BottomButton icon={petsitter} label="펫시터찾기" onClick={() => navigate("/petsitter-finder")} />
         </Box>
     );
 };

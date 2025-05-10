@@ -139,7 +139,7 @@ const VideoDetail = ({ post, currentTime = 0 }) => {
                 zIndex="999"
                 gap={1}
             >
-                <IconButton onClick={() => navigate(-1)}>
+                <IconButton onClick={() => navigate("/petsta")}>
                     <img src={LeftArrow} />
                 </IconButton>
                 동영상

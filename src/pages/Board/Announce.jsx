@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, InputBase, Typography } from "@mui/material";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import ImgSlide from "../../components/Board/ImgSlider.jsx";
+import ImgSlide from "../../components/Global/ImgSlider.jsx";
 import { getAnnounceDetail } from "../../services/announceService.js";
 import Loading from "../../components/Global/Loading.jsx";
 
@@ -36,7 +36,7 @@ const Announce = () => {
                         m: "0 10px 20px 10px",
                     }}
                 >
-                    {announceData.photos.length > 0 && <ImgSlide photos={announceData.photos} />}
+                    {announceData.photos.length > 0 && <ImgSlide photos={announceData.photos} borderRadius={true} />}
                     <Typography
                         sx={{
                             fontSize: "22px",
