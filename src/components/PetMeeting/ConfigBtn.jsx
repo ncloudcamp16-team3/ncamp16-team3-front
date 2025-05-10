@@ -2,17 +2,19 @@ import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
 import { Context } from "../../context/Context.jsx";
+import { useNavigate } from "react-router-dom";
 
 const ConfigBtn = ({ img, label, type }) => {
     const { setOpenPetConfigModal, setView, setOpenActivityModal } = useContext(PetMeetingContext);
     const { pet } = useContext(Context);
+    const navigate = useNavigate();
     const handleClick = () => {
         switch (type) {
             case "pet":
                 setOpenPetConfigModal(true);
                 break;
             case "location":
-                setView("locationConfig");
+                navigate("/location");
                 break;
             case "activity":
                 if (pet?.activityStatus === "NONE" || pet?.activityStatus === undefined || pet?.id == null) {

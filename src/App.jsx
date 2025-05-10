@@ -23,6 +23,7 @@ import AdminNoticeDetail from "./pages/Admin/AdminNoticeDetail.jsx";
 
 // Lazy-loaded Pages
 const Main = lazy(() => import("./pages/PetMeeting/Main.jsx"));
+const LocationConfig = lazy(() => import("./pages/LocationConfig/LocationConfig.jsx"));
 const Login = lazy(() => import("./pages/User/Login.jsx"));
 const Register = lazy(() => import("./pages/User/Register.jsx"));
 const Board = lazy(() => import("./pages/Board/Board.jsx"));
@@ -116,6 +117,7 @@ function App() {
                             <Route element={<ProtectedRoute />}>
                                 <Route element={<Layout1 />}>
                                     <Route path="/" element={<Main />} />
+                                    <Route path="/location" element={<LocationConfig />} />
                                     <Route path="/announce/:announceId" element={<Announce />} />
                                     <Route path="/pet/:petId" element={<PetDetails />} />
                                     <Route path="/board" element={<Board />} />

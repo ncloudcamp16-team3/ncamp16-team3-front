@@ -1,22 +1,22 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import KakaoMap from "./KakaoMap.jsx";
-import { PetMeetingContext } from "../../context/PetMeetingContext.jsx";
-import LocationConfigBtns from "./LocationConfigBtns.jsx";
-import Distance from "./Disdance.jsx";
-import TitleBar from "../Global/TitleBar.jsx";
+import KakaoMap from "../../components/Location/KakaoMap.jsx";
+import LocationConfigBtns from "../../components/Location/LocationConfigBtns.jsx";
+import Distance from "../../components/Location/Disdance.jsx";
+import TitleBar from "../../components/Global/TitleBar.jsx";
 import { Context } from "../../context/Context.jsx";
 import { saveUserData } from "../../services/memberService.js";
+import { useNavigate } from "react-router-dom";
 
 const LocationConfig = () => {
     const { user, setUser } = useContext(Context);
-    const { setView } = useContext(PetMeetingContext);
     const [address, setAddress] = useState(null);
     const [dongName, setDongName] = useState(null);
     const [distance, setDistance] = useState("LEVEL2");
     const { showModal } = useContext(Context);
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
+    const navigete = useNavigate();
 
     useEffect(() => {
         if (user) {
@@ -41,7 +41,7 @@ const LocationConfig = () => {
 
             saveUserData(updatedUser)
                 .then(() => {
-                    showModal(null, "위치 저장 완료", () => setView("petMeeting"));
+                    showModal(null, "위치 저장 완료", () => navigete("/"));
                 })
                 .catch((err) => {
                     console.error("에러 발생:", err.message);
@@ -54,7 +54,7 @@ const LocationConfig = () => {
 
     return (
         <Box>
-            <TitleBar name={"내 위치정보 설정"} onBack={() => setView("petMeeting")} />
+            <TitleBar name={"내 위치정보 설정"} onBack={() => navigete("/")} />
 
             <KakaoMap
                 address={address}
