@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, Typography, Button, Container, Avatar, CircularProgress, Alert } from "@mui/material";
+import { Box, Typography, Button, Container, Avatar, CircularProgress } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useNavigate, useParams } from "react-router-dom";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import { getPetSitterDetails } from "../../services/petSitterService";
 import { createChatRoom } from "../../services/chatService";
 import { Context } from "../../context/Context.jsx";
+import GlobalSnackbar from "../../components/Global/GlobalSnackbar";
 
 const PetSitterDetail = () => {
     const { sitterId } = useParams();
@@ -14,6 +15,12 @@ const PetSitterDetail = () => {
     const [sitter, setSitter] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
 
     useEffect(() => {
         const fetchPetSitterDetails = async () => {
@@ -31,11 +38,24 @@ const PetSitterDetail = () => {
 
                 if (err.response && err.response.status === 401) {
                     setError("로그인이 필요합니다.");
+
+                    setSnackbar({
+                        open: true,
+                        message: "로그인이 필요합니다. 로그인 페이지로 이동합니다.",
+                        severity: "warning",
+                    });
+
                     setTimeout(() => {
                         navigate("/login");
                     }, 2000);
                 } else {
                     setError("펫시터 정보를 불러오는데 실패했습니다.");
+
+                    setSnackbar({
+                        open: true,
+                        message: "펫시터 정보를 불러오는데 실패했습니다.",
+                        severity: "error",
+                    });
                 }
             } finally {
                 setLoading(false);
@@ -44,6 +64,10 @@ const PetSitterDetail = () => {
 
         fetchPetSitterDetails();
     }, [sitterId, navigate]);
+
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
 
     const handleChat = async () => {
         if (!sitter || !user || !nc) return;
@@ -124,6 +148,12 @@ const PetSitterDetail = () => {
             navigate(`/chat/room/${channelId}`);
         } catch (e) {
             console.error("❌ 펫시터 채팅 생성 실패:", e);
+
+            setSnackbar({
+                open: true,
+                message: "채팅 생성에 실패했습니다. 다시 시도해주세요.",
+                severity: "error",
+            });
         }
     };
 
@@ -149,7 +179,9 @@ const PetSitterDetail = () => {
     if (error) {
         return (
             <Box sx={{ p: 2 }}>
-                <Alert severity="error">{error}</Alert>
+                <Typography variant="body1" color="error" sx={{ mb: 2 }}>
+                    {error}
+                </Typography>
                 <Button variant="contained" onClick={() => navigate(-1)} sx={{ mt: 2, width: "100%" }}>
                     돌아가기
                 </Button>
@@ -253,6 +285,14 @@ const PetSitterDetail = () => {
                     </Button>
                 </Box>
             </Container>
+
+            {/* GlobalSnackbar */}
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
+            />
         </Box>
     );
 };

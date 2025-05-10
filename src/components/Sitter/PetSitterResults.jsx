@@ -13,12 +13,23 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { getAllApprovedPetSitters, getApprovedPetSitters } from "../../services/petSitterService";
+import GlobalSnackbar from "../../components/Global/GlobalSnackbar";
 
 const PetSitterResults = ({ filteredPetsitters, error, showResults, resetSearch }) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [allPetsitters, setAllPetsitters] = useState(null);
     const [loadAllError, setLoadAllError] = useState(null);
+
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
+
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
 
     const handleSitterClick = (sitterId) => {
         navigate(`/petsitter/${sitterId}`);
@@ -77,14 +88,32 @@ const PetSitterResults = ({ filteredPetsitters, error, showResults, resetSearch 
             console.error("모든 펫시터 목록 조회 오류:", error);
             setLoadAllError("펫시터 목록을 불러오는데 실패했습니다.");
 
+            setSnackbar({
+                open: true,
+                message: "펫시터 목록을 불러오는데 실패했습니다.",
+                severity: "error",
+            });
+
             try {
                 const fallbackResponse = await getApprovedPetSitters({});
                 if (fallbackResponse && fallbackResponse.data) {
                     setAllPetsitters(fallbackResponse.data);
                     setLoadAllError(null);
+
+                    setSnackbar({
+                        open: true,
+                        message: "대체 목록을 성공적으로 불러왔습니다.",
+                        severity: "success",
+                    });
                 }
             } catch (fallbackError) {
                 console.error("대체 API 호출도 실패:", fallbackError);
+
+                setSnackbar({
+                    open: true,
+                    message: "펫시터 목록을 가져오지 못했습니다. 잠시 후 다시 시도해주세요.",
+                    severity: "error",
+                });
             }
         } finally {
             setIsLoading(false);
@@ -264,6 +293,14 @@ const PetSitterResults = ({ filteredPetsitters, error, showResults, resetSearch 
                     모든 펫시터 보기
                 </Button>
             )}
+
+            {/* GlobalSnackbar */}
+            <GlobalSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleSnackbarClose={handleSnackbarClose}
+            />
         </Box>
     );
 };

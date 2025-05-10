@@ -173,7 +173,7 @@ const ReviewCardItem = ({
 
                         <Box
                             sx={{
-                                minWidth: 120,
+                                maxWidth: 80,
                                 flexShrink: 0,
                             }}
                         >
@@ -257,4 +257,3 @@ const ReviewCardItem = ({
 };
 
 export default ReviewCardItem;
-ㅎ;
