@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Grid, Card, CardContent, Avatar, Typography, TextField, Button, Box, Stack, CardMedia } from "@mui/material";
-import ReviewDropdown from "./ReviewDropdown"; // 드롭다운 버튼 컴포넌트
+import ReviewDropdown from "./ReviewDropDown"; // 드롭다운 버튼 컴포넌트
 import { putReview } from "../../services/reserveService";
 import StarRatingConstructor from "../../components/Reserve/utils/StarRatingConstructor.jsx";
 import { Context } from "../../context/Context.jsx";
@@ -88,22 +88,21 @@ const ReviewCardItem = ({
                             {image ? (
                                 <CardMedia
                                     component="img"
-                                    height="180"
+                                    height="90"
                                     image={image}
                                     alt="review"
-                                    sx={{ borderRadius: 1, cursor: "pointer", boxShadow: 3 }}
+                                    sx={{ cursor: "pointer" }}
                                     onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
                                 />
                             ) : (
                                 <Box
                                     onClick={() => document.getElementById(`fileInput-${review.id}`).click()}
                                     sx={{
-                                        height: 180,
+                                        height: 90,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
                                         border: "1px dashed #ccc",
-                                        borderRadius: 1,
                                         cursor: "pointer",
                                         color: "#888",
                                         fontSize: 14,
