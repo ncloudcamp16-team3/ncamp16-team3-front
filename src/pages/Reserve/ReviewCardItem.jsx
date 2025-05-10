@@ -239,6 +239,7 @@ const ReviewCardItem = ({
                     </Box>
                 </CardContent>
             </Box>
+            <hr />
         </Grid>
     );
 };
