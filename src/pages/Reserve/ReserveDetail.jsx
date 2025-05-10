@@ -526,7 +526,7 @@ const ReserveDetail = () => {
                             이용자 리뷰
                         </Typography>
                     </Box>
-                    <Grid container spacing={3}>
+                    <Grid container>
                         {reviews.length > 0 ? (
                             reviews.map((review, idx) => (
                                 <ReviewCardItem
