@@ -10,6 +10,8 @@ const PetstaBookmarks = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         const fetchBookmarks = async () => {
             try {
                 setLoading(true);
