@@ -239,7 +239,7 @@ const Notification = () => {
         <div
             style={{
                 backgroundColor: "white",
-                minHeight: "100vh",
+                minHeight: "90vh",
                 display: "flex",
                 flexDirection: "column",
             }}
