@@ -18,7 +18,7 @@ export const RegisterProvider = ({ children }) => {
     const [step, setStep] = useState(1);
     const [nickname, setNickname] = useState("");
     const [formData, setFormData] = useState(initialPetData);
-    const [petDataList, setPetDataList] = useState([]);
+    const [petData, setPetData] = useState(null);
     const [snsAccountId, setSnsAccountId] = useState("");
     const [snsTypeId, setSnsTypeId] = useState(null);
     const [previews, setPreviews] = useState([]);
@@ -34,13 +34,18 @@ export const RegisterProvider = ({ children }) => {
     };
 
     const handleStep4Next = (newPetData) => {
-        setPetDataList([...petDataList, newPetData]);
-        setStep(4);
+        if (!newPetData || !newPetData.petName) {
+            console.error("펫 데이터가 누락되었습니다", newPetData);
+            return;
+        }
+        setPetData(newPetData); // 상태 업데이트
+        setStep(4); // 스텝 변경
     };
 
     const goToStep1 = () => {
         setFormData(initialPetData);
-        setStep(1);
+        setPetData(null); // 펫 데이터 초기화
+        setStep(1); // 스텝 1로 이동
     };
 
     const removePhoto = (index) => {
@@ -126,8 +131,6 @@ export const RegisterProvider = ({ children }) => {
                 setNickname,
                 formData,
                 setFormData,
-                petDataList,
-                setPetDataList,
                 nextStep,
                 prevStep,
                 handleChange,
