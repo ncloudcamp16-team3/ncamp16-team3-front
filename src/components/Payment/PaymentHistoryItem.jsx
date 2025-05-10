@@ -1,6 +1,6 @@
 import React from "react";
 import { formatPrice } from "./utils/formatters.jsx";
-import { Box, Typography, Card, CardMedia, CardContent, Divider, Chip } from "@mui/material";
+import { Box, Typography, Card, CardMedia, CardContent, Chip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import StarIcon from "@mui/icons-material/Star";
 
@@ -17,7 +17,7 @@ const formatDateTime = (dateTimeStr) => {
     });
 };
 
-export const PaymentHistoryItem = ({ payment, isLast }) => {
+export const PaymentHistoryItem = ({ payment }) => {
     const navigate = useNavigate();
     const hasReview = payment.reviewDto != null;
 
@@ -30,6 +30,7 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     alignItems: "flex-start",
                     p: 1.5,
                     mb: 0,
+                    mx: 1.5, // ✅ 좌우 마진 추가 (예: theme.spacing(1.5) → 12px)
                     borderRadius: 2,
                     cursor: "pointer",
                     boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
@@ -156,7 +157,6 @@ export const PaymentHistoryItem = ({ payment, isLast }) => {
                     </Box>
                 </CardContent>
             </Card>
-            {!isLast && <Divider />}
         </Box>
     );
 };
