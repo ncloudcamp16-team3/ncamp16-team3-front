@@ -272,6 +272,8 @@ const PostCommentPage = () => {
                             alt="profile"
                             sx={{
                                 maxWidth: "100%",
+                                height: "100%",
+                                objectFit: "cover",
                             }}
                         />
                     </Box>
