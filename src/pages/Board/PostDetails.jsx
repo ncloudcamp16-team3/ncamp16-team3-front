@@ -118,6 +118,7 @@ const PostDetails = () => {
                             ? postData.imageUrls[0]
                             : "https://kr.object.ncloudstorage.com/tailfriends-buck/uploads/board/join-logo.png",
                         postId: postData.id,
+                        text: "상대방과의 거래가 시작되었어요.",
                     },
                 };
 
