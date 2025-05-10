@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
 import { Box, Typography, Button, Container, Grid, Stack, Divider, Chip, CircularProgress, Alert } from "@mui/material";
-import StarBorder from "@mui/icons-material/StarBorder";
-import Star from "@mui/icons-material/Star";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -18,6 +16,7 @@ import timezone from "dayjs/plugin/timezone";
 import ReviewCardItem from "./ReviewCardItem.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
 import ImgSlide from "../../components/Global/ImgSlider.jsx";
+import StarRating from "./StarRating.jsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -65,7 +64,6 @@ const ReserveDetail = () => {
             setFacilityData(data.facility);
             setReviews(data.reviews || []);
             setChartData(transformScoreToChartData(data.ratingRatio));
-            showModal("", "리뷰가 삭제되었습니다.");
         } catch (err) {
             console.error("리뷰를 불러오는데 실패했습니다:", err);
             setError("리뷰를 불러오는데 실패했습니다. 다시 시도해주세요.");
@@ -89,6 +87,7 @@ const ReserveDetail = () => {
 
     // 요일 정보
     const today = dayjs().format("ddd").toUpperCase();
+    // const timeNow = dayjs.format("HH");
     const inRange = facilityData?.openingHours?.[today]?.isOpen || false;
 
     // API에서 데이터 가져오기
@@ -120,12 +119,12 @@ const ReserveDetail = () => {
 
     const handlePaymentClick = async () => {
         if (!naverPayRef.current) {
-            showModal("불러오기 실패", "알 수 없는 서버 오류로 인해 결제를 진행할 수 없습니다.");
+            showModal("", "알 수 없는 서버 오류로 인해 결제를 진행할 수 없습니다.");
             return;
         }
 
         if (!startDate || !startTime) {
-            showModal("입력값 검증 실패", "예약 날짜와 시간을 선택해주세요.");
+            showModal("", "예약 날짜와 시간을 선택해주세요.");
             return;
         }
 
@@ -164,7 +163,7 @@ const ReserveDetail = () => {
             });
         } catch (err) {
             console.error("예약 생성 실패:", err);
-            showModal("예약 확정 실패", "예약 처리 중 오류가 발생했습니다.");
+            showModal("", "예약 처리 중 오류가 발생했습니다.");
         }
     };
 
@@ -173,57 +172,6 @@ const ReserveDetail = () => {
     };
 
     const rating = facilityData.starPoint || 0;
-
-    const StarRating = () => {
-        const percentage = (rating / 5) * 100;
-
-        return (
-            <Box
-                sx={{
-                    position: "relative",
-                    display: "inline-block",
-                    width: 100,
-                    height: 20,
-                }}
-            >
-                {/* 빈 별 5개 */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        color: "#ccc", // 빈 별 색상
-                    }}
-                >
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <StarBorder key={i} sx={{ width: 20, height: 20 }} />
-                    ))}
-                </Box>
-
-                {/* 채워진 별 5개 (클리핑) */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: `${percentage}%`,
-                        height: "100%",
-                        overflow: "hidden",
-                        color: "#FFD700", // 채워진 별 색상
-                        pointerEvents: "none",
-                    }}
-                >
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} sx={{ width: 20, height: 20 }} />
-                    ))}
-                </Box>
-            </Box>
-        );
-    };
 
     const ScoreBar = () => {
         return (
@@ -496,7 +444,7 @@ const ReserveDetail = () => {
                                     {rating.toFixed(1)}/5.0
                                 </Typography>
                                 <Box sx={{ mb: 1, ml: 3 }}>
-                                    <StarRating />
+                                    <StarRating rating={rating} />
                                 </Box>
                                 <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
                                     {facilityData.reviewCount}명 참여
