@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 
 export const PeriodSelector = ({ selected, onChange }) => {
-    const periods = ["15일", "1개월", "3개월", "6개월", "1년", "직접입력"];
+    const periods = ["15일", "1개월", "3개월", "6개월", "1년", "전체보기"];
 
     return (
         <Box

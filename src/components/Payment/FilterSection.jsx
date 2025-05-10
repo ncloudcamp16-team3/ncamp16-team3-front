@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { PeriodSelector } from "./PeriodSelector.jsx";
-import { SimpleDateRangeSelector } from "./DateRangeSelector.jsx";
 import { Box, Typography, Paper, Divider } from "@mui/material";
 import dayjs from "dayjs";
 
@@ -50,6 +49,9 @@ export const FilterSection = ({
             case "1년":
                 newStart = today.subtract(1, "year");
                 break;
+            case "전체보기":
+                newStart = dayjs("1970-01-01");
+                break;
             default:
                 return;
         }
@@ -66,17 +68,6 @@ export const FilterSection = ({
             onSearch(startDate, endDate);
         }
     }, [startDate, endDate]);
-
-    const handleDateChange = (target, value) => {
-        const newValue = dayjs(value);
-        if (target === "start") {
-            setStartDate(newValue);
-            onSearch(newValue, endDate);
-        } else if (target === "end") {
-            setEndDate(newValue);
-            onSearch(startDate, newValue);
-        }
-    };
 
     return (
         <Paper
@@ -120,25 +111,6 @@ export const FilterSection = ({
                     }}
                 >
                     <PeriodSelector selected={periodSelect} onChange={handlePeriodChange} />
-
-                    {periodSelect === "직접입력" && (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                width: "100%",
-                                mt: 2,
-                                gap: 1.5,
-                            }}
-                        >
-                            <SimpleDateRangeSelector
-                                startDate={startDate.format("YYYY-MM-DD")}
-                                endDate={endDate.format("YYYY-MM-DD")}
-                                onDateChange={handleDateChange}
-                                onSearch={onSearch}
-                            />
-                        </Box>
-                    )}
                 </Box>
             </Box>
         </Paper>
