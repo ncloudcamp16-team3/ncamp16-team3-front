@@ -17,6 +17,7 @@ import {
 import AdminHeader from "./AdminHeader.jsx";
 import { useAdmin } from "./AdminContext.jsx";
 import { fetchPetSitterDetail } from "./adminPetSitterApi.js";
+import Dog from "../../../src/assets/images/Admin/dog.svg";
 
 // 테이블 행 컴포넌트
 const TableRow = ({ label, value }) => (
@@ -271,7 +272,7 @@ const PetSitterDetail = () => {
                 >
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <img
-                            src="/src/assets/images/Admin/dog.svg"
+                            src={Dog}
                             alt="Dog"
                             style={{
                                 width: "100px",
