@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import { fetchPaymentHistory } from "../../services/paymentService.js";
 
 export const PaymentHistoryInterface = () => {
-    const today = dayjs().format("YYYY-MM-DD");
     const [periodSelect, setPeriodSelect] = useState("15일"); // Default "15일"
     const [startDate, setStartDate] = useState(dayjs().subtract(15, "day")); // Default 15 days ago
     const [endDate, setEndDate] = useState(dayjs());
