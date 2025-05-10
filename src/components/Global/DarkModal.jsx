@@ -1,45 +1,33 @@
-import React, { useEffect } from "react";
-import { Modal } from "@mui/material";
+import React from "react";
+import { Modal, Backdrop } from "@mui/material";
 
-const DarkModal = ({ open, onClose, children, backdropProps = {}, modalProps = {} }) => {
-    useEffect(() => {
-        if (!open) return;
+const DarkModal = ({ open, onClose, children, modalProps = {} }) => {
+    // open 속성이 명확한 boolean 값인지 확인
+    const isOpen = Boolean(open);
 
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("id", "modal-overlay-styles");
+    const safeModalProps = modalProps || {};
 
-        styleElement.textContent = `
-      .header, .footer {
-        pointer-events: none !important;
-        transition: opacity 0.3s ease, filter 0.3s ease;
-      }
-    `;
-
-        document.head.appendChild(styleElement);
-
-        return () => {
-            const existingStyle = document.getElementById("modal-overlay-styles");
-            if (existingStyle) {
-                document.head.removeChild(existingStyle);
-            }
-        };
-    }, [open]);
+    // 모달이 닫힐 때 호출할 함수
+    const handleClose = onClose || (() => {});
 
     return (
         <Modal
-            open={open}
-            onClose={onClose}
-            disableScrollLock={true}
-            BackdropProps={{
-                style: {
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    ...backdropProps?.style,
-                },
-                ...backdropProps,
+            open={isOpen}
+            onClose={handleClose}
+            aria-labelledby="dark-modal-title"
+            aria-describedby="dark-modal-description"
+            closeAfterTransition
+            slots={{
+                backdrop: Backdrop,
             }}
-            {...modalProps}
+            slotProps={{
+                backdrop: {
+                    timeout: 500,
+                },
+            }}
+            {...safeModalProps}
         >
-            {children}
+            <div>{children}</div>
         </Modal>
     );
 };
