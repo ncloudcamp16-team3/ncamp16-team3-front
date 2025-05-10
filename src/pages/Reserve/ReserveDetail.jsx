@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // MUI Components
 import { Box, Typography, Button, Container, Grid, Stack, Divider, Chip, CircularProgress, Alert } from "@mui/material";
+import StarBorder from "@mui/icons-material/StarBorder";
+import Star from "@mui/icons-material/Star";
 import ReserveMap from "../../components/Reserve/map/ReserveMap.jsx";
 import TitleBar from "../../components/Global/TitleBar.jsx";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -17,6 +19,7 @@ import ReviewCardItem from "./ReviewCardItem.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
 import ImgSlide from "../../components/Global/ImgSlider.jsx";
 import StarRating from "./StarRating.jsx";
+import ReviewFilter from "../../components/Reserve/filter/ReviewFilter.jsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,6 +41,8 @@ const ReserveDetail = () => {
     // Facility data
     const [facilityData, setFacilityData] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [sortedReviews, setSortedReviews] = useState([]);
+    const [sortBy, setSortBy] = useState("newest"); // 기본값: 최신순
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -49,6 +54,44 @@ const ReserveDetail = () => {
 
     // 모달설정 관련
     const { showModal } = useContext(Context);
+
+    // 리뷰 정렬 로직
+    useEffect(() => {
+        if (!reviews || reviews.length === 0) {
+            setSortedReviews([]);
+            return;
+        }
+
+        const sorted = [...reviews];
+
+        switch (sortBy) {
+            case "newest":
+                // 최신순 정렬 (날짜 기준 내림차순)
+                sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                break;
+            case "oldest":
+                // 오래된순 정렬 (날짜 기준 오름차순)
+                sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                break;
+            case "highest":
+                // 평점높은순 정렬
+                sorted.sort((a, b) => b.starPoint - a.starPoint);
+                break;
+            case "lowest":
+                // 평점낮은순 정렬
+                sorted.sort((a, b) => a.starPoint - b.starPoint);
+                break;
+            default:
+                // 기본 정렬은 최신순
+                sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        setSortedReviews(sorted);
+    }, [reviews, sortBy]);
+    // 정렬 옵션 변경 핸들러
+    const handleSortChange = (newSortBy) => {
+        setSortBy(newSortBy);
+    };
 
     // 리뷰 삭제 관련
     const handleReviewDelete = async (review) => {
@@ -64,6 +107,7 @@ const ReserveDetail = () => {
             setFacilityData(data.facility);
             setReviews(data.reviews || []);
             setChartData(transformScoreToChartData(data.ratingRatio));
+            showModal("", "리뷰가 삭제되었습니다.");
         } catch (err) {
             console.error("리뷰를 불러오는데 실패했습니다:", err);
             setError("리뷰를 불러오는데 실패했습니다. 다시 시도해주세요.");
@@ -468,15 +512,31 @@ const ReserveDetail = () => {
 
                     <Divider sx={{ my: 4 }} />
 
-                    {/* 리뷰 목록 */}
-                    <Box sx={{ display: "flex", ml: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            이용자 리뷰
+                    {/* 리뷰 목록 헤더 */}
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, mx: 3 }}>
+                        <Typography variant="h6" fontWeight="bold" gutterBottom>
+                            이용자 리뷰 ({reviews?.length || 0})
                         </Typography>
+
+                        {/* 별점 통계 요약 */}
+                        {facilityData && (
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                                <Typography variant="body2" fontWeight="bold" color="primary">
+                                    평균 평점: {facilityData.starPoint?.toFixed(1) || "0.0"}
+                                </Typography>
+                            </Box>
+                        )}
                     </Box>
-                    <Grid container spacing={3}>
-                        {reviews.length > 0 ? (
-                            reviews.map((review, idx) => (
+
+                    {/* 리뷰 필터 */}
+                    <Box sx={{ mx: 3, mb: 2 }}>
+                        <ReviewFilter sortBy={sortBy} onSortChange={handleSortChange} />
+                    </Box>
+
+                    {/* 리뷰 목록 */}
+                    <Grid container spacing={3} sx={{ px: 2 }}>
+                        {sortedReviews && sortedReviews.length > 0 ? (
+                            sortedReviews.map((review, idx) => (
                                 <ReviewCardItem
                                     key={idx}
                                     review={review}
@@ -490,7 +550,11 @@ const ReserveDetail = () => {
                                 />
                             ))
                         ) : (
-                            <Typography sx={{ ml: 3 }}>리뷰가 없습니다.</Typography>
+                            <Box sx={{ py: 4, textAlign: "center", width: "100%" }}>
+                                <Typography variant="body1" color="text.secondary">
+                                    아직 등록된 리뷰가 없습니다.
+                                </Typography>
+                            </Box>
                         )}
                     </Grid>
                 </Box>
