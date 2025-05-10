@@ -13,7 +13,18 @@ const FriendIcon = React.memo(({ friend }) => {
     return (
         <Box display="flex" flexDirection="column" alignItems="center">
             <UserIcon userInfo={userInfo} />
-            <Typography marginTop="4px" fontSize="11px" color={theme.secondary}>
+            <Typography
+                marginTop="4px"
+                fontSize="11px"
+                color={theme.secondary}
+                noWrap
+                sx={{
+                    maxWidth: "44px", // 원하는 최대 너비
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    textAlign: "center",
+                }}
+            >
                 {friend.name}
             </Typography>
         </Box>
