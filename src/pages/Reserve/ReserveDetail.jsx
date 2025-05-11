@@ -296,7 +296,7 @@ const ReserveDetail = () => {
 
     const StarRating = () => {
         const percentage = (rating / 5) * 100;
-        // console.log("percentage: " + percentage);
+        console.log("percentage: " + percentage);
 
         return (
             <Box
@@ -305,9 +305,7 @@ const ReserveDetail = () => {
                     display: "inline-block",
                     width: 100,
                     height: 20,
-                    "@media (min-width: 395px)": {
-                        ml: 2,
-                    },
+                    ml: 2,
                 }}
             >
                 {/* 빈 별 5개 */}
@@ -323,17 +321,7 @@ const ReserveDetail = () => {
                     }}
                 >
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <StarBorder
-                            key={i}
-                            sx={{
-                                width: 20,
-                                height: 20,
-                                "@media (min-width: 390px)": {
-                                    width: 25,
-                                    height: 25,
-                                },
-                            }}
-                        />
+                        <StarBorder key={i} sx={{ width: 20, height: 20 }} />
                     ))}
                 </Box>
 
@@ -344,7 +332,7 @@ const ReserveDetail = () => {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        width: `${percentage}`,
+                        width: `${percentage}%`,
                         height: "100%",
                         overflow: "hidden",
                         color: "#FFD700", // 채워진 별 색상
@@ -352,17 +340,7 @@ const ReserveDetail = () => {
                     }}
                 >
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                            key={i}
-                            sx={{
-                                width: 20,
-                                height: 20,
-                                "@media (min-width: 390px)": {
-                                    width: 25,
-                                    height: 25,
-                                },
-                            }}
-                        />
+                        <Star key={i} sx={{ width: 20, height: 20 }} />
                     ))}
                 </Box>
             </Box>
