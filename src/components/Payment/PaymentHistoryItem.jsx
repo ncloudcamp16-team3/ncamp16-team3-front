@@ -112,7 +112,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                         <Typography
                             sx={{
                                 position: "absolute",
-                                top: 20,
+                                top: 22,
                                 right: 16,
                                 fontSize: "0.75rem",
                                 color: "text.secondary",
@@ -146,19 +146,19 @@ export const PaymentHistoryItem = ({ payment }) => {
                         )}
                     </Box>
 
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 2, wordBreak: "keep-all" }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 3, wordBreak: "keep-all" }}>
                         {payment.exitTime ? "체크인: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}
                     </Typography>
 
                     {/* 체크아웃 (있을 경우만) */}
                     {payment.exitTime && (
-                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, wordBreak: "keep-all" }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: -0, wordBreak: "keep-all" }}>
                             체크아웃: {formatDateTime(payment.exitTime)}
                         </Typography>
                     )}
 
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <Typography
                             variant="subtitle1"
                             sx={{
