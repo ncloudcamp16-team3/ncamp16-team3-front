@@ -305,7 +305,7 @@ const PostSave = () => {
                                 mb: "5px",
                             }}
                         >
-                            자세한 설명
+                            내용
                         </Typography>
                         <InputBase
                             value={postData.content}
@@ -313,7 +313,7 @@ const PostSave = () => {
                             fullWidth
                             minRows={3}
                             maxRows={Infinity}
-                            placeholder={"자세한 설명을 적어주세요."}
+                            placeholder={"내용을 적어주세요."}
                             onChange={(e) =>
                                 setPostData((prev) =>
                                     produce(prev, (draft) => {

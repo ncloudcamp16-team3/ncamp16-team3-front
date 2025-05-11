@@ -62,9 +62,9 @@ const MyPage = () => {
             setError(null);
             try {
                 // 사용자 정보 API 호출
-                console.log("마이페이지 ");
+                // console.log("마이페이지 ");
                 const response = await instance.get("/user/mypage");
-                console.log("마이페이지 응답 데이터:", response.data);
+                // console.log("마이페이지 응답 데이터:", response.data);
 
                 // API에서 받아온 데이터로 상태 업데이트
                 if (response.data) {
@@ -517,7 +517,7 @@ const MyPage = () => {
                     />
 
                     {/* 회원 탈퇴 링크 */}
-                    <Box sx={{ mt: 6, textAlign: "center" }}>
+                    <Box sx={{ mt: 6, textAlign: "right" }}>
                         <Link
                             component="button"
                             variant="body2"

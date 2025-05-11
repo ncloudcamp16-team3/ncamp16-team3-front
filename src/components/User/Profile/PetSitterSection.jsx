@@ -96,7 +96,7 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
                 펫시터
             </Typography>
-            <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "90%", mx: "auto" }}>
+            <Card sx={{ bgcolor: "#FDF1E5", borderRadius: "12px", boxShadow: "none", maxWidth: "100%", mx: "auto" }}>
                 <CardContent sx={{ p: 2 }}>
                     {isApproved ? (
                         // 승인된 펫시터의 경우

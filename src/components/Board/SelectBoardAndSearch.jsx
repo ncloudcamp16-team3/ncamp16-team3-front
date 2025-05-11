@@ -24,7 +24,7 @@ const SelectBoardAndSearch = ({ keywordSearch }) => {
     }, [dropList]);
 
     return (
-        <Box>
+        <Box sx={{ px: 1.5, pt: 1 }}>
             <Box
                 sx={{
                     display: "flex",

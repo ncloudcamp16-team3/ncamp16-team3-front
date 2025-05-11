@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button, Avatar, Divider, Paper, Grid, Alert, Snackbar } from "@mui/material";
+import { Box, Typography, Button, Avatar, Divider, Grid, Alert, Snackbar, Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useRegister } from "./RegisterContext.jsx";
 import dayjs from "dayjs";
@@ -87,44 +87,57 @@ const Step4 = () => {
 
     return (
         <>
-            <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                width="90%"
-                mx="auto"
-                gap={3}
-                mt={3}
-                sx={{
-                    position: "relative",
-                }}
-            >
-                <Typography variant="h6" fontWeight="bold" textAlign="center">
-                    입력한 정보를 확인하세요
+            <Box sx={{ mt: 4, mx: 1.5 }}>
+                <Typography variant="h6" fontWeight="bold" textAlign="center" sx={{ mb: 1 }}>
+                    입력 정보 확인
                 </Typography>
-
-                <Box width="100%">
-                    <Typography variant="h5" fontWeight="bold">
-                        닉네임: {nickname}
-                    </Typography>
-                </Box>
-
                 {!formData.petName ? (
                     <Typography>아직 등록된 반려동물이 없습니다.</Typography>
                 ) : (
-                    <Paper elevation={3} sx={{ p: 3, width: "100%" }}>
-                        <Box display="flex" alignItems="center" gap={2}>
-                            <Avatar
-                                src={
-                                    formData.petPhotos?.[formData.mainPhotoIndex ?? 0] instanceof File
-                                        ? URL.createObjectURL(formData.petPhotos[formData.mainPhotoIndex ?? 0])
-                                        : formData.petPhotos?.[formData.mainPhotoIndex ?? 0] || null
-                                }
-                                alt={formData.petName}
-                                sx={{ width: 80, height: 80 }}
-                            />
-                            <Box>
-                                <Typography variant="h6">{formData.petName}</Typography>
+                    <Card
+                        sx={{
+                            bgcolor: "#FDF1E5",
+                            borderRadius: "12px",
+                            boxShadow: "none",
+                            maxWidth: "100%",
+                            mx: "auto",
+                        }}
+                    >
+                        <CardContent sx={{ p: 2 }}>
+                            <Box
+                                sx={{
+                                    width: 120,
+                                    height: 120,
+                                    borderRadius: "50%",
+                                    overflow: "hidden",
+                                    mb: 3,
+                                    mx: "auto",
+                                }}
+                            >
+                                <Avatar
+                                    src={
+                                        formData.petPhotos?.[formData.mainPhotoIndex ?? 0] instanceof File
+                                            ? URL.createObjectURL(formData.petPhotos[formData.mainPhotoIndex ?? 0])
+                                            : formData.petPhotos?.[formData.mainPhotoIndex ?? 0] || null
+                                    }
+                                    alt={formData.petName}
+                                    sx={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                    }}
+                                />
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    mb: 3,
+                                }}
+                            >
+                                <Typography variant="h6">닉네임: {nickname}</Typography>
+                                <Typography variant="h6">이름: {formData.petName}</Typography>
                                 <Typography variant="body2">
                                     {formData.petGender === "남아" ? "수컷" : "암컷"} •{" "}
                                     {formData.petNeutered == null
@@ -142,20 +155,19 @@ const Step4 = () => {
                                     <Typography variant="body2">체중: {formData.petWeight}kg</Typography>
                                 )}
                             </Box>
-                        </Box>
-                        {formData.petInfo && (
-                            <>
-                                <Divider sx={{ my: 2 }} />
-                                <Typography variant="body1">{formData.petInfo}</Typography>
-                            </>
-                        )}
-                    </Paper>
+                            {formData.petInfo && (
+                                <>
+                                    <Divider sx={{ my: 2 }} />
+                                    <Typography variant="body1">{formData.petInfo}</Typography>
+                                </>
+                            )}
+                        </CardContent>
+                    </Card>
                 )}
 
                 {/* Display pet addition message */}
-
-                <Box sx={{ marginTop: 2, padding: 2, backgroundColor: "#e9f7e8", borderRadius: 2 }}>
-                    <Typography variant="h6" textAlign="center" color="green">
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+                    <Typography variant="span">
                         마이페이지에서 반려동물을 <br />
                         추가등록 하실 수 있습니다.
                     </Typography>

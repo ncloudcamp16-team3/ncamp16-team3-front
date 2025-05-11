@@ -84,7 +84,7 @@ const ChatList = () => {
                     } catch (err) {
                         console.warn(`채널 ${ch.id} unreadCount 조회 실패`, err);
                     }
-                    console.log(ch.last_message?.content);
+                    // console.log(ch.last_message?.content);
                     result.push({
                         id: ch.id,
                         name: room.nickname,
@@ -180,7 +180,7 @@ const ChatList = () => {
         <Box p={1}>
             <ProfileHeader userName={user.name} />
 
-            <Box bgcolor="#d9d9d9" p={2} borderRadius="15px" display="flex" alignItems="center">
+            <Box bgcolor="#d9d9d9" p={1.5} borderRadius="15px" display="flex" alignItems="center">
                 <img src={SearchIcon} alt="search" />
                 <input
                     type="text"
@@ -197,8 +197,6 @@ const ChatList = () => {
                     }}
                 />
             </Box>
-
-            <Typography p={1}>메시지</Typography>
 
             {isLoading ? (
                 <Box display="flex" justifyContent="center" py={5}>

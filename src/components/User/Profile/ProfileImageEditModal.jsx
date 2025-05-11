@@ -173,8 +173,8 @@ const ProfileImageModal = ({ open, onClose, currentImage, onImageUpdate }) => {
                             onClick={handleButtonClick}
                             sx={{
                                 position: "absolute",
-                                right: -10,
-                                bottom: -10,
+                                right: 0,
+                                bottom: 0,
                                 minWidth: 0,
                                 width: 40,
                                 height: 40,

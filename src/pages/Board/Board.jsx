@@ -99,28 +99,34 @@ const Board = () => {
     };
 
     return (
-        <Box
-            sx={{
-                position: "relative",
-                width: "100%",
-                p: "10px",
-            }}
-        >
-            <Box>
-                <SelectBoardAndSearch keywordSearch={keywordSearch} />
-                <AnnounceContainer announceData={announceData} />
+        <Box>
+            <SelectBoardAndSearch keywordSearch={keywordSearch} />
+            <AnnounceContainer announceData={announceData} />
 
-                {postList.map((item, index) => {
-                    const isLast = index === postList.length - 1;
-                    return (
-                        <Box ref={isLast ? lastItemRef : null}>
-                            <PostCard postItem={item} />
-                        </Box>
-                    );
-                })}
-                {loading && <Loading />}
-                <AddBtn />
-            </Box>
+            {postList.length === 0 && !loading && (
+                <Box
+                    sx={{
+                        textAlign: "center",
+                        padding: "40px",
+                        color: "#888",
+                        fontSize: "16px",
+                    }}
+                >
+                    게시글이 없습니다.
+                </Box>
+            )}
+
+            {postList.map((item, index) => {
+                const isLast = index === postList.length - 1;
+                return (
+                    <Box key={item.id} ref={isLast ? lastItemRef : null}>
+                        <PostCard postItem={item} />
+                    </Box>
+                );
+            })}
+
+            {loading && <Loading />}
+            <AddBtn />
         </Box>
     );
 };
