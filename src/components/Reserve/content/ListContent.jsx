@@ -44,8 +44,6 @@ const ListContent = () => {
             setLoading(true); // 로딩 시작
             setError(null); // 에러 초기화
 
-            console.log("nodata : " + noData);
-            console.log("last : " + last);
             try {
                 if (noData || last) return;
                 const result = await getFacilityListsToReserve({
