@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
+import { Avatar, Box, Card, CardContent, Chip, Typography } from "@mui/material";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -60,10 +60,28 @@ const PostCard = ({ postItem }) => {
                             fontWeight: "bold",
                             fontSize: "15px",
                             mb: 0.5,
-                            visibility: postItem.product ? "visible" : "hidden",
+                            visibility: postItem.price ? "visible" : "hidden",
+                            display: "flex", // flex 컨테이너로 만들어서 인라인 요소들을 나란히 배치
+                            alignItems: "center", // 수직 중앙 정렬
+                            gap: 0.5, // 아이템 간 간격
                         }}
                     >
-                        {postItem.product?.price}원
+                        {/* 거래완료 표시 조건부 렌더링 */}
+                        {!postItem.sell && (
+                            <Chip
+                                label="거래완료"
+                                size="small"
+                                color="secondary"
+                                sx={{
+                                    fontSize: "0.6rem", // 작은 글씨
+                                    height: "16px", // 낮은 높이
+                                    "& .MuiChip-label": {
+                                        padding: "0 6px", // 좌우 패딩 조정
+                                    },
+                                }}
+                            />
+                        )}
+                        {postItem.price}원
                     </Typography>
 
                     {boardType.id !== 2 && (
