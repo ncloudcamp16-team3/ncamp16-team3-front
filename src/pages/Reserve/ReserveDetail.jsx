@@ -19,6 +19,7 @@ import ReviewCardItem from "./ReviewCardItem.jsx";
 import transformScoreToChartData from "../../hook/Reserve/transformScoreToChartData.js";
 import ImgSlide from "../../components/Global/ImgSlider.jsx";
 import ReviewFilter from "../../components/Reserve/filter/ReviewFilter.jsx";
+import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -226,11 +227,38 @@ const ReserveDetail = () => {
                     backgroundColor: "#FFF5EE",
                     p: 1,
                     borderRadius: 3,
+                    "@media (min-width: 390px)": {
+                        p: 1,
+                        gap: 0,
+                    },
                 }}
             >
-                <Typography sx={{ fontWeight: "bold", mb: 3, ml: 2, mt: 1 }}>점수 비율</Typography>
+                <Typography
+                    sx={{
+                        fontWeight: "bold",
+                        mb: 3,
+                        ml: 2,
+                        mt: 1,
+                        "@media (min-width: 390px)": {
+                            mb: 1,
+                            ml: 1,
+                        },
+                    }}
+                >
+                    점수 비율
+                </Typography>
                 {chartData.map((item) => (
-                    <Box key={item.name} sx={{ display: "flex", alignItems: "center", ml: 3 }}>
+                    <Box
+                        key={item.name}
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            ml: 3,
+                            "@media (min-width: 390px)": {
+                                ml: 1,
+                            },
+                        }}
+                    >
                         <Typography sx={{ width: 24, fontSize: 14, color: "#FF5555", fontWeight: 500 }}>
                             {item.name}
                         </Typography>
@@ -242,6 +270,9 @@ const ReserveDetail = () => {
                                 borderRadius: 5,
                                 mx: 1,
                                 position: "relative",
+                                "@media (min-width: 390px)": {
+                                    gap: 0,
+                                },
                             }}
                         >
                             <Box
@@ -272,6 +303,9 @@ const ReserveDetail = () => {
                     display: "inline-block",
                     width: 100,
                     height: 20,
+                    "@media (min-width: 395px)": {
+                        ml: 2,
+                    },
                 }}
             >
                 {/* 빈 별 5개 */}
@@ -287,7 +321,17 @@ const ReserveDetail = () => {
                     }}
                 >
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <StarBorder key={i} sx={{ width: 20, height: 20 }} />
+                        <StarBorder
+                            key={i}
+                            sx={{
+                                width: 20,
+                                height: 20,
+                                "@media (min-width: 390px)": {
+                                    width: 25,
+                                    height: 25,
+                                },
+                            }}
+                        />
                     ))}
                 </Box>
 
@@ -306,7 +350,17 @@ const ReserveDetail = () => {
                     }}
                 >
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} sx={{ width: 20, height: 20 }} />
+                        <Star
+                            key={i}
+                            sx={{
+                                width: 20,
+                                height: 20,
+                                "@media (min-width: 390px)": {
+                                    width: 25,
+                                    height: 25,
+                                },
+                            }}
+                        />
                     ))}
                 </Box>
             </Box>
@@ -452,7 +506,6 @@ const ReserveDetail = () => {
                         : { onBack: () => navigate("/reserve") })}
                 />
                 <ImgSlide photos={facilityData.imagePaths} />
-                <Divider />
                 <Box sx={{ width: "100%", display: "flex", alignItems: "center", gap: 1, px: 3, mt: 2 }}>
                     <Typography variant="h4" gutterBottom>
                         {facilityData.name}
@@ -472,11 +525,20 @@ const ReserveDetail = () => {
                         <Typography sx={{ fontWeight: "bold", mb: 1 }}>휴무</Typography>
                     )}
                 </Box>
-
+                <Box sx={{ display: "flex", justifyContent: "row", alignItems: "center", px: 2, gap: 1, ml: 1.5 }}>
+                    <Typography variant="body1" color="text.secondary">
+                        <CustomizedDot />
+                        문의전화:{" "}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        {facilityData.tel.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3")}
+                    </Typography>
+                </Box>
                 {/* 기본 정보 */}
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2, ml: 1.5 }}>
                     <Typography variant="body1" color="text.secondary" gutterBottom>
-                        ・ {facilityData.address}
+                        <CustomizedDot />
+                        {facilityData.address}
                     </Typography>
                     <Typography
                         onClick={() => setIsMapOpen(!isMapOpen)}
@@ -597,7 +659,6 @@ const ReserveDetail = () => {
                 </Box>
                 {/* 상세 정보 */}
                 <Box sx={{ display: userWantReserve ? "none" : "block" }}>
-                    <Divider />
                     {/* 예약 버튼 */}
                     <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
                         <Button
@@ -610,18 +671,20 @@ const ReserveDetail = () => {
                         </Button>
                     </Box>
 
-                    <Divider />
+                    <Divider sx={{ my: 4, "@media (min-width: 390px)": { my: 2 } }} />
 
                     <Stack
                         direction="row"
                         sx={{
-                            my: 4,
                             width: "100%",
                             px: 3,
                             justifyContent: "center",
                             gap: "5%",
+                            "@media (min-width: 390px)": {
+                                my: 2,
+                                gap: 2,
+                            },
                         }}
-                        alignItems="stretch"
                     >
                         {/* 이용자 평점 */}
                         <Box
@@ -632,6 +695,11 @@ const ReserveDetail = () => {
                                 height: 200,
                                 bgcolor: "#FFF7EF",
                                 borderRadius: 5,
+                                "@media (min-width: 390px)": {
+                                    height: 120,
+                                    m: 0,
+                                    p: 0,
+                                },
                             }}
                         >
                             <Box
@@ -639,19 +707,71 @@ const ReserveDetail = () => {
                                     backgroundColor: "#FFF5EE",
                                     p: 1,
                                     borderRadius: 3,
+                                    "@media (min-width: 390px)": {
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        p: 1,
+                                        gap: 0.3,
+                                    },
                                 }}
                             >
-                                <Typography sx={{ fontWeight: "bold", mb: 3, ml: 2, mt: 1 }}>이용자 평점</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: "bold",
+                                        mb: 3,
+                                        ml: 2,
+                                        mt: 1,
+                                        "@media (min-width: 390px)": {
+                                            mb: 0,
+                                            ml: "10%",
+                                        },
+                                    }}
+                                >
+                                    이용자 평점
+                                </Typography>
                                 <Typography
                                     variant="h6"
-                                    sx={{ mb: 1, color: "#FF5555", ml: 4, mt: 1, fontWeight: "bold" }}
+                                    sx={{
+                                        mb: 1,
+                                        color: "#FF5555",
+                                        ml: 4,
+                                        mt: 1,
+                                        fontWeight: "bold",
+                                        "@media (min-width: 390px)": {
+                                            ml: "10%",
+                                            mt: 0,
+                                            mb: 0,
+                                            fontSize: 30,
+                                        },
+                                    }}
                                 >
                                     {rating.toFixed(1)}/5.0
                                 </Typography>
-                                <Box sx={{ mb: 1, ml: 3 }}>
+                                <Box
+                                    sx={{
+                                        mb: 1,
+                                        ml: 3,
+                                        "@media (min-width: 390px)": {
+                                            ml: 0,
+                                            mb: 0,
+                                            mr: 3,
+                                        },
+                                    }}
+                                >
                                     <StarRating rating={rating} />
                                 </Box>
-                                <Typography variant="h7" sx={{ color: "#FF5555", ml: 4, fontWeight: "bold" }}>
+                                <Typography
+                                    variant="h7"
+                                    sx={{
+                                        color: "#FF5555",
+                                        ml: 4,
+                                        fontWeight: "bold",
+                                        "@media (min-width: 390px)": {
+                                            ml: 2.4,
+                                            pt: 1,
+                                        },
+                                    }}
+                                >
                                     {facilityData.reviewCount}명 참여
                                 </Typography>
                             </Box>
@@ -665,13 +785,25 @@ const ReserveDetail = () => {
                                 flexDirection: "column",
                                 bgcolor: "#FFF7EF",
                                 borderRadius: 5,
+                                "@media (min-width: 390px)": {
+                                    gap: 0,
+                                    m: 0,
+                                    p: 0,
+                                },
                             }}
                         >
                             <ScoreBar />
                         </Box>
                     </Stack>
 
-                    <Divider sx={{ my: 4 }} />
+                    <Divider
+                        sx={{
+                            my: 4,
+                            "@media (min-width: 390px)": {
+                                my: 2,
+                            },
+                        }}
+                    />
 
                     {/* 리뷰 목록 헤더 */}
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, mx: 3 }}>

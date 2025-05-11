@@ -76,7 +76,7 @@ const MyPage = () => {
                         path: response.data.profileImageUrl,
                     }));
 
-                    // 반려동물 정보 처리 - 주요 수정 부분
+                    // 반려동물 정보 처리
                     if (response.data.pets && Array.isArray(response.data.pets)) {
                         const petsWithProfiles = response.data.pets.map((pet) => {
                             // 프로필 이미지 URL 찾기 로직 개선
@@ -100,9 +100,9 @@ const MyPage = () => {
                             }
                             // 3. petPhotoUrls 배열이 제공되는 경우
                             else if (
-                              pet.petPhotoUrls &&
-                              Array.isArray(pet.petPhotoUrls) &&
-                              pet.petPhotoUrls.length > 0
+                                pet.petPhotoUrls &&
+                                Array.isArray(pet.petPhotoUrls) &&
+                                pet.petPhotoUrls.length > 0
                             ) {
                                 profileImageUrl = pet.petPhotoUrls[0];
                             }
@@ -215,19 +215,20 @@ const MyPage = () => {
     const handleOpenDeletePetModal = (petId) => {
         setPetDeleteConfirmModal({
             open: true,
-            petId: petId
+            petId: petId,
         });
     };
 
     const handleCloseDeletePetModal = () => {
         setPetDeleteConfirmModal({
             open: false,
-            petId: null
+            petId: null,
         });
     };
 
     // 반려동물 삭제 함수 수정
     const handleDeletePet = async (petId) => {
+        // 모달을 통해 확인을 받은 경우에만 실행
         try {
             await instance.delete(`/pet/${petId}`);
             setPets(pets.filter((pet) => pet.id !== petId));
@@ -290,8 +291,8 @@ const MyPage = () => {
 
                 document.cookie.split(";").forEach(function (c) {
                     document.cookie = c
-                      .replace(/^ +/, "")
-                      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                        .replace(/^ +/, "")
+                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                 });
 
                 navigate("/withdrawal-complete");
@@ -309,8 +310,8 @@ const MyPage = () => {
                     setSnackbar({
                         open: true,
                         message:
-                          "회원 탈퇴 처리 중 오류가 발생했습니다: " +
-                          (err.response?.data?.error || err.message || "알 수 없는 오류"),
+                            "회원 탈퇴 처리 중 오류가 발생했습니다: " +
+                            (err.response?.data?.error || err.message || "알 수 없는 오류"),
                         severity: "error",
                     });
                 }
@@ -331,6 +332,7 @@ const MyPage = () => {
 
     const handleNicknameSave = async (newNickname) => {
         try {
+            // 닉네임 유효성 검사 (2-8자)
             if (newNickname.length < 2 || newNickname.length > 8) {
                 setSnackbar({
                     open: true,
@@ -393,6 +395,7 @@ const MyPage = () => {
     };
 
     const handleProfileImageUpdate = (imageUrl) => {
+        // Context를 통해 전역 상태 업데이트
         setUser((prev) => ({
             ...prev,
             photo: imageUrl,
@@ -463,124 +466,124 @@ const MyPage = () => {
     };
 
     return (
-      <Box sx={{ py: 3, px: 2, maxWidth: "100%", margin: "0 auto" }}>
-          {isLoading ? (
-            <Box
-              sx={{
-                  textAlign: "center",
-                  my: 4,
-                  height: "60vh",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-              }}
-            >
-                <CircularProgress color="primary" />
-            </Box>
-          ) : error ? (
-            <Box sx={{ textAlign: "center", my: 4, color: "error.main" }}>
-                <Typography>{error}</Typography>
-                <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
-                    새로고침
-                </Button>
-            </Box>
-          ) : (
-            <>
-                {/* 사용자 프로필 섹션 */}
-                <UserProfileSection
-                  user={user}
-                  onNicknameEdit={handleOpenNicknameModal}
-                  onProfileClick={handleProfileClick}
-                  fileInputRef={fileInputRef}
-                />
-
-                {/* 반려동물 목록 섹션 */}
-                <PetListSection
-                  pets={pets}
-                  onEditPet={handleEditPet}
-                  onDeletePet={handleOpenDeletePetModal}
-                  hover={hover}
-                  onHoverEnter={handleHoverEnter}
-                  onHoverLeave={handleHoverLeave}
-                  onAddPet={handleAddPet}
-                />
-
-                {/* 펫시터 섹션 */}
-                <PetSitterSection
-                  sitterInfo={sitterStatus}
-                  onEditClick={handlePetSitterAction}
-                  onQuitClick={handleOpenQuitPetsitterModal}
-                  onApplyClick={handlePetSitterAction}
-                />
-
-                {/* 회원 탈퇴 링크 */}
-                <Box sx={{ mt: 6, textAlign: "center" }}>
-                    <Link
-                      component="button"
-                      variant="body2"
-                      onClick={handleOpenWithdrawalModal}
-                      sx={{ color: "#999", textDecoration: "underline" }}
-                    >
-                        회원 탈퇴하기
-                    </Link>
+        <Box sx={{ py: 3, px: 2, maxWidth: "100%", margin: "0 auto" }}>
+            {isLoading ? (
+                <Box
+                    sx={{
+                        textAlign: "center",
+                        my: 4,
+                        height: "60vh",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <CircularProgress color="primary" />
                 </Box>
+            ) : error ? (
+                <Box sx={{ textAlign: "center", my: 4, color: "error.main" }}>
+                    <Typography>{error}</Typography>
+                    <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
+                        새로고침
+                    </Button>
+                </Box>
+            ) : (
+                <>
+                    {/* 사용자 프로필 섹션 */}
+                    <UserProfileSection
+                        user={user}
+                        onNicknameEdit={handleOpenNicknameModal}
+                        onProfileClick={handleProfileClick}
+                        fileInputRef={fileInputRef}
+                    />
 
-                {/* 모달 컴포넌트 */}
-                <WithdrawalModal
-                  open={openWithdrawalModal}
-                  onClose={handleCloseWithdrawalModal}
-                  inputValue={withdrawalInput}
-                  onInputChange={handleWithdrawalInputChange}
-                  onWithdrawal={handleWithdrawal}
-                />
+                    {/* 반려동물 목록 섹션 */}
+                    <PetListSection
+                        pets={pets}
+                        onEditPet={handleEditPet}
+                        onDeletePet={handleOpenDeletePetModal}
+                        hover={hover}
+                        onHoverEnter={handleHoverEnter}
+                        onHoverLeave={handleHoverLeave}
+                        onAddPet={handleAddPet}
+                    />
 
-                <NicknameEditModal
-                  open={openNicknameModal}
-                  onClose={handleCloseNicknameModal}
-                  currentNickname={user?.nickname || ""}
-                  onSave={handleNicknameSave}
-                />
+                    {/* 펫시터 섹션 */}
+                    <PetSitterSection
+                        sitterInfo={sitterStatus}
+                        onEditClick={handlePetSitterAction}
+                        onQuitClick={handleOpenQuitPetsitterModal}
+                        onApplyClick={handlePetSitterAction}
+                    />
 
-                <PetSitterQuitModal
-                  open={openQuitPetsitterModal}
-                  onClose={handleCloseQuitPetsitterModal}
-                  onConfirm={handleQuitPetsitter}
-                />
+                    {/* 회원 탈퇴 링크 */}
+                    <Box sx={{ mt: 6, textAlign: "center" }}>
+                        <Link
+                            component="button"
+                            variant="body2"
+                            onClick={handleOpenWithdrawalModal}
+                            sx={{ color: "#999", textDecoration: "underline" }}
+                        >
+                            회원 탈퇴하기
+                        </Link>
+                    </Box>
 
-                {/* 프로필 이미지 모달 */}
-                <ProfileImageModal
-                  open={openProfileImageModal}
-                  onClose={handleCloseProfileImageModal}
-                  currentImage={user?.path || "/src/assets/images/User/profile-pic.jpg"}
-                  onImageUpdate={handleProfileImageUpdate}
-                />
+                    {/* 모달 컴포넌트 */}
+                    <WithdrawalModal
+                        open={openWithdrawalModal}
+                        onClose={handleCloseWithdrawalModal}
+                        inputValue={withdrawalInput}
+                        onInputChange={handleWithdrawalInputChange}
+                        onWithdrawal={handleWithdrawal}
+                    />
 
-                {/* 반려동물 삭제 확인 모달 추가 */}
-                <GlobalConfirmModal
-                  open={petDeleteConfirmModal.open}
-                  onClose={handleCloseDeletePetModal}
-                  onConfirm={() => {
-                      if (petDeleteConfirmModal.petId) {
-                          handleDeletePet(petDeleteConfirmModal.petId);
-                          handleCloseDeletePetModal();
-                      }
-                  }}
-                  title="반려동물 삭제"
-                  description="정말로 이 반려동물 정보를 삭제하시겠습니까?"
-                  confirmText="삭제"
-                  cancelText="취소"
-                />
+                    <NicknameEditModal
+                        open={openNicknameModal}
+                        onClose={handleCloseNicknameModal}
+                        currentNickname={user?.nickname || ""}
+                        onSave={handleNicknameSave}
+                    />
 
-                {/* 스낵바  */}
-                <GlobalSnackbar
-                  open={snackbar.open}
-                  message={snackbar.message}
-                  severity={snackbar.severity}
-                  handleSnackbarClose={handleSnackbarClose}
-                />
-            </>
-          )}
-      </Box>
+                    <PetSitterQuitModal
+                        open={openQuitPetsitterModal}
+                        onClose={handleCloseQuitPetsitterModal}
+                        onConfirm={handleQuitPetsitter}
+                    />
+
+                    {/* 프로필 이미지 모달 */}
+                    <ProfileImageModal
+                        open={openProfileImageModal}
+                        onClose={handleCloseProfileImageModal}
+                        currentImage={user?.path || "/src/assets/images/User/profile-pic.jpg"}
+                        onImageUpdate={handleProfileImageUpdate}
+                    />
+
+                    {/* 반려동물 삭제 확인 모달  */}
+                    <GlobalConfirmModal
+                        open={petDeleteConfirmModal.open}
+                        onClose={handleCloseDeletePetModal}
+                        onConfirm={() => {
+                            if (petDeleteConfirmModal.petId) {
+                                handleDeletePet(petDeleteConfirmModal.petId);
+                                handleCloseDeletePetModal();
+                            }
+                        }}
+                        title="반려동물 삭제"
+                        description="정말로 이 반려동물 정보를 삭제하시겠습니까?"
+                        confirmText="삭제"
+                        cancelText="취소"
+                    />
+
+                    {/* 스낵바  */}
+                    <GlobalSnackbar
+                        open={snackbar.open}
+                        message={snackbar.message}
+                        severity={snackbar.severity}
+                        handleSnackbarClose={handleSnackbarClose}
+                    />
+                </>
+            )}
+        </Box>
     );
 };
 
