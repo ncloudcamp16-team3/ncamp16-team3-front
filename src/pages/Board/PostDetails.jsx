@@ -402,6 +402,7 @@ const PostDetails = () => {
                                             handleSnackbarOpen={handleSnackbarOpen}
                                             setPostComments={setPostComments}
                                             postId={postId}
+                                            setPostData={setPostData}
                                         />
                                         {commentItem.children?.map((child) => {
                                             return (
@@ -419,6 +420,7 @@ const PostDetails = () => {
                                                         handleSnackbarOpen={handleSnackbarOpen}
                                                         setPostComments={setPostComments}
                                                         postId={postId}
+                                                        setPostData={setPostData}
                                                     />
                                                 </Box>
                                             );
