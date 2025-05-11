@@ -135,7 +135,7 @@ const FacilityCards = ({ item }) => {
                         </Typography>
                         <Typography sx={{ fontSize: 14, color: "#555" }}>
                             <TelephoneIcon sx={{ fontSize: 13 }} />{" "}
-                            {item.tel.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3")}
+                            {item.tel.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, "$1-$2-$3")}
                         </Typography>
                         <CardContentAboutTime openTimeRange={item.openTimeRange} isOpened={item.opened} />
                     </Box>
