@@ -12,6 +12,7 @@ import PostCenterBtns from "../../components/Board/PostCenterBtns.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     addComment,
+    completeSell,
     getBoardDetail,
     getBookmarkedAndLiked,
     getComments,
@@ -23,6 +24,7 @@ import CommentCard from "../../components/Board/CommentCard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import { createChatRoom, postTradeCheck, postTradeStart } from "../../services/chatService.js";
+import GlobalConfirmModal from "../../components/Global/GlobalConfirmModal.jsx";
 
 const PostDetails = () => {
     const { postId } = useParams();
@@ -39,6 +41,7 @@ const PostDetails = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     const [postComments, setPostComments] = useState([]);
+    const [openCompleteModal, setOpenCompleteModal] = useState(false);
 
     const [postData, setPostData] = useState({
         id: null,
@@ -132,6 +135,19 @@ const PostDetails = () => {
         } catch (e) {
             console.error("❌ 중고거래 채팅 생성 실패:", e);
         }
+    };
+
+    const handleSellComplete = () => {
+        completeSell(postData.id)
+            .then((res) => {
+                setOpenCompleteModal(false);
+                setPostData((prev) =>
+                    produce(prev, (draft) => {
+                        draft.sell = false;
+                    })
+                );
+            })
+            .catch((err) => {});
     };
 
     const handleReply = (commentId, authorNickname) => {
@@ -432,9 +448,11 @@ const PostDetails = () => {
             {boardType.id === 2 ? (
                 <UsedMarketBar
                     postData={postData}
+                    setPostData={setPostData}
                     bookMarked={bookMarked}
                     bookMarkBtnClick={bookMarkBtnClick}
                     onClickChat={handleTradeChat}
+                    openCompleteModal={() => setOpenCompleteModal(true)}
                 />
             ) : (
                 <Box
@@ -500,6 +518,14 @@ const PostDetails = () => {
                 openUpdateModal={openUpdateModal}
                 setOpenUpdateModal={setOpenUpdateModal}
                 postId={postData.id}
+            />
+            <GlobalConfirmModal
+                open={openCompleteModal}
+                onClose={() => setOpenCompleteModal(false)}
+                cancelText="취소"
+                confirmText="확인"
+                description="거래완료 하시겠습니까?"
+                onConfirm={handleSellComplete}
             />
         </Box>
     );

@@ -29,6 +29,18 @@ export const deleteBoard = async (postId) => {
         });
 };
 
+export const completeSell = async (postId) => {
+    return await instance
+        // 프론트
+        .post(`${API_URL}/product/complete`, { postId })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            throw error.response.data;
+        });
+};
+
 export const getBoardDetail = async (boardId) => {
     return await instance
         .get(`${API_URL}/detail/${boardId}`)
