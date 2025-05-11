@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
+import { Avatar, Box, Card, CardContent, Chip, Typography } from "@mui/material";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -60,10 +60,49 @@ const PostCard = ({ postItem }) => {
                             fontWeight: "bold",
                             fontSize: "15px",
                             mb: 0.5,
-                            visibility: postItem.product ? "visible" : "hidden",
+                            visibility:
+                                (postItem.price !== null && postItem.price !== undefined) || !postItem.sell
+                                    ? "visible"
+                                    : "hidden",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
                         }}
                     >
-                        {postItem.product?.price}원
+                        {postItem.sell !== null && postItem.sell === false && (
+                            // 거래완료 상태면 이것만 표시
+                            <Chip
+                                label="거래완료"
+                                size="small"
+                                color="secondary"
+                                sx={{
+                                    fontSize: "0.6rem",
+                                    height: "16px",
+                                    "& .MuiChip-label": {
+                                        padding: "0 6px",
+                                    },
+                                }}
+                            />
+                        )}
+
+                        {/* 거래완료가 아닌 경우에만 가격 관련 표시 */}
+                        {postItem.sell && postItem.price === 0 && (
+                            <Chip
+                                label="무료나눔"
+                                size="small"
+                                color="primary"
+                                sx={{
+                                    fontSize: "0.6rem",
+                                    height: "16px",
+                                    "& .MuiChip-label": {
+                                        padding: "0 6px",
+                                    },
+                                }}
+                            />
+                        )}
+
+                        {/* 거래완료가 아니고 가격이 0보다 클 때만 가격 표시 */}
+                        {postItem.sell && postItem.price > 0 && `${postItem.price}원`}
                     </Typography>
 
                     {boardType.id !== 2 && (

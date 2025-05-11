@@ -103,7 +103,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
-                                pr: "130px", // 날짜 위치만큼 패딩
+                                pr: "180px", // 날짜 위치만큼 패딩
                             }}
                         >
                             {payment.name}

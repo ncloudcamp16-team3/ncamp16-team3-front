@@ -161,10 +161,10 @@ const PostDetail = () => {
                             <Typography variant="body1" color="text.primary" paragraph>
                                 {board.content}
                             </Typography>
-                            {board.authorAddress != null && (
+                            {board.address != null && (
                                 <PostInfo>
                                     <Typography variant="body1" color="text.primary">
-                                        거래장소: {board.authorAddress}
+                                        거래장소: {board.address}
                                     </Typography>
                                 </PostInfo>
                             )}
