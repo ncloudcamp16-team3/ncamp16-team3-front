@@ -90,7 +90,7 @@ const PetSitterApplyList = () => {
             setFilteredRows(transformedData);
             setTotalPage(response.totalPages || 0);
         } catch (error) {
-            console.log("펫시터 신청 목록 불러오는중 오류 발생: " + error);
+            // console.log("펫시터 신청 목록 불러오는중 오류 발생: " + error);
             setError("펫시터 신청 목록을 불러오는중 오류가 발생했습니다");
         } finally {
             setLoading(false);

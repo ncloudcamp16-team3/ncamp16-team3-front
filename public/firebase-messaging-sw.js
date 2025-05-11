@@ -19,7 +19,7 @@ messaging.onBackgroundMessage((payload) => {
     const type = payload.data?.type;
 
     if (type === "FETCH_ROOMS") {
-        console.log("[firebase-messaging-sw.js] FETCH_ROOMS 메시지 수신, 알림 생략");
+        // console.log("[firebase-messaging-sw.js] FETCH_ROOMS 메시지 수신, 알림 생략");
 
         // React 앱으로 메시지 전달
         self.clients.matchAll({ includeUncontrolled: true, type: "window" }).then((clients) => {

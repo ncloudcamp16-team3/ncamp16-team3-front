@@ -18,7 +18,7 @@ const UserLayout = () => {
         };
 
         fetchUserName();
-        console.log(userName);
+        // console.log(userName);
     }, [userId]);
 
     return (

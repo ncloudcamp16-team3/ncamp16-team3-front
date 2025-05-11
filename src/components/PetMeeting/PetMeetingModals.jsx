@@ -16,15 +16,15 @@ const PetConfigModal = () => {
         getMyPets({ userId: user.id })
             .then((res) => {
                 const data = res.data;
-                console.log("응답 성공: " + res.message);
-                console.log(data);
+                // console.log("응답 성공: " + res.message);
+                // console.log(data);
                 setMyPets(data);
                 if (data.length > 0) {
                     setPet(data[0]);
                 }
             })
             .catch((err) => {
-                console.log("에러 발생: " + err.message);
+                // console.log("에러 발생: " + err.message);
             });
     }, []);
 
@@ -42,10 +42,10 @@ const PetConfigModal = () => {
 
         savePet(selectedPet, user.id)
             .then((res) => {
-                console.log(res.message);
+                // console.log(res.message);
             })
             .catch((err) => {
-                console.log(err.message);
+                // console.log(err.message);
             });
     };
 

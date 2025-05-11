@@ -23,7 +23,7 @@ export const usePaymentsData = (params = {}) => {
                 if (endDate) query.append("endDate", endDate);
                 if (page) query.append("page", page);
                 if (size) query.append("size", size);
-                console.log(query);
+                // console.log(query);
 
                 const response = await fetch(`http://localhost:8080/api/payment/get?${query}`);
                 if (!response.ok) {

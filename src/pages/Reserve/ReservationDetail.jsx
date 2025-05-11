@@ -31,7 +31,7 @@ const ReservationDetail = () => {
         getReserveDetail(id)
             .then((res) => {
                 setReservation(res.data);
-                console.log(res.data);
+                // console.log(res.data);
             })
             .catch((err) => {
                 console.error("예약 상세 조회 실패:", err);

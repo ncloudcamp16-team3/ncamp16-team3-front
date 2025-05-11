@@ -44,8 +44,8 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const handleToggle = (id, type) => {
-        console.log("startDate", formData.startDate);
-        console.log("endDate", formData.endDate);
+        // console.log("startDate", formData.startDate);
+        // console.log("endDate", formData.endDate);
         setOpenItem({ id, type });
     };
 
@@ -167,7 +167,7 @@ export const CalendarProvider = ({ children }) => {
 
             // 서버에서 최신 스케줄 데이터 가져오기
             const schedulesData = await getScheduleAll(user.id);
-            console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+            // console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
 
             // 스케줄 데이터를 상태에 반영
             setSchedules(schedulesData);
@@ -187,7 +187,7 @@ export const CalendarProvider = ({ children }) => {
 
             // 서버에서 최신 스케줄 데이터 가져오기
             const schedulesData = await getScheduleAll(user.id);
-            console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+            // console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
 
             // 삭제된 항목을 제외한 새로운 리스트로 갱신
             setSchedules(schedulesData);
@@ -253,7 +253,7 @@ export const CalendarProvider = ({ children }) => {
 
             // 서버에서 최신 스케줄 데이터 가져오기
             const schedulesData = await getScheduleAll(user.id);
-            console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+            // console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
 
             // 새로 추가된 스케줄을 상태에 반영
             setSchedules(schedulesData);
@@ -274,7 +274,7 @@ export const CalendarProvider = ({ children }) => {
             handleSnackbarOpen("일정이 성공적으로 등록되었습니다!", "success");
         } catch (error) {
             handleSnackbarOpen("시작일시와 종료일시를 확인해주세요.", "error");
-            console.log("일정 등록 에러:", error);
+            // console.log("일정 등록 에러:", error);
         }
     };
 
@@ -289,7 +289,7 @@ export const CalendarProvider = ({ children }) => {
         const selectedReserve = reserves.find((reserve) => reserve.id === id);
         setSelectedReserve(selectedReserve);
 
-        console.log("선택된 예약 정보:", selectedReserve);
+        // console.log("선택된 예약 정보:", selectedReserve);
     };
 
     return (

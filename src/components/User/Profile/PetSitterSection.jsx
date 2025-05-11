@@ -16,8 +16,8 @@ const PetSitterSection = ({ sitterInfo, onEditClick, onQuitClick, onApplyClick }
                 const localInfo = localStorage.getItem("petSitterInfo");
                 if (localInfo) {
                     const parsedInfo = JSON.parse(localInfo);
-                    console.log("로컬 스토리지의 펫시터 정보:", parsedInfo);
-                    console.log("로컬 스토리지의 petTypesFormatted:", parsedInfo.petTypesFormatted);
+                    // console.log("로컬 스토리지의 펫시터 정보:", parsedInfo);
+                    // console.log("로컬 스토리지의 petTypesFormatted:", parsedInfo.petTypesFormatted);
                 }
             } catch (e) {
                 console.error("로컬 스토리지 로깅 오류:", e);
