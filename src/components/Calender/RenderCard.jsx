@@ -68,7 +68,18 @@ const RenderCard = ({ item, type }) => {
                                 </a>
                             </Typography>
                         )}
-                        <RenderButtonGroup buttons={[{ label: "확인", color: "#E9A260", onClick: handleBack }]} />
+                        <RenderButtonGroup
+                            buttons={[
+                                {
+                                    label: "확인",
+                                    color: "#E9A260",
+                                    onClick: (e) => {
+                                        e.stopPropagation();
+                                        handleBack();
+                                    },
+                                },
+                            ]}
+                        />
                     </>
                 );
             case "reserve":
@@ -83,7 +94,14 @@ const RenderCard = ({ item, type }) => {
                                     color: "#2F80ED",
                                     onClick: () => handleReserveDetailClick(item.id),
                                 },
-                                { label: "확인", color: "#E9A260", onClick: handleBack },
+                                {
+                                    label: "확인",
+                                    color: "#E9A260",
+                                    onClick: (e) => {
+                                        e.stopPropagation();
+                                        handleBack();
+                                    },
+                                },
                             ]}
                         />
                     </>
