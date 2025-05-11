@@ -28,6 +28,7 @@ const ReviewFilter = ({ sortBy, onSortChange, hasFilterOptions = false }) => {
         >
             <ToggleButtonGroup
                 value={sortBy}
+                exclusive
                 fullWidth
                 onChange={handleChange}
                 size="small"
