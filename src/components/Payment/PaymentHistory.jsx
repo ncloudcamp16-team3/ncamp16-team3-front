@@ -3,6 +3,7 @@ import { PaymentHistoryItem } from "./PaymentHistoryItem.jsx";
 import { Box, Typography, CircularProgress, Container } from "@mui/material";
 
 export const PaymentHistory = ({ payments, loading }) => {
+    console.log(payments);
     if (loading) {
         return (
             <Box
