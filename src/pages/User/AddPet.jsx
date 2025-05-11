@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box,
     Typography,
@@ -17,12 +17,13 @@ import StarIcon from "@mui/icons-material/Star";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import TitleBar from "../../components/Global/TitleBar.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import petEx from "/src/assets/images/User/profile.png";
 import instance from "../../services/axiosInstance.js";
 
-const AddPet = () => {
+const EditPet = () => {
     const navigate = useNavigate();
+    const { petId } = useParams();
 
     const [petData, setPetData] = useState({
         name: "",
@@ -37,9 +38,12 @@ const AddPet = () => {
     // 이미지 상태를 동적 배열로 관리
     const [images, setImages] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [mainPhotoIndex, setMainPhotoIndex] = useState(0); // 대표 이미지 인덱스
-    const [selectedImageIndex, setSelectedImageIndex] = useState(-1); // 선택된 이미지 인덱스
+    const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(-1);
+    const [deletedImageIds, setDeletedImageIds] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: "",
@@ -49,6 +53,84 @@ const AddPet = () => {
     // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
     const today = new Date().toISOString().split("T")[0];
 
+    // 반려동물 종류 옵션
+    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
+
+    // 데이터 로드
+    useEffect(() => {
+        const loadPetData = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const response = await instance.get(`/pet/${petId}`);
+
+                if (response.data && response.data.data) {
+                    const petInfo = response.data.data;
+
+                    setPetData({
+                        name: petInfo.name || "",
+                        type: petInfo.type || "",
+                        birthDate: petInfo.birthDate || "",
+                        gender: petInfo.gender || "",
+                        isNeutered: petInfo.isNeutered || false,
+                        weight: petInfo.weight ? petInfo.weight.toString() : "",
+                        introduction: petInfo.introduction || "",
+                    });
+
+                    // 이미지 상태 초기화
+                    const newImages = [];
+                    const newPreviews = [];
+
+                    // 썸네일 이미지 인덱스 찾기
+                    let thumbnailIndex = 0;
+
+                    // 이미지 정보 설정
+                    if (petInfo.photos && petInfo.photos.length > 0) {
+                        petInfo.photos.forEach((photo, index) => {
+                            const mockFile = {
+                                isExisting: true,
+                                path: photo.path,
+                                id: photo.id,
+                            };
+
+                            newImages.push(mockFile);
+                            newPreviews.push(photo.path);
+
+                            // 썸네일(대표 이미지) 찾기
+                            if (photo.thumbnail) {
+                                thumbnailIndex = index;
+                            }
+                        });
+                    }
+
+                    setImages(newImages);
+                    setImagePreviews(newPreviews);
+                    setMainPhotoIndex(thumbnailIndex);
+                    setSelectedImageIndex(0);
+                }
+
+                setIsLoading(false);
+            } catch (error) {
+                console.error("반려동물 정보 로드 실패:", error);
+
+                // 401 오류인 경우 로그인 페이지로 리다이렉트
+                if (error.response && error.response.status === 401) {
+                    setError("인증이 필요합니다. 로그인 페이지로 이동합니다.");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 2000);
+                } else {
+                    setError("반려동물 정보를 불러오는데 실패했습니다.");
+                }
+                setIsLoading(false);
+            }
+        };
+
+        if (petId) {
+            loadPetData();
+        }
+    }, [petId, navigate]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPetData({
@@ -57,17 +139,41 @@ const AddPet = () => {
         });
     };
 
-    // 몸무게 입력 처리 함수 추가
+    // 몸무게 입력 처리 함수 수정
     const handleWeightChange = (e) => {
         const value = e.target.value;
 
-        // 숫자와 소수점만 허용
         const regex = /^[0-9]*\.?[0-9]*$/;
 
         if (value === "" || regex.test(value)) {
+            if (value === "" || parseFloat(value) <= 1000) {
+                setPetData({
+                    ...petData,
+                    weight: value,
+                });
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: "몸무게는 최대 1000kg까지 입력 가능합니다.",
+                    severity: "warning",
+                });
+            }
+        }
+    };
+
+    const handleIntroductionChange = (e) => {
+        const value = e.target.value;
+
+        if (value.length <= 255) {
             setPetData({
                 ...petData,
-                weight: value,
+                introduction: value,
+            });
+        } else {
+            setSnackbar({
+                open: true,
+                message: "소개글은 최대 255자까지 입력 가능합니다.",
+                severity: "warning",
             });
         }
     };
@@ -119,11 +225,6 @@ const AddPet = () => {
             // 새로 추가된 이미지 선택
             setSelectedImageIndex(newPreviews.length - 1);
 
-            // 첫 이미지라면 자동으로 메인 이미지로 설정 (중요)
-            if (newPreviews.length === 1) {
-                setMainPhotoIndex(0);
-            }
-
             setSnackbar({
                 open: true,
                 message: "이미지가 추가되었습니다.",
@@ -142,6 +243,11 @@ const AddPet = () => {
         const newImages = [...images];
         const newPreviews = [...imagePreviews];
 
+        // 기존 이미지라면 삭제 목록에 추가
+        if (images[index] && images[index].isExisting && images[index].id) {
+            setDeletedImageIds((prev) => [...prev, images[index].id]);
+        }
+
         newImages.splice(index, 1);
         newPreviews.splice(index, 1);
 
@@ -155,6 +261,7 @@ const AddPet = () => {
             setMainPhotoIndex(mainPhotoIndex - 1);
         }
 
+        // 현재 선택 인덱스 조정
         if (selectedImageIndex === index) {
             setSelectedImageIndex(newPreviews.length > 0 ? 0 : -1);
         } else if (selectedImageIndex > index) {
@@ -231,38 +338,58 @@ const AddPet = () => {
             return;
         }
 
-        try {
-            // FormData 객체 생성
-            const formData = new FormData();
+        // FormData 객체 생성
+        const formData = new FormData();
 
-            // 반려동물 데이터 JSON 변환 및 추가
-            const petDataJson = JSON.stringify({
-                name: petData.name,
-                type: petData.type,
-                birthDate: petData.birthDate,
-                gender: petData.gender,
-                isNeutered: petData.isNeutered,
-                weight: parseFloat(petData.weight),
-                introduction: petData.introduction,
-            });
+        // 반려동물 데이터 JSON 변환 및 추가
+        const petDataJson = JSON.stringify({
+            name: petData.name,
+            type: petData.type,
+            birthDate: petData.birthDate,
+            gender: petData.gender,
+            isNeutered: petData.isNeutered,
+            weight: parseFloat(petData.weight),
+            introduction: petData.introduction,
+            mainPhotoIndex: mainPhotoIndex,
+        });
 
-            formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
+        formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
 
-            // 이미지 추가 - 중요: 대표 이미지를 먼저 추가
-            if (images.length > 0) {
-                // 먼저 메인 이미지 (썸네일)을 추가
-                formData.append("images", images[mainPhotoIndex]);
+        // 이미지 처리 수정
+        const existingPhotos = [];
+        const newImages = [];
 
-                // 그 다음 나머지 이미지들 추가
-                images.forEach((image, idx) => {
-                    if (idx !== mainPhotoIndex) {
-                        formData.append("images", image);
-                    }
+        // 현재 있는 모든 이미지 처리
+        images.forEach((img, index) => {
+            if (img instanceof File) {
+                // 새로 추가된 이미지
+                newImages.push({ file: img, index: index });
+            } else if (img && img.isExisting && img.id) {
+                // 기존 이미지
+                existingPhotos.push({
+                    id: img.id,
+                    thumbnail: index === mainPhotoIndex,
+                    order: index,
                 });
             }
+        });
 
-            // API 호출
-            const response = await instance.post("/pet/add", formData, {
+        // 새 이미지 추가
+        newImages.forEach((item) => {
+            formData.append("images", item.file);
+        });
+
+        // 기존 이미지 정보 추가
+        if (existingPhotos.length > 0 || deletedImageIds.length > 0) {
+            const photoInfo = {
+                existing: existingPhotos,
+                deleted: deletedImageIds,
+            };
+            formData.append("existingPhotos", new Blob([JSON.stringify(photoInfo)], { type: "application/json" }));
+        }
+
+        try {
+            const response = await instance.put(`/pet/${petId}/update`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -271,7 +398,7 @@ const AddPet = () => {
             // 성공 시 처리
             setSnackbar({
                 open: true,
-                message: "반려동물 등록이 완료되었습니다.",
+                message: "반려동물 정보가 성공적으로 수정되었습니다.",
                 severity: "success",
             });
 
@@ -280,7 +407,7 @@ const AddPet = () => {
                 navigate("/mypage");
             }, 1500);
         } catch (error) {
-            console.error("반려동물 등록 오류:", error);
+            console.error("반려동물 정보 수정 오류:", error);
 
             if (error.response && error.response.status === 401) {
                 setSnackbar({
@@ -294,7 +421,7 @@ const AddPet = () => {
 
             setSnackbar({
                 open: true,
-                message: error.response?.data?.message || "반려동물 등록 중 오류가 발생했습니다.",
+                message: error.response?.data?.message || "반려동물 정보 수정 중 오류가 발생했습니다.",
                 severity: "error",
             });
         } finally {
@@ -306,8 +433,6 @@ const AddPet = () => {
         navigate(-1);
     };
 
-    const petTypes = ["강아지", "고양이", "햄스터", "앵무새", "물고기", "기타"];
-
     // 현재 보여줄 이미지 (선택된 이미지 또는 첫 번째 이미지)
     const currentDisplayImage =
         selectedImageIndex >= 0 && selectedImageIndex < imagePreviews.length
@@ -316,9 +441,37 @@ const AddPet = () => {
               ? imagePreviews[0]
               : null;
 
+    if (isLoading) {
+        return (
+            <Box sx={{ textAlign: "center", py: 4 }}>
+                <Typography>데이터를 불러오는 중...</Typography>
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ p: 3 }}>
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                </Alert>
+                <Button
+                    variant="contained"
+                    onClick={() => navigate("/mypage")}
+                    sx={{
+                        bgcolor: "#E9A260",
+                        "&:hover": { bgcolor: "#d0905a" },
+                    }}
+                >
+                    마이페이지로 돌아가기
+                </Button>
+            </Box>
+        );
+    }
+
     return (
         <Box sx={{ bgcolor: "white", minHeight: "100vh", pb: 8 }}>
-            <TitleBar name="반려동물 정보추가" onBack={handleGoBack} />
+            <TitleBar name="반려동물 정보수정" onBack={handleGoBack} />
 
             {/* 선택된 이미지 표시 영역 */}
             <Box
@@ -381,7 +534,7 @@ const AddPet = () => {
                     </IconButton>
                 )}
 
-                {/* 이미지 업로드 버튼 */}
+                {/* 이미지 업로드 버튼 - 항상 표시 */}
                 <IconButton
                     component="label"
                     sx={{
@@ -476,8 +629,8 @@ const AddPet = () => {
                                 <Card
                                     component="label"
                                     sx={{
-                                        height: 100,
                                         width: 100,
+                                        height: 100,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
@@ -672,8 +825,9 @@ const AddPet = () => {
                     rows={4}
                     name="introduction"
                     value={petData.introduction}
-                    onChange={handleChange}
-                    placeholder="10~50 글자 사이로 아이를 소개해주세요"
+                    onChange={handleIntroductionChange}
+                    placeholder="반려동물을 소개해주세요 (최대 255자)"
+                    helperText={`${petData.introduction.length}/255`}
                     sx={{ mb: 3 }}
                 />
 
@@ -723,4 +877,4 @@ const AddPet = () => {
     );
 };
 
-export default AddPet;
+export default EditPet;

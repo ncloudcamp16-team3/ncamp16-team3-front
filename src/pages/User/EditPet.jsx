@@ -89,9 +89,8 @@ const EditPet = () => {
                     // 이미지 정보 설정
                     if (petInfo.photos && petInfo.photos.length > 0) {
                         petInfo.photos.forEach((photo, index) => {
-                            // 기존 이미지는 File 객체가 아니지만 path 정보를 저장
                             const mockFile = {
-                                isExisting: true, // 기존 파일임을 표시
+                                isExisting: true,
                                 path: photo.path,
                                 id: photo.id,
                             };
@@ -142,17 +141,41 @@ const EditPet = () => {
         });
     };
 
-    // 몸무게 입력 처리 함수 추가
     const handleWeightChange = (e) => {
         const value = e.target.value;
 
-        // 숫자와 소수점만 허용
         const regex = /^[0-9]*\.?[0-9]*$/;
 
         if (value === "" || regex.test(value)) {
+            if (value === "" || parseFloat(value) <= 1000) {
+                setPetData({
+                    ...petData,
+                    weight: value,
+                });
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: "몸무게는 최대 1000kg까지 입력 가능합니다.",
+                    severity: "warning",
+                });
+            }
+        }
+    };
+
+    // 소개글 입력
+    const handleIntroductionChange = (e) => {
+        const value = e.target.value;
+
+        if (value.length <= 255) {
             setPetData({
                 ...petData,
-                weight: value,
+                introduction: value,
+            });
+        } else {
+            setSnackbar({
+                open: true,
+                message: "소개글은 최대 255자까지 입력 가능합니다.",
+                severity: "warning",
             });
         }
     };
@@ -201,7 +224,6 @@ const EditPet = () => {
             const newPreviews = [...imagePreviews, reader.result];
             setImagePreviews(newPreviews);
 
-            // 새로 추가된 이미지 선택
             setSelectedImageIndex(newPreviews.length - 1);
 
             setSnackbar({
@@ -297,14 +319,10 @@ const EditPet = () => {
             errorMessages.push("반려동물의 몸무게를 입력해주세요.");
         } else if (Number(petData.weight) <= 0) {
             errorMessages.push("몸무게는 0보다 커야 합니다.");
-        } else if (Number(petData.weight) > 1000) {
-            errorMessages.push("몸무게는 1000kg 이하여야 합니다.");
         }
 
         if (!petData.introduction || !petData.introduction.trim()) {
             errorMessages.push("반려동물 소개를 입력해주세요.");
-        } else if (petData.introduction.length > 255) {
-            errorMessages.push("반려동물 소개는 255자 이하여야 합니다.");
         }
 
         if (images.length === 0) {
@@ -315,7 +333,7 @@ const EditPet = () => {
         if (errorMessages.length > 0) {
             setSnackbar({
                 open: true,
-                message: errorMessages[0], // 첫 번째 에러만 표시
+                message: errorMessages[0],
                 severity: "error",
             });
             setIsSubmitting(false);
@@ -334,7 +352,7 @@ const EditPet = () => {
             isNeutered: petData.isNeutered,
             weight: parseFloat(petData.weight),
             introduction: petData.introduction,
-            mainPhotoIndex: mainPhotoIndex, // mainPhotoIndex를 petData에 포함
+            mainPhotoIndex: mainPhotoIndex,
         });
 
         formData.append("petData", new Blob([petDataJson], { type: "application/json" }));
@@ -663,7 +681,7 @@ const EditPet = () => {
                     onChange={handleChange}
                     sx={{ mb: 2 }}
                     inputProps={{
-                        max: today, // 오늘 날짜까지만 선택 가능
+                        max: today,
                     }}
                 />
 
@@ -809,8 +827,9 @@ const EditPet = () => {
                     rows={4}
                     name="introduction"
                     value={petData.introduction}
-                    onChange={handleChange}
-                    placeholder="10~50 글자 사이로 아이를 소개해주세요"
+                    onChange={handleIntroductionChange}
+                    placeholder="반려동물을 소개해주세요 (최대 255자)"
+                    helperText={`${petData.introduction.length}/255`}
                     sx={{ mb: 3 }}
                 />
 
