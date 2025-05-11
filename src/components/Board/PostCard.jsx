@@ -60,28 +60,49 @@ const PostCard = ({ postItem }) => {
                             fontWeight: "bold",
                             fontSize: "15px",
                             mb: 0.5,
-                            visibility: postItem.price ? "visible" : "hidden",
-                            display: "flex", // flex 컨테이너로 만들어서 인라인 요소들을 나란히 배치
-                            alignItems: "center", // 수직 중앙 정렬
-                            gap: 0.5, // 아이템 간 간격
+                            visibility:
+                                (postItem.price !== null && postItem.price !== undefined) || !postItem.sell
+                                    ? "visible"
+                                    : "hidden",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
                         }}
                     >
-                        {/* 거래완료 표시 조건부 렌더링 */}
-                        {!postItem.sell && (
+                        {postItem.sell !== null && postItem.sell === false && (
+                            // 거래완료 상태면 이것만 표시
                             <Chip
                                 label="거래완료"
                                 size="small"
                                 color="secondary"
                                 sx={{
-                                    fontSize: "0.6rem", // 작은 글씨
-                                    height: "16px", // 낮은 높이
+                                    fontSize: "0.6rem",
+                                    height: "16px",
                                     "& .MuiChip-label": {
-                                        padding: "0 6px", // 좌우 패딩 조정
+                                        padding: "0 6px",
                                     },
                                 }}
                             />
                         )}
-                        {postItem.price}원
+
+                        {/* 거래완료가 아닌 경우에만 가격 관련 표시 */}
+                        {postItem.sell && postItem.price === 0 && (
+                            <Chip
+                                label="무료나눔"
+                                size="small"
+                                color="primary"
+                                sx={{
+                                    fontSize: "0.6rem",
+                                    height: "16px",
+                                    "& .MuiChip-label": {
+                                        padding: "0 6px",
+                                    },
+                                }}
+                            />
+                        )}
+
+                        {/* 거래완료가 아니고 가격이 0보다 클 때만 가격 표시 */}
+                        {postItem.sell && postItem.price > 0 && `${postItem.price}원`}
                     </Typography>
 
                     {boardType.id !== 2 && (
