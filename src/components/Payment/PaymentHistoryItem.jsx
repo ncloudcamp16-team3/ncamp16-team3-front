@@ -26,7 +26,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                 elevation={3}
                 sx={{
                     display: "flex",
-                    alignItems: "stretch", // ← 중요! 높이 균등
+                    alignItems: "flex-start", // ← 중요! 높이 균등
                     p: 1.5,
                     mb: 0,
                     mx: 1.5,
@@ -61,6 +61,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                         position: "relative",
                         padding: "5px 5px 5px 16px",
                         width: "100%",
+                        minWidth: 0, // 💥 줄어들 수 있도록 허용
                         minHeight: 100,
                         display: "flex",
                         flexDirection: "column",
@@ -151,7 +152,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                     </Typography>
 
                     {/* 오른쪽 하단 - 리뷰작성가능 Chip */}
-                    {!hasReview && (
+                    {!payment.reviewId && payment.exitTime && new Date(payment.exitTime) < new Date() && (
                         <Chip
                             label="리뷰작성가능"
                             size="small"
