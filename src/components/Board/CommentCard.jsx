@@ -7,8 +7,17 @@ import { useTheme } from "@mui/material/styles";
 import DropdownCommentBtns from "./DropdownCommentBtns.jsx";
 import { deleteComment, getComments, updateComment } from "../../services/boardService.js";
 import replyIcon from "../../assets/images/Board/reply.png";
+import { produce } from "immer";
 
-const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbarOpen, setPostComments, postId }) => {
+const CommentCard = ({
+    commentItem,
+    handleReply,
+    scrollToComment,
+    handleSnackbarOpen,
+    setPostComments,
+    postId,
+    setPostData,
+}) => {
     const { user } = useContext(Context);
     const timeAgo = useTimeAgo(commentItem.createdAt);
     const [dropCommentBtn, setDropCommentBtn] = useState(false);
@@ -55,6 +64,11 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
                 // console.log("응답 결과: " + res.message);
                 handleSnackbarOpen(res.message, "success");
                 setPostComments(res.data);
+                setPostData((prev) =>
+                    produce(prev, (draft) => {
+                        draft.commentCount = draft.commentCount - 1;
+                    })
+                );
             })
             .catch((err) => {
                 // console.log("에러 발생: " + err.message);

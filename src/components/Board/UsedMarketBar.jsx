@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import BookMarkBtn from "./BookMarkBtn.jsx";
 import { Context } from "../../context/Context.jsx";
 
-const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) => {
+const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat, openCompleteModal }) => {
     const theme = useTheme();
     const { user } = useContext(Context);
 
@@ -42,12 +42,12 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) 
                     fontWeight: "600",
                 }}
             >
-                {postData.price.toLocaleString()}원
+                {postData.price === 0 ? "무료나눔" : postData.price.toLocaleString() + "원"}
             </Typography>
 
-            {postData.authorId !== user.id && (
+            {postData.sell ? (
                 <Button
-                    onClick={onClickChat}
+                    onClick={postData.authorId === user.id ? openCompleteModal : onClickChat}
                     variant="contained"
                     sx={{
                         position: "absolute",
@@ -63,8 +63,27 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat }) 
                         },
                     }}
                 >
-                    채팅하기
+                    {postData.authorId === user.id ? "거래완료" : "채팅하기"}
                 </Button>
+            ) : (
+                <Typography
+                    sx={{
+                        position: "absolute",
+                        right: "15px",
+                        borderRadius: "25px",
+                        height: "38px",
+                        width: "100px",
+                        boxShadow: "none",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "black",
+                        fontSize: "20px",
+                        fontWeight: "600",
+                    }}
+                >
+                    거래완료
+                </Typography>
             )}
         </Box>
     );
