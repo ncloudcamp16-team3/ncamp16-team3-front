@@ -149,7 +149,6 @@ const PostSave = () => {
             content: postData.content,
             authorId: postData.authorId,
             price: postData.price,
-            sell: postData.sell,
             address: postData.address,
             deleteFileIds: deleteFileIds.current,
         };
