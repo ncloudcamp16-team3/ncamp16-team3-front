@@ -42,7 +42,7 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat, op
                     fontWeight: "600",
                 }}
             >
-                {postData.price.toLocaleString()}원
+                {postData.price === 0 ? "무료나눔" : postData.price.toLocaleString() + "원"}
             </Typography>
 
             {postData.sell ? (
@@ -78,7 +78,8 @@ const UsedMarketBar = ({ postData, bookMarked, bookMarkBtnClick, onClickChat, op
                         justifyContent: "center",
                         alignItems: "center",
                         color: "black",
-                        fontWeight: "bold",
+                        fontSize: "20px",
+                        fontWeight: "600",
                     }}
                 >
                     거래완료
