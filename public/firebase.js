@@ -25,7 +25,7 @@ const messaging = getMessaging(app); // FCM 객체 초기화
 
 export const listenToMessages = (callback) => {
     onMessage(messaging, (payload) => {
-        console.log("📲 FCM 메시지 수신:", payload);
+        // console.log("📲 FCM 메시지 수신:", payload);
         callback(payload); // payload 전달
     });
 };

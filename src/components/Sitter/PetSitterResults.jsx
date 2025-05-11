@@ -77,7 +77,7 @@ const PetSitterResults = ({ filteredPetsitters, error, showResults, resetSearch 
 
         try {
             const response = await getAllApprovedPetSitters();
-            console.log("모든 펫시터 목록 응답:", response);
+            // console.log("모든 펫시터 목록 응답:", response);
 
             if (response && response.data) {
                 setAllPetsitters(response.data);

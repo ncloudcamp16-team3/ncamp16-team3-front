@@ -149,7 +149,7 @@ const FacilityUpdate = () => {
             }
 
             const facility = response.data;
-            console.log("시설 정보:", facility);
+            // console.log("시설 정보:", facility);
 
             const typeId = facilityTypeMapping[facility.facilityType] || "";
 
@@ -168,7 +168,7 @@ const FacilityUpdate = () => {
 
             // 이미지 처리 (예외 처리 수정)
             if (facility.imagePaths && Array.isArray(facility.imagePaths)) {
-                console.log("이미지 데이터:", facility.imagePaths);
+                // console.log("이미지 데이터:", facility.imagePaths);
 
                 // 이미지 URL 설정
                 setExistingImages(facility.imagePaths);
@@ -189,7 +189,7 @@ const FacilityUpdate = () => {
 
                 // 이미지 ID 설정
                 setExistingImageIds(filePathsOnly);
-                console.log("추출된 파일 경로: " + filePathsOnly);
+                // console.log("추출된 파일 경로: " + filePathsOnly);
             } else {
                 console.warn("이미지 데이터가 없거나 배열이 아님:", facility.imagePaths);
                 setExistingImages([]);

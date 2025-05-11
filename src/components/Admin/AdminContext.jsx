@@ -122,7 +122,7 @@ export const AdminProvider = ({ children }) => {
 
             return data;
         } catch (error) {
-            console.log("로그인 오류: " + error);
+            // console.log("로그인 오류: " + error);
             throw error;
         }
     };
@@ -137,7 +137,7 @@ export const AdminProvider = ({ children }) => {
 
             window.location.href = "/admin";
         } catch (error) {
-            console.log("로그아웃 API 오류: " + error);
+            // console.log("로그아웃 API 오류: " + error);
             localStorage.removeItem("adminToken");
             localStorage.removeItem("adminEmail");
             window.location.href = "/admin";
