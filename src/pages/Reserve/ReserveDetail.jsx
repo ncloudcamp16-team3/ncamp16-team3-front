@@ -296,7 +296,7 @@ const ReserveDetail = () => {
 
     const StarRating = () => {
         const percentage = (rating / 5) * 100;
-        console.log("percentage: " + percentage);
+        // console.log("percentage: " + percentage);
 
         return (
             <Box
