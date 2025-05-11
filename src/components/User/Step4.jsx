@@ -158,7 +158,9 @@ const Step4 = () => {
                             {formData.petInfo && (
                                 <>
                                     <Divider sx={{ my: 2 }} />
-                                    <Typography variant="body1">{formData.petInfo}</Typography>
+                                    <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                                        {formData.petInfo}
+                                    </Typography>
                                 </>
                             )}
                         </CardContent>

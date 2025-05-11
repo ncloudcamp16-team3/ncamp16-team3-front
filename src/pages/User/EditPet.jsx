@@ -297,10 +297,14 @@ const EditPet = () => {
             errorMessages.push("반려동물의 몸무게를 입력해주세요.");
         } else if (Number(petData.weight) <= 0) {
             errorMessages.push("몸무게는 0보다 커야 합니다.");
+        } else if (Number(petData.weight) > 1000) {
+            errorMessages.push("몸무게는 1000kg 이하여야 합니다.");
         }
 
         if (!petData.introduction || !petData.introduction.trim()) {
             errorMessages.push("반려동물 소개를 입력해주세요.");
+        } else if (petData.introduction.length > 255) {
+            errorMessages.push("반려동물 소개는 255자 이하여야 합니다.");
         }
 
         if (images.length === 0) {

@@ -41,13 +41,14 @@ const Step2 = () => {
     const handleNext = () => {
         const today = new Date();
         const birthDate = formData.petBirth ? new Date(formData.petBirth) : null;
+        const weight = Number(formData.petWeight);
 
         const newErrors = {
             petName: !formData.petName || formData.petName.trim().length < 1 || formData.petName.trim().length > 16,
             petTypeId: !formData.petTypeId,
             petGender: !formData.petGender,
             petBirth: !birthDate || birthDate > today,
-            petWeight: !formData.petWeight || isNaN(Number(formData.petWeight)) || Number(formData.petWeight) <= 0,
+            petWeight: !formData.petWeight || isNaN(weight) || weight <= 0 || weight > 1000,
         };
 
         setErrors(newErrors);
@@ -73,8 +74,12 @@ const Step2 = () => {
             showSnackbar("반려동물 생일은 오늘보다 미래일 수 없습니다.");
             return;
         }
-        if (!formData.petWeight || isNaN(Number(formData.petWeight)) || Number(formData.petWeight) <= 0) {
+        if (!formData.petWeight || isNaN(weight) || weight <= 0) {
             showSnackbar("반려동물 몸무게는 0보다 큰 숫자로 입력해주세요.");
+            return;
+        }
+        if (weight > 1000) {
+            showSnackbar("반려동물 몸무게는 1000kg 이하로 입력해주세요.");
             return;
         }
 
