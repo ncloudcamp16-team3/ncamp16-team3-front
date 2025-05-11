@@ -22,6 +22,12 @@ function TelephoneIcon(props) {
     );
 }
 
+const formatPhone = (tel) => {
+    return tel.replace(/^(02)(\d{3,4})(\d{4})$|^(0\d{2})(\d{3,4})(\d{4})$/, (_, p1, p2, p3, p4, p5, p6) =>
+        p1 ? `${p1}-${p2}-${p3}` : `${p4}-${p5}-${p6}`
+    );
+};
+
 const FacilityCards = ({ item }) => {
     const navigate = useNavigate();
 
@@ -134,8 +140,7 @@ const FacilityCards = ({ item }) => {
                             {item.address}
                         </Typography>
                         <Typography sx={{ fontSize: 14, color: "#555" }}>
-                            <TelephoneIcon sx={{ fontSize: 13 }} />{" "}
-                            {item.tel.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, "$1-$2-$3")}
+                            <TelephoneIcon sx={{ fontSize: 13 }} /> {formatPhone(item.tel)}
                         </Typography>
                         <CardContentAboutTime openTimeRange={item.openTimeRange} isOpened={item.opened} />
                     </Box>
