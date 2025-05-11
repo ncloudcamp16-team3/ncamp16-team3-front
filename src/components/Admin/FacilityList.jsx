@@ -192,7 +192,7 @@ function FacilityList() {
                                                 {getFacilityType(row.facilityType)}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.starPoint, ...commonCellStyle }}>
-                                                g{(Math.round(row.starPoint * 10) / 10).toFixed(1)}
+                                                {(Math.round(row.starPoint * 10) / 10).toFixed(1)}
                                             </TableCell>
                                             <TableCell sx={{ ...cellStyles.image }}>
                                                 {row.image ? (
