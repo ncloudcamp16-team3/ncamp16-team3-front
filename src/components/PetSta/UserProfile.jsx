@@ -32,14 +32,14 @@ const UserProfile = ({ userInfo }) => {
             // 2️⃣ customField를 기준으로 채널 조회
             const filter = { name: uniqueId };
             const channelList = await nc.getChannels(filter, {}, { per_page: 1 });
-            console.log("엥" + JSON.stringify(channelList));
+            // console.log("엥" + JSON.stringify(channelList));
 
             const { edges } = channelList;
 
             let realChannelId = null;
 
             if (edges.length > 0) {
-                console.log("이거떠야하는거아닌가?");
+                // console.log("이거떠야하는거아닌가?");
                 realChannelId = edges[0].node.id;
             } else {
                 const newChannel = await nc.createChannel({
@@ -62,7 +62,7 @@ const UserProfile = ({ userInfo }) => {
 
             if (!isSubscribed) {
                 await nc.subscribe(realChannelId);
-                console.log("✅ 사용자 구독 완료");
+                // console.log("✅ 사용자 구독 완료");
             }
 
             // 7️⃣ 채팅방 이동

@@ -17,7 +17,7 @@ export const useFilterOptions = () => {
     };
 
     const handleSearch = () => {
-        console.log(`${startDate} ~ ${endDate} 검색`);
+        // console.log(`${startDate} ~ ${endDate} 검색`);
         setSearchTrigger((prev) => prev + 1); // ✅ 여기에 포함
     };
 

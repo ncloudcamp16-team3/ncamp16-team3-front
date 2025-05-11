@@ -24,7 +24,7 @@ export const fetchBoards = async (page = 0, size = 10, boardTypeId = null, searc
 
         const response = await adminAxios.get(url);
 
-        console.log(response);
+        // console.log(response);
 
         if (response.status != 200) {
             throw new Error(response.data.message || "게시판 목록을 가져오는데 실패했습니다");
