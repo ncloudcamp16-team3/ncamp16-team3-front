@@ -7,14 +7,15 @@ import StarIcon from "@mui/icons-material/Star";
 // 날짜/시간 포맷 (ex. 2025-05-06T10:00:00 → "2025.05.06 (화) 10:00")
 const formatDateTime = (dateTimeStr) => {
     const date = new Date(dateTimeStr);
-    return date.toLocaleString("ko-KR", {
+    return new Intl.DateTimeFormat("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
         weekday: "short",
         hour: "2-digit",
         minute: "2-digit",
-    });
+        hour12: false, // 24시간제
+    }).format(date);
 };
 
 export const PaymentHistoryItem = ({ payment }) => {
@@ -30,7 +31,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                     alignItems: "flex-start",
                     p: 1.5,
                     mb: 0,
-                    mx: 1.5, // ✅ 좌우 마진 추가 (예: theme.spacing(1.5) → 12px)
+                    mx: 1.5, // 좌우 마진 추가
                     borderRadius: 2,
                     cursor: "pointer",
                     boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.15)",
@@ -72,7 +73,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                     sx={{
                         width: 120,
                         height: 96,
-                        minWidth: 120, // ✅ 작아도 영역 확보
+                        minWidth: 120, // 작아도 영역 확보
                         objectFit: "cover",
                         objectPosition: "center",
                         bgcolor: "grey.100",
@@ -91,43 +92,69 @@ export const PaymentHistoryItem = ({ payment }) => {
                         "&:last-child": { paddingBottom: "5px" },
                     }}
                 >
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{
-                            fontWeight: "bold",
-                            fontSize: "1.3rem",
-                            lineHeight: 1.2,
-                        }}
-                    >
-                        {payment.name}
-                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{
+                                fontWeight: "bold",
+                                fontSize: "1.3rem",
+                                lineHeight: 1.2,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                pr: "130px", // 날짜 위치만큼 패딩
+                            }}
+                        >
+                            {payment.name}
+                        </Typography>
+                        {/* 예약시간 텍스트를 절대 위치로 배치 */}
+                        <Typography
+                            sx={{
+                                position: "absolute",
+                                top: 20,
+                                right: 16,
+                                fontSize: "0.75rem",
+                                color: "text.secondary",
+                            }}
+                        >
+                            [예약시간]
+                        </Typography>
 
-                    {payment.createdAt && (
-                        <Box sx={{ position: "relative", width: "100%", height: "1.2rem", mt: 0.5 }}>
-                            <Typography
-                                variant="caption"
-                                color="text.secondary"
+                        {payment.createdAt && (
+                            <Box
                                 sx={{
                                     position: "absolute",
-                                    right: 0,
-                                    whiteSpace: "nowrap",
+                                    top: 35, // 제목 아랫줄로
+                                    right: 16,
+                                    textAlign: "right",
                                 }}
                             >
-                                {formatDateTime(payment.createdAt)}
-                            </Typography>
-                        </Box>
-                    )}
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{ lineHeight: 1 }}
+                                ></Typography>
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{ whiteSpace: "nowrap", lineHeight: 1.4 }}
+                                >
+                                    {formatDateTime(payment.createdAt)}
+                                </Typography>
+                            </Box>
+                        )}
+                    </Box>
 
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, wordBreak: "keep-all" }}>
-                        {payment.exitTime ? "In: " : "예약시간: "}
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 2, wordBreak: "keep-all" }}>
+                        {payment.exitTime ? "체크인: " : "예약시간: "}
                         {formatDateTime(payment.entryTime)}
                     </Typography>
 
                     {/* 체크아웃 (있을 경우만) */}
                     {payment.exitTime && (
                         <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, wordBreak: "keep-all" }}>
-                            Out: {formatDateTime(payment.exitTime)}
+                            체크아웃: {formatDateTime(payment.exitTime)}
                         </Typography>
                     )}
 
@@ -142,14 +169,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                             {formatPrice(payment.price)}원
                         </Typography>
 
-                        {hasReview ? (
-                            <Chip
-                                label="리뷰작성완료"
-                                size="small"
-                                color="success"
-                                sx={{ height: 24, fontSize: "0.7rem" }}
-                            />
-                        ) : (
+                        {hasReview && (
                             <Chip
                                 label="리뷰작성가능"
                                 size="small"

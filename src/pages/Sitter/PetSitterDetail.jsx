@@ -255,6 +255,21 @@ const PetSitterDetail = () => {
                     <Button
                         variant="contained"
                         fullWidth
+                        onClick={handleCancel}
+                        sx={{
+                            bgcolor: "#E9A260",
+                            color: "white",
+                            py: 1.5,
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            "&:hover": { bgcolor: "#d0905a" },
+                        }}
+                    >
+                        취소
+                    </Button>
+                    <Button
+                        variant="contained"
+                        fullWidth
                         onClick={handleChat}
                         startIcon={<ChatIcon />}
                         sx={{
@@ -267,21 +282,6 @@ const PetSitterDetail = () => {
                         }}
                     >
                         채팅하기
-                    </Button>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        onClick={handleCancel}
-                        sx={{
-                            bgcolor: "#E9A260",
-                            color: "white",
-                            py: 1.5,
-                            borderRadius: "8px",
-                            fontWeight: "bold",
-                            "&:hover": { bgcolor: "#d0905a" },
-                        }}
-                    >
-                        취소
                     </Button>
                 </Box>
             </Container>
