@@ -44,8 +44,6 @@ const ListContent = () => {
             setLoading(true); // 로딩 시작
             setError(null); // 에러 초기화
 
-            console.log(noData);
-            console.log(last);
             try {
                 if (noData || last) return;
                 const result = await getFacilityListsToReserve({
@@ -56,6 +54,16 @@ const ListContent = () => {
                     location, // location 객체 전달
                     today, // 오늘 날짜 전달
                 });
+
+                console.log({
+                    category,
+                    sortBy,
+                    page,
+                    size,
+                    location, // location 객체 전달
+                    today, // 오늘 날짜 전달
+                });
+                console.log(result);
 
                 if (!result || !Array.isArray(result.content)) {
                     setError("서버 데이터 형식 오류");
