@@ -1,8 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Card, CardContent, Typography, Box, SvgIcon } from "@mui/material";
 import { Star, StarBorder } from "@mui/icons-material";
 import CardContentAboutTime from "./CardContentAboutTime.jsx";
+
+function TelephoneIcon(props) {
+    return (
+        <SvgIcon {...props} viewBox="0 0 512 512">
+            <g transform="translate(0,512) scale(0.1,-0.1)" fill="currentColor" stroke="none">
+                <path
+                    d="M1164 5111 c-17 -4 -45 -15 -62 -24 -51 -25 -339 -255 -416 -332
+-486 -484 -482 -1386 9 -2380 448 -909 1219 -1721 2009 -2117 619 -311 1177
+-340 1598 -84 89 54 402 301 432 341 64 83 79 207 37 296 -25 54 -733 957
+-792 1011 -50 46 -114 68 -199 68 -87 0 -131 -23 -285 -146 -214 -171 -243
+-184 -401 -184 -282 0 -564 145 -839 431 -364 378 -567 834 -525 1177 13 103
+48 209 85 258 15 19 102 94 193 167 205 163 227 195 227 322 0 62 -5 90 -22
+125 -32 64 -753 978 -803 1017 -66 53 -163 73 -246 54z"
+                />
+            </g>
+        </SvgIcon>
+    );
+}
 
 const FacilityCards = ({ item }) => {
     const navigate = useNavigate();
@@ -114,6 +132,10 @@ const FacilityCards = ({ item }) => {
                                 : `${Math.round(item.distance)}m`}
                             {" ・ "}
                             {item.address}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14, color: "#555" }}>
+                            <TelephoneIcon sx={{ fontSize: 13 }} />{" "}
+                            {item.tel.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3")}
                         </Typography>
                         <CardContentAboutTime openTimeRange={item.openTimeRange} isOpened={item.opened} />
                     </Box>

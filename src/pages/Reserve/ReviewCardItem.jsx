@@ -104,7 +104,6 @@ const ReviewCardItem = ({
             setEditable(false);
             setImageFile(null);
             setPreviewImage(null);
-            showModal("", "리뷰가 수정되었습니다.");
         } catch (err) {
             showModal("", "리뷰 수정 실패: " + err.message);
         } finally {
