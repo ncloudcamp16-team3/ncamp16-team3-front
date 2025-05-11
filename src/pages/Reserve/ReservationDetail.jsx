@@ -31,7 +31,6 @@ const ReservationDetail = () => {
         getReserveDetail(id)
             .then((res) => {
                 setReservation(res.data);
-                // console.log(res.data);
             })
             .catch((err) => {
                 console.error("예약 상세 조회 실패:", err);
@@ -68,7 +67,7 @@ const ReservationDetail = () => {
         <Container>
             <TitleBar name="예약 상세" onBack={() => navigate("/payment")} />
             <Box sx={{ m: 2 }}>
-                <Box my={2} sx={{ cursor: "pointer" }} onClick={() => navigate(`/reserve/${reservation.id}`)}>
+                <Box my={2} sx={{ cursor: "pointer" }} onClick={() => navigate(`/reserve/${reservation.facilityId}`)}>
                     <Typography variant="h5" fontWeight="bold">
                         {reservation.name}
                     </Typography>
