@@ -292,11 +292,9 @@ const ReserveDetail = () => {
     };
 
     const rating = facilityData.starPoint || 0;
-    // console.log("rating: " + rating);
 
     const StarRating = () => {
         const percentage = (rating / 5) * 100;
-        console.log("percentage: " + percentage);
 
         return (
             <Box

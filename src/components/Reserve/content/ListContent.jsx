@@ -40,11 +40,12 @@ const ListContent = () => {
     }, [geolocation.latitude, geolocation.longitude]);
 
     useEffect(() => {
-        console.log("시설 useEffect 들어오나 확인용");
         const fetchFacilities = async () => {
             setLoading(true); // 로딩 시작
             setError(null); // 에러 초기화
 
+            console.log(noData);
+            console.log(last);
             try {
                 if (noData || last) return;
                 const result = await getFacilityListsToReserve({
@@ -84,16 +85,6 @@ const ListContent = () => {
             fetchFacilities(); // 위치 정보가 있을 때만 데이터 가져오기
         }
     }, [page, sortBy, category, location]); // 의존성 배열에 필요한 값들 추가
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            console.log("[5초 주기] 현재 시설 데이터:", data);
-            console.log("geolocation latitude:", geolocation.latitude);
-            console.log("geolocation longitude:", geolocation.longitude);
-        }, 3000);
-
-        return () => clearInterval(interval); // 언마운트 시 인터벌 정리
-    }, [data]);
 
     if (loading) {
         return (
