@@ -102,7 +102,7 @@ const ReserveDetail = () => {
             const response = await deleteReview(reviewId);
             const data = response;
 
-            console.log(data);
+            // console.log(data);
 
             setFacilityData(data.facility);
             setReviews(data.reviews || []);
@@ -148,7 +148,7 @@ const ReserveDetail = () => {
                 const response = await getFacilityToReserveById(id);
                 const data = response.data;
 
-                console.log(data);
+                // console.log(data);
 
                 setFacilityData(data.data.facility);
                 setReviews(data.data.reviews || []);
@@ -181,14 +181,14 @@ const ReserveDetail = () => {
         const entryTime = dayjs
             .tz(`${dayjs(startDate).format("YYYY-MM-DD")}T${startTime}`, "Asia/Seoul")
             .format("YYYY-MM-DDTHH:mm:ss");
-        console.log(entryTime);
+        // console.log(entryTime);
         const exitTime =
             endDate && endTime
                 ? dayjs
                       .tz(`${dayjs(endDate).format("YYYY-MM-DD")}T${endTime}`, "Asia/Seoul")
                       .format("YYYY-MM-DDTHH:mm:ss")
                 : null;
-        console.log(exitTime);
+        // console.log(exitTime);
         try {
             const response = await addTempReserve({
                 userId: user.id,
@@ -292,9 +292,11 @@ const ReserveDetail = () => {
     };
 
     const rating = facilityData.starPoint || 0;
+    // console.log("rating: " + rating);
 
     const StarRating = () => {
         const percentage = (rating / 5) * 100;
+        // console.log("percentage: " + percentage);
 
         return (
             <Box
@@ -342,7 +344,7 @@ const ReserveDetail = () => {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        width: `${percentage}%`,
+                        width: `${percentage}`,
                         height: "100%",
                         overflow: "hidden",
                         color: "#FFD700", // 채워진 별 색상
