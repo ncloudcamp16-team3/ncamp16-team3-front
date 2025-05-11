@@ -39,8 +39,8 @@ const ReviewCardItem = ({
     const [imageToShow, setImageToShow] = useState(review.reviewImages?.[0] || null);
     const [isExpended, setIsExpended] = useState(false);
 
-    const { showModal } = useContext(Context);
     const fileInputRef = useRef(); // ✅ 파일 input 참조
+    const { handleSnackbarOpen } = useContext(Context);
 
     useEffect(() => {
         if (!editable) {
@@ -104,8 +104,9 @@ const ReviewCardItem = ({
             setEditable(false);
             setImageFile(null);
             setPreviewImage(null);
+            handleSnackbarOpen("리뷰가 수정되었습니다");
         } catch (err) {
-            showModal("", "리뷰 수정 실패: " + err.message);
+            handleSnackbarOpen("리뷰 수정 실패 : " + err.message, "error");
         } finally {
             setLoading(false);
         }

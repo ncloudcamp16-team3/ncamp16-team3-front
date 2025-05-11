@@ -53,7 +53,7 @@ const ReserveDetail = () => {
     const naverPayRef = useRef(null);
 
     // 모달설정 관련
-    const { showModal } = useContext(Context);
+    const { showModal, handleSnackbarOpen } = useContext(Context);
 
     // 리뷰 정렬 로직
     useEffect(() => {
@@ -107,6 +107,7 @@ const ReserveDetail = () => {
             setFacilityData(data.facility);
             setReviews(data.reviews || []);
             setChartData(transformScoreToChartData(data.ratingRatio));
+            handleSnackbarOpen("리뷰가 삭제되었습니다");
         } catch (err) {
             console.error("리뷰를 불러오는데 실패했습니다:", err);
             setError("리뷰를 불러오는데 실패했습니다. 다시 시도해주세요.");
