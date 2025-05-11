@@ -95,7 +95,7 @@ const Step1 = () => {
                     환영합니다
                 </Typography>
                 <Typography variant="body1" textAlign="center" mb={2}>
-                    회원가입이 완료되었어요! 닉네임을 설정해주세요.
+                    닉네임을 설정해주세요.
                 </Typography>
 
                 <FormControl
