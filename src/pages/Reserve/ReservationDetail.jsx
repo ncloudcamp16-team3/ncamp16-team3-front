@@ -63,8 +63,6 @@ const ReservationDetail = () => {
     const canCancel = reservation.entryTime && new Date(reservation.entryTime) > now;
     const canReview = reservation.entryTime && new Date(reservation.entryTime) < now;
 
-    console.log(reservation.exitTime);
-
     return (
         <Container>
             <TitleBar name="예약 상세" onBack={() => navigate("/payment")} />
