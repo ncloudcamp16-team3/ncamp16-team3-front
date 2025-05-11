@@ -278,7 +278,12 @@ const Step3 = () => {
                             borderStyle: "solid",
                         }}
                         value={formData.petInfo}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value.length <= 255) {
+                                handleChange(e); // 기존 로직 그대로 사용
+                            }
+                        }}
                     />
                 </FormControl>
             </Box>
