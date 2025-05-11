@@ -103,14 +103,14 @@ const PetSitterRegister = () => {
 
             // 타임아웃 설정
             const timeoutId = setTimeout(() => {
-                console.log("펫시터 상태 확인 타임아웃, 기본 초기화 진행");
+                // console.log("펫시터 상태 확인 타임아웃, 기본 초기화 진행");
                 setIsInitialized(true);
             }, 10000);
 
             try {
                 // 서버에서 펫시터 상태 확인
                 const statusResponse = await instance.get("/petsitter/status");
-                console.log("서버 응답:", statusResponse);
+                // console.log("서버 응답:", statusResponse);
 
                 if (statusResponse.status === 200 && statusResponse.data.data) {
                     const sitterData = statusResponse.data.data;
@@ -132,7 +132,7 @@ const PetSitterRegister = () => {
                             const localData = localStorage.getItem("petSitterInfo");
                             if (localData) {
                                 const parsedData = JSON.parse(localData);
-                                console.log("로컬 스토리지에서 로드한 데이터:", parsedData);
+                                // console.log("로컬 스토리지에서 로드한 데이터:", parsedData);
                                 initializeFormFromLocal(parsedData);
                             }
                         } catch (e) {
@@ -155,7 +155,7 @@ const PetSitterRegister = () => {
                             const localData = localStorage.getItem("petSitterInfo");
                             if (localData) {
                                 const parsedData = JSON.parse(localData);
-                                console.log("로컬 스토리지에서 로드한 데이터:", parsedData);
+                                // console.log("로컬 스토리지에서 로드한 데이터:", parsedData);
                                 initializeFormFromLocal(parsedData);
                             }
                         } catch (e) {
@@ -176,13 +176,13 @@ const PetSitterRegister = () => {
 
     // 로컬 스토리지에서 데이터로 폼 초기화
     const initializeFormFromLocal = (data) => {
-        console.log("로컬 스토리지에서 받은 펫시터 데이터:", data);
+        // console.log("로컬 스토리지에서 받은 펫시터 데이터:", data);
 
         // 기존 이미지 경로 저장
         if (data.image) {
             setExistingImagePath(data.image);
             setImagePreview(data.image);
-            console.log("로컬 스토리지에서 이미지 경로 저장:", data.image);
+            // console.log("로컬 스토리지에서 이미지 경로 저장:", data.image);
         }
 
         // 직접 petSitterData 상태 업데이트
@@ -266,18 +266,18 @@ const PetSitterRegister = () => {
             setCommentText(data.comment);
         }
 
-        console.log("로컬 스토리지에서 폼 데이터 초기화 완료");
+        // console.log("로컬 스토리지에서 폼 데이터 초기화 완료");
     };
 
     // 서버에서 가져온 데이터로 폼 초기화하는 함수
     const initializeFormFromServer = (data) => {
-        console.log("서버에서 받은 펫시터 데이터:", data);
+        // console.log("서버에서 받은 펫시터 데이터:", data);
 
         // 기존 이미지 경로 저장
         if (data.imagePath) {
             setExistingImagePath(data.imagePath);
             setImagePreview(data.imagePath);
-            console.log("기존 이미지 경로 저장:", data.imagePath);
+            // console.log("기존 이미지 경로 저장:", data.imagePath);
         }
 
         // 직접 petSitterData 상태 업데이트
@@ -368,7 +368,7 @@ const PetSitterRegister = () => {
             setCommentText(data.comment);
         }
 
-        console.log("폼 데이터 초기화 완료");
+        // console.log("폼 데이터 초기화 완료");
     };
     useEffect(() => {
         // "키우고 있지 않습니다"로 변경된 경우
@@ -431,8 +431,8 @@ const PetSitterRegister = () => {
                     let formattedPetTypes = selectedPetTypes;
                     if (petTypes["기타"] && otherPetText.trim()) {
                         formattedPetTypes = selectedPetTypes
-                          .filter(type => type !== "기타")
-                          .concat([otherPetText.trim()]);
+                            .filter((type) => type !== "기타")
+                            .concat([otherPetText.trim()]);
                     }
 
                     setPetSitterData((prev) => ({
@@ -792,7 +792,7 @@ const PetSitterRegister = () => {
                     await new Response(new Blob([formData.get("data")], { type: "application/json" })).text()
                 );
 
-                console.log("서버로 전송되는 JSON 데이터:", dataJson);
+                // console.log("서버로 전송되는 JSON 데이터:", dataJson);
             } catch (e) {
                 console.error("폼 데이터 로깅 오류:", e);
             }
@@ -805,14 +805,14 @@ const PetSitterRegister = () => {
             if (imageFile) {
                 formData.append("image", imageFile);
                 imageDataChanged = true;
-                console.log("새 이미지 파일 추가:", imageFile.name);
+                // console.log("새 이미지 파일 추가:", imageFile.name);
 
                 // 이미지 파일 로깅
-                console.log("서버로 전송되는 이미지:", {
-                    name: imageFile.name,
-                    type: imageFile.type,
-                    size: imageFile.size + "bytes",
-                });
+                // console.log("서버로 전송되는 이미지:", {
+                //     name: imageFile.name,
+                //     type: imageFile.type,
+                //     size: imageFile.size + "bytes",
+                // });
             }
             // 이미지 프리뷰가 있고 URL이 아닌 데이터 URL인 경우(새로 선택했지만 File 객체가 없는 경우)
             else if (imagePreview && !imagePreview.startsWith("http") && imagePreview.startsWith("data:")) {
@@ -821,23 +821,23 @@ const PetSitterRegister = () => {
                     const imageBlob = await response.blob();
                     formData.append("image", imageBlob, "profile.jpg");
                     imageDataChanged = true;
-                    console.log("Base64 이미지를 Blob으로 변환하여 추가");
+                    // console.log("Base64 이미지를 Blob으로 변환하여 추가");
 
                     // 이미지 Blob 로깅
-                    console.log("서버로 전송되는 Blob 이미지:", {
-                        type: imageBlob.type,
-                        size: imageBlob.size + "bytes",
-                    });
+                    // console.log("서버로 전송되는 Blob 이미지:", {
+                    //     type: imageBlob.type,
+                    //     size: imageBlob.size + "bytes",
+                    // });
                 } catch (err) {
                     console.error("이미지 변환 오류:", err);
                 }
             } else {
-                console.log("이미지 변경 없음, 기존 이미지 유지:", existingImagePath);
+                // console.log("이미지 변경 없음, 기존 이미지 유지:", existingImagePath);
             }
 
-            console.log("이미지 변경 여부:", imageDataChanged);
-            console.log("기존 이미지 경로:", existingImagePath);
-            console.log("이미지 미리보기:", imagePreview);
+            // console.log("이미지 변경 여부:", imageDataChanged);
+            // console.log("기존 이미지 경로:", existingImagePath);
+            // console.log("이미지 미리보기:", imagePreview);
 
             // 세부 요청 헤더 설정
             const headers = {
@@ -847,8 +847,8 @@ const PetSitterRegister = () => {
             };
 
             // 요청 로깅
-            console.log("API 요청 URL:", "/petsitter/apply");
-            console.log("API 요청 헤더:", headers);
+            // console.log("API 요청 URL:", "/petsitter/apply");
+            // console.log("API 요청 헤더:", headers);
 
             // API 호출 (instance 사용)
             try {
@@ -861,9 +861,9 @@ const PetSitterRegister = () => {
                 clearTimeout(timeoutId);
 
                 // 응답 로깅
-                console.log("API 응답 상태:", res.status);
-                console.log("API 응답 데이터:", res.data);
-                console.log("API 응답 헤더:", res.headers);
+                // console.log("API 응답 상태:", res.status);
+                // console.log("API 응답 데이터:", res.data);
+                // console.log("API 응답 헤더:", res.headers);
 
                 if (res.status === 200 || res.status === 201) {
                     // 서버 응답에서 이미지 경로가 없으면, 기존 이미지 경로 또는 미리보기 이미지 사용
@@ -872,7 +872,7 @@ const PetSitterRegister = () => {
                     if (!finalImagePath) {
                         // 이미지가 변경되었으면 미리보기 이미지를 사용, 아니면 기존 이미지 경로 사용
                         finalImagePath = imageDataChanged ? imagePreview : existingImagePath;
-                        console.log("서버에서 이미지 경로가 제공되지 않아 클라이언트 측 이미지 사용:", finalImagePath);
+                        // console.log("서버에서 이미지 경로가 제공되지 않아 클라이언트 측 이미지 사용:", finalImagePath);
                     }
 
                     // 로컬 스토리지에 저장할 정보
@@ -895,7 +895,7 @@ const PetSitterRegister = () => {
                         grown: submitData.grown,
                     };
 
-                    console.log("로컬 스토리지에 저장할 완전한 정보:", sitterInfoComplete);
+                    // console.log("로컬 스토리지에 저장할 완전한 정보:", sitterInfoComplete);
 
                     localStorage.setItem("petSitterRegistrationCompleted", "true");
                     localStorage.setItem("petSitterInfo", JSON.stringify(sitterInfoComplete));

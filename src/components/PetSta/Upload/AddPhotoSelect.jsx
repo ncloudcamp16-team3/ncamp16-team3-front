@@ -28,7 +28,7 @@ const AddPhotoSelect = ({ imagePreview, setImagePreview, setImageFile, goNext })
                 // 이미지가 업로드된 상태
                 <Box
                     width="88%"
-                    height="70vh"
+                    height="50vh"
                     m="0 auto"
                     display="flex"
                     justifyContent="center"
@@ -54,8 +54,9 @@ const AddPhotoSelect = ({ imagePreview, setImagePreview, setImageFile, goNext })
                         <label htmlFor="fileUpload">
                             <Box
                                 sx={{
-                                    width: "100%",
-                                    height: "100%",
+                                    width: "88%",
+                                    height: "50vh",
+                                    m: "0 auto",
                                     borderRadius: "20px",
                                     overflow: "hidden",
                                     cursor: "pointer", // 여기서 커서 처리 가능
@@ -78,7 +79,7 @@ const AddPhotoSelect = ({ imagePreview, setImagePreview, setImageFile, goNext })
                 // 업로드 전 상태
                 <Box
                     width="88%"
-                    height="70vh"
+                    height="50vh"
                     bgcolor="#D9D9D9"
                     m="0 auto"
                     borderRadius="20px"

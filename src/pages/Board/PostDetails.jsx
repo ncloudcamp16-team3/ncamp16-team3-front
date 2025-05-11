@@ -298,7 +298,7 @@ const PostDetails = () => {
                         mb: "5px",
                     }}
                 >
-                    자세한 설명
+                    내용
                 </Typography>
                 <InputBase
                     value={postData.content}

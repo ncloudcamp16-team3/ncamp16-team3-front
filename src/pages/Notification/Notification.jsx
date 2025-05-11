@@ -69,7 +69,7 @@ const Notification = () => {
 
         // listenToMessages는 user.id 있을 때만 등록
         const unsubscribe = listenToMessages(async (payload) => {
-            console.log("📥 실시간 알림 수신됨:", payload);
+            // console.log("📥 실시간 알림 수신됨:", payload);
             await fetchNotifications();
             const result = await checkNotification(user.id);
             setHasNewNotification(result.exists);

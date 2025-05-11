@@ -152,16 +152,14 @@ const CalendarRendering = () => {
                 <Box
                     sx={{
                         backgroundColor: "white",
-                        borderBottom: "1px solid #ccc",
                         fontSize: "20px",
                         fontWeight: "bold",
                         height: "60px",
                         display: "flex",
-                        justifyContent: "center",
                         alignItems: "center",
                     }}
                 >
-                    <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>캘린더</Typography>
+                    <Typography sx={{ fontWeight: "bold", fontSize: "20px", ml: 2 }}>캘린더</Typography>
                 </Box>
                 <Box
                     display="flex"

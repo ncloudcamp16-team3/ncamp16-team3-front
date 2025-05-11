@@ -28,14 +28,21 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, setVideoFile, goNext })
             {videoPreview ? (
                 <Box
                     width="88%"
-                    height="70vh"
+                    height="50vh"
                     m="0 auto"
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     position="relative"
                 >
-                    <Box overflow="hidden" minHeight="20%" maxHeight="60vh" minWidth="20%" position="relative">
+                    <Box
+                        overflow="hidden"
+                        minHeight="20%"
+                        maxHeight="60vh"
+                        minWidth="20%"
+                        position="relative"
+                        m="0 auto"
+                    >
                         <input
                             type="file"
                             id="fileUpload"
@@ -47,8 +54,8 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, setVideoFile, goNext })
                         <label htmlFor="fileUpload">
                             <Box
                                 width="100%"
-                                minHeight="66vh"
-                                maxHeight="66vh"
+                                minHeight="50vh"
+                                maxHeight="50vh"
                                 display="flex"
                                 justifyContent="center"
                                 m="0 auto"
@@ -74,7 +81,7 @@ const AddPhotoSelect = ({ videoPreview, setVideoPreview, setVideoFile, goNext })
             ) : (
                 <Box
                     width="88%"
-                    height="70vh"
+                    height="50vh"
                     bgcolor="#D9D9D9"
                     m="0 auto"
                     borderRadius="20px"
