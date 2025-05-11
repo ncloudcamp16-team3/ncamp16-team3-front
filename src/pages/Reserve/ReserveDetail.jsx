@@ -24,6 +24,12 @@ import CustomizedDot from "../../components/Reserve/utils/CustomizedDot.jsx";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const formatPhone = (tel) => {
+    return tel.replace(/^(02)(\d{3,4})(\d{4})$|^(0\d{2})(\d{3,4})(\d{4})$/, (_, p1, p2, p3, p4, p5, p6) =>
+        p1 ? `${p1}-${p2}-${p3}` : `${p4}-${p5}-${p6}`
+    );
+};
+
 const ReserveDetail = () => {
     const { id } = useParams();
     const [isMapOpen, setIsMapOpen] = useState(false);
@@ -509,7 +515,7 @@ const ReserveDetail = () => {
                         문의전화:{" "}
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
-                        {facilityData.tel.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3")}
+                        {formatPhone(facilityData.tel)}
                     </Typography>
                 </Box>
                 {/* 기본 정보 */}
