@@ -57,7 +57,7 @@ const Review = () => {
                 const now = new Date();
                 const res = await getReserveDetail(id);
                 const reserveData = res.data;
-                if (new Date(reserveData.exitTime) > now || reserveData.reviewDto) {
+                if (new Date(reserveData.entryTime) > now || reserveData.reviewDto) {
                     setInvalidAccess(true);
                 }
             } catch (err) {

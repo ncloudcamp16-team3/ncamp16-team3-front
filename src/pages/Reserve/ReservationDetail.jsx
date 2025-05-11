@@ -61,7 +61,7 @@ const ReservationDetail = () => {
 
     const now = new Date();
     const canCancel = reservation.entryTime && new Date(reservation.entryTime) > now;
-    const canReview = reservation.exitTime && new Date(reservation.exitTime) < now;
+    const canReview = reservation.entryTime && new Date(reservation.entryTime) < now;
 
     console.log(reservation.exitTime);
 
@@ -105,7 +105,7 @@ const ReservationDetail = () => {
                 </List>
                 <Divider />
                 <Divider />
-                {canReview && reservation.exitTime && new Date(reservation.exitTime) < new Date() && (
+                {canReview && !reservation.reviewDto && (
                     <Button
                         variant="contained"
                         sx={{ bgcolor: "#E9A260", borderRadius: 3, mt: 2, mb: 2 }}

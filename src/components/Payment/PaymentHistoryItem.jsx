@@ -18,7 +18,6 @@ const formatDateTime = (dateTimeStr) => {
 
 export const PaymentHistoryItem = ({ payment }) => {
     const navigate = useNavigate();
-    const hasReview = payment.reviewDto != null;
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
@@ -152,7 +151,7 @@ export const PaymentHistoryItem = ({ payment }) => {
                     </Typography>
 
                     {/* 오른쪽 하단 - 리뷰작성가능 Chip */}
-                    {!payment.reviewId && payment.exitTime && new Date(payment.exitTime) < new Date() && (
+                    {!payment.reviewId && payment.entryTime && new Date(payment.entryTime) < new Date() && (
                         <Chip
                             label="리뷰작성가능"
                             size="small"
