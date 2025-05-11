@@ -112,28 +112,28 @@ const CalendarRendering = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("Fetching schedules..."); // 디버깅: 스케줄 데이터 로딩 시작
+                // console.log("Fetching schedules..."); // 디버깅: 스케줄 데이터 로딩 시작
                 // fetch를 이용한 스케줄 데이터 가져오기
                 const schedulesData = await getScheduleAll(user.id);
-                console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
+                // console.log("Schedules data fetched:", schedulesData); // 디버깅: 스케줄 데이터 확인
                 setSchedules(schedulesData);
 
-                console.log("Fetching events..."); // 디버깅: 이벤트 데이터 로딩 시작
+                // console.log("Fetching events..."); // 디버깅: 이벤트 데이터 로딩 시작
                 // fetch로 이벤트 데이터 가져오기
                 const eventData = await getEventAll();
-                console.log("Events data fetched:", eventData); // 디버깅: 이벤트 데이터 확인
+                // console.log("Events data fetched:", eventData); // 디버깅: 이벤트 데이터 확인
                 setEvents(eventData);
 
-                console.log("Fetching reserves..."); // 디버깅: 예약 데이터 로딩 시작
+                // console.log("Fetching reserves..."); // 디버깅: 예약 데이터 로딩 시작
                 // fetch로 예약 데이터 가져오기
                 const reserveData = await getReserveAll(user.id);
-                console.log("Reserves data fetched:", reserveData); // 디버깅: 예약 데이터 확인
+                // console.log("Reserves data fetched:", reserveData); // 디버깅: 예약 데이터 확인
                 setReserves(reserveData);
             } catch (err) {
                 console.error("데이터 로딩 실패:", err); // 에러 로깅
             } finally {
                 setLoading(false); // 데이터 로딩 완료 후 상태 변경
-                console.log("Loading finished.");
+                // console.log("Loading finished.");
             }
         };
 

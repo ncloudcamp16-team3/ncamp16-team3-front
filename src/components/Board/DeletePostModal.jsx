@@ -10,11 +10,11 @@ const DeletePostModal = ({ openDeleteModal, setOpenDeleteModal, postId }) => {
     const requestPostDelete = () => {
         deleteBoard(postId)
             .then((res) => {
-                console.log("응답 결과: " + res.message);
+                // console.log("응답 결과: " + res.message);
                 navigate("/board");
             })
             .catch((err) => {
-                console.log("에러 발생: " + err.message);
+                // console.log("에러 발생: " + err.message);
             });
     };
 

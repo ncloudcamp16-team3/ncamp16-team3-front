@@ -8,7 +8,7 @@ const useGeolocation = () => {
     });
 
     useEffect(() => {
-        console.log("Geolocation hook 실행됨");
+        // console.log("Geolocation hook 실행됨");
 
         if (!navigator.geolocation) {
             setLocation({ latitude: null, longitude: null, error: "Geolocation not supported" });
@@ -17,7 +17,7 @@ const useGeolocation = () => {
 
         const handleSuccess = (position) => {
             const { latitude, longitude } = position.coords;
-            console.log("위치 성공:", latitude, longitude);
+            // console.log("위치 성공:", latitude, longitude);
             setLocation({ latitude, longitude, error: null });
         };
 

@@ -34,17 +34,17 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
     const requestCommentUpdate = () => {
         updateComment(comment, commentItem.id, user.id)
             .then((res) => {
-                console.log("응답 결과: " + res.message);
+                // console.log("응답 결과: " + res.message);
                 setUpdateAble(false);
 
                 return getComments(postId);
             })
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
                 setPostComments(res.data);
             })
             .catch((err) => {
-                console.log("에러 발생: " + err.message);
+                // console.log("에러 발생: " + err.message);
                 handleSnackbarOpen(err.message, "error");
             });
     };
@@ -52,12 +52,12 @@ const CommentCard = ({ commentItem, handleReply, scrollToComment, handleSnackbar
     const requestCommentDelete = () => {
         deleteComment(commentItem.id, user.id)
             .then((res) => {
-                console.log("응답 결과: " + res.message);
+                // console.log("응답 결과: " + res.message);
                 handleSnackbarOpen(res.message, "success");
                 setPostComments(res.data);
             })
             .catch((err) => {
-                console.log("에러 발생: " + err.message);
+                // console.log("에러 발생: " + err.message);
                 handleSnackbarOpen(err.message, "error");
             });
     };
