@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CategoryFilter from "../../components/Reserve/filter/CategoryFilter.jsx";
 import SortFilter from "../../components/Reserve/filter/SortFilter";
 import ListContent from "../../components/Reserve/content/ListContent.jsx";
@@ -6,9 +6,18 @@ import { Box, Button, Container, Divider } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useNavigate } from "react-router-dom";
+import { useReserveContext } from "../../context/ReserveContext.jsx";
 
 const ReserveContent = () => {
     const navigate = useNavigate();
+    const { setData, setNoData, setPage, setLast } = useReserveContext();
+
+    useEffect(() => {
+        setData([]);
+        setNoData(false);
+        setPage(0);
+        setLast(false);
+    }, []);
 
     return (
         <Container sx={{ maxWidth: 500 }}>

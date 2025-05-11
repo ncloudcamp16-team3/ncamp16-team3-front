@@ -40,7 +40,6 @@ const ListContent = () => {
     }, [geolocation.latitude, geolocation.longitude]);
 
     useEffect(() => {
-        // console.log("시설 useEffect 들어오나 확인용");
         const fetchFacilities = async () => {
             setLoading(true); // 로딩 시작
             setError(null); // 에러 초기화
@@ -55,6 +54,16 @@ const ListContent = () => {
                     location, // location 객체 전달
                     today, // 오늘 날짜 전달
                 });
+
+                console.log({
+                    category,
+                    sortBy,
+                    page,
+                    size,
+                    location, // location 객체 전달
+                    today, // 오늘 날짜 전달
+                });
+                console.log(result);
 
                 if (!result || !Array.isArray(result.content)) {
                     setError("서버 데이터 형식 오류");
